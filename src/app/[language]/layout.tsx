@@ -10,7 +10,7 @@ import { dir } from "i18next";
 import "@/services/i18n/config";
 import { languages } from "@/services/i18n/config";
 import type { Metadata } from "next";
-import ToastContainer from "@/components/snackbar-provider";
+import SnackbarProvider from "@/components/snackbar-provider";
 import { getServerTranslation } from "@/services/i18n";
 import StoreLanguageProvider from "@/services/i18n/store-language-provider";
 import ThemeProvider from "@/components/theme/theme-provider";
@@ -67,10 +67,7 @@ export default async function RootLayout(props: {
                       <LeavePageProvider>
                         <ResponsiveAppBar />
                         {children}
-                        <ToastContainer
-                          position="bottom-left"
-                          hideProgressBar
-                        />
+                        <SnackbarProvider />
                       </LeavePageProvider>
                     </FacebookAuthProvider>
                   </GoogleAuthProvider>

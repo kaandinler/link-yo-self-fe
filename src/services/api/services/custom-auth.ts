@@ -17,7 +17,7 @@ export function useCustomAuthLoginService() {
   return useCallback(
     (data: CustomAuthLoginRequest) => {
       // Update the endpoint to match your FastAPI endpoint
-      return fetchBase(`${API_URL}/auth/login`, {
+      return fetchBase(`${API_URL}/auth/token`, {
         method: "POST",
         body: JSON.stringify(data),
       }).then(wrapperFetchJsonResponse<CustomLoginResponse>);

@@ -7,6 +7,6 @@ export const AUTH_ME_URL = API_URL + "/v1/auth/me";
 export const AUTH_LOGOUT_URL = API_URL + "/v1/auth/logout";
 
 // Custom FastAPI endpoints
-export const CUSTOM_AUTH_LOGIN_URL = API_URL + "/auth/login";
-export const CUSTOM_AUTH_ME_URL = API_URL + "/auth/me";
-export const CUSTOM_AUTH_LOGOUT_URL = API_URL + "/auth/logout";
+export const CUSTOM_AUTH_LOGIN_URL = API_URL + "/v1/auth/token";
+export const CUSTOM_AUTH_ME_URL = API_URL + "/v1/auth/me";
+export const CUSTOM_AUTH_LOGOUT_URL = API_URL + "/v1/auth/logout";

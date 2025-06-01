@@ -12,6 +12,7 @@ import {
   FieldValues,
 } from "react-hook-form";
 import { InputBaseComponentProps } from "@mui/material/InputBase/InputBase";
+import { SxProps, Theme } from "@mui/material/styles";
 
 type TextInputProps = {
   label: string;
@@ -27,6 +28,11 @@ type TextInputProps = {
   minRows?: number;
   maxRows?: number;
   size?: "small" | "medium";
+  sx?: SxProps<Theme>;
+  InputLabelProps?: {
+    shrink?: boolean;
+    [key: string]: any;
+  };
 };
 
 const TextInput = forwardRef<
@@ -70,6 +76,8 @@ const TextInput = forwardRef<
       multiline={props.multiline}
       minRows={props.minRows}
       maxRows={props.maxRows}
+      sx={props.sx}
+      InputLabelProps={props.InputLabelProps}
       slotProps={{
         formHelperText: {
           ["data-testid" as string]: `${props.testId}-error`,
@@ -122,6 +130,8 @@ function FormTextInput<
           maxRows={props.maxRows}
           inputComponent={props.inputComponent}
           size={props.size}
+          sx={props.sx}
+          InputLabelProps={props.InputLabelProps}
         />
       )}
     />

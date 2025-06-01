@@ -5,9 +5,11 @@ import { User } from "../types/user";
 import { Tokens } from "../types/tokens";
 import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
 import { RequestConfigType } from "./types/request-config";
+import { BaseResponseModel, TokenResponse } from "../types/base-response";
+import { parseAPIError, safeParseApiResponse, ProcessedApiError } from "../types/fastapi-errors";
 
 export type AuthLoginRequest = {
-  email: string;
+  username: string;
   password: string;
 };
 
@@ -20,12 +22,68 @@ export function useAuthLoginService() {
 
   return useCallback(
     (data: AuthLoginRequest) => {
-      return fetchBase(`${API_URL}/v1/auth/email/login`, {
+      return fetchBase(`${API_URL}/v1/auth/token`, {
         method: "POST",
         body: JSON.stringify(data),
       }).then(wrapperFetchJsonResponse<AuthLoginResponse>);
     },
     [fetchBase]
+  );
+}
+
+// New FastAPI-compatible login service that returns BaseResponseModel
+export function useAuthLoginWithFastAPIService() {
+  return useCallback(
+    async (data: AuthLoginRequest): Promise<BaseResponseModel<TokenResponse>> => {
+      try {
+        const formData = new FormData();
+        formData.append('username', data.username); // OAuth2 'username' field'ını bekliyor
+        formData.append('password', data.password);
+
+        const response = await fetch(`${API_URL}/v1/auth/token`, {
+          method: "POST",          
+          body: formData,
+        });
+
+        const result = await safeParseApiResponse(response);
+
+        // Başarılı yanıt kontrolü
+        if (response.ok && result && !result.detail) {
+          // Normal BaseResponseModel formatı
+          if (result.status && result.data) {
+            return result as BaseResponseModel<TokenResponse>;
+          }
+          
+          // Eğer doğrudan token data'sı geliyorsa BaseResponseModel'e çevir
+          if (result.access_token) {
+            return {
+              status: "success",
+              message: "Welcome back!",
+              data: result as TokenResponse,
+            };
+          }
+        }
+
+        // Hata durumunu parse et
+        const parsedError = parseAPIError(result, response);
+        
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+          errors: parsedError.fieldErrors,
+        };
+      } catch (error) {
+        // Network hatası
+        const parsedError = parseAPIError(error);
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+        };
+      }
+    },
+    []
   );
 }
 
@@ -77,6 +135,9 @@ export function useAuthFacebookLoginService() {
 export type AuthSignUpRequest = {
   email: string;
   password: string;
+  username: string;
+  first_name: string;
+  last_name: string;
 };
 
 export type AuthSignUpResponse = void;
@@ -93,6 +154,59 @@ export function useAuthSignUpService() {
       }).then(wrapperFetchJsonResponse<AuthSignUpResponse>);
     },
     [fetchBase]
+  );
+}
+
+// New FastAPI-compatible sign-up service that returns BaseResponseModel
+export function useAuthSignUpWithFastAPIService() {
+  return useCallback(
+    async (data: AuthSignUpRequest): Promise<BaseResponseModel<void>> => {
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await safeParseApiResponse(response);
+
+        // Başarılı yanıt kontrolü
+        if (response.ok && result && !result.detail) {
+          // Normal BaseResponseModel formatı
+          if (result.status) {
+            return result as BaseResponseModel<void>;
+          }
+          
+          // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
+          return {
+            status: "success",
+            message: "Account created successfully! Please check your email for verification.",
+            data: undefined,
+          };
+        }
+
+        // Hata durumunu parse et
+        const parsedError = parseAPIError(result, response);
+        
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+          errors: parsedError.fieldErrors,
+        };
+      } catch (error) {
+        // Network hatası
+        const parsedError = parseAPIError(error);
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+        };
+      }
+    },
+    []
   );
 }
 
@@ -171,13 +285,225 @@ export function useAuthResetPasswordService() {
 
   return useCallback(
     (data: AuthResetPasswordRequest, requestConfig?: RequestConfigType) => {
-      return fetchBase(`${API_URL}/v1/auth/reset/password`, {
+      return fetchBase(API_URL + "/v1/auth/password/reset", {
         method: "POST",
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthResetPasswordResponse>);
     },
     [fetchBase]
+  );
+}
+
+// New FastAPI-compatible forgot password service
+export function useAuthForgotPasswordWithFastAPIService() {
+  return useCallback(
+    async (data: AuthForgotPasswordRequest): Promise<BaseResponseModel<void>> => {
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/forgot-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await safeParseApiResponse(response);
+
+        // Başarılı yanıt kontrolü
+        if (response.ok && result && !result.detail) {
+          // Normal BaseResponseModel formatı
+          if (result.status) {
+            return result as BaseResponseModel<void>;
+          }
+          
+          // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
+          return {
+            status: "success",
+            message: "Şifre sıfırlama bağlantısı e-postanıza gönderildi.",
+            data: undefined,
+          };
+        }
+
+        // Hata durumunu parse et
+        const parsedError = parseAPIError(result, response);
+        
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+          errors: parsedError.fieldErrors,
+        };
+      } catch (error) {
+        // Network hatası
+        const parsedError = parseAPIError(error);
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+        };
+      }
+    },
+    []
+  );
+}
+
+// New FastAPI-compatible reset password service
+export function useAuthResetPasswordWithFastAPIService() {
+  return useCallback(
+    async (data: AuthResetPasswordRequest): Promise<BaseResponseModel<void>> => {
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/reset-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await safeParseApiResponse(response);
+
+        // Başarılı yanıt kontrolü
+        if (response.ok && result && !result.detail) {
+          // Normal BaseResponseModel formatı
+          if (result.status) {
+            return result as BaseResponseModel<void>;
+          }
+          
+          // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
+          return {
+            status: "success",
+            message: "Şifreniz başarıyla sıfırlandı.",
+            data: undefined,
+          };
+        }
+
+        // Hata durumunu parse et
+        const parsedError = parseAPIError(result, response);
+        
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+          errors: parsedError.fieldErrors,
+        };
+      } catch (error) {
+        // Network hatası
+        const parsedError = parseAPIError(error);
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+        };
+      }
+    },
+    []
+  );
+}
+
+// New FastAPI-compatible email confirmation service
+export function useAuthConfirmEmailWithFastAPIService() {
+  return useCallback(
+    async (data: AuthConfirmEmailRequest): Promise<BaseResponseModel<void>> => {
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/email/confirm`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await safeParseApiResponse(response);
+
+        // Başarılı yanıt kontrolü
+        if (response.ok && result && !result.detail) {
+          // Normal BaseResponseModel formatı
+          if (result.status) {
+            return result as BaseResponseModel<void>;
+          }
+          
+          // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
+          return {
+            status: "success",
+            message: "E-posta adresiniz başarıyla doğrulandı.",
+            data: undefined,
+          };
+        }
+
+        // Hata durumunu parse et
+        const parsedError = parseAPIError(result, response);
+        
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+          errors: parsedError.fieldErrors,
+        };
+      } catch (error) {
+        // Network hatası
+        const parsedError = parseAPIError(error);
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+        };
+      }
+    },
+    []
+  );
+}
+
+// New FastAPI-compatible logout service
+export function useAuthLogoutWithFastAPIService() {
+  return useCallback(
+    async (accessToken: string): Promise<BaseResponseModel<void>> => {
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
+
+        const result = await safeParseApiResponse(response);
+
+        // Başarılı yanıt kontrolü
+        if (response.ok && result && !result.detail) {
+          // Normal BaseResponseModel formatı
+          if (result.status) {
+            return result as BaseResponseModel<void>;
+          }
+          
+          // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
+          return {
+            status: "success",
+            message: "Başarıyla çıkış yapıldı.",
+            data: undefined,
+          };
+        }
+
+        // Hata durumunu parse et
+        const parsedError = parseAPIError(result, response);
+        
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+          errors: parsedError.fieldErrors,
+        };
+      } catch (error) {
+        // Network hatası
+        const parsedError = parseAPIError(error);
+        return {
+          status: "error",
+          message: parsedError.message,
+          data: undefined,
+        };
+      }
+    },
+    []
   );
 }
 
