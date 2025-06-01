@@ -21,11 +21,25 @@ import {
   getTokensInfo,
   setTokensInfo as setTokensInfoToStorage,
 } from "./auth-tokens-info";
+import { useAuthLogoutWithFastAPIService } from "@/services/api/services/auth";
+import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
+
+/**
+ * Enhanced AuthProvider that supports both legacy and FastAPI backends
+ *
+ * Features:
+ * - Automatic user data loading on app start
+ * - Support for both legacy and FastAPI logout
+ * - Support for both legacy and FastAPI user info fetching
+ * - Graceful fallback between different API formats
+ */
 
 function AuthProvider(props: PropsWithChildren<{}>) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const fetchBase = useFetch();
+  const fetchAuthLogoutFastAPI = useAuthLogoutWithFastAPIService();
+  const fetchAuthMeFastAPI = useAuthMeWithFastAPIService();
 
   const setTokensInfo = useCallback((tokensInfo: TokensInfo) => {
     setTokensInfoToStorage(tokensInfo);
@@ -39,34 +53,74 @@ function AuthProvider(props: PropsWithChildren<{}>) {
     const tokens = getTokensInfo();
 
     if (tokens?.token) {
-      await fetchBase(AUTH_LOGOUT_URL, {
-        method: "POST",
-      });
+      try {
+        // Try FastAPI logout first
+        const fastAPIResponse = await fetchAuthLogoutFastAPI(tokens.token);
+        
+        if (fastAPIResponse.status !== "success") {
+          // Fallback to legacy logout if FastAPI fails
+          await fetchBase(AUTH_LOGOUT_URL, {
+            method: "POST",
+          });
+        }
+      } catch (error) {
+        // Fallback to legacy logout if FastAPI fails
+        try {
+          await fetchBase(AUTH_LOGOUT_URL, {
+            method: "POST",
+          });
+        } catch (legacyError) {
+          console.warn("Both FastAPI and legacy logout failed:", { error, legacyError });
+        }
+      }
     }
     setTokensInfo(null);
-  }, [setTokensInfo, fetchBase]);
+  }, [setTokensInfo, fetchBase, fetchAuthLogoutFastAPI]);
 
   const loadData = useCallback(async () => {
     const tokens = getTokensInfo();
 
     try {
       if (tokens?.token) {
-        const response = await fetchBase(AUTH_ME_URL, {
-          method: "GET",
-        });
-
-        if (response.status === HTTP_CODES_ENUM.UNAUTHORIZED) {
-          logOut();
-          return;
+        let userData = null;
+        
+        try {
+          // Try FastAPI user info endpoint first
+          const fastAPIResponse = await fetchAuthMeFastAPI(tokens.token);
+          
+          if (fastAPIResponse.status === "success" && fastAPIResponse.data) {
+            userData = fastAPIResponse.data;
+          }
+        } catch (fastAPIError) {
+          console.warn("FastAPI user info failed, trying legacy:", fastAPIError);
         }
+        
+        // Fallback to legacy user info endpoint if FastAPI failed
+        if (!userData) {
+          try {
+            const response = await fetchBase(AUTH_ME_URL, {
+              method: "GET",
+            });
 
-        const data = await response.json();
-        setUser(data);
+            if (response.status === HTTP_CODES_ENUM.UNAUTHORIZED) {
+              logOut();
+              return;
+            }
+
+            userData = await response.json();
+          } catch (legacyError) {
+            console.warn("Legacy user info also failed:", legacyError);
+            logOut();
+            return;
+          }
+        }
+        
+        setUser(userData);
       }
     } finally {
       setIsLoaded(true);
     }
-  }, [fetchBase, logOut]);
+  }, [fetchBase, logOut, fetchAuthMeFastAPI]);
 
   useEffect(() => {
     loadData();
