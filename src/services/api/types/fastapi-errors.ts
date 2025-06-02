@@ -76,7 +76,7 @@ export function parseAPIError(
   if (response.status === 422 && error?.detail && Array.isArray(error.detail)) {
     // Validation errors
     const fieldErrors: Record<string, string> = {};
-    let generalMessage = error?.message || "Girdiğiniz bilgilerde hatalar var:";
+    const generalMessage = error?.message || "Girdiğiniz bilgilerde hatalar var:";
 
     error.detail.forEach((validationError: ValidationErrorDetail) => {
       const fieldPath = validationError.loc.slice(1); // Remove 'body' from path
