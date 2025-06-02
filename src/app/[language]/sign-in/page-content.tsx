@@ -60,7 +60,7 @@ const FormInput = ({
   name: string;
   label: string;
   type?: string;
-  icon?: any;
+  icon?: unknown;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
@@ -206,14 +206,12 @@ function LinkYoSelfSignInForm() {
         onlyShowOnError: false,
         autoHideDuration: 5000,
         customMessage: loginResult.success ? "Welcome back!" : errorMessage,
-      });
-
-      // Handle successful login
+      }); // Handle successful login
       if (loginResult.success && loginResult.tokenData) {
         // Handle token saving
         handleLoginSuccess(loginResult.tokenData, {
           saveTokens: (tokens) => setTokensInfo(tokens),
-          setUser: (user) => setUser(user as any), // Cast or adapt to match (user: User | null) => void
+          setUser: (user) => user && setUser(user), // Only call setUser if user is not null
         });
 
         // Create a simple user object since we have the email

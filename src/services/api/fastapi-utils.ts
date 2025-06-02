@@ -8,7 +8,7 @@ import { API_URL } from "./config";
 /**
  * BaseResponseModel'i parse eder ve tip güvenliği sağlar
  */
-export function parseBaseResponse<T>(response: any): BaseResponseModel<T> {
+export function parseBaseResponse<T>(response: unknown): BaseResponseModel<T> {
   // Eğer zaten BaseResponseModel formatındaysa direkt döndür
   if (response && typeof response === "object" && "status" in response) {
     return response as BaseResponseModel<T>;
@@ -81,33 +81,34 @@ export async function makeFastAPIRequest<T>(
   endpoint: string,
   options: {
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-    body?: any;
+    body?: unknown;
     headers?: Record<string, string>;
   } = {}
 ): Promise<BaseResponseModel<T>> {
   try {
     const { method = "GET", body, headers = {} } = options;
-
     const response = await fetch(`${API_URL}${endpoint}`, {
       method,
       headers: {
         "Content-Type": "application/json",
         ...headers,
       },
-      ...(body && { body: JSON.stringify(body) }),
+      ...(body ? { body: JSON.stringify(body) } : {}),
     });
-
-    const result = await safeParseApiResponse(response);
+    const result = (await safeParseApiResponse(response)) as Record<
+      string,
+      unknown
+    >;
 
     // Başarılı yanıt kontrolü
-    if (response.ok && result && !result.detail) {
+    if (response.ok && result && !("detail" in result)) {
       // Normal BaseResponseModel formatı
-      if (result.status && (result.data !== undefined || result.message)) {
+      if ("status" in result && (result.data !== undefined || result.message)) {
         return result as BaseResponseModel<T>;
       }
 
       // Eğer doğrudan data geliyorsa BaseResponseModel'e çevir
-      if (result && typeof result === "object" && !result.status) {
+      if (result && typeof result === "object" && !("status" in result)) {
         return {
           status: "success",
           message: "İşlem başarılı",
@@ -187,7 +188,7 @@ export async function makeFastAPIRequestWithAuth<T>(
   token: string,
   options: {
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-    body?: any;
+    body?: unknown;
   } = {}
 ): Promise<BaseResponseModel<T>> {
   return makeFastAPIRequest<T>(endpoint, {

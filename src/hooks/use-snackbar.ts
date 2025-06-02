@@ -93,7 +93,7 @@ export function useSnackbar() {
       } = options || {};
 
       let variant: ResponseStatus = "info";
-      let message = customMessage;
+      let message: string = customMessage || "";
 
       // HTTP status koduna göre variant belirleme
       if (status === HTTP_CODES_ENUM.OK || status === HTTP_CODES_ENUM.CREATED) {
@@ -102,7 +102,7 @@ export function useSnackbar() {
           message =
             successMessage ||
             (data && typeof data === "object" && "message" in data
-              ? (data as any)?.message
+              ? (data.message as string)
               : null) ||
             "İşlem başarıyla tamamlandı";
         }
@@ -111,7 +111,7 @@ export function useSnackbar() {
         if (!message) {
           message =
             (data && typeof data === "object" && "message" in data
-              ? (data as any)?.message
+              ? (data.message as string)
               : null) || "Girdiğiniz bilgilerde hata var";
         }
       } else if (
@@ -127,7 +127,7 @@ export function useSnackbar() {
         if (!message) {
           message =
             (data && typeof data === "object" && "message" in data
-              ? (data as any)?.message
+              ? (data.message as string)
               : null) || "Bir hata oluştu";
         }
       }

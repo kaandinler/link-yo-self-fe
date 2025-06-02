@@ -129,7 +129,7 @@ function MultipleImagePicker(props: MultipleImagePickerProps) {
       )}
       {props?.value?.length ? (
         <>
-          <ImageList sx={{ width: `100%` }} cols={3} rowHeight={250}>
+          <ImageList sx={{ width: "100%" }} cols={3} rowHeight={250}>
             {props.value.map((item) => (
               <ImageListItem key={item.id} style={{ overflow: "hidden" }}>
                 <StyledOverlay>

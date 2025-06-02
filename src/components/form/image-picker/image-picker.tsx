@@ -129,7 +129,7 @@ function ImagePicker(props: ImagePickerProps) {
       )}
       {props?.value ? (
         <>
-          <ImageList sx={{ width: `100%` }} cols={3} rowHeight={250}>
+          <ImageList sx={{ width: "100%" }} cols={3} rowHeight={250}>
             <ImageListItem style={{ overflow: "hidden" }}>
               <StyledOverlay>
                 <IconButton

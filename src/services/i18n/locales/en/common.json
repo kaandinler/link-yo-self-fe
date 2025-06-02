@@ -1,13 +1,22 @@
 {
-  "app-name": "APP",
+  "app-name": "Link Yo Self",
   "loading": "Loading ...",
+  "description": "Link Yo Self is a social media platform that allows you to connect with others by sharing your profile links.",
+  "error": {
+    "notFound": "Page not found",
+    "unauthorized": "You are not authorized to view this page",
+    "serverError": "An unexpected error occurred. Please try again later.",
+    "networkError": "Network error. Please check your internet connection."
+  },
   "navigation": {
     "home": "Home",
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "profile": "Profile",
     "users": "Users",
-    "logout": "Logout"
+    "logout": "Logout",
+    "settings": "Settings",
+    "about": "About"
   },
   "formInputs": {
     "avatarInput": {

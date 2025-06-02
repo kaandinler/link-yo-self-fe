@@ -5,12 +5,14 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
 ## 🚀 Sistem Özellikleri (Tamamlandı)
 
 ### ✅ **Desteklenen Hata Türleri**
+
 1. **Validation Errors** - Pydantic field validation hataları
-2. **General API Errors** - Genel API hataları 
+2. **General API Errors** - Genel API hataları
 3. **Network Errors** - Bağlantı hataları
 4. **HTTP Status Errors** - HTTP durum koduna göre hatalar
 
 ### ✅ **Otomatik Özellikler**
+
 - Pydantic validation hatalarını field-specific olarak parse etme
 - Türkçe hata mesajları çevirisi
 - Form field'larına otomatik hata ataması
@@ -18,6 +20,7 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
 - Network hatalarını graceful handling
 
 ### ✅ **Yeni Eklenen Özellikler**
+
 - **Complete Auth Services** - Tüm auth endpoint'leri için FastAPI desteği
 - **User Info Management** - Ayrı user info endpoint ile veri fetching
 - **Enhanced Auth Provider** - FastAPI ve legacy backend desteği
@@ -27,6 +30,7 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
 ## 📋 **Desteklenen FastAPI Hata Formatları**
 
 ### 1. Validation Errors (422)
+
 ```json
 {
   "detail": [
@@ -38,7 +42,7 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
     },
     {
       "type": "missing",
-      "loc": ["body", "password"], 
+      "loc": ["body", "password"],
       "msg": "Field required",
       "input": null
     }
@@ -47,6 +51,7 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
 ```
 
 ### 2. General Errors
+
 ```json
 {
   "detail": "Invalid credentials"
@@ -54,6 +59,7 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
 ```
 
 ### 3. Success Response
+
 ```json
 {
   "status": "success",
@@ -65,24 +71,26 @@ Bu döküman, React Next.js frontend'inde FastAPI backend hatalarını handle et
 ## 🛠️ **Kullanım Örnekleri**
 
 ### 1. Basit API Çağrısı
-```typescript
-import { makeFastAPIRequest } from '@/services/api/fastapi-utils';
 
-const response = await makeFastAPIRequest<UserData>('/users/me', {
-  method: 'GET',
+```typescript
+import { makeFastAPIRequest } from "@/services/api/fastapi-utils";
+
+const response = await makeFastAPIRequest<UserData>("/users/me", {
+  method: "GET",
 });
 
-if (response.status === 'success') {
-  console.log('User data:', response.data);
+if (response.status === "success") {
+  console.log("User data:", response.data);
 } else {
-  console.error('Error:', response.message);
+  console.error("Error:", response.message);
 }
 ```
 
 ### 2. Form Submission (Auth Services)
+
 ```typescript
-import { useAuthLoginWithFastAPIService } from '@/services/api/services/auth';
-import { useSnackbar } from '@/hooks/use-snackbar';
+import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
+import { useSnackbar } from "@/hooks/use-snackbar";
 
 function LoginForm() {
   const { showApiResponse } = useSnackbar();
@@ -99,15 +107,16 @@ function LoginForm() {
     showApiResponse(response, {
       onlyShowOnError: false,
       autoHideDuration: 5000,
-      customMessage: response.status === "success" ? "Hoş geldiniz!" : undefined,
+      customMessage:
+        response.status === "success" ? "Hoş geldiniz!" : undefined,
     });
 
     // Field-specific hatalar
     if (response.status === "error" && response.errors) {
       Object.entries(response.errors).forEach(([fieldName, errorMessage]) => {
-        const formFieldName = fieldName === 'username' ? 'email' : fieldName;
+        const formFieldName = fieldName === "username" ? "email" : fieldName;
         setError(formFieldName, {
-          type: "manual", 
+          type: "manual",
           message: errorMessage,
         });
       });
@@ -122,19 +131,20 @@ function LoginForm() {
 ```
 
 ### 3. Generic Form Submission
+
 ```typescript
-import { submitFormToFastAPI } from '@/services/api/fastapi-utils';
+import { submitFormToFastAPI } from "@/services/api/fastapi-utils";
 
 const response = await submitFormToFastAPI<LoginRequest, TokenResponse>(
-  '/auth/token',
-  { username: 'user@example.com', password: 'password' },
+  "/auth/token",
+  { username: "user@example.com", password: "password" },
   {
     onSuccess: (response) => {
-      console.log('Login successful:', response.data);
+      console.log("Login successful:", response.data);
     },
     onFieldErrors: (errors) => {
       Object.entries(errors).forEach(([field, message]) => {
-        setError(field, { type: 'manual', message });
+        setError(field, { type: "manual", message });
       });
     },
   }
@@ -144,26 +154,28 @@ const response = await submitFormToFastAPI<LoginRequest, TokenResponse>(
 ## 🔧 **Konfigürasyon**
 
 ### Field Name Mapping
+
 Alan adlarının Türkçe çevirileri `fastapi-errors.ts` dosyasında tanımlanmıştır:
 
 ```typescript
 const FIELD_NAME_MAP: Record<string, string> = {
-  username: 'Kullanıcı adı',
-  password: 'Şifre', 
-  email: 'E-posta',
-  firstName: 'Ad',
-  lastName: 'Soyad',
+  username: "Kullanıcı adı",
+  password: "Şifre",
+  email: "E-posta",
+  firstName: "Ad",
+  lastName: "Soyad",
 };
 ```
 
 ### Error Message Translation
+
 Hata mesajlarının Türkçe çevirileri:
 
 ```typescript
 const ERROR_MESSAGE_MAP: Record<string, string> = {
-  'Field required': 'Bu alan zorunludur',
-  'String too short': 'Bu alan çok kısa',
-  'Input should be a valid email': 'Geçerli bir e-posta adresi giriniz',
+  "Field required": "Bu alan zorunludur",
+  "String too short": "Bu alan çok kısa",
+  "Input should be a valid email": "Geçerli bir e-posta adresi giriniz",
 };
 ```
 
@@ -187,11 +199,11 @@ src/services/api/
 Error handling sistemini test etmek için:
 
 ```typescript
-import { 
-  testValidationErrorParsing, 
+import {
+  testValidationErrorParsing,
   testGeneralErrorParsing,
-  mockLoginWithErrorHandling 
-} from '@/services/api/services/error-handling-examples';
+  mockLoginWithErrorHandling,
+} from "@/services/api/services/error-handling-examples";
 
 // Console'da test et
 testValidationErrorParsing();
@@ -206,11 +218,13 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 ## 🔄 **Migration Path**
 
 ### Mevcut Servisleri Güncelleme
+
 1. Legacy servisler (`useAuthLoginService`) korundu
 2. Yeni FastAPI servisleri (`useAuthLoginWithFastAPIService`) eklendi
 3. Aşamalı geçiş yapılabilir
 
 ### Auth Servisleri Güncellemesi
+
 - ✅ Login service (FastAPI uyumlu)
 - ✅ Sign-up service (FastAPI uyumlu)
 - ⏳ Diğer auth servisleri (gelecekte eklenecek)
@@ -218,7 +232,9 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 ## 📞 **API Endpoint Beklentileri**
 
 ### Login Endpoint
+
 **Request:**
+
 ```json
 {
   "username": "user@example.com",
@@ -227,9 +243,10 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 ```
 
 **Success Response:**
+
 ```json
 {
-  "status": "success", 
+  "status": "success",
   "message": "Successfully logged in",
   "data": {
     "access_token": "eyJ...",
@@ -240,6 +257,7 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 ```
 
 **Error Response:**
+
 ```json
 {
   "detail": [
@@ -254,7 +272,9 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 ```
 
 ### Sign-up Endpoint
+
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -263,6 +283,7 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 ```
 
 **Success Response:**
+
 ```json
 {
   "status": "success",
@@ -273,26 +294,28 @@ mockLoginWithErrorHandling("valid@example.com", "pass").then(console.log); // Su
 
 ## 🚨 **Hata Senaryoları**
 
-| Durum | Frontend Response | Kullanıcı Deneyimi |
-|-------|------------------|---------------------|
-| Missing fields | Field-specific errors | Kırmızı form field'ları + mesajlar |
-| Invalid credentials | General error | Snackbar error mesajı |
-| Network error | Network error | "Bağlantı hatası" mesajı |
-| Server error (500) | General error | "Sunucu hatası" mesajı |
-| Validation error | Field errors + snackbar | Form field'ları + genel mesaj |
+| Durum               | Frontend Response       | Kullanıcı Deneyimi                 |
+| ------------------- | ----------------------- | ---------------------------------- |
+| Missing fields      | Field-specific errors   | Kırmızı form field'ları + mesajlar |
+| Invalid credentials | General error           | Snackbar error mesajı              |
+| Network error       | Network error           | "Bağlantı hatası" mesajı           |
+| Server error (500)  | General error           | "Sunucu hatası" mesajı             |
+| Validation error    | Field errors + snackbar | Form field'ları + genel mesaj      |
 
 ## 🔧 **Geliştirici Notları**
 
 ### Yeni Endpoint Ekleme
+
 1. `makeFastAPIRequest` utility'sini kullan
 2. Response tipini `BaseResponseModel<T>` olarak tanımla
 3. Error handling otomatik olarak çalışır
 
 ### Custom Error Handling
+
 ```typescript
 // Özel hata handling gerekirse
-const response = await makeFastAPIRequest('/custom-endpoint');
-if (response.status === 'error') {
+const response = await makeFastAPIRequest("/custom-endpoint");
+if (response.status === "error") {
   // Custom logic burada
 }
 ```
@@ -302,6 +325,7 @@ if (response.status === 'error') {
 ### ✅ **Tamamlanan Özellikler**
 
 #### Auth Services (Tüm endpoint'ler tamamlandı)
+
 - **Login** - `useAuthLoginWithFastAPIService()` ✅
 - **Sign-up** - `useAuthSignUpWithFastAPIService()` ✅
 - **Forgot Password** - `useAuthForgotPasswordWithFastAPIService()` ✅
@@ -310,22 +334,26 @@ if (response.status === 'error') {
 - **Logout** - `useAuthLogoutWithFastAPIService()` ✅
 
 #### User Management Services
+
 - **User Info** - `useAuthMeWithFastAPIService()` ✅
 - **Update Profile** - `useUpdateUserProfileWithFastAPIService()` ✅
 - **Change Password** - `useChangePasswordWithFastAPIService()` ✅
 
 #### Utility Functions
+
 - **Generic API Call** - `makeFastAPIRequest<T>()` ✅
 - **Authenticated API Call** - `makeFastAPIRequestWithAuth<T>()` ✅
 - **Form Submission** - `submitFormToFastAPI<T>()` ✅
 
 #### Frontend Integration
+
 - **Enhanced Auth Provider** - FastAPI + Legacy backend desteği ✅
 - **Updated Sign-in Page** - FastAPI error handling + user info fetching ✅
 - **Updated Sign-up Page** - FastAPI error handling ✅
 - **Enhanced Snackbar** - BaseResponseModel desteği ✅
 
 #### Test Suite
+
 - **Comprehensive Test Examples** - `fastapi-test-suite.ts` ✅
 - **Error Scenario Testing** - Tüm hata türleri için test örnekleri ✅
 - **Complete Auth Flow Testing** - End-to-end authentication flow ✅

@@ -6,27 +6,37 @@ type ExtendedUser = User & {
   onboarding_completed?: boolean;
   profile_completed?: boolean;
   profile_completion_percentage?: number;
-  links?: any[];
+  links?: unknown[];
 };
 
 /**
  * Type-safe property getter with fallback
  */
-const getUserProperty = <T>(user: any, propertyName: string, fallback: T): T => {
-  return user?.[propertyName] !== undefined ? user[propertyName] : fallback;
+const getUserProperty = <T>(
+  user: User | Record<string, unknown>,
+  propertyName: string,
+  fallback: T
+): T => {
+  if (!user) return fallback;
+  return (user as Record<string, unknown>)[propertyName] !== undefined
+    ? (user as Record<string, unknown>)[propertyName]
+    : fallback;
 };
 
 /**
  * Kullanıcının mevcut durumuna göre yönlendirilmesi gereken sayfayı belirler
  */
-export const determineUserDestination = (user: User, currentPath: string): string | null => {
+export const determineUserDestination = (
+  user: User,
+  currentPath: string
+): string | null => {
   // Eğer kullanıcı zaten dashboard/app sayfalarında ise yönlendirme yapma
   if (
-    currentPath.startsWith('/dashboard') || 
-    currentPath.startsWith('/links') || 
-    currentPath.startsWith('/analytics') ||
-    currentPath.startsWith('/profile') ||
-    currentPath.startsWith('/onboarding')
+    currentPath.startsWith("/dashboard") ||
+    currentPath.startsWith("/links") ||
+    currentPath.startsWith("/analytics") ||
+    currentPath.startsWith("/profile") ||
+    currentPath.startsWith("/onboarding")
   ) {
     return null;
   }
@@ -34,39 +44,54 @@ export const determineUserDestination = (user: User, currentPath: string): strin
   const extendedUser = user as ExtendedUser;
 
   // İlk kez giriş yapan kullanıcı (onboarding tamamlanmamış)
-  const onboardingCompleted = getUserProperty(extendedUser, 'onboarding_completed', false);
+  const onboardingCompleted = getUserProperty(
+    extendedUser,
+    "onboarding_completed",
+    false
+  );
   if (!onboardingCompleted) {
-    return '/onboarding/welcome';
+    return "/onboarding/welcome";
   }
 
   // Profili tamamlanmamış kullanıcı
-  const profileCompleted = getUserProperty(extendedUser, 'profile_completed', false);
+  const profileCompleted = getUserProperty(
+    extendedUser,
+    "profile_completed",
+    false
+  );
   if (!profileCompleted) {
     // Profile completion percentage'ı kontrol et (eğer property varsa)
-    const completionPercentage = getUserProperty(extendedUser, 'profile_completion_percentage', 0);
+    const completionPercentage = getUserProperty(
+      extendedUser,
+      "profile_completion_percentage",
+      0
+    );
     if (completionPercentage < 50) {
-      return '/profile/complete';
+      return "/profile/complete";
     }
-    return '/profile/complete';
+    return "/profile/complete";
   }
 
   // Link'i olmayan kullanıcı (links property'si varsa kontrol et)
-  const userLinks = getUserProperty(extendedUser, 'links', []);
+  const userLinks = getUserProperty(extendedUser, "links", []);
   if (userLinks.length === 0) {
-    return '/links/add?welcome=true';
+    return "/links/add?welcome=true";
   }
 
   // Normal kullanıcı - dashboard'a yönlendir
-  return '/dashboard';
+  return "/dashboard";
 };
 
 /**
  * Login başarılı olduktan sonra kullanıcıyı uygun sayfaya yönlendirir
  */
-export const handlePostLoginRedirect = (user: User, router: any) => {
+export const handlePostLoginRedirect = (
+  user: User,
+  router: { push: (path: string) => void }
+) => {
   const currentPath = window.location.pathname;
   const destination = determineUserDestination(user, currentPath);
-  
+
   if (destination) {
     router.push(destination);
   }
@@ -77,12 +102,24 @@ export const handlePostLoginRedirect = (user: User, router: any) => {
  */
 export const checkOnboardingStatus = (user: User) => {
   const extendedUser = user as ExtendedUser;
-  
+
   return {
-    needsOnboarding: !getUserProperty(extendedUser, 'onboarding_completed', false),
-    needsProfileCompletion: !getUserProperty(extendedUser, 'profile_completed', false),
-    needsFirstLinks: getUserProperty(extendedUser, 'links', []).length === 0,
-    completionPercentage: getUserProperty(extendedUser, 'profile_completion_percentage', 0)
+    needsOnboarding: !getUserProperty(
+      extendedUser,
+      "onboarding_completed",
+      false
+    ),
+    needsProfileCompletion: !getUserProperty(
+      extendedUser,
+      "profile_completed",
+      false
+    ),
+    needsFirstLinks: getUserProperty(extendedUser, "links", []).length === 0,
+    completionPercentage: getUserProperty(
+      extendedUser,
+      "profile_completion_percentage",
+      0
+    ),
   };
 };
 
@@ -91,21 +128,19 @@ export const checkOnboardingStatus = (user: User) => {
  */
 export const getOnboardingStep = (user: User) => {
   const extendedUser = user as ExtendedUser;
-  
-  const onboardingCompleted = getUserProperty(extendedUser, 'onboarding_completed', false);
+
+  const onboardingCompleted = getUserProperty(
+    extendedUser,
+    "onboarding_completed",
+    false
+  );
   if (!onboardingCompleted) {
-    return 'welcome';
+    return "welcome";
   }
-  
-  const profileCompleted = getUserProperty(extendedUser, 'profile_completed', false);
-  if (!profileCompleted) {
-    return 'profile';
-  }
-  
-  const userLinks = getUserProperty(extendedUser, 'links', []);
-  if (userLinks.length === 0) {
-    return 'first-links';
-  }
-  
-  return 'completed';
+
+  const profileCompleted = getUserProperty(
+    extendedUser,
+    "profile_completed",
+    false
+  );
 };

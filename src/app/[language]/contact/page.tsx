@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
-import { Mail, MessageCircle, Phone, MapPin, Send, Clock, Users, ArrowRight } from "lucide-react";
+import {
+  Mail,
+  MessageCircle,
+  Phone,
+  MapPin,
+  Send,
+  Clock,
+  Users,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -20,16 +29,17 @@ export default function ContactPage() {
               <MessageCircle className="h-4 w-4 text-blue-400" />
               <span className="text-sm text-gray-300">Get in Touch</span>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Contact
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}Us
+                {" "}
+                Us
               </span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
-              Have questions? We'd love to hear from you. Send us a message and 
+              Have questions? We'd love to hear from you. Send us a message and
               we'll respond as soon as possible.
             </p>
           </div>
@@ -49,7 +59,7 @@ export default function ContactPage() {
               <p className="text-gray-300 mb-4">
                 Send us an email and we'll get back to you within 24 hours.
               </p>
-              <a 
+              <a
                 href="mailto:support@linkyoself.com"
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
               >
@@ -80,7 +90,7 @@ export default function ContactPage() {
               <p className="text-gray-300 mb-4">
                 Speak directly with our team for complex inquiries.
               </p>
-              <a 
+              <a
                 href="tel:+1-555-LINKYOU"
                 className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
               >
@@ -115,16 +125,17 @@ export default function ContactPage() {
                 <Send className="h-4 w-4 text-purple-400" />
                 <span className="text-sm text-purple-300">Send a Message</span>
               </div>
-              
+
               <h2 className="text-3xl md:text-4xl font-black text-white mb-6">
                 Let's start a conversation
               </h2>
-              
+
               <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-                Whether you have a question about features, pricing, need a demo, 
-                or anything else, our team is ready to answer all your questions.
+                Whether you have a question about features, pricing, need a
+                demo, or anything else, our team is ready to answer all your
+                questions.
               </p>
-              
+
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -148,7 +159,7 @@ export default function ContactPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Email
@@ -159,7 +170,7 @@ export default function ContactPage() {
                     placeholder="john@example.com"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Subject
@@ -173,7 +184,7 @@ export default function ContactPage() {
                     <option value="partnership">Partnership</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Message
@@ -184,7 +195,7 @@ export default function ContactPage() {
                     placeholder="Tell us how we can help you..."
                   ></textarea>
                 </div>
-                
+
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-2xl flex items-center justify-center gap-2"
@@ -194,7 +205,7 @@ export default function ContactPage() {
                 </button>
               </form>
             </div>
-            
+
             {/* Contact Info & FAQ */}
             <div className="space-y-8">
               {/* Response Time */}
@@ -204,13 +215,17 @@ export default function ContactPage() {
                     <Clock className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Quick Response</h3>
-                    <p className="text-blue-300">We typically respond within 2-4 hours</p>
+                    <h3 className="text-xl font-bold text-white">
+                      Quick Response
+                    </h3>
+                    <p className="text-blue-300">
+                      We typically respond within 2-4 hours
+                    </p>
                   </div>
                 </div>
                 <p className="text-gray-300">
-                  Our support team is dedicated to providing fast, helpful responses 
-                  to all inquiries during business hours.
+                  Our support team is dedicated to providing fast, helpful
+                  responses to all inquiries during business hours.
                 </p>
               </div>
 
@@ -221,8 +236,12 @@ export default function ContactPage() {
                     <Users className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Support Hours</h3>
-                    <p className="text-green-300">Monday - Friday, 9AM - 6PM EST</p>
+                    <h3 className="text-xl font-bold text-white">
+                      Support Hours
+                    </h3>
+                    <p className="text-green-300">
+                      Monday - Friday, 9AM - 6PM EST
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-2 text-gray-300">
@@ -234,26 +253,48 @@ export default function ContactPage() {
 
               {/* FAQ */}
               <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-gray-700 rounded-2xl p-8">
-                <h3 className="text-xl font-bold text-white mb-6">Frequently Asked Questions</h3>
+                <h3 className="text-xl font-bold text-white mb-6">
+                  Frequently Asked Questions
+                </h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-white mb-2">How quickly can I get started?</h4>
-                    <p className="text-gray-300 text-sm">You can create your LinkYoSelf page in less than 5 minutes!</p>
+                    <h4 className="font-semibold text-white mb-2">
+                      How quickly can I get started?
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      You can create your LinkYoSelf page in less than 5
+                      minutes!
+                    </p>
                   </div>
-                  
+
                   <div>
-                    <h4 className="font-semibold text-white mb-2">Is there a free plan?</h4>
-                    <p className="text-gray-300 text-sm">Yes! We offer a free plan with basic features to get you started.</p>
+                    <h4 className="font-semibold text-white mb-2">
+                      Is there a free plan?
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Yes! We offer a free plan with basic features to get you
+                      started.
+                    </p>
                   </div>
-                  
+
                   <div>
-                    <h4 className="font-semibold text-white mb-2">Can I customize my page design?</h4>
-                    <p className="text-gray-300 text-sm">Absolutely! Choose from multiple themes and customize colors, layouts, and more.</p>
+                    <h4 className="font-semibold text-white mb-2">
+                      Can I customize my page design?
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Absolutely! Choose from multiple themes and customize
+                      colors, layouts, and more.
+                    </p>
                   </div>
-                  
+
                   <div>
-                    <h4 className="font-semibold text-white mb-2">Do you provide analytics?</h4>
-                    <p className="text-gray-300 text-sm">Yes, track clicks, views, and audience insights with our built-in analytics.</p>
+                    <h4 className="font-semibold text-white mb-2">
+                      Do you provide analytics?
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Yes, track clicks, views, and audience insights with our
+                      built-in analytics.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -270,16 +311,18 @@ export default function ContactPage() {
               <MapPin className="h-4 w-4 text-orange-400" />
               <span className="text-sm text-orange-300">Our Locations</span>
             </div>
-            
+
             <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
               Visit our
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}offices
+                {" "}
+                offices
               </span>
             </h2>
-            
+
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              We have offices around the world to better serve our global community of creators.
+              We have offices around the world to better serve our global
+              community of creators.
             </p>
           </div>
 
@@ -289,7 +332,9 @@ export default function ContactPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <MapPin className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4">San Francisco</h3>
+              <h3 className="text-xl font-bold text-white mb-4">
+                San Francisco
+              </h3>
               <div className="text-gray-300 space-y-2">
                 <p>123 Innovation Drive</p>
                 <p>San Francisco, CA 94105</p>
@@ -343,8 +388,9 @@ export default function ContactPage() {
               Ready to get started?
             </h2>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Don't wait! Join thousands of creators who are already using LinkYoSelf 
-              to build their digital presence and connect with their audience.
+              Don't wait! Join thousands of creators who are already using
+              LinkYoSelf to build their digital presence and connect with their
+              audience.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/sign-up">

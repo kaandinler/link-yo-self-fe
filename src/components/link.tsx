@@ -4,7 +4,7 @@ import {
   LeavePageContext,
 } from "@/services/leave-page/leave-page-context";
 // Need for leave page logic
- 
+
 import NextLink, { LinkProps } from "next/link";
 import { forwardRef, useContext, ReactNode } from "react";
 

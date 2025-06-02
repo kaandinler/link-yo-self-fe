@@ -2,11 +2,18 @@
 
 import React from "react";
 import Link from "next/link";
-import { Link as LinkIcon, Users, BarChart3, Palette, Star, ArrowRight } from "lucide-react";
+import {
+  Link as LinkIcon,
+  Users,
+  BarChart3,
+  Palette,
+  Star,
+  ArrowRight,
+} from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">      
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-20 md:py-32">
         <div className="max-w-7xl mx-auto text-center">
@@ -14,19 +21,23 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full px-4 py-2 mb-8">
               <Star className="h-4 w-4 text-yellow-400" />
-              <span className="text-sm text-gray-300">Join thousands of creators</span>
+              <span className="text-sm text-gray-300">
+                Join thousands of creators
+              </span>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Connect with your
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}audience
+                {" "}
+                audience
               </span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
-              One link to share everything you create. Build your personal brand and 
-              share all your important links in one beautiful, customizable page.
+              One link to share everything you create. Build your personal brand
+              and share all your important links in one beautiful, customizable
+              page.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -79,11 +90,12 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
               Everything you need to
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}connect
+                {" "}
+                connect
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              LinkYoSelf provides all the tools you need to create a beautiful, 
+              LinkYoSelf provides all the tools you need to create a beautiful,
               functional link-in-bio page that represents your brand.
             </p>
           </div>
@@ -94,10 +106,12 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <LinkIcon className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4">Unlimited Links</h3>
+              <h3 className="text-xl font-bold text-white mb-4">
+                Unlimited Links
+              </h3>
               <p className="text-gray-300 leading-relaxed">
-                Add all your social media profiles, websites, and important links in one place. 
-                No limits, complete control.
+                Add all your social media profiles, websites, and important
+                links in one place. No limits, complete control.
               </p>
             </div>
 
@@ -106,10 +120,12 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Palette className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4">Custom Design</h3>
+              <h3 className="text-xl font-bold text-white mb-4">
+                Custom Design
+              </h3>
               <p className="text-gray-300 leading-relaxed">
-                Customize your page with themes, colors, and layouts that match your personal 
-                brand and style.
+                Customize your page with themes, colors, and layouts that match
+                your personal brand and style.
               </p>
             </div>
 
@@ -120,8 +136,8 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Analytics</h3>
               <p className="text-gray-300 leading-relaxed">
-                Track your link performance with detailed analytics and insights to 
-                understand your audience better.
+                Track your link performance with detailed analytics and insights
+                to understand your audience better.
               </p>
             </div>
 
@@ -130,10 +146,12 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4">Mobile Optimized</h3>
+              <h3 className="text-xl font-bold text-white mb-4">
+                Mobile Optimized
+              </h3>
               <p className="text-gray-300 leading-relaxed">
-                Your page looks perfect on all devices. Mobile-first design ensures 
-                the best experience for your audience.
+                Your page looks perfect on all devices. Mobile-first design
+                ensures the best experience for your audience.
               </p>
             </div>
 
@@ -144,7 +162,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Easy Setup</h3>
               <p className="text-gray-300 leading-relaxed">
-                Get started in minutes. Our intuitive interface makes it easy to 
+                Get started in minutes. Our intuitive interface makes it easy to
                 create and customize your link page.
               </p>
             </div>
@@ -154,10 +172,12 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <LinkIcon className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4">SEO Friendly</h3>
+              <h3 className="text-xl font-bold text-white mb-4">
+                SEO Friendly
+              </h3>
               <p className="text-gray-300 leading-relaxed">
-                Optimized for search engines with custom meta tags, descriptions, 
-                and social media previews.
+                Optimized for search engines with custom meta tags,
+                descriptions, and social media previews.
               </p>
             </div>
           </div>
@@ -172,8 +192,8 @@ export default function LandingPage() {
               Ready to connect with your audience?
             </h2>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Join thousands of creators, influencers, and professionals who use LinkYoSelf 
-              to share their digital presence in one beautiful link.
+              Join thousands of creators, influencers, and professionals who use
+              LinkYoSelf to share their digital presence in one beautiful link.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/sign-up">
@@ -206,16 +226,28 @@ export default function LandingPage() {
 
             {/* Links */}
             <div className="flex items-center gap-8">
-              <a href="/about" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="/about"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 About
               </a>
-              <a href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="/privacy-policy"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 Privacy
               </a>
-              <a href="/terms" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="/terms"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 Terms
               </a>
-              <a href="/contact" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="/contact"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 Contact
               </a>
             </div>

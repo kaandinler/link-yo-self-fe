@@ -31,7 +31,7 @@ type TextInputProps = {
   sx?: SxProps<Theme>;
   InputLabelProps?: {
     shrink?: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 };
 

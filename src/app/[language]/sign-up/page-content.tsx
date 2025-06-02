@@ -75,7 +75,7 @@ const FormInput = ({
   name: string;
   label: string;
   type?: string;
-  icon?: any;
+  icon?: React.ElementType;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;

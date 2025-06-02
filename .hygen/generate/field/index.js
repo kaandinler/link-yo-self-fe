@@ -1,3 +1,5 @@
+// Using CommonJS require since this is a node script
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars
 const { execSync } = require("child_process");
 
 const collectPromisesResults = (callback) => async (prevValues) => {

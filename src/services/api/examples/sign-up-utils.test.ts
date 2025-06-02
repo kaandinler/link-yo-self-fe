@@ -61,7 +61,7 @@ describe("parseSignUpResponse", () => {
   it("should handle unknown response format", () => {
     const mockResponse = {
       unknown: "format",
-    } as any;
+    } as unknown;
 
     const result = parseSignUpResponse(mockResponse);
 
@@ -226,7 +226,7 @@ describe("logSignUpAttempt", () => {
   it("should log unknown response without error", () => {
     const mockResponse = {
       unknown: "format",
-    } as any;
+    } as unknown;
 
     expect(() =>
       logSignUpAttempt("test@example.com", mockResponse)

@@ -215,7 +215,7 @@ function Actions({ user }: { user: User }) {
                     <MenuItem
                       sx={{
                         bgcolor: "error.main",
-                        color: `var(--mui-palette-common-white)`,
+                        color: "var(--mui-palette-common-white)",
                         "&:hover": {
                           bgcolor: "error.light",
                         },

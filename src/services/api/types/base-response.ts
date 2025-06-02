@@ -10,7 +10,7 @@ export const API_STATUS = {
 } as const;
 
 // Tüm API yanıtları için temel model
-export interface BaseResponseModel<T = any> {
+export interface BaseResponseModel<T = unknown> {
   status: ResponseStatus;
   message?: string;
   data?: T;
@@ -29,12 +29,12 @@ export interface AuthLoginResponse {
   token: string;
   refreshToken: string;
   tokenExpires: number;
-  user: any; // User tipini gerçek user modeline göre güncelleyin
+  user: unknown; // User tipini gerçek user modeline göre güncelleyin
 }
 
 export interface AuthSignUpResponse {
   token: string;
   refreshToken: string;
   tokenExpires: number;
-  user: any;
+  user: unknown;
 }

@@ -28,27 +28,34 @@ export interface SignUpParseResult {
 /**
  * Sign-up response'unu parse eder ve form için uygun format döndürür
  */
-export function parseSignUpResponse(
-  response: BaseResponseModel<any>
-): SignUpParseResult {
-  if (isSuccessResponse(response)) {
-    return {
-      success: true,
-      message:
-        response.message ||
-        "Account created successfully! Please check your email for verification.",
-    };
-  }
+export function parseSignUpResponse(response: unknown): SignUpParseResult {
+  // Tip güvenliği için response'u kontrol et
+  const typedResponse = response as BaseResponseModel<unknown>;
 
-  if (isErrorResponse(response)) {
-    const fieldErrors = getResponseFieldErrors(response);
-    const errorMessage = getResponseErrorMessage(response);
+  if (
+    typedResponse &&
+    typeof typedResponse === "object" &&
+    "status" in typedResponse
+  ) {
+    if (isSuccessResponse(typedResponse)) {
+      return {
+        success: true,
+        message:
+          typedResponse.message ||
+          "Account created successfully! Please check your email for verification.",
+      };
+    }
 
-    return {
-      success: false,
-      fieldErrors,
-      message: errorMessage || "Registration failed. Please try again.",
-    };
+    if (isErrorResponse(typedResponse)) {
+      const fieldErrors = getResponseFieldErrors(typedResponse);
+      const errorMessage = getResponseErrorMessage(typedResponse);
+
+      return {
+        success: false,
+        fieldErrors,
+        message: errorMessage || "Registration failed. Please try again.",
+      };
+    }
   }
 
   // Bilinmeyen response type
@@ -62,7 +69,7 @@ export function parseSignUpResponse(
  * Field errors'ları form field errors'a dönüştürür
  */
 export function convertFieldErrorsToFormErrors(
-  response: BaseResponseModel<any>
+  response: BaseResponseModel<unknown>
 ): Record<string, { type: string; message: string }> {
   const fieldErrors = getResponseFieldErrors(response);
   const formErrors: Record<string, { type: string; message: string }> = {};
@@ -103,7 +110,7 @@ export function mapBackendFieldsToFormFields(
  * Sign-up işlemi için user-friendly error messages
  */
 export function getSignUpErrorMessage(
-  response: BaseResponseModel<any>
+  response: BaseResponseModel<unknown>
 ): string {
   if (!isErrorResponse(response)) {
     return "";
@@ -138,26 +145,34 @@ export function getSignUpErrorMessage(
 /**
  * Sign-up için comprehensive logging
  */
-export function logSignUpAttempt(
-  email: string,
-  response: BaseResponseModel<any>
-): void {
+export function logSignUpAttempt(email: string, response: unknown): void {
   const timestamp = new Date().toISOString();
+  const typedResponse = response as BaseResponseModel<unknown>;
 
-  if (isSuccessResponse(response)) {
-    console.log(`✅ [${timestamp}] Sign-up successful for: ${email}`);
-  } else if (isErrorResponse(response)) {
-    const errorMessage = getResponseErrorMessage(response);
-    const fieldErrors = getResponseFieldErrors(response);
-
-    console.error(`❌ [${timestamp}] Sign-up failed for: ${email}`, {
-      message: errorMessage,
-      fieldErrors: Object.keys(fieldErrors),
-      hasFieldErrors: Object.keys(fieldErrors).length > 0,
-    });
+  if (
+    typedResponse &&
+    typeof typedResponse === "object" &&
+    "status" in typedResponse
+  ) {
+    if (isSuccessResponse(typedResponse)) {
+      console.log(`✅ [${timestamp}] Sign-up successful for: ${email}`);
+    } else if (isErrorResponse(typedResponse)) {
+      const errorMessage = getResponseErrorMessage(typedResponse);
+      const fieldErrors = getResponseFieldErrors(typedResponse);
+      console.error(`❌ [${timestamp}] Sign-up failed for: ${email}`, {
+        message: errorMessage,
+        fieldErrors: Object.keys(fieldErrors),
+        hasFieldErrors: Object.keys(fieldErrors).length > 0,
+      });
+    } else {
+      console.warn(
+        `⚠️ [${timestamp}] Unknown sign-up response for: ${email}`,
+        response
+      );
+    }
   } else {
     console.warn(
-      `⚠️ [${timestamp}] Unknown sign-up response for: ${email}`,
+      `⚠️ [${timestamp}] Invalid sign-up response format for: ${email}`,
       response
     );
   }

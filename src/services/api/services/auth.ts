@@ -50,22 +50,27 @@ export function useAuthLoginWithFastAPIService() {
           method: "POST",
           body: formData,
         });
-
-        const result = await safeParseApiResponse(response);
+        const result = (await safeParseApiResponse(response)) as Record<
+          string,
+          unknown
+        >;
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !result.detail) {
+        if (response.ok && result && !("detail" in result)) {
           // Normal BaseResponseModel formatı
-          if (result.status && result.data) {
-            return result as BaseResponseModel<TokenResponse>;
+          if ("status" in result && "data" in result) {
+            // Tip güvenliği için iki adımda dönüştürme
+            const typedResult =
+              result as unknown as BaseResponseModel<TokenResponse>;
+            return typedResult;
           }
 
           // Eğer doğrudan token data'sı geliyorsa BaseResponseModel'e çevir
-          if (result.access_token) {
+          if ("access_token" in result) {
             return {
               status: "success",
               message: "Welcome back!",
-              data: result as TokenResponse,
+              data: result as unknown as TokenResponse,
             };
           }
         }
@@ -184,15 +189,24 @@ export function useAuthSignUpWithFastAPIService() {
           "🔑 Auth service: Sign-up response status:",
           response.status
         );
-
-        const result = await safeParseApiResponse(response);
+        const result = (await safeParseApiResponse(response)) as Record<
+          string,
+          unknown
+        >;
         console.log("🔑 Auth service: Sign-up parsed response:", result);
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !result.detail) {
+        if (
+          response.ok &&
+          result &&
+          typeof result === "object" &&
+          !("detail" in result)
+        ) {
           // Normal BaseResponseModel formatı
-          if (result.status) {
-            return result as BaseResponseModel<void>;
+          if ("status" in result) {
+            // Tip güvenliği için iki adımda dönüştürme
+            const typedResult = result as unknown as BaseResponseModel<void>;
+            return typedResult;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
@@ -329,12 +343,20 @@ export function useAuthForgotPasswordWithFastAPIService() {
           body: JSON.stringify(data),
         });
 
-        const result = await safeParseApiResponse(response);
+        const result = (await safeParseApiResponse(response)) as Record<
+          string,
+          unknown
+        >;
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !result.detail) {
+        if (
+          response.ok &&
+          result &&
+          typeof result === "object" &&
+          !("detail" in result)
+        ) {
           // Normal BaseResponseModel formatı
-          if (result.status) {
+          if ("status" in result) {
             return result as BaseResponseModel<void>;
           }
 
@@ -384,12 +406,20 @@ export function useAuthResetPasswordWithFastAPIService() {
           body: JSON.stringify(data),
         });
 
-        const result = await safeParseApiResponse(response);
+        const result = (await safeParseApiResponse(response)) as Record<
+          string,
+          unknown
+        >;
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !result.detail) {
+        if (
+          response.ok &&
+          result &&
+          typeof result === "object" &&
+          !("detail" in result)
+        ) {
           // Normal BaseResponseModel formatı
-          if (result.status) {
+          if ("status" in result) {
             return result as BaseResponseModel<void>;
           }
 
@@ -437,12 +467,20 @@ export function useAuthConfirmEmailWithFastAPIService() {
           body: JSON.stringify(data),
         });
 
-        const result = await safeParseApiResponse(response);
+        const result = (await safeParseApiResponse(response)) as Record<
+          string,
+          unknown
+        >;
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !result.detail) {
+        if (
+          response.ok &&
+          result &&
+          typeof result === "object" &&
+          !("detail" in result)
+        ) {
           // Normal BaseResponseModel formatı
-          if (result.status) {
+          if ("status" in result) {
             return result as BaseResponseModel<void>;
           }
 
@@ -490,12 +528,20 @@ export function useAuthLogoutWithFastAPIService() {
           },
         });
 
-        const result = await safeParseApiResponse(response);
+        const result = (await safeParseApiResponse(response)) as Record<
+          string,
+          unknown
+        >;
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !result.detail) {
+        if (
+          response.ok &&
+          result &&
+          typeof result === "object" &&
+          !("detail" in result)
+        ) {
           // Normal BaseResponseModel formatı
-          if (result.status) {
+          if ("status" in result) {
             return result as BaseResponseModel<void>;
           }
 

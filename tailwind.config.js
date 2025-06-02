@@ -7,11 +7,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', '"Noto Sans"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"Noto Sans"', "sans-serif"],
       },
     },
   },
   plugins: [
-    require('@tailwindcss/container-queries'),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("@tailwindcss/container-queries"),
   ],
-}
+};

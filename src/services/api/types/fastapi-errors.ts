@@ -5,7 +5,7 @@ export interface ValidationErrorDetail {
   type: string;
   loc: (string | number)[];
   msg: string;
-  input: any;
+  input: unknown;
 }
 
 // FastAPI error response when validation fails
@@ -16,14 +16,43 @@ export interface FastAPIValidationError {
 // General FastAPI error response
 export interface FastAPIError {
   detail: string | ValidationErrorDetail[];
+  message?: string;
 }
+
+// API Error with possible message
+export interface ApiErrorWithMessage {
+  message: string;
+  [key: string]: unknown;
+}
+
+// API Error with detail field
+export interface ApiErrorWithDetail {
+  detail: string | ValidationErrorDetail[];
+  [key: string]: unknown;
+}
+
+// API Error with data containing message
+export interface ApiErrorWithData {
+  data: {
+    message: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+// Union type for all possible API error formats
+export type ApiErrorResponse =
+  | ApiErrorWithMessage
+  | ApiErrorWithDetail
+  | ApiErrorWithData
+  | Record<string, unknown>;
 
 // Processed error for UI consumption
 export interface ProcessedApiError {
   type: "validation" | "general" | "network";
   message: string;
   fieldErrors?: Record<string, string>; // Field name -> error message
-  originalError?: any;
+  originalError?: unknown;
 }
 
 // Field name mapping for translation
@@ -51,9 +80,12 @@ const ERROR_MESSAGE_MAP: Record<string, string> = {
  * FastAPI error response'unu kullanıcı dostu formata çevirir
  */
 export function parseAPIError(
-  error: any,
+  error: unknown,
   response?: Response
 ): ProcessedApiError {
+  // API hatası tipi olarak kullanmak için dönüştürme
+  const errorData = error as ApiErrorResponse;
+
   // Network hatası
   if (!response || error instanceof TypeError) {
     return {
@@ -64,34 +96,52 @@ export function parseAPIError(
   }
 
   // Backend'den gelen message'ı öncelikle kontrol et
-  if (error?.message && typeof error.message === "string") {
+  if (
+    errorData &&
+    typeof errorData === "object" &&
+    "message" in errorData &&
+    typeof errorData.message === "string"
+  ) {
     return {
       type: "general",
-      message: error.message,
+      message: errorData.message,
       originalError: error,
     };
   }
-
   // Response status kontrolü
-  if (response.status === 422 && error?.detail && Array.isArray(error.detail)) {
+  if (
+    response.status === 422 &&
+    errorData &&
+    typeof errorData === "object" &&
+    "detail" in errorData &&
+    Array.isArray(errorData.detail)
+  ) {
     // Validation errors
     const fieldErrors: Record<string, string> = {};
-    const generalMessage = error?.message || "Girdiğiniz bilgilerde hatalar var:";
+    const generalMessage =
+      errorData &&
+      typeof errorData === "object" &&
+      "message" in errorData &&
+      typeof errorData.message === "string"
+        ? errorData.message
+        : "Girdiğiniz bilgilerde hatalar var:";
 
-    error.detail.forEach((validationError: ValidationErrorDetail) => {
-      const fieldPath = validationError.loc.slice(1); // Remove 'body' from path
-      const fieldName = fieldPath[fieldPath.length - 1] as string;
+    (errorData.detail as ValidationErrorDetail[]).forEach(
+      (validationError: ValidationErrorDetail) => {
+        const fieldPath = validationError.loc.slice(1); // Remove 'body' from path
+        const fieldName = fieldPath[fieldPath.length - 1] as string;
 
-      // Translate field name
-      const translatedFieldName = FIELD_NAME_MAP[fieldName] || fieldName;
+        // Translate field name
+        const translatedFieldName = FIELD_NAME_MAP[fieldName] || fieldName;
 
-      // Translate error message
-      const translatedMessage =
-        ERROR_MESSAGE_MAP[validationError.msg] || validationError.msg;
+        // Translate error message
+        const translatedMessage =
+          ERROR_MESSAGE_MAP[validationError.msg] || validationError.msg;
 
-      // Store field-specific error
-      fieldErrors[fieldName] = translatedMessage;
-    });
+        // Store field-specific error
+        fieldErrors[fieldName] = translatedMessage;
+      }
+    );
 
     return {
       type: "validation",
@@ -100,22 +150,21 @@ export function parseAPIError(
       originalError: error,
     };
   }
-
   // General API error - Backend'den gelen message'ı öncelikle kullan
-  if (error?.detail) {
+  if (errorData && typeof errorData === "object" && "detail" in errorData) {
     // Önce message alanını kontrol et
-    if (error.message && typeof error.message === "string") {
+    if ("message" in errorData && typeof errorData.message === "string") {
       return {
         type: "general",
-        message: error.message,
+        message: errorData.message,
         originalError: error,
       };
     }
 
     // Eğer message yoksa detail'i kullan
     const message =
-      typeof error.detail === "string"
-        ? error.detail
+      typeof errorData.detail === "string"
+        ? errorData.detail
         : "Bir hata oluştu. Lütfen tekrar deneyin.";
 
     return {
@@ -151,7 +200,9 @@ export function parseAPIError(
 /**
  * API response'unu güvenli şekilde parse eder
  */
-export async function safeParseApiResponse(response: Response): Promise<any> {
+export async function safeParseApiResponse(
+  response: Response
+): Promise<unknown> {
   try {
     const text = await response.text();
     if (!text) {
@@ -168,26 +219,44 @@ export async function safeParseApiResponse(response: Response): Promise<any> {
  * Snackbar'da gösterilmek üzere optimize edilmiştir
  */
 export function getBackendErrorMessage(
-  error: any,
+  error: unknown,
   response?: Response
 ): string {
+  // API hatası tipi olarak kullanmak için dönüştürme
+  const errorData = error as Record<string, unknown>;
+
   // Önce message alanını kontrol et (en yüksek öncelik)
   if (
-    error?.message &&
-    typeof error.message === "string" &&
-    error.message.trim() !== ""
+    errorData &&
+    typeof errorData === "object" &&
+    "message" in errorData &&
+    typeof errorData.message === "string" &&
+    errorData.message.trim() !== ""
   ) {
-    return error.message;
+    return errorData.message;
   }
 
   // BaseResponseModel formatında message varsa
-  if (error?.data?.message && typeof error.data.message === "string") {
-    return error.data.message;
+  if (
+    errorData &&
+    typeof errorData === "object" &&
+    "data" in errorData &&
+    errorData.data &&
+    typeof errorData.data === "object" &&
+    "message" in errorData.data &&
+    typeof errorData.data.message === "string"
+  ) {
+    return errorData.data.message;
   }
 
   // Detail string ise kullan
-  if (error?.detail && typeof error.detail === "string") {
-    return error.detail;
+  if (
+    errorData &&
+    typeof errorData === "object" &&
+    "detail" in errorData &&
+    typeof errorData.detail === "string"
+  ) {
+    return errorData.detail;
   }
 
   // HTTP status'e göre fallback
