@@ -18,7 +18,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function Home(props: Props) {
   const params = await props.params;
-  
+
   // Redirect to landing page
   redirect(`/${params.language}/landing-page`);
   return null;

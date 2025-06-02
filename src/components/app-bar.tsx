@@ -32,7 +32,13 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 
 // Logo SVG bileşeni
 const LogoIcon = () => (
-  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+  <svg
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+  >
     <path
       d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
       fill="currentColor"
@@ -68,12 +74,14 @@ function ResponsiveAppBar() {
   return (
     <StyledAppBar position="sticky">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>          {/* Logo ve Başlık - Desktop */}
-          <Box 
+        <Toolbar disableGutters>
+          {" "}
+          {/* Logo ve Başlık - Desktop */}
+          <Box
             sx={{
               display: { xs: "none", md: "flex" },
               alignItems: "center",
-              gap: 2
+              gap: 2,
             }}
           >
             <LogoIcon />
@@ -93,7 +101,6 @@ function ResponsiveAppBar() {
               LinkYoSelf
             </Typography>
           </Box>
-
           {/* Mobil Menü Ikonu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -127,53 +134,46 @@ function ResponsiveAppBar() {
                   backgroundColor: "#1c2127",
                   borderRadius: "6px",
                   border: "1px solid #283139",
-                }
+                },
               }}
-            >              <MenuItem 
-                onClick={handleCloseNavMenu} 
-                component={Link} 
+            >
+              {" "}
+              <MenuItem
+                onClick={handleCloseNavMenu}
+                component={Link}
                 href="/"
                 sx={{
                   "&:hover": {
-                    backgroundColor: "#283139"
-                  }
+                    backgroundColor: "#283139",
+                  },
                 }}
               >
-                <Typography textAlign="center">
-                  Home
-                </Typography>
+                <Typography textAlign="center">Home</Typography>
               </MenuItem>
-
-              <MenuItem 
-                onClick={handleCloseNavMenu} 
-                component={Link} 
+              <MenuItem
+                onClick={handleCloseNavMenu}
+                component={Link}
                 href="/about"
                 sx={{
                   "&:hover": {
-                    backgroundColor: "#283139"
-                  }
+                    backgroundColor: "#283139",
+                  },
                 }}
               >
-                <Typography textAlign="center">
-                  About
-                </Typography>
+                <Typography textAlign="center">About</Typography>
               </MenuItem>
-
-              <MenuItem 
-                onClick={handleCloseNavMenu} 
-                component={Link} 
+              <MenuItem
+                onClick={handleCloseNavMenu}
+                component={Link}
                 href="/contact"
                 sx={{
                   "&:hover": {
-                    backgroundColor: "#283139"
-                  }
+                    backgroundColor: "#283139",
+                  },
                 }}
               >
-                <Typography textAlign="center">
-                  Contact
-                </Typography>
+                <Typography textAlign="center">Contact</Typography>
               </MenuItem>
-
               {!!user?.role &&
                 [RoleEnum.ADMIN].includes(Number(user?.role?.id)) && [
                   <MenuItem
@@ -183,8 +183,8 @@ function ResponsiveAppBar() {
                     href="/admin-panel/users"
                     sx={{
                       "&:hover": {
-                        backgroundColor: "#283139"
-                      }
+                        backgroundColor: "#283139",
+                      },
                     }}
                   >
                     <Typography textAlign="center">
@@ -195,7 +195,7 @@ function ResponsiveAppBar() {
                 ]}
               {isLoaded &&
                 !user && [
-                  <Divider key="divider" sx={{ borderColor: "#283139" }}/>,
+                  <Divider key="divider" sx={{ borderColor: "#283139" }} />,
                   <MenuItem
                     key="sign-in"
                     onClick={handleCloseNavMenu}
@@ -203,8 +203,8 @@ function ResponsiveAppBar() {
                     href="/sign-in"
                     sx={{
                       "&:hover": {
-                        backgroundColor: "#283139"
-                      }
+                        backgroundColor: "#283139",
+                      },
                     }}
                   >
                     <Typography textAlign="center">
@@ -219,8 +219,8 @@ function ResponsiveAppBar() {
                       href="/sign-up"
                       sx={{
                         "&:hover": {
-                          backgroundColor: "#283139"
-                        }
+                          backgroundColor: "#283139",
+                        },
                       }}
                     >
                       <Typography textAlign="center">
@@ -230,13 +230,14 @@ function ResponsiveAppBar() {
                   ) : null,
                 ]}
             </Menu>
-          </Box>          {/* Logo ve Başlık - Mobil */}
-          <Box 
-            sx={{ 
-              display: { xs: "flex", md: "none" }, 
+          </Box>{" "}
+          {/* Logo ve Başlık - Mobil */}
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
               flexGrow: 1,
               alignItems: "center",
-              gap: 1
+              gap: 1,
             }}
           >
             <LogoIcon />
@@ -255,14 +256,15 @@ function ResponsiveAppBar() {
             >
               LinkYoSelf
             </Typography>
-          </Box>{/* Desktop Navigation */}
+          </Box>
+          {/* Desktop Navigation */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 4 }}>
             <Button
               onClick={handleCloseNavMenu}
               component={Link}
               href="/"
-              sx={{ 
-                color: "white", 
+              sx={{
+                color: "white",
                 textTransform: "none",
                 fontSize: "14px",
                 fontWeight: 500,
@@ -270,7 +272,7 @@ function ResponsiveAppBar() {
                 "&:hover": {
                   color: "#60a5fa",
                   backgroundColor: "transparent",
-                }
+                },
               }}
             >
               Home
@@ -280,8 +282,8 @@ function ResponsiveAppBar() {
               onClick={handleCloseNavMenu}
               component={Link}
               href="/about"
-              sx={{ 
-                color: "white", 
+              sx={{
+                color: "white",
                 textTransform: "none",
                 fontSize: "14px",
                 fontWeight: 500,
@@ -289,7 +291,7 @@ function ResponsiveAppBar() {
                 "&:hover": {
                   color: "#60a5fa",
                   backgroundColor: "transparent",
-                }
+                },
               }}
             >
               About
@@ -299,8 +301,8 @@ function ResponsiveAppBar() {
               onClick={handleCloseNavMenu}
               component={Link}
               href="/contact"
-              sx={{ 
-                color: "white", 
+              sx={{
+                color: "white",
                 textTransform: "none",
                 fontSize: "14px",
                 fontWeight: 500,
@@ -308,7 +310,7 @@ function ResponsiveAppBar() {
                 "&:hover": {
                   color: "#60a5fa",
                   backgroundColor: "transparent",
-                }
+                },
               }}
             >
               Contact
@@ -321,8 +323,8 @@ function ResponsiveAppBar() {
                     onClick={handleCloseNavMenu}
                     component={Link}
                     href="/admin-panel/users"
-                    sx={{ 
-                      color: "white", 
+                    sx={{
+                      color: "white",
                       textTransform: "none",
                       fontSize: "14px",
                       fontWeight: 500,
@@ -330,7 +332,7 @@ function ResponsiveAppBar() {
                       "&:hover": {
                         color: "#60a5fa",
                         backgroundColor: "transparent",
-                      }
+                      },
                     }}
                   >
                     {t("common:navigation.users")}
@@ -339,7 +341,6 @@ function ResponsiveAppBar() {
                 </>
               )}
           </Box>
-
           <Box
             sx={{
               display: "flex",
@@ -348,7 +349,6 @@ function ResponsiveAppBar() {
           >
             {/* <ThemeSwitchButton /> */}
           </Box>
-
           {!isLoaded ? (
             <CircularProgress color="inherit" />
           ) : user ? (
@@ -367,13 +367,13 @@ function ResponsiveAppBar() {
                   </IconButton>
                 </Tooltip>
                 <Menu
-                  sx={{ 
+                  sx={{
                     mt: 5.5,
                     "& .MuiPaper-root": {
                       backgroundColor: "#1c2127",
                       borderRadius: "6px",
                       border: "1px solid #283139",
-                    }
+                    },
                   }}
                   id="menu-appbar"
                   anchorEl={anchorElementUser}
@@ -396,8 +396,8 @@ function ResponsiveAppBar() {
                     data-testid="user-profile"
                     sx={{
                       "&:hover": {
-                        backgroundColor: "#283139"
-                      }
+                        backgroundColor: "#283139",
+                      },
                     }}
                   >
                     <Typography textAlign="center">
@@ -412,8 +412,8 @@ function ResponsiveAppBar() {
                     data-testid="logout-menu-item"
                     sx={{
                       "&:hover": {
-                        backgroundColor: "#283139"
-                      }
+                        backgroundColor: "#283139",
+                      },
                     }}
                   >
                     <Typography textAlign="center">
@@ -424,18 +424,20 @@ function ResponsiveAppBar() {
               </Box>
             </>
           ) : (
-            <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" }, gap: 2 }}>
+            <Box
+              sx={{ flexGrow: 0, display: { xs: "none", md: "flex" }, gap: 2 }}
+            >
               <Button
                 onClick={handleCloseNavMenu}
-                sx={{ 
-                  color: "white", 
+                sx={{
+                  color: "white",
                   textTransform: "none",
                   fontSize: "14px",
                   fontWeight: 500,
                   "&:hover": {
                     color: "#60a5fa",
                     backgroundColor: "transparent",
-                  }
+                  },
                 }}
                 component={Link}
                 href="/sign-in"
@@ -445,7 +447,7 @@ function ResponsiveAppBar() {
               {IS_SIGN_UP_ENABLED && (
                 <Button
                   onClick={handleCloseNavMenu}
-                  sx={{ 
+                  sx={{
                     backgroundColor: "#1383eb",
                     color: "white",
                     textTransform: "none",
@@ -454,7 +456,7 @@ function ResponsiveAppBar() {
                     fontWeight: "bold",
                     "&:hover": {
                       backgroundColor: "#0e6ac7",
-                    }
+                    },
                   }}
                   component={Link}
                   href="/sign-up"

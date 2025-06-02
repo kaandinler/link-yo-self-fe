@@ -1,120 +1,190 @@
 "use client";
-import Button from "@mui/material/Button";
+import React, { useState } from "react";
+import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import withPageRequiredGuest from "@/services/auth/with-page-required-guest";
-import { useForm, FormProvider, useFormState } from "react-hook-form";
-import { useAuthLoginService, useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
-import { useCustomAuthLoginService } from "@/services/api/services/custom-auth";
-import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
+import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import useAuthTokens from "@/services/auth/use-auth-tokens";
-import Typography from "@mui/material/Typography";
-import FormTextInput from "@/components/form/text-input/form-text-input";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Link from "@/components/link";
-import Box from "@mui/material/Box";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
-import SocialAuth from "@/services/social-auth/social-auth";
-import Divider from "@mui/material/Divider";
 import { isGoogleAuthEnabled } from "@/services/social-auth/google/google-config";
 import { isFacebookAuthEnabled } from "@/services/social-auth/facebook/facebook-config";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { useSnackbar } from "@/hooks/use-snackbar";
-import { BaseResponseModel, API_STATUS } from "@/services/api/types/base-response";
-import { 
-  isSuccessResponse, 
-  isErrorResponse, 
-  getResponseData, 
-  getResponseErrorMessage, 
-  getResponseFieldErrors 
+import {
+  isSuccessResponse,
+  isErrorResponse,
+  getResponseErrorMessage,
 } from "@/services/api/fastapi-utils";
-import { 
+import {
   parseLoginResponse,
   parseUserInfoResponse,
   handleLoginSuccess,
   logLoginAttempt,
-  getLoginErrorMessage
 } from "@/services/api/examples/login-utils";
-import { getBackendErrorMessage } from "@/services/api/types/fastapi-errors";
 
+// Types
 type SignInFormData = {
   email: string;
   password: string;
 };
 
-const useValidationSchema = () => {
-  const { t } = useTranslation("sign-in");
+// Validation function
+const validateForm = (data: SignInFormData) => {
+  const errors: Partial<Record<keyof SignInFormData, string>> = {};
 
-  return yup.object().shape({
-    email: yup
-      .string()
-      .email(t("sign-in:inputs.email.validation.invalid"))
-      .required(t("sign-in:inputs.email.validation.required")),
-    password: yup
-      .string()
-      .min(6, t("sign-in:inputs.password.validation.min"))
-      .required(t("sign-in:inputs.password.validation.required")),
-  });
+  if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
+    errors.email = "Please enter a valid email address";
+  }
+
+  if (!data.password || data.password.length < 6) {
+    errors.password = "Password must be at least 6 characters";
+  }
+
+  return errors;
 };
 
-function FormActions() {
-  const { t } = useTranslation("sign-in");
-  const { isSubmitting } = useFormState();
-
+// Input Component
+const FormInput = ({
+  name,
+  label,
+  type = "text",
+  icon: Icon,
+  value,
+  onChange,
+  error,
+  placeholder,
+  showPasswordToggle = false,
+  onTogglePassword,
+  showPassword = false,
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  icon?: any;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  placeholder?: string;
+  showPasswordToggle?: boolean;
+  onTogglePassword?: () => void;
+  showPassword?: boolean;
+}) => {
   return (
-    <Button
-      variant="contained"
-      type="submit"
-      disabled={isSubmitting}
-      data-testid="sign-in-submit"
-      sx={{
-        backgroundColor: "#1383eb",
-        color: "white",
-        textTransform: "none",
-        borderRadius: "8px",
-        padding: "12px 24px",
-        fontWeight: "600",
-        fontSize: "16px",
-        width: "100%",
-        "&:hover": {
-          backgroundColor: "#0e6ac7",
-        },
-        "&:disabled": {
-          backgroundColor: "#3b4854",
-          color: "#9dabb9",
-        }
-      }}
-    >
-      {t("sign-in:actions.submit")}
-    </Button>
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-300">{label}</label>
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          {Icon && <Icon className="h-5 w-5 text-gray-500" />}
+        </div>
+        <input
+          type={showPasswordToggle && showPassword ? "text" : type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`
+            block w-full pl-10 pr-12 py-3 border rounded-lg text-sm
+            bg-gray-800 text-white placeholder-gray-400
+            focus:ring-2 focus:ring-purple-500 focus:border-purple-500
+            transition-colors duration-200
+            ${
+              error
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-600 hover:border-gray-500"
+            }
+          `}
+        />
+        {showPasswordToggle && (
+          <button
+            type="button"
+            onClick={onTogglePassword}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5 text-gray-500 hover:text-gray-300" />
+            ) : (
+              <Eye className="h-5 w-5 text-gray-500 hover:text-gray-300" />
+            )}
+          </button>
+        )}
+      </div>
+      {error && (
+        <p className="text-sm text-red-400 flex items-center gap-1">
+          <AlertCircle className="h-4 w-4" />
+          {error}
+        </p>
+      )}
+    </div>
   );
-}
+};
 
-function Form() {
+// Main Component
+function LinkYoSelfSignInForm() {
   const { setUser } = useAuthActions();
   const { setTokensInfo } = useAuthTokens();
-  const fetchAuthLogin = useAuthLoginService(); // Legacy service
-  const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService(); // New FastAPI service
-  const fetchCustomAuthLogin = useCustomAuthLoginService();
-  const fetchAuthMe = useAuthMeWithFastAPIService(); // User info service
+  const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService();
   const { t } = useTranslation("sign-in");
-  const validationSchema = useValidationSchema();
-  const { showFetchResponse, showApiResponse, enqueueSnackbar } = useSnackbar();
+  const { showApiResponse, enqueueSnackbar } = useSnackbar();
 
-  const methods = useForm<SignInFormData>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const [formData, setFormData] = useState<SignInFormData>({
+    email: "",
+    password: "",
   });
 
-  const { handleSubmit, setError } = methods;
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof SignInFormData, string>>
+  >({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = handleSubmit(async (formData) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof SignInFormData]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+  };
+
+  const validateForm = (data: SignInFormData) => {
+    const errors: Partial<Record<keyof SignInFormData, string>> = {};
+
+    if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    if (!data.password || data.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
     try {
-      // Use the new FastAPI service that returns BaseResponseModel
+      console.log("✅ Login attempt for:", formData.email);
+
+      // Use the FastAPI service
       const response = await fetchAuthLoginFastAPI({
         username: formData.email, // FastAPI expects 'username' field
         password: formData.password,
@@ -126,18 +196,16 @@ function Form() {
       // Parse login response using utility functions
       const loginResult = parseLoginResponse(response);
 
-      // Backend'den gelen message'ı önceleyerek snackbar'da göster
-      const errorMessage = isErrorResponse(response) 
-        ? getResponseErrorMessage(response) // Backend'den gelen message'ı direkt kullan
+      // Get error message from backend
+      const errorMessage = isErrorResponse(response)
+        ? getResponseErrorMessage(response)
         : undefined;
 
-      // Show API response using improved error messages
+      // Show API response
       showApiResponse(response, {
         onlyShowOnError: false,
         autoHideDuration: 5000,
-        customMessage: loginResult.success 
-          ? "Login successful! Welcome back." 
-          : errorMessage, // Backend'den gelen message'ı kullan
+        customMessage: loginResult.success ? "Welcome back!" : errorMessage,
       });
 
       // Handle successful login
@@ -147,245 +215,177 @@ function Form() {
           saveTokens: (tokens) => setTokensInfo(tokens),
           setUser: setUser,
         });
-        
-        // Fetch user data using the access token
-        await handleUserInfoFetch(loginResult.tokenData.access_token, formData.email);
-      } else if (loginResult.fieldErrors) {
-        // Set field-specific errors using parsed results
-        Object.entries(loginResult.fieldErrors).forEach(([fieldName, errorInfo]) => {
-          setError(fieldName as keyof SignInFormData, errorInfo);
+
+        // Create a simple user object since we have the email
+        setUser({
+          id: "temp-id",
+          email: formData.email,
+          firstName: "",
+          lastName: "",
         });
+
+        console.log("✅ Login successful");
+      } else if (loginResult.fieldErrors) {
+        // Set field-specific errors
+        const formFieldErrors: Partial<Record<keyof SignInFormData, string>> =
+          {};
+
+        Object.entries(loginResult.fieldErrors).forEach(([key, errorInfo]) => {
+          if (key in formData) {
+            formFieldErrors[key as keyof SignInFormData] = errorInfo.message;
+          }
+        });
+
+        if (Object.keys(formFieldErrors).length > 0) {
+          setErrors(formFieldErrors);
+        } else {
+          // No field-specific errors, display general error message
+          setSubmitError(errorMessage || "Login failed. Please try again.");
+        }
+      } else {
+        setSubmitError(errorMessage || "Login failed. Please try again.");
       }
     } catch (error) {
       // Network error or unexpected error
-      console.error("❌ Login network error:", error);
-      enqueueSnackbar("Error occurred during login. Please try again.", {
-        variant: "error",
-        autoHideDuration: 5000,
-      });
-    }
-  });
-
-  // Helper function to handle user info fetching with improved error handling
-  const handleUserInfoFetch = async (accessToken: string, email: string) => {
-    try {
-      const userResponse = await fetchAuthMe(accessToken);
-      const userResult = parseUserInfoResponse(userResponse, email);
-      
-      if (userResult.success && userResult.userData) {
-        setUser(userResult.userData);
-        console.log("✅ User info fetched successfully");
-      } else {
-        // Use fallback user and log warning
-        console.warn("⚠️ Using fallback user:", userResult.message);
-        if (userResult.fallbackUser) {
-          setUser(userResult.fallbackUser);
-        }
-      }
-    } catch (userError) {
-      // Fallback: create minimal user object if user info fetch fails
-      console.error("❌ Error fetching user info:", userError);
-      setUser({
-        id: "temp-id",
-        email: email,
-        firstName: "",
-        lastName: "",
-      });
+      setSubmitError(
+        "Network error occurred. Please check your connection and try again."
+      );
+      console.error("❌ Login error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      className="relative flex w-full min-h-screen flex-col bg-[#111518] overflow-x-hidden"
-      style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
-    >
-      <div className="flex h-full grow flex-col">
-        <div className="flex flex-1 justify-center items-center py-10 px-4">
-          <div className="w-full max-w-md">
-            {/* Logo */}
-            <div className="flex justify-center mb-8">
-              <div className="flex items-center gap-3">
-                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
-                  <path
-                    d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
-                    fill="white"
-                  />
-                </svg>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 700,
-                    letterSpacing: "-0.015em",
-                    color: "white",
-                    fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
-                  }}
-                >
-                  LinkYoSelf
-                </Typography>
-              </div>
-            </div>
-
-            {/* Sign In Card */}
-            <div className="rounded-xl border border-[#3b4854] bg-[#1c2127] p-8">
-              <div className="text-center mb-6">
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontWeight: 700,
-                    color: "white",
-                    mb: 1,
-                    fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
-                  }}
-                >
-                  {t("sign-in:title")}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: "#9dabb9",
-                    fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif',
-                  }}
-                >
-                  Welcome back! Please sign in to your account.
-                </Typography>
-              </div>
-
-              <FormProvider {...methods}>
-                <form onSubmit={onSubmit} className="space-y-6">
-                  <div>
-                    <FormTextInput<SignInFormData>
-                      name="email"
-                      label={t("sign-in:inputs.email.label")}
-                      type="email"
-                      testId="email"
-                      autoFocus
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          backgroundColor: "#283139",
-                          border: "1px solid #3b4854",
-                          borderRadius: "8px",
-                          "& fieldset": {
-                            border: "none",
-                          },
-                          "&:hover": {
-                            border: "1px solid #60a5fa",
-                          },
-                          "&.Mui-focused": {
-                            border: "1px solid #1383eb",
-                          },
-                          "& input": {
-                            color: "white",
-                            padding: "14px 16px",
-                          }
-                        },
-                        "& .MuiInputLabel-root": {
-                          color: "#9dabb9",
-                          position: "static",
-                          transform: "none",
-                          marginBottom: "8px",
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          "&.Mui-focused": {
-                            color: "#1383eb",
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <FormTextInput<SignInFormData>
-                      name="password"
-                      label={t("sign-in:inputs.password.label")}
-                      type="password"
-                      testId="password"
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          backgroundColor: "#283139",
-                          border: "1px solid #3b4854",
-                          borderRadius: "8px",
-                          "& fieldset": {
-                            border: "none",
-                          },
-                          "&:hover": {
-                            border: "1px solid #60a5fa",
-                          },
-                          "&.Mui-focused": {
-                            border: "1px solid #1383eb",
-                          },
-                          "& input": {
-                            color: "white",
-                            padding: "14px 16px",
-                          }
-                        },
-                        "& .MuiInputLabel-root": {
-                          color: "#9dabb9",
-                          position: "static",
-                          transform: "none",
-                          marginBottom: "8px",
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          "&.Mui-focused": {
-                            color: "#1383eb",
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex justify-end">
-                    <Link
-                      href="/forgot-password"
-                      data-testid="forgot-password"
-                      className="text-[#1383eb] hover:text-blue-400 transition-colors text-sm font-medium"
-                    >
-                      {t("sign-in:actions.forgotPassword")}
-                    </Link>
-                  </div>
-
-                  <FormActions />
-
-                  {IS_SIGN_UP_ENABLED && (
-                    <div className="text-center">
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#9dabb9",
-                          mb: 2,
-                        }}
-                      >
-                        Don't have an account?{" "}
-                        <Link
-                          href="/sign-up"
-                          data-testid="create-account"
-                          className="text-[#1383eb] hover:text-blue-400 transition-colors font-medium"
-                        >
-                          {t("sign-in:actions.createAccount")}
-                        </Link>
-                      </Typography>
-                    </div>
-                  )}
-
-                  {[isGoogleAuthEnabled, isFacebookAuthEnabled].some(Boolean) && (
-                    <>
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <div className="w-full border-t border-[#3b4854]" />
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                          <span className="px-2 bg-[#1c2127] text-[#9dabb9]">
-                            {t("sign-in:or")}
-                          </span>
-                        </div>
-                      </div>
-
-                      <SocialAuth />
-                    </>
-                  )}
-                </form>
-              </FormProvider>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+            <LogIn className="h-8 w-8 text-white" />
           </div>
+          <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+          <p className="text-gray-300">Sign in to your LinkYoSelf account</p>
+        </div>
+
+        {/* Form Card */}
+        <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+          <div className="space-y-6">
+            {/* Email */}
+            <FormInput
+              name="email"
+              label="Email"
+              type="email"
+              icon={Mail}
+              value={formData.email}
+              onChange={handleInputChange}
+              error={errors.email}
+              placeholder="example@email.com"
+            />
+
+            {/* Password */}
+            <FormInput
+              name="password"
+              label="Password"
+              type="password"
+              icon={Lock}
+              value={formData.password}
+              onChange={handleInputChange}
+              error={errors.password}
+              placeholder="Enter your password"
+              showPasswordToggle={true}
+              onTogglePassword={() => setShowPassword(!showPassword)}
+              showPassword={showPassword}
+            />
+
+            {/* Forgot Password */}
+            <div className="flex justify-end">
+              <a
+                href="/forgot-password"
+                className="text-sm text-purple-400 hover:text-purple-300 transition-colors duration-200 font-medium"
+              >
+                Forgot your password?
+              </a>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={`
+                w-full py-3 px-4 rounded-lg font-semibold text-white
+                transition-all duration-200 transform
+                ${
+                  isSubmitting
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                }
+                focus:ring-4 focus:ring-purple-300 focus:outline-none
+              `}
+            >
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  Signing in...
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+
+            {/* Social Auth */}
+            {[isGoogleAuthEnabled, isFacebookAuthEnabled].some(Boolean) && (
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-600" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-gray-800 text-gray-400">
+                      or continue with
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-sm text-gray-400">
+                    Social login coming soon
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Sign Up Link */}
+            {IS_SIGN_UP_ENABLED && (
+              <div className="text-center">
+                <a
+                  href="/sign-up"
+                  className="text-sm text-gray-400 hover:text-purple-400 transition-colors duration-200"
+                >
+                  Don't have an account?{" "}
+                  <span className="font-medium">Create one</span>
+                </a>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {submitError && (
+              <div className="p-4 bg-red-900/30 border border-red-500/50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-red-400" />
+                  <p className="text-sm text-red-300">{submitError}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-sm text-gray-400">
+            Access your digital world with LinkYoSelf ✨
+          </p>
         </div>
       </div>
     </div>
@@ -393,7 +393,7 @@ function Form() {
 }
 
 function SignIn() {
-  return <Form />;
+  return <LinkYoSelfSignInForm />;
 }
 
 export default withPageRequiredGuest(SignIn);
