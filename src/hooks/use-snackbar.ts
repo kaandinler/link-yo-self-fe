@@ -2,7 +2,10 @@ import { useCallback } from "react";
 import { toast } from "react-toastify";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { FetchJsonResponse } from "@/services/api/types/fetch-json-response";
-import { BaseResponseModel, ResponseStatus } from "@/services/api/types/base-response";
+import {
+  BaseResponseModel,
+  ResponseStatus,
+} from "@/services/api/types/base-response";
 
 export function useSnackbar() {
   const enqueueSnackbar = useCallback(
@@ -27,7 +30,7 @@ export function useSnackbar() {
   const showApiResponse = useCallback(
     (
       response: BaseResponseModel,
-      options?: { 
+      options?: {
         autoHideDuration?: number;
         onlyShowOnError?: boolean;
         customMessage?: string;
@@ -35,11 +38,11 @@ export function useSnackbar() {
       }
     ) => {
       const { status, message, errors } = response;
-      const { 
-        onlyShowOnError = false, 
-        customMessage, 
+      const {
+        onlyShowOnError = false,
+        customMessage,
         autoHideDuration,
-        showFieldErrors = false 
+        showFieldErrors = false,
       } = options || {};
 
       if (onlyShowOnError && status !== "error") {
@@ -82,11 +85,11 @@ export function useSnackbar() {
       }
     ) => {
       const { status, data } = response;
-      const { 
-        onlyShowOnError = false, 
-        customMessage, 
+      const {
+        onlyShowOnError = false,
+        customMessage,
         autoHideDuration = 5000,
-        successMessage 
+        successMessage,
       } = options || {};
 
       let variant: ResponseStatus = "info";
@@ -96,18 +99,25 @@ export function useSnackbar() {
       if (status === HTTP_CODES_ENUM.OK || status === HTTP_CODES_ENUM.CREATED) {
         variant = "success";
         if (!message) {
-          message = successMessage || 
-                   (data && typeof data === 'object' && 'message' in data ? (data as any)?.message : null) || 
-                   "İşlem başarıyla tamamlandı";
+          message =
+            successMessage ||
+            (data && typeof data === "object" && "message" in data
+              ? (data as any)?.message
+              : null) ||
+            "İşlem başarıyla tamamlandı";
         }
       } else if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
         variant = "error";
         if (!message) {
-          message = (data && typeof data === 'object' && 'message' in data ? (data as any)?.message : null) || 
-                   "Girdiğiniz bilgilerde hata var";
+          message =
+            (data && typeof data === "object" && "message" in data
+              ? (data as any)?.message
+              : null) || "Girdiğiniz bilgilerde hata var";
         }
-      } else if (status === HTTP_CODES_ENUM.INTERNAL_SERVER_ERROR || 
-                 status === HTTP_CODES_ENUM.SERVICE_UNAVAILABLE) {
+      } else if (
+        status === HTTP_CODES_ENUM.INTERNAL_SERVER_ERROR ||
+        status === HTTP_CODES_ENUM.SERVICE_UNAVAILABLE
+      ) {
         variant = "error";
         if (!message) {
           message = "Sunucu hatası oluştu. Lütfen tekrar deneyin";
@@ -115,8 +125,10 @@ export function useSnackbar() {
       } else {
         variant = "error";
         if (!message) {
-          message = (data && typeof data === 'object' && 'message' in data ? (data as any)?.message : null) || 
-                   "Bir hata oluştu";
+          message =
+            (data && typeof data === "object" && "message" in data
+              ? (data as any)?.message
+              : null) || "Bir hata oluştu";
         }
       }
 
@@ -133,9 +145,9 @@ export function useSnackbar() {
     []
   );
 
-  return { 
+  return {
     enqueueSnackbar,
     showApiResponse,
-    showFetchResponse 
+    showFetchResponse,
   };
 }

@@ -5,7 +5,7 @@ import { makeFastAPIRequestWithAuth } from "../fastapi-utils";
 
 /**
  * FastAPI user info endpoint service
- * 
+ *
  * Bu servis login sonrası kullanıcı bilgilerini almak için kullanılır.
  * FastAPI token response'larında genellikle user data bulunmadığı için
  * ayrı bir endpoint'e istek gönderilmesi gerekir.
@@ -13,8 +13,8 @@ import { makeFastAPIRequestWithAuth } from "../fastapi-utils";
 export function useAuthMeWithFastAPIService() {
   return useCallback(
     async (accessToken: string): Promise<BaseResponseModel<User>> => {
-      return makeFastAPIRequestWithAuth<User>('/v1/auth/me', accessToken, {
-        method: 'GET',
+      return makeFastAPIRequestWithAuth<User>("/v1/auth/me", accessToken, {
+        method: "GET",
       });
     },
     []
@@ -27,10 +27,17 @@ export function useAuthMeWithFastAPIService() {
  */
 export function useUserProfileWithFastAPIService() {
   return useCallback(
-    async (userId: string, accessToken: string): Promise<BaseResponseModel<User>> => {
-      return makeFastAPIRequestWithAuth<User>(`/v1/users/${userId}`, accessToken, {
-        method: 'GET',
-      });
+    async (
+      userId: string,
+      accessToken: string
+    ): Promise<BaseResponseModel<User>> => {
+      return makeFastAPIRequestWithAuth<User>(
+        `/v1/users/${userId}`,
+        accessToken,
+        {
+          method: "GET",
+        }
+      );
     },
     []
   );
@@ -49,14 +56,18 @@ export type UserUpdateRequest = {
 export function useUpdateUserProfileWithFastAPIService() {
   return useCallback(
     async (
-      userId: string, 
-      userData: UserUpdateRequest, 
+      userId: string,
+      userData: UserUpdateRequest,
       accessToken: string
     ): Promise<BaseResponseModel<User>> => {
-      return makeFastAPIRequestWithAuth<User>(`/v1/users/${userId}`, accessToken, {
-        method: 'PATCH',
-        body: userData,
-      });
+      return makeFastAPIRequestWithAuth<User>(
+        `/v1/users/${userId}`,
+        accessToken,
+        {
+          method: "PATCH",
+          body: userData,
+        }
+      );
     },
     []
   );
@@ -73,13 +84,17 @@ export type ChangePasswordRequest = {
 export function useChangePasswordWithFastAPIService() {
   return useCallback(
     async (
-      passwordData: ChangePasswordRequest, 
+      passwordData: ChangePasswordRequest,
       accessToken: string
     ): Promise<BaseResponseModel<void>> => {
-      return makeFastAPIRequestWithAuth<void>('/v1/auth/change-password', accessToken, {
-        method: 'POST',
-        body: passwordData,
-      });
+      return makeFastAPIRequestWithAuth<void>(
+        "/v1/auth/change-password",
+        accessToken,
+        {
+          method: "POST",
+          body: passwordData,
+        }
+      );
     },
     []
   );

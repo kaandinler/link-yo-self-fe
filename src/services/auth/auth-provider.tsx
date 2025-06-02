@@ -56,7 +56,7 @@ function AuthProvider(props: PropsWithChildren<{}>) {
       try {
         // Try FastAPI logout first
         const fastAPIResponse = await fetchAuthLogoutFastAPI(tokens.token);
-        
+
         if (fastAPIResponse.status !== "success") {
           // Fallback to legacy logout if FastAPI fails
           await fetchBase(AUTH_LOGOUT_URL, {
@@ -70,7 +70,10 @@ function AuthProvider(props: PropsWithChildren<{}>) {
             method: "POST",
           });
         } catch (legacyError) {
-          console.warn("Both FastAPI and legacy logout failed:", { error, legacyError });
+          console.warn("Both FastAPI and legacy logout failed:", {
+            error,
+            legacyError,
+          });
         }
       }
     }
@@ -83,18 +86,21 @@ function AuthProvider(props: PropsWithChildren<{}>) {
     try {
       if (tokens?.token) {
         let userData = null;
-        
+
         try {
           // Try FastAPI user info endpoint first
           const fastAPIResponse = await fetchAuthMeFastAPI(tokens.token);
-          
+
           if (fastAPIResponse.status === "success" && fastAPIResponse.data) {
             userData = fastAPIResponse.data;
           }
         } catch (fastAPIError) {
-          console.warn("FastAPI user info failed, trying legacy:", fastAPIError);
+          console.warn(
+            "FastAPI user info failed, trying legacy:",
+            fastAPIError
+          );
         }
-        
+
         // Fallback to legacy user info endpoint if FastAPI failed
         if (!userData) {
           try {
@@ -114,7 +120,7 @@ function AuthProvider(props: PropsWithChildren<{}>) {
             return;
           }
         }
-        
+
         setUser(userData);
       }
     } finally {

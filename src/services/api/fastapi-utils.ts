@@ -10,7 +10,7 @@ import { API_URL } from "./config";
  */
 export function parseBaseResponse<T>(response: any): BaseResponseModel<T> {
   // Eğer zaten BaseResponseModel formatındaysa direkt döndür
-  if (response && typeof response === 'object' && 'status' in response) {
+  if (response && typeof response === "object" && "status" in response) {
     return response as BaseResponseModel<T>;
   }
 
@@ -25,28 +25,36 @@ export function parseBaseResponse<T>(response: any): BaseResponseModel<T> {
 /**
  * API response'unu kontrol eder ve tip güvenliği sağlar
  */
-export function isSuccessResponse<T>(response: BaseResponseModel<T>): response is BaseResponseModel<T> & { status: "success" } {
+export function isSuccessResponse<T>(
+  response: BaseResponseModel<T>
+): response is BaseResponseModel<T> & { status: "success" } {
   return response.status === API_STATUS.SUCCESS;
 }
 
 /**
  * Error response'unu kontrol eder
  */
-export function isErrorResponse<T>(response: BaseResponseModel<T>): response is BaseResponseModel<T> & { status: "error" } {
+export function isErrorResponse<T>(
+  response: BaseResponseModel<T>
+): response is BaseResponseModel<T> & { status: "error" } {
   return response.status === API_STATUS.ERROR;
 }
 
 /**
  * Response'dan data'yı güvenli şekilde alır
  */
-export function getResponseData<T>(response: BaseResponseModel<T>): T | undefined {
+export function getResponseData<T>(
+  response: BaseResponseModel<T>
+): T | undefined {
   return isSuccessResponse(response) ? response.data : undefined;
 }
 
 /**
  * Response'dan error mesajını alır
  */
-export function getResponseErrorMessage<T>(response: BaseResponseModel<T>): string {
+export function getResponseErrorMessage<T>(
+  response: BaseResponseModel<T>
+): string {
   if (isErrorResponse(response)) {
     return response.message || "Bir hata oluştu";
   }
@@ -56,7 +64,9 @@ export function getResponseErrorMessage<T>(response: BaseResponseModel<T>): stri
 /**
  * Response'dan field errors'ları alır
  */
-export function getResponseFieldErrors<T>(response: BaseResponseModel<T>): Record<string, string> {
+export function getResponseFieldErrors<T>(
+  response: BaseResponseModel<T>
+): Record<string, string> {
   if (isErrorResponse(response) && response.errors) {
     return response.errors;
   }
@@ -70,18 +80,18 @@ export function getResponseFieldErrors<T>(response: BaseResponseModel<T>): Recor
 export async function makeFastAPIRequest<T>(
   endpoint: string,
   options: {
-    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: any;
     headers?: Record<string, string>;
   } = {}
 ): Promise<BaseResponseModel<T>> {
   try {
-    const { method = 'GET', body, headers = {} } = options;
+    const { method = "GET", body, headers = {} } = options;
 
     const response = await fetch(`${API_URL}${endpoint}`, {
       method,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...headers,
       },
       ...(body && { body: JSON.stringify(body) }),
@@ -95,9 +105,9 @@ export async function makeFastAPIRequest<T>(
       if (result.status && (result.data !== undefined || result.message)) {
         return result as BaseResponseModel<T>;
       }
-      
+
       // Eğer doğrudan data geliyorsa BaseResponseModel'e çevir
-      if (result && typeof result === 'object' && !result.status) {
+      if (result && typeof result === "object" && !result.status) {
         return {
           status: "success",
           message: "İşlem başarılı",
@@ -115,7 +125,7 @@ export async function makeFastAPIRequest<T>(
 
     // Hata durumunu parse et
     const parsedError = parseAPIError(result, response);
-    
+
     return {
       status: "error",
       message: parsedError.message,
@@ -141,13 +151,13 @@ export async function submitFormToFastAPI<TRequest, TResponse>(
   endpoint: string,
   formData: TRequest,
   options?: {
-    method?: 'POST' | 'PUT' | 'PATCH';
+    method?: "POST" | "PUT" | "PATCH";
     onSuccess?: (response: BaseResponseModel<TResponse>) => void;
     onError?: (response: BaseResponseModel<TResponse>) => void;
     onFieldErrors?: (errors: Record<string, string>) => void;
   }
 ): Promise<BaseResponseModel<TResponse>> {
-  const { method = 'POST', onSuccess, onError, onFieldErrors } = options || {};
+  const { method = "POST", onSuccess, onError, onFieldErrors } = options || {};
 
   const response = await makeFastAPIRequest<TResponse>(endpoint, {
     method,
@@ -159,7 +169,7 @@ export async function submitFormToFastAPI<TRequest, TResponse>(
     onSuccess?.(response);
   } else if (response.status === "error") {
     onError?.(response);
-    
+
     // Field errors varsa callback'i çağır
     if (response.errors) {
       onFieldErrors?.(response.errors);
@@ -176,14 +186,14 @@ export async function makeFastAPIRequestWithAuth<T>(
   endpoint: string,
   token: string,
   options: {
-    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: any;
   } = {}
 ): Promise<BaseResponseModel<T>> {
   return makeFastAPIRequest<T>(endpoint, {
     ...options,
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 }
