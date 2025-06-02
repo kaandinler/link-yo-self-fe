@@ -13,7 +13,7 @@ import { makeFastAPIRequestWithAuth } from "../fastapi-utils";
 export function useAuthMeWithFastAPIService() {
   return useCallback(
     async (accessToken: string): Promise<BaseResponseModel<User>> => {
-      return makeFastAPIRequestWithAuth<User>("/v1/auth/me", accessToken, {
+      return makeFastAPIRequestWithAuth<User>("/v1/users/me", accessToken, {
         method: "GET",
       });
     },

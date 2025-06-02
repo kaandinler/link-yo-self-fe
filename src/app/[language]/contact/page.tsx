@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact - LinkYoSelf",
   description:
-    "Get in touch with the LinkYoSelf team. We'd love to hear from you!",
+    "Get in touch with the LinkYoSelf team. We're here to help you build your digital presence.",
 };
 
 export default function ContactPage() {
@@ -21,166 +21,176 @@ export default function ContactPage() {
                   Contact Us
                 </h1>
                 <p className="text-white text-base font-normal leading-normal max-w-[720px]">
-                  Have questions, feedback, or need support? We're here to help!
-                  Reach out to us using any of the methods below.
+                  Have questions about LinkYoSelf? Need help with your account?
+                  We're here to help! Get in touch with our team.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-3 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
-                  <div className="text-white mb-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Contact Form */}
+                <div className="flex flex-col gap-6 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
                   <h2 className="text-white text-xl font-bold leading-tight">
-                    Email Support
+                    Send us a message
                   </h2>
-                  <p className="text-[#9dabb9] text-base font-normal leading-normal">
-                    For general inquiries and support
-                  </p>
-                  <a
-                    href="mailto:support@linkyoself.com"
-                    className="text-[#1383eb] hover:text-blue-400 transition-colors"
-                  >
-                    support@linkyoself.com
-                  </a>
+                  <form className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-white text-sm font-medium">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        className="bg-[#111518] border border-[#3b4854] rounded-lg px-3 py-2 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none"
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-white text-sm font-medium">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        className="bg-[#111518] border border-[#3b4854] rounded-lg px-3 py-2 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none"
+                        placeholder="your.email@example.com"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-white text-sm font-medium">
+                        Subject
+                      </label>
+                      <input
+                        type="text"
+                        className="bg-[#111518] border border-[#3b4854] rounded-lg px-3 py-2 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none"
+                        placeholder="What's this about?"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-white text-sm font-medium">
+                        Message
+                      </label>
+                      <textarea
+                        rows={5}
+                        className="bg-[#111518] border border-[#3b4854] rounded-lg px-3 py-2 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none resize-none"
+                        placeholder="Tell us how we can help you..."
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="bg-[#1383eb] hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                    >
+                      Send Message
+                    </button>
+                  </form>
                 </div>
 
-                <div className="flex flex-col gap-3 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
-                  <div className="text-white mb-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                    </svg>
+                {/* Contact Info */}
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-3 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
+                    <h2 className="text-white text-xl font-bold leading-tight">
+                      Get in Touch
+                    </h2>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 flex-shrink-0 mt-0.5">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-[#1383eb]"
+                          >
+                            <path
+                              d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">Email</p>
+                          <p className="text-[#9dabb9] text-sm">
+                            support@linkyoself.com
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 flex-shrink-0 mt-0.5">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-[#1383eb]"
+                          >
+                            <path
+                              d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22S19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9S10.62 6.5 12 6.5S14.5 7.62 14.5 9S13.38 11.5 12 11.5Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">Location</p>
+                          <p className="text-[#9dabb9] text-sm">
+                            Remote Team, Worldwide
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 flex-shrink-0 mt-0.5">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="text-[#1383eb]"
+                          >
+                            <path
+                              d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22S22 17.52 22 12S17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">Support Hours</p>
+                          <p className="text-[#9dabb9] text-sm">
+                            Monday - Friday: 9:00 AM - 6:00 PM UTC
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <h2 className="text-white text-xl font-bold leading-tight">
-                    Phone Support
-                  </h2>
-                  <p className="text-[#9dabb9] text-base font-normal leading-normal">
-                    Call us during business hours
-                  </p>
-                  <a
-                    href="tel:+1-555-0123"
-                    className="text-[#1383eb] hover:text-blue-400 transition-colors"
-                  >
-                    +1 (555) 012-3456
-                  </a>
-                </div>
 
-                <div className="flex flex-col gap-3 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
-                  <div className="text-white mb-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
+                  <div className="flex flex-col gap-3 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
+                    <h2 className="text-white text-xl font-bold leading-tight">
+                      Frequently Asked Questions
+                    </h2>
+                    <div className="flex flex-col gap-3">
+                      <details className="group">
+                        <summary className="text-white cursor-pointer hover:text-[#1383eb] transition-colors">
+                          How do I customize my LinkYoSelf page?
+                        </summary>
+                        <p className="text-[#9dabb9] text-sm mt-2 ml-4">
+                          After signing up, you can access the customization
+                          options in your dashboard to change themes, colors,
+                          and layouts.
+                        </p>
+                      </details>
+                      <details className="group">
+                        <summary className="text-white cursor-pointer hover:text-[#1383eb] transition-colors">
+                          Is LinkYoSelf free to use?
+                        </summary>
+                        <p className="text-[#9dabb9] text-sm mt-2 ml-4">
+                          Yes! LinkYoSelf offers a free plan with essential
+                          features to get you started.
+                        </p>
+                      </details>
+                      <details className="group">
+                        <summary className="text-white cursor-pointer hover:text-[#1383eb] transition-colors">
+                          Can I track clicks on my links?
+                        </summary>
+                        <p className="text-[#9dabb9] text-sm mt-2 ml-4">
+                          Absolutely! LinkYoSelf provides detailed analytics to
+                          track link performance and audience engagement.
+                        </p>
+                      </details>
+                    </div>
                   </div>
-                  <h2 className="text-white text-xl font-bold leading-tight">
-                    Office Address
-                  </h2>
-                  <p className="text-[#9dabb9] text-base font-normal leading-normal">
-                    123 Innovation Drive
-                    <br />
-                    Tech Valley, CA 94000
-                    <br />
-                    United States
-                  </p>
                 </div>
-
-                <div className="flex flex-col gap-3 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
-                  <div className="text-white mb-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12,6 12,12 16,14"></polyline>
-                    </svg>
-                  </div>
-                  <h2 className="text-white text-xl font-bold leading-tight">
-                    Business Hours
-                  </h2>
-                  <p className="text-[#9dabb9] text-base font-normal leading-normal">
-                    Monday - Friday: 9:00 AM - 6:00 PM PST
-                    <br />
-                    Saturday: 10:00 AM - 4:00 PM PST
-                    <br />
-                    Sunday: Closed
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-4 rounded-lg border border-[#3b4854] bg-[#1c2127] p-6">
-                <h2 className="text-white text-xl font-bold leading-tight">
-                  Send us a Message
-                </h2>
-                <form className="flex flex-col gap-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Your Name"
-                      className="bg-[#283139] border border-[#3b4854] rounded-md px-4 py-3 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Your Email"
-                      className="bg-[#283139] border border-[#3b4854] rounded-md px-4 py-3 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Subject"
-                    className="bg-[#283139] border border-[#3b4854] rounded-md px-4 py-3 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none"
-                  />
-                  <textarea
-                    placeholder="Your Message"
-                    rows={6}
-                    className="bg-[#283139] border border-[#3b4854] rounded-md px-4 py-3 text-white placeholder-[#9dabb9] focus:border-[#1383eb] focus:outline-none resize-vertical"
-                  ></textarea>
-                  <button
-                    type="submit"
-                    className="bg-[#1383eb] hover:bg-blue-600 transition-colors text-white font-bold py-3 px-6 rounded-md self-start"
-                  >
-                    Send Message
-                  </button>
-                </form>
               </div>
             </div>
           </div>

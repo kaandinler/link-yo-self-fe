@@ -541,7 +541,7 @@ export function useAuthPatchMeService() {
 
   return useCallback(
     (data: AuthPatchMeRequest, requestConfig?: RequestConfigType) => {
-      return fetch(`${API_URL}/v1/auth/me`, {
+      return fetch(`${API_URL}/v1/users/me`, {
         method: "PATCH",
         body: JSON.stringify(data),
         ...requestConfig,
@@ -558,7 +558,7 @@ export function useAuthGetMeService() {
 
   return useCallback(
     (requestConfig?: RequestConfigType) => {
-      return fetch(`${API_URL}/v1/auth/me`, {
+      return fetch(`${API_URL}/v1/users/me`, {
         method: "GET",
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthGetMeResponse>);

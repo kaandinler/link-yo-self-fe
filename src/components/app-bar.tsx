@@ -8,6 +8,7 @@ import Link from "@/components/link";
 import { RoleEnum } from "@/services/api/types/role";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { Menu, X, User, LogOut, Settings, ChevronDown } from "lucide-react";
+import { Link as LinkIcon, Users, BarChart3, Palette, Star, ArrowRight } from "lucide-react";
 
 // Logo SVG bileşeni
 const LogoIcon = () => (
@@ -35,12 +36,12 @@ function ResponsiveAppBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // Landing page'de navbar'ı gizle
-  const isLandingPage = pathname?.includes('/landing-page') || pathname === '/' || pathname?.match(/^\/[a-z]{2}$/);
+  // Landing page'de navbar'ı gizle - KALDIRIYORUZ, her sayfada gösterelim
+  // const isLandingPage = pathname?.includes('/landing-page') || pathname === '/' || pathname?.match(/^\/[a-z]{2}$/);
   
-  if (isLandingPage) {
-    return null;
-  }
+  // if (isLandingPage) {
+  //   return null;
+  // }
 
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -61,15 +62,11 @@ function ResponsiveAppBar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo - Desktop & Mobile */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-              <LogoIcon />
-            </div>
-            <Link href="/">
-              <h1 className="text-xl font-bold text-white cursor-pointer hover:text-purple-300 transition-colors">
-                LinkYoSelf
-              </h1>
-            </Link>
-          </div>
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <LinkIcon className="h-6 w-6 text-white" />
+                      </div>
+                      <h1 className="text-2xl font-bold text-white">LinkYoSelf</h1>
+                    </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
@@ -132,7 +129,7 @@ function ResponsiveAppBar() {
                       onClick={() => setUserMenuOpen(false)}
                     ></div>
                     <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl z-20 py-2">
-                      <Link href="/profile">
+                    <Link href="/profile">
                         <div
                           className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors cursor-pointer"
                           onClick={() => setUserMenuOpen(false)}

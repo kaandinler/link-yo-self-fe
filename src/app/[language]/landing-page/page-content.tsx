@@ -6,47 +6,7 @@ import { Link as LinkIcon, Users, BarChart3, Palette, Star, ArrowRight } from "l
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-      {/* Header */}
-      <header className="relative z-10 px-4 sm:px-6 lg:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-              <LinkIcon className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-white">LinkYoSelf</h1>
-          </div>
-
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-gray-300 hover:text-white transition-colors">
-              Features
-            </a>
-            <a href="#about" className="text-gray-300 hover:text-white transition-colors">
-              About
-            </a>
-            <a href="#contact" className="text-gray-300 hover:text-white transition-colors">
-              Contact
-            </a>
-          </nav>
-
-          {/* Auth Buttons */}
-          <div className="flex items-center gap-4">
-            <Link href="/sign-in">
-              <button className="hidden sm:block text-gray-300 hover:text-white transition-colors font-medium">
-                Sign In
-              </button>
-            </Link>
-            <Link href="/sign-up">
-              <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg">
-                Get Started
-              </button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">      
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-20 md:py-32">
         <div className="max-w-7xl mx-auto text-center">
