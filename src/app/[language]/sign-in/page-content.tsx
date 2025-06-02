@@ -213,7 +213,7 @@ function LinkYoSelfSignInForm() {
         // Handle token saving
         handleLoginSuccess(loginResult.tokenData, {
           saveTokens: (tokens) => setTokensInfo(tokens),
-          setUser: setUser,
+          setUser: (user) => setUser(user as any), // Cast or adapt to match (user: User | null) => void
         });
 
         // Create a simple user object since we have the email
