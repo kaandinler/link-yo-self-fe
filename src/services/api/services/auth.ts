@@ -9,7 +9,7 @@ import { BaseResponseModel, TokenResponse } from "../types/base-response";
 import {
   parseAPIError,
   safeParseApiResponse,
-  ProcessedApiError,
+  ProcessedApiError as _ProcessedApiError,
 } from "../types/fastapi-errors";
 
 export type AuthLoginRequest = {
