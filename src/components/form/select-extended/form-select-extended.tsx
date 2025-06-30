@@ -1,27 +1,27 @@
-"use client";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import TextField from "@mui/material/TextField";
+'use client';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
 import React, {
   ForwardedRef,
   forwardRef,
   useState,
   useRef,
   useEffect,
-} from "react";
+} from 'react';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import { ItemProps, ListProps, Virtuoso } from "react-virtuoso";
-import ListItemText from "@mui/material/ListItemText";
-import Box from "@mui/material/Box";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+} from 'react-hook-form';
+import { ItemProps, ListProps, Virtuoso } from 'react-virtuoso';
+import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 type SelectExtendedInputProps<T extends object> = {
   label: string;
@@ -85,7 +85,7 @@ function SelectExtendedInputRaw<T extends object>(
 
   useEffect(() => {
     if (isOpen) {
-      boxRef.current?.scrollIntoView({ behavior: "smooth" });
+      boxRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isOpen]);
 
@@ -96,7 +96,7 @@ function SelectExtendedInputRaw<T extends object>(
           <TextField
             ref={ref}
             name={props.name}
-            value={props.value ? props.renderOption(props.value) : ""}
+            value={props.value ? props.renderOption(props.value) : ''}
             onBlur={props.onBlur}
             label={props.label}
             variant="outlined"
@@ -115,7 +115,7 @@ function SelectExtendedInputRaw<T extends object>(
                 readOnly: true,
               },
               formHelperText: {
-                ["data-testid" as string]: `${props.testId}-error`,
+                ['data-testid' as string]: `${props.testId}-error`,
               },
             }}
           />
@@ -126,7 +126,7 @@ function SelectExtendedInputRaw<T extends object>(
             <CardContent
               sx={{
                 p: 0,
-                "&:last-child": {
+                '&:last-child': {
                   pb: 0,
                 },
               }}
@@ -199,7 +199,7 @@ function FormSelectExtendedInput<
   T extends object = object,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
-  props: Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue"> &
+  props: Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'> &
     SelectExtendedInputProps<T>
 ) {
   return (
@@ -218,13 +218,13 @@ function FormSelectExtendedInput<
           renderSelected={props.renderSelected}
           renderOption={props.renderOption}
           keyExtractor={props.keyExtractor}
-          search={props.isSearchable ? props.search : ""}
+          search={props.isSearchable ? props.search : ''}
           onSearchChange={
             props.isSearchable ? props.onSearchChange : () => undefined
           }
           onEndReached={props.isSearchable ? props.onEndReached : undefined}
-          searchLabel={props.isSearchable ? props.searchLabel : ""}
-          searchPlaceholder={props.isSearchable ? props.searchPlaceholder : ""}
+          searchLabel={props.isSearchable ? props.searchLabel : ''}
+          searchPlaceholder={props.isSearchable ? props.searchPlaceholder : ''}
         />
       )}
     />

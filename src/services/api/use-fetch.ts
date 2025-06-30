@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useCallback } from "react";
-import { AUTH_REFRESH_URL } from "./config";
-import { FetchInputType, FetchInitType } from "./types/fetch-params";
-import useLanguage from "../i18n/use-language";
-import { getTokensInfo, setTokensInfo } from "../auth/auth-tokens-info";
+import { useCallback } from 'react';
+import { AUTH_REFRESH_URL } from './config';
+import { FetchInputType, FetchInitType } from './types/fetch-params';
+import useLanguage from '../i18n/use-language';
+import { getTokensInfo, setTokensInfo } from '../auth/auth-tokens-info';
 
 function useFetch() {
   const language = useLanguage();
@@ -14,13 +14,13 @@ function useFetch() {
       const tokens = getTokensInfo();
 
       let headers: HeadersInit = {
-        "x-custom-lang": language,
+        'x-custom-lang': language,
       };
 
       if (!(init?.body instanceof FormData)) {
         headers = {
           ...headers,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         };
       }
 
@@ -33,9 +33,9 @@ function useFetch() {
 
       if (tokens?.tokenExpires && tokens.tokenExpires - 60000 <= Date.now()) {
         const newTokens = await fetch(AUTH_REFRESH_URL, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${tokens.refreshToken}`,
           },
         }).then((res) => res.json());

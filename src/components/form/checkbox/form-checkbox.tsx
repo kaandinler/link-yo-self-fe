@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { ForwardedRef, forwardRef } from "react";
+import { ForwardedRef, forwardRef } from 'react';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import FormLabel from "@mui/material/FormLabel";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import FormGroup from "@mui/material/FormGroup";
+} from 'react-hook-form';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
 
 export type CheckboxInputProps<T> = {
   label: string;
@@ -103,7 +103,7 @@ function FormCheckboxInput<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
   props: CheckboxInputProps<T> &
-    Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue">
+    Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'>
 ) {
   return (
     <Controller

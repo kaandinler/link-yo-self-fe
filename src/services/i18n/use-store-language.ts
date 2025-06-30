@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { StoreLanguageContext } from "./store-language-context";
+import { useContext } from 'react';
+import { StoreLanguageContext } from './store-language-context';
 
 function useStoreLanguage() {
   return useContext(StoreLanguageContext);

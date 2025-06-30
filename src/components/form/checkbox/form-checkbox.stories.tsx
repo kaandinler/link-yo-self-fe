@@ -1,7 +1,7 @@
-import React from "react";
-import { Meta, StoryFn } from "@storybook/react";
-import { useForm, FormProvider } from "react-hook-form";
-import FormCheckboxInput, { CheckboxInputProps } from "./form-checkbox";
+import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
+import { useForm, FormProvider } from 'react-hook-form';
+import FormCheckboxInput, { CheckboxInputProps } from './form-checkbox';
 
 interface Option {
   id: number;
@@ -9,7 +9,7 @@ interface Option {
 }
 
 export default {
-  title: "Components/Form/CheckboxInput",
+  title: 'Components/Form/CheckboxInput',
   component: FormCheckboxInput,
 } as Meta;
 
@@ -33,16 +33,16 @@ const Template: StoryFn<CheckboxInputProps<Option> & { name: string }> = (
 
 export const Default = Template.bind({});
 Default.args = {
-  label: "Sample Form Checkbox",
-  name: "sampleCheckbox",
+  label: 'Sample Form Checkbox',
+  name: 'sampleCheckbox',
   options: [
-    { id: 1, name: "Option 1" },
-    { id: 2, name: "Option 2" },
-    { id: 3, name: "Option 3" },
+    { id: 1, name: 'Option 1' },
+    { id: 2, name: 'Option 2' },
+    { id: 3, name: 'Option 3' },
   ],
-  keyValue: "id",
+  keyValue: 'id',
   keyExtractor: (option: Option) => option.id.toString(),
   renderOption: (option: Option) => option.name,
-  error: "",
-  testId: "sampleCheckbox",
+  error: '',
+  testId: 'sampleCheckbox',
 };

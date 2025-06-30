@@ -1,26 +1,26 @@
-"use client";
-import React, { useState } from "react";
-import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
-import withPageRequiredGuest from "@/services/auth/with-page-required-guest";
-import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
-import useAuthActions from "@/services/auth/use-auth-actions";
-import useAuthTokens from "@/services/auth/use-auth-tokens";
-import { useTranslation } from "@/services/i18n/client";
-import { isGoogleAuthEnabled } from "@/services/social-auth/google/google-config";
-import { isFacebookAuthEnabled } from "@/services/social-auth/facebook/facebook-config";
-import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
-import { useSnackbar } from "@/hooks/use-snackbar";
+'use client';
+import React, { useState } from 'react';
+import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
+import withPageRequiredGuest from '@/services/auth/with-page-required-guest';
+import { useAuthLoginWithFastAPIService } from '@/services/api/services/auth';
+import useAuthActions from '@/services/auth/use-auth-actions';
+import useAuthTokens from '@/services/auth/use-auth-tokens';
+import { useTranslation } from '@/services/i18n/client';
+import { isGoogleAuthEnabled } from '@/services/social-auth/google/google-config';
+import { isFacebookAuthEnabled } from '@/services/social-auth/facebook/facebook-config';
+import { IS_SIGN_UP_ENABLED } from '@/services/auth/config';
+import { useSnackbar } from '@/hooks/use-snackbar';
 import {
   isSuccessResponse,
   isErrorResponse,
   getResponseErrorMessage,
-} from "@/services/api/fastapi-utils";
+} from '@/services/api/fastapi-utils';
 import {
   parseLoginResponse,
   parseUserInfoResponse,
   handleLoginSuccess,
   logLoginAttempt,
-} from "@/services/api/examples/login-utils";
+} from '@/services/api/examples/login-utils';
 
 // Types
 type SignInFormData = {
@@ -33,11 +33,11 @@ const validateForm = (data: SignInFormData) => {
   const errors: Partial<Record<keyof SignInFormData, string>> = {};
 
   if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-    errors.email = "Please enter a valid email address";
+    errors.email = 'Please enter a valid email address';
   }
 
   if (!data.password || data.password.length < 6) {
-    errors.password = "Password must be at least 6 characters";
+    errors.password = 'Password must be at least 6 characters';
   }
 
   return errors;
@@ -47,7 +47,7 @@ const validateForm = (data: SignInFormData) => {
 const FormInput = ({
   name,
   label,
-  type = "text",
+  type = 'text',
   icon: Icon,
   value,
   onChange,
@@ -77,7 +77,7 @@ const FormInput = ({
           {Icon && <Icon className="h-5 w-5 text-gray-500" />}
         </div>
         <input
-          type={showPasswordToggle && showPassword ? "text" : type}
+          type={showPasswordToggle && showPassword ? 'text' : type}
           name={name}
           value={value}
           onChange={onChange}
@@ -89,8 +89,8 @@ const FormInput = ({
             transition-colors duration-200
             ${
               error
-                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-600 hover:border-gray-500"
+                ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                : 'border-gray-600 hover:border-gray-500'
             }
           `}
         />
@@ -123,19 +123,19 @@ function LinkYoSelfSignInForm() {
   const { setUser } = useAuthActions();
   const { setTokensInfo } = useAuthTokens();
   const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService();
-  const { t } = useTranslation("sign-in");
+  const { t } = useTranslation('sign-in');
   const { showApiResponse, enqueueSnackbar } = useSnackbar();
 
   const [formData, setFormData] = useState<SignInFormData>({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState<
     Partial<Record<keyof SignInFormData, string>>
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [submitError, setSubmitError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,11 +158,11 @@ function LinkYoSelfSignInForm() {
     const errors: Partial<Record<keyof SignInFormData, string>> = {};
 
     if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-      errors.email = "Please enter a valid email address";
+      errors.email = 'Please enter a valid email address';
     }
 
     if (!data.password || data.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
+      errors.password = 'Password must be at least 6 characters';
     }
 
     return errors;
@@ -179,10 +179,10 @@ function LinkYoSelfSignInForm() {
     }
 
     setIsSubmitting(true);
-    setSubmitError("");
+    setSubmitError('');
 
     try {
-      console.log("✅ Login attempt for:", formData.email);
+      console.log('✅ Login attempt for:', formData.email);
 
       // Use the FastAPI service
       const response = await fetchAuthLoginFastAPI({
@@ -205,7 +205,7 @@ function LinkYoSelfSignInForm() {
       showApiResponse(response, {
         onlyShowOnError: false,
         autoHideDuration: 5000,
-        customMessage: loginResult.success ? "Welcome back!" : errorMessage,
+        customMessage: loginResult.success ? 'Welcome back!' : errorMessage,
       }); // Handle successful login
       if (loginResult.success && loginResult.tokenData) {
         // Handle token saving
@@ -216,13 +216,13 @@ function LinkYoSelfSignInForm() {
 
         // Create a simple user object since we have the email
         setUser({
-          id: "temp-id",
+          id: 'temp-id',
           email: formData.email,
-          firstName: "",
-          lastName: "",
+          firstName: '',
+          lastName: '',
         });
 
-        console.log("✅ Login successful");
+        console.log('✅ Login successful');
       } else if (loginResult.fieldErrors) {
         // Set field-specific errors
         const formFieldErrors: Partial<Record<keyof SignInFormData, string>> =
@@ -238,17 +238,17 @@ function LinkYoSelfSignInForm() {
           setErrors(formFieldErrors);
         } else {
           // No field-specific errors, display general error message
-          setSubmitError(errorMessage || "Login failed. Please try again.");
+          setSubmitError(errorMessage || 'Login failed. Please try again.');
         }
       } else {
-        setSubmitError(errorMessage || "Login failed. Please try again.");
+        setSubmitError(errorMessage || 'Login failed. Please try again.');
       }
     } catch (error) {
       // Network error or unexpected error
       setSubmitError(
-        "Network error occurred. Please check your connection and try again."
+        'Network error occurred. Please check your connection and try again.'
       );
-      console.error("❌ Login error:", error);
+      console.error('❌ Login error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -316,8 +316,8 @@ function LinkYoSelfSignInForm() {
                 transition-all duration-200 transform
                 ${
                   isSubmitting
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                    ? 'bg-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
                 }
                 focus:ring-4 focus:ring-purple-300 focus:outline-none
               `}
@@ -328,7 +328,7 @@ function LinkYoSelfSignInForm() {
                   Signing in...
                 </div>
               ) : (
-                "Sign In"
+                'Sign In'
               )}
             </button>
 
@@ -361,7 +361,7 @@ function LinkYoSelfSignInForm() {
                   href="/sign-up"
                   className="text-sm text-gray-400 hover:text-purple-400 transition-colors duration-200"
                 >
-                  Don't have an account?{" "}
+                  Don't have an account?{' '}
                   <span className="font-medium">Create one</span>
                 </a>
               </div>

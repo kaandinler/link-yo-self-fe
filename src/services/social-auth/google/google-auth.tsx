@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useAuthGoogleLoginService } from "@/services/api/services/auth";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import useAuthActions from "@/services/auth/use-auth-actions";
-import useAuthTokens from "@/services/auth/use-auth-tokens";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
-import { FullPageLoader } from "@/components/full-page-loader";
-import useLanguage from "@/services/i18n/use-language";
+import { useAuthGoogleLoginService } from '@/services/api/services/auth';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import useAuthActions from '@/services/auth/use-auth-actions';
+import useAuthTokens from '@/services/auth/use-auth-tokens';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { useState } from 'react';
+import { FullPageLoader } from '@/components/full-page-loader';
+import useLanguage from '@/services/i18n/use-language';
 
 export default function GoogleAuth() {
   const { setUser } = useAuthActions();

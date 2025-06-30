@@ -1,5 +1,5 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+import React, { useState } from 'react';
 import {
   Eye,
   EyeOff,
@@ -9,15 +9,15 @@ import {
   Lock,
   Check,
   AlertCircle,
-} from "lucide-react";
-import { useAuthSignUpWithFastAPIService } from "@/services/api/services/auth";
-import { API_STATUS } from "@/services/api/types/base-response";
+} from 'lucide-react';
+import { useAuthSignUpWithFastAPIService } from '@/services/api/services/auth';
+import { API_STATUS } from '@/services/api/types/base-response';
 import {
   parseSignUpResponse,
   mapBackendFieldsToFormFields,
   logSignUpAttempt,
   getSignUpErrorMessage,
-} from "@/services/api/examples/sign-up-utils";
+} from '@/services/api/examples/sign-up-utils';
 
 // Types
 type SignUpFormData = {
@@ -31,28 +31,28 @@ type SignUpFormData = {
 const validateForm = (data: SignUpFormData) => {
   const errors: Partial<Record<keyof SignUpFormData, string>> = {};
   if (!data.username || data.username.length < 3) {
-    errors.username = "Username must be at least 3 characters";
+    errors.username = 'Username must be at least 3 characters';
   } else if (!/^[a-zA-Z0-9_]+$/.test(data.username)) {
     errors.username =
-      "Username can only contain letters, numbers and underscores";
+      'Username can only contain letters, numbers and underscores';
   }
 
   if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-    errors.email = "Please enter a valid email address";
+    errors.email = 'Please enter a valid email address';
   }
 
   if (!data.password || data.password.length < 8) {
-    errors.password = "Password must be at least 8 characters";
+    errors.password = 'Password must be at least 8 characters';
   } else if (!/(?=.*[a-z])/.test(data.password)) {
-    errors.password = "Password must contain at least one lowercase letter";
+    errors.password = 'Password must contain at least one lowercase letter';
   } else if (!/(?=.*[A-Z])/.test(data.password)) {
-    errors.password = "Password must contain at least one uppercase letter";
+    errors.password = 'Password must contain at least one uppercase letter';
   } else if (!/(?=.*\d)/.test(data.password)) {
-    errors.password = "Password must contain at least one number";
+    errors.password = 'Password must contain at least one number';
   }
 
   if (!data.policy) {
-    errors.policy = "You must accept the terms and conditions";
+    errors.policy = 'You must accept the terms and conditions';
   }
 
   return errors;
@@ -62,7 +62,7 @@ const validateForm = (data: SignUpFormData) => {
 const FormInput = ({
   name,
   label,
-  type = "text",
+  type = 'text',
   icon: Icon,
   value,
   onChange,
@@ -92,7 +92,7 @@ const FormInput = ({
           {Icon && <Icon className="h-5 w-5 text-gray-500" />}
         </div>
         <input
-          type={showPasswordToggle && showPassword ? "text" : type}
+          type={showPasswordToggle && showPassword ? 'text' : type}
           name={name}
           value={value}
           onChange={onChange}
@@ -104,8 +104,8 @@ const FormInput = ({
             transition-colors duration-200
             ${
               error
-                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-600 hover:border-gray-500"
+                ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                : 'border-gray-600 hover:border-gray-500'
             }
           `}
         />
@@ -136,9 +136,9 @@ const FormInput = ({
 // Main Component
 function LinkYoSelfSignUpForm() {
   const [formData, setFormData] = useState<SignUpFormData>({
-    email: "",
-    password: "",
-    username: "",
+    email: '',
+    password: '',
+    username: '',
     policy: false,
   });
 
@@ -146,8 +146,8 @@ function LinkYoSelfSignUpForm() {
     Partial<Record<keyof SignUpFormData, string>>
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [submitSuccess, setSubmitSuccess] = useState("");
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const fetchAuthSignUpFastAPI = useAuthSignUpWithFastAPIService();
@@ -156,7 +156,7 @@ function LinkYoSelfSignUpForm() {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
 
     // Clear error when user starts typing
@@ -178,8 +178,8 @@ function LinkYoSelfSignUpForm() {
     }
 
     setIsSubmitting(true);
-    setSubmitError("");
-    setSubmitSuccess("");
+    setSubmitError('');
+    setSubmitSuccess('');
 
     try {
       // Prepare API payload
@@ -189,7 +189,7 @@ function LinkYoSelfSignUpForm() {
         password: formData.password,
       };
 
-      console.log("✅ API Payload:", apiPayload);
+      console.log('✅ API Payload:', apiPayload);
 
       // FastAPI servisini kullanarak kayıt isteği gönder
       const response = await fetchAuthSignUpFastAPI(apiPayload);
@@ -206,9 +206,9 @@ function LinkYoSelfSignUpForm() {
 
         // Formu sıfırla
         setFormData({
-          email: "",
-          password: "",
-          username: "",
+          email: '',
+          password: '',
+          username: '',
           policy: false,
         });
       } else {
@@ -237,16 +237,16 @@ function LinkYoSelfSignUpForm() {
           }
         } else {
           setSubmitError(
-            signUpResult.message || "Registration failed. Please try again."
+            signUpResult.message || 'Registration failed. Please try again.'
           );
         }
       }
     } catch (error) {
       // Network veya diğer hatalar
       setSubmitError(
-        "Network error occurred. Please check your connection and try again."
+        'Network error occurred. Please check your connection and try again.'
       );
-      console.error("❌ Registration error:", error);
+      console.error('❌ Registration error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -254,7 +254,7 @@ function LinkYoSelfSignUpForm() {
 
   const profileUrl = formData.username
     ? `linkyoself.com/${formData.username}`
-    : "linkyoself.com/username";
+    : 'linkyoself.com/username';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -308,7 +308,7 @@ function LinkYoSelfSignUpForm() {
                 placeholder="username"
               />
               <p className="mt-1 text-sm text-gray-400">
-                Your profile:{" "}
+                Your profile:{' '}
                 <span className="font-medium text-purple-400">
                   {profileUrl}
                 </span>
@@ -347,25 +347,25 @@ function LinkYoSelfSignUpForm() {
               <p>Your password must include:</p>
               <div className="grid grid-cols-2 gap-2">
                 <div
-                  className={`flex items-center gap-1 ${/(?=.*[a-z])/.test(formData.password) ? "text-green-400" : "text-gray-500"}`}
+                  className={`flex items-center gap-1 ${/(?=.*[a-z])/.test(formData.password) ? 'text-green-400' : 'text-gray-500'}`}
                 >
                   <Check className="h-3 w-3" />
                   <span>Lowercase</span>
                 </div>
                 <div
-                  className={`flex items-center gap-1 ${/(?=.*[A-Z])/.test(formData.password) ? "text-green-400" : "text-gray-500"}`}
+                  className={`flex items-center gap-1 ${/(?=.*[A-Z])/.test(formData.password) ? 'text-green-400' : 'text-gray-500'}`}
                 >
                   <Check className="h-3 w-3" />
                   <span>Uppercase</span>
                 </div>
                 <div
-                  className={`flex items-center gap-1 ${/(?=.*\d)/.test(formData.password) ? "text-green-400" : "text-gray-500"}`}
+                  className={`flex items-center gap-1 ${/(?=.*\d)/.test(formData.password) ? 'text-green-400' : 'text-gray-500'}`}
                 >
                   <Check className="h-3 w-3" />
                   <span>Number</span>
                 </div>
                 <div
-                  className={`flex items-center gap-1 ${formData.password.length >= 8 ? "text-green-400" : "text-gray-500"}`}
+                  className={`flex items-center gap-1 ${formData.password.length >= 8 ? 'text-green-400' : 'text-gray-500'}`}
                 >
                   <Check className="h-3 w-3" />
                   <span>8+ chars</span>
@@ -390,10 +390,10 @@ function LinkYoSelfSignUpForm() {
                     transition-colors duration-200
                     ${
                       formData.policy
-                        ? "bg-purple-600 border-purple-600"
-                        : "border-gray-500 hover:border-gray-400"
+                        ? 'bg-purple-600 border-purple-600'
+                        : 'border-gray-500 hover:border-gray-400'
                     }
-                    ${errors.policy ? "border-red-500" : ""}
+                    ${errors.policy ? 'border-red-500' : ''}
                   `}
                   >
                     {formData.policy && (
@@ -402,15 +402,15 @@ function LinkYoSelfSignUpForm() {
                   </div>
                 </div>
                 <span className="text-sm text-gray-300 leading-5">
-                  I agree to the{" "}
+                  I agree to the{' '}
                   <a
                     href="/terms"
                     target="_blank"
                     className="text-purple-400 hover:text-purple-300 font-medium underline"
                   >
                     Terms of Service
-                  </a>{" "}
-                  and{" "}
+                  </a>{' '}
+                  and{' '}
                   <a
                     href="/privacy"
                     target="_blank"
@@ -438,8 +438,8 @@ function LinkYoSelfSignUpForm() {
                 transition-all duration-200 transform
                 ${
                   isSubmitting
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                    ? 'bg-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
                 }
                 focus:ring-4 focus:ring-purple-300 focus:outline-none
               `}
@@ -450,7 +450,7 @@ function LinkYoSelfSignUpForm() {
                   Creating account...
                 </div>
               ) : (
-                "Create Account"
+                'Create Account'
               )}
             </button>
 
@@ -460,7 +460,7 @@ function LinkYoSelfSignUpForm() {
                 href="/sign-in"
                 className="text-sm text-gray-400 hover:text-purple-400 transition-colors duration-200"
               >
-                Already have an account?{" "}
+                Already have an account?{' '}
                 <span className="font-medium">Sign in</span>
               </a>
             </div>

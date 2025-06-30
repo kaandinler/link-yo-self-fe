@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createContext } from "react";
-import { UrlObject } from "url";
+import { createContext } from 'react';
+import { UrlObject } from 'url';
 
 type Url = string | UrlObject;
 

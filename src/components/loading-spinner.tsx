@@ -1,33 +1,33 @@
-import React from "react";
+import React from 'react';
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg";
-  color?: "purple" | "blue" | "white";
+  size?: 'sm' | 'md' | 'lg';
+  color?: 'purple' | 'blue' | 'white';
   text?: string;
   fullScreen?: boolean;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = "md",
-  color = "purple",
-  text = "Loading...",
+  size = 'md',
+  color = 'purple',
+  text = 'Loading...',
   fullScreen = true,
 }) => {
   const sizeClasses = {
-    sm: "w-6 h-6",
-    md: "w-8 h-8",
-    lg: "w-12 h-12",
+    sm: 'w-6 h-6',
+    md: 'w-8 h-8',
+    lg: 'w-12 h-12',
   };
 
   const colorClasses = {
-    purple: "border-purple-500",
-    blue: "border-blue-500",
-    white: "border-white",
+    purple: 'border-purple-500',
+    blue: 'border-blue-500',
+    white: 'border-white',
   };
 
   const containerClasses = fullScreen
-    ? "min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center"
-    : "flex items-center justify-center p-4";
+    ? 'min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center'
+    : 'flex items-center justify-center p-4';
 
   return (
     <div className={containerClasses}>

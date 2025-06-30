@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SnackbarProvider() {
   return (
@@ -17,12 +17,12 @@ export default function SnackbarProvider() {
       pauseOnHover
       theme="dark"
       style={{
-        fontSize: "14px",
+        fontSize: '14px',
       }}
       toastStyle={{
-        backgroundColor: "#1c2127",
-        color: "#ffffff",
-        border: "1px solid #3b4854",
+        backgroundColor: '#1c2127',
+        color: '#ffffff',
+        border: '1px solid #3b4854',
       }}
     />
   );

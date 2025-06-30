@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { User } from "@/services/api/types/user";
+import { User } from '@/services/api/types/user';
 import {
   PropsWithChildren,
   useCallback,
   useEffect,
   useMemo,
   useState,
-} from "react";
+} from 'react';
 import {
   AuthActionsContext,
   AuthContext,
   AuthTokensContext,
   TokensInfo,
-} from "./auth-context";
-import useFetch from "@/services/api/use-fetch";
-import { AUTH_LOGOUT_URL, AUTH_ME_URL } from "@/services/api/config";
-import HTTP_CODES_ENUM from "../api/types/http-codes";
+} from './auth-context';
+import useFetch from '@/services/api/use-fetch';
+import { AUTH_LOGOUT_URL, AUTH_ME_URL } from '@/services/api/config';
+import HTTP_CODES_ENUM from '../api/types/http-codes';
 import {
   getTokensInfo,
   setTokensInfo as setTokensInfoToStorage,
-} from "./auth-tokens-info";
-import { useAuthLogoutWithFastAPIService } from "@/services/api/services/auth";
-import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
+} from './auth-tokens-info';
+import { useAuthLogoutWithFastAPIService } from '@/services/api/services/auth';
+import { useAuthMeWithFastAPIService } from '@/services/api/services/user-info';
 
 /**
  * Enhanced AuthProvider that supports both legacy and FastAPI backends
@@ -57,20 +57,20 @@ function AuthProvider(props: PropsWithChildren<{}>) {
         // Try FastAPI logout first
         const fastAPIResponse = await fetchAuthLogoutFastAPI(tokens.token);
 
-        if (fastAPIResponse.status !== "success") {
+        if (fastAPIResponse.status !== 'success') {
           // Fallback to legacy logout if FastAPI fails
           await fetchBase(AUTH_LOGOUT_URL, {
-            method: "POST",
+            method: 'POST',
           });
         }
       } catch (error) {
         // Fallback to legacy logout if FastAPI fails
         try {
           await fetchBase(AUTH_LOGOUT_URL, {
-            method: "POST",
+            method: 'POST',
           });
         } catch (legacyError) {
-          console.warn("Both FastAPI and legacy logout failed:", {
+          console.warn('Both FastAPI and legacy logout failed:', {
             error,
             legacyError,
           });
@@ -91,12 +91,12 @@ function AuthProvider(props: PropsWithChildren<{}>) {
           // Try FastAPI user info endpoint first
           const fastAPIResponse = await fetchAuthMeFastAPI(tokens.token);
 
-          if (fastAPIResponse.status === "success" && fastAPIResponse.data) {
+          if (fastAPIResponse.status === 'success' && fastAPIResponse.data) {
             userData = fastAPIResponse.data;
           }
         } catch (fastAPIError) {
           console.warn(
-            "FastAPI user info failed, trying legacy:",
+            'FastAPI user info failed, trying legacy:',
             fastAPIError
           );
         }
@@ -105,7 +105,7 @@ function AuthProvider(props: PropsWithChildren<{}>) {
         if (!userData) {
           try {
             const response = await fetchBase(AUTH_ME_URL, {
-              method: "GET",
+              method: 'GET',
             });
 
             if (response.status === HTTP_CODES_ENUM.UNAUTHORIZED) {
@@ -115,7 +115,7 @@ function AuthProvider(props: PropsWithChildren<{}>) {
 
             userData = await response.json();
           } catch (legacyError) {
-            console.warn("Legacy user info also failed:", legacyError);
+            console.warn('Legacy user info also failed:', legacyError);
             logOut();
             return;
           }

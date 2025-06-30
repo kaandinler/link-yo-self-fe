@@ -1,10 +1,10 @@
 // src/services/api/types/user.ts - Mevcut dosyayı güncelle
-import { FileEntity } from "./file-entity";
-import { Role } from "./role";
+import { FileEntity } from './file-entity';
+import { Role } from './role';
 
 export enum UserProviderEnum {
-  EMAIL = "email",
-  GOOGLE = "google",
+  EMAIL = 'email',
+  GOOGLE = 'google',
 }
 
 // Backend User modelini tam olarak yansıtan extended type

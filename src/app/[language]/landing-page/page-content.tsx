@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 import {
   Link as LinkIcon,
   Users,
@@ -9,7 +9,7 @@ import {
   Palette,
   Star,
   ArrowRight,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -29,7 +29,7 @@ export default function LandingPage() {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Connect with your
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}
+                {' '}
                 audience
               </span>
             </h1>
@@ -90,7 +90,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
               Everything you need to
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}
+                {' '}
                 connect
               </span>
             </h2>

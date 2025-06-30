@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { fallbackLanguage } from "./config";
+import { useParams } from 'next/navigation';
+import { fallbackLanguage } from './config';
 
 function useLanguage() {
   const params = useParams();

@@ -1,12 +1,12 @@
-import useLanguage from "@/services/i18n/use-language";
+import useLanguage from '@/services/i18n/use-language';
 import {
   LeavePageActionsContext,
   LeavePageContext,
-} from "@/services/leave-page/leave-page-context";
+} from '@/services/leave-page/leave-page-context';
 // Need for leave page logic
 
-import NextLink, { LinkProps } from "next/link";
-import { forwardRef, useContext, ReactNode } from "react";
+import NextLink, { LinkProps } from 'next/link';
+import { forwardRef, useContext, ReactNode } from 'react';
 
 export interface InternalLinkProps extends LinkProps {
   children?: ReactNode;
@@ -20,9 +20,9 @@ const Link = forwardRef<HTMLAnchorElement, InternalLinkProps>(
     const { setLeavePage, openModal } = useContext(LeavePageActionsContext);
     let href = props.href;
 
-    if (typeof href === "string" && href.startsWith("/")) {
+    if (typeof href === 'string' && href.startsWith('/')) {
       href = `/${language}${href}`;
-    } else if (typeof href === "object" && href !== null) {
+    } else if (typeof href === 'object' && href !== null) {
       const pathname = href.pathname
         ? `/${language}${href.pathname}`
         : href.pathname;
@@ -41,7 +41,7 @@ const Link = forwardRef<HTMLAnchorElement, InternalLinkProps>(
           if (isLeavePage) {
             e.preventDefault();
             setLeavePage({
-              [props.replace ? "replace" : "push"]: href,
+              [props.replace ? 'replace' : 'push']: href,
             });
             openModal();
           } else {

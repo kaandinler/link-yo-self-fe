@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 import {
   Mail,
   MessageCircle,
@@ -8,11 +8,11 @@ import {
   Clock,
   Users,
   ArrowRight,
-} from "lucide-react";
-import Link from "next/link";
+} from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: "Contact - LinkYoSelf",
+  title: 'Contact - LinkYoSelf',
   description:
     "Get in touch with the LinkYoSelf team. We're here to help you succeed with your digital presence.",
 };
@@ -33,7 +33,7 @@ export default function ContactPage() {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Contact
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}
+                {' '}
                 Us
               </span>
             </h1>
@@ -315,7 +315,7 @@ export default function ContactPage() {
             <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
               Visit our
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}
+                {' '}
                 offices
               </span>
             </h2>

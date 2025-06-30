@@ -1,11 +1,11 @@
-import { useCallback } from "react";
-import { toast } from "react-toastify";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import { FetchJsonResponse } from "@/services/api/types/fetch-json-response";
+import { useCallback } from 'react';
+import { toast } from 'react-toastify';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import { FetchJsonResponse } from '@/services/api/types/fetch-json-response';
 import {
   BaseResponseModel,
   ResponseStatus,
-} from "@/services/api/types/base-response";
+} from '@/services/api/types/base-response';
 
 export function useSnackbar() {
   const enqueueSnackbar = useCallback(
@@ -45,7 +45,7 @@ export function useSnackbar() {
         showFieldErrors = false,
       } = options || {};
 
-      if (onlyShowOnError && status !== "error") {
+      if (onlyShowOnError && status !== 'error') {
         return;
       }
 
@@ -59,11 +59,11 @@ export function useSnackbar() {
       }
 
       // Field errors'ları ayrı ayrı göster (opsiyonel)
-      if (showFieldErrors && errors && status === "error") {
+      if (showFieldErrors && errors && status === 'error') {
         Object.entries(errors).forEach(([fieldName, errorMessage]) => {
           setTimeout(() => {
             toast(`${fieldName}: ${errorMessage}`, {
-              type: "error",
+              type: 'error',
               autoClose: autoHideDuration,
             });
           }, 300); // Ana mesajdan sonra göster
@@ -92,48 +92,48 @@ export function useSnackbar() {
         successMessage,
       } = options || {};
 
-      let variant: ResponseStatus = "info";
-      let message: string = customMessage || "";
+      let variant: ResponseStatus = 'info';
+      let message: string = customMessage || '';
 
       // HTTP status koduna göre variant belirleme
       if (status === HTTP_CODES_ENUM.OK || status === HTTP_CODES_ENUM.CREATED) {
-        variant = "success";
+        variant = 'success';
         if (!message) {
           message =
             successMessage ||
-            (data && typeof data === "object" && "message" in data
+            (data && typeof data === 'object' && 'message' in data
               ? (data.message as string)
               : null) ||
-            "İşlem başarıyla tamamlandı";
+            'İşlem başarıyla tamamlandı';
         }
       } else if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-        variant = "error";
+        variant = 'error';
         if (!message) {
           message =
-            (data && typeof data === "object" && "message" in data
+            (data && typeof data === 'object' && 'message' in data
               ? (data.message as string)
-              : null) || "Girdiğiniz bilgilerde hata var";
+              : null) || 'Girdiğiniz bilgilerde hata var';
         }
       } else if (
         status === HTTP_CODES_ENUM.INTERNAL_SERVER_ERROR ||
         status === HTTP_CODES_ENUM.SERVICE_UNAVAILABLE
       ) {
-        variant = "error";
+        variant = 'error';
         if (!message) {
-          message = "Sunucu hatası oluştu. Lütfen tekrar deneyin";
+          message = 'Sunucu hatası oluştu. Lütfen tekrar deneyin';
         }
       } else {
-        variant = "error";
+        variant = 'error';
         if (!message) {
           message =
-            (data && typeof data === "object" && "message" in data
+            (data && typeof data === 'object' && 'message' in data
               ? (data.message as string)
-              : null) || "Bir hata oluştu";
+              : null) || 'Bir hata oluştu';
         }
       }
 
       // Sadece hata durumlarında gösterilmesi isteniyorsa ve başarılı ise çık
-      if (onlyShowOnError && variant === "success") {
+      if (onlyShowOnError && variant === 'success') {
         return;
       }
 

@@ -1,33 +1,33 @@
-import React from "react";
+import React from 'react';
 import {
   ArrowRight,
   CheckCircle,
   Palette,
   Link2,
   BarChart3,
-} from "lucide-react";
+} from 'lucide-react';
 
 const OnboardingWelcome = () => {
   const steps = [
     {
       icon: CheckCircle,
-      title: "Complete Your Profile",
-      description: "Add your photo, bio, and basic information",
+      title: 'Complete Your Profile',
+      description: 'Add your photo, bio, and basic information',
     },
     {
       icon: Link2,
-      title: "Add Your First Links",
-      description: "Connect your social media and important links",
+      title: 'Add Your First Links',
+      description: 'Connect your social media and important links',
     },
     {
       icon: Palette,
-      title: "Customize Your Page",
-      description: "Choose colors, themes, and layout options",
+      title: 'Customize Your Page',
+      description: 'Choose colors, themes, and layout options',
     },
     {
       icon: BarChart3,
-      title: "Share & Track",
-      description: "Share your page and monitor performance",
+      title: 'Share & Track',
+      description: 'Share your page and monitor performance',
     },
   ];
 
@@ -43,7 +43,7 @@ const OnboardingWelcome = () => {
           <h1 className="text-4xl md:text-6xl font-black text-white mb-4">
             Welcome to
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              {" "}
+              {' '}
               LinkYoSelf
             </span>
             ! 🎉

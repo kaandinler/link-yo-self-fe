@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import i18next from "i18next";
-import { useEffect, useState } from "react";
+import i18next from 'i18next';
+import { useEffect, useState } from 'react';
 import {
   initReactI18next,
   useTranslation as useTranslationOriginal,
-} from "react-i18next";
-import resourcesToBackend from "i18next-resources-to-backend";
-import LanguageDetector from "i18next-browser-languagedetector";
-import { getOptions, languages } from "./config";
-import useStoreLanguage from "./use-store-language";
-import useStoreLanguageActions from "./use-store-language-actions";
-import useLanguage from "./use-language";
-import { runsOnServerSide } from "../runs-on-server-side/runs-on-server-side";
+} from 'react-i18next';
+import resourcesToBackend from 'i18next-resources-to-backend';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import { getOptions, languages } from './config';
+import useStoreLanguage from './use-store-language';
+import useStoreLanguageActions from './use-store-language-actions';
+import useLanguage from './use-language';
+import { runsOnServerSide } from '../runs-on-server-side/runs-on-server-side';
 
 i18next
   .use(initReactI18next)
@@ -27,7 +27,7 @@ i18next
     ...getOptions(),
     lng: undefined, // Let detect the language on client side
     detection: {
-      order: ["path", "htmlTag", "cookie", "navigator"],
+      order: ['path', 'htmlTag', 'cookie', 'navigator'],
     },
     preload: runsOnServerSide ? languages : [],
   });

@@ -1,1 +1,1 @@
-export const runsOnServerSide = typeof window === "undefined";
+export const runsOnServerSide = typeof window === 'undefined';

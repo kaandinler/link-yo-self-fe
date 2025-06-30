@@ -1,10 +1,10 @@
-import { useGetUsersService } from "@/services/api/services/users";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import { createQueryKeys } from "@/services/react-query/query-key-factory";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { UserFilterType, UserSortType } from "../user-filter-types";
+import { useGetUsersService } from '@/services/api/services/users';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import { createQueryKeys } from '@/services/react-query/query-key-factory';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { UserFilterType, UserSortType } from '../user-filter-types';
 
-export const usersQueryKeys = createQueryKeys(["users"], {
+export const usersQueryKeys = createQueryKeys(['users'], {
   list: () => ({
     key: [],
     sub: {

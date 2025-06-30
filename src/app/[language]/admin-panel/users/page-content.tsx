@@ -1,47 +1,47 @@
-"use client";
+'use client';
 
-import { RoleEnum } from "@/services/api/types/role";
-import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { useTranslation } from "@/services/i18n/client";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import Typography from "@mui/material/Typography";
+import { RoleEnum } from '@/services/api/types/role';
+import withPageRequiredAuth from '@/services/auth/with-page-required-auth';
+import { useTranslation } from '@/services/i18n/client';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
 import {
   PropsWithChildren,
   useCallback,
   useMemo,
   useRef,
   useState,
-} from "react";
-import { useGetUsersQuery, usersQueryKeys } from "./queries/queries";
-import { TableVirtuoso } from "react-virtuoso";
-import TableCell from "@mui/material/TableCell";
-import TableRow from "@mui/material/TableRow";
-import Avatar from "@mui/material/Avatar";
-import LinearProgress from "@mui/material/LinearProgress";
-import { styled } from "@mui/material/styles";
-import TableComponents from "@/components/table/table-components";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import Button from "@mui/material/Button";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import Grow from "@mui/material/Grow";
-import Paper from "@mui/material/Paper";
-import Popper from "@mui/material/Popper";
-import MenuItem from "@mui/material/MenuItem";
-import MenuList from "@mui/material/MenuList";
-import { User } from "@/services/api/types/user";
-import Link from "@/components/link";
-import useAuth from "@/services/auth/use-auth";
-import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
-import { useDeleteUsersService } from "@/services/api/services/users";
-import removeDuplicatesFromArrayObjects from "@/services/helpers/remove-duplicates-from-array-of-objects";
-import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import UserFilter from "./user-filter";
-import { useRouter, useSearchParams } from "next/navigation";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import { UserFilterType, UserSortType } from "./user-filter-types";
-import { SortEnum } from "@/services/api/types/sort-type";
+} from 'react';
+import { useGetUsersQuery, usersQueryKeys } from './queries/queries';
+import { TableVirtuoso } from 'react-virtuoso';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import Avatar from '@mui/material/Avatar';
+import LinearProgress from '@mui/material/LinearProgress';
+import { styled } from '@mui/material/styles';
+import TableComponents from '@/components/table/table-components';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Button from '@mui/material/Button';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+import { User } from '@/services/api/types/user';
+import Link from '@/components/link';
+import useAuth from '@/services/auth/use-auth';
+import useConfirmDialog from '@/components/confirm-dialog/use-confirm-dialog';
+import { useDeleteUsersService } from '@/services/api/services/users';
+import removeDuplicatesFromArrayObjects from '@/services/helpers/remove-duplicates-from-array-of-objects';
+import { InfiniteData, useQueryClient } from '@tanstack/react-query';
+import UserFilter from './user-filter';
+import { useRouter, useSearchParams } from 'next/navigation';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import { UserFilterType, UserSortType } from './user-filter-types';
+import { SortEnum } from '@/services/api/types/sort-type';
 
 type UsersKeys = keyof User;
 
@@ -85,7 +85,7 @@ function Actions({ user }: { user: User }) {
   const queryClient = useQueryClient();
   const anchorRef = useRef<HTMLDivElement>(null);
   const canDelete = user.id !== authUser?.id;
-  const { t: tUsers } = useTranslation("admin-panel-users");
+  const { t: tUsers } = useTranslation('admin-panel-users');
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -104,21 +104,21 @@ function Actions({ user }: { user: User }) {
 
   const handleDelete = async () => {
     const isConfirmed = await confirmDialog({
-      title: tUsers("admin-panel-users:confirm.delete.title"),
-      message: tUsers("admin-panel-users:confirm.delete.message"),
+      title: tUsers('admin-panel-users:confirm.delete.title'),
+      message: tUsers('admin-panel-users:confirm.delete.message'),
     });
 
     if (isConfirmed) {
       setOpen(false);
 
       const searchParams = new URLSearchParams(window.location.search);
-      const searchParamsFilter = searchParams.get("filter");
-      const searchParamsSort = searchParams.get("sort");
+      const searchParamsFilter = searchParams.get('filter');
+      const searchParamsSort = searchParams.get('sort');
 
       let filter: UserFilterType | undefined = undefined;
       let sort: UserSortType | undefined = {
         order: SortEnum.DESC,
-        orderBy: "id",
+        orderBy: 'id',
       };
 
       if (searchParamsFilter) {
@@ -161,7 +161,7 @@ function Actions({ user }: { user: User }) {
       LinkComponent={Link}
       href={`/admin-panel/users/edit/${user.id}`}
     >
-      {tUsers("admin-panel-users:actions.edit")}
+      {tUsers('admin-panel-users:actions.edit')}
     </Button>
   );
 
@@ -180,8 +180,8 @@ function Actions({ user }: { user: User }) {
 
           <Button
             size="small"
-            aria-controls={open ? "split-button-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
+            aria-controls={open ? 'split-button-menu' : undefined}
+            aria-expanded={open ? 'true' : undefined}
             aria-label="select merge strategy"
             aria-haspopup="menu"
             onClick={handleToggle}
@@ -205,7 +205,7 @@ function Actions({ user }: { user: User }) {
             {...TransitionProps}
             style={{
               transformOrigin:
-                placement === "bottom" ? "center top" : "center bottom",
+                placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
             <Paper>
@@ -214,15 +214,15 @@ function Actions({ user }: { user: User }) {
                   {canDelete && (
                     <MenuItem
                       sx={{
-                        bgcolor: "error.main",
-                        color: "var(--mui-palette-common-white)",
-                        "&:hover": {
-                          bgcolor: "error.light",
+                        bgcolor: 'error.main',
+                        color: 'var(--mui-palette-common-white)',
+                        '&:hover': {
+                          bgcolor: 'error.light',
                         },
                       }}
                       onClick={handleDelete}
                     >
-                      {tUsers("admin-panel-users:actions.delete")}
+                      {tUsers('admin-panel-users:actions.delete')}
                     </MenuItem>
                   )}
                 </MenuList>
@@ -236,19 +236,19 @@ function Actions({ user }: { user: User }) {
 }
 
 function Users() {
-  const { t: tUsers } = useTranslation("admin-panel-users");
-  const { t: tRoles } = useTranslation("admin-panel-roles");
+  const { t: tUsers } = useTranslation('admin-panel-users');
+  const { t: tRoles } = useTranslation('admin-panel-roles');
   const searchParams = useSearchParams();
   const router = useRouter();
   const [{ order, orderBy }, setSort] = useState<{
     order: SortEnum;
     orderBy: UsersKeys;
   }>(() => {
-    const searchParamsSort = searchParams.get("sort");
+    const searchParamsSort = searchParams.get('sort');
     if (searchParamsSort) {
       return JSON.parse(searchParamsSort);
     }
-    return { order: SortEnum.DESC, orderBy: "id" };
+    return { order: SortEnum.DESC, orderBy: 'id' };
   });
 
   const handleRequestSort = (
@@ -260,18 +260,18 @@ function Users() {
     const newOrder = isAsc ? SortEnum.DESC : SortEnum.ASC;
     const newOrderBy = property;
     searchParams.set(
-      "sort",
+      'sort',
       JSON.stringify({ order: newOrder, orderBy: newOrderBy })
     );
     setSort({
       order: newOrder,
       orderBy: newOrderBy,
     });
-    router.push(window.location.pathname + "?" + searchParams.toString());
+    router.push(window.location.pathname + '?' + searchParams.toString());
   };
 
   const filter = useMemo(() => {
-    const searchParamsFilter = searchParams.get("filter");
+    const searchParamsFilter = searchParams.get('filter');
     if (searchParamsFilter) {
       return JSON.parse(searchParamsFilter) as UserFilterType;
     }
@@ -291,7 +291,7 @@ function Users() {
     const result =
       (data?.pages.flatMap((page) => page?.data) as User[]) ?? ([] as User[]);
 
-    return removeDuplicatesFromArrayObjects(result, "id");
+    return removeDuplicatesFromArrayObjects(result, 'id');
   }, [data]);
 
   return (
@@ -300,7 +300,7 @@ function Users() {
         <Grid container spacing={3} size={{ xs: 12 }}>
           <Grid size="grow">
             <Typography variant="h3">
-              {tUsers("admin-panel-users:title")}
+              {tUsers('admin-panel-users:title')}
             </Typography>
           </Grid>
           <Grid container size="auto" wrap="nowrap" spacing={2}>
@@ -314,7 +314,7 @@ function Users() {
                 href="/admin-panel/users/create"
                 color="success"
               >
-                {tUsers("admin-panel-users:actions.create")}
+                {tUsers('admin-panel-users:actions.create')}
               </Button>
             </Grid>
           </Grid>
@@ -340,10 +340,10 @@ function Users() {
                     column="id"
                     handleRequestSort={handleRequestSort}
                   >
-                    {tUsers("admin-panel-users:table.column1")}
+                    {tUsers('admin-panel-users:table.column1')}
                   </TableSortCellWrapper>
                   <TableCell style={{ width: 200 }}>
-                    {tUsers("admin-panel-users:table.column2")}
+                    {tUsers('admin-panel-users:table.column2')}
                   </TableCell>
                   <TableSortCellWrapper
                     orderBy={orderBy}
@@ -351,11 +351,11 @@ function Users() {
                     column="email"
                     handleRequestSort={handleRequestSort}
                   >
-                    {tUsers("admin-panel-users:table.column3")}
+                    {tUsers('admin-panel-users:table.column3')}
                   </TableSortCellWrapper>
 
                   <TableCell style={{ width: 80 }}>
-                    {tUsers("admin-panel-users:table.column4")}
+                    {tUsers('admin-panel-users:table.column4')}
                   </TableCell>
                   <TableCell style={{ width: 130 }}></TableCell>
                 </TableRow>
@@ -372,7 +372,7 @@ function Users() {
               <>
                 <TableCell style={{ width: 50 }}>
                   <Avatar
-                    alt={user?.firstName + " " + user?.lastName}
+                    alt={user?.firstName + ' ' + user?.lastName}
                     src={user?.photo?.path}
                   />
                 </TableCell>

@@ -1,14 +1,14 @@
 // Sign-up işlemi için gelişmiş utility fonksiyonları
 // Bu dosya sign-up page'inde kullanılmak üzere oluşturulmuştur
 
-import { BaseResponseModel, API_STATUS } from "../types/base-response";
+import { BaseResponseModel, API_STATUS } from '../types/base-response';
 import {
   isSuccessResponse,
   isErrorResponse,
   getResponseData,
   getResponseErrorMessage,
   getResponseFieldErrors,
-} from "../fastapi-utils";
+} from '../fastapi-utils';
 
 export interface SignUpFormData {
   firstName: string;
@@ -34,15 +34,15 @@ export function parseSignUpResponse(response: unknown): SignUpParseResult {
 
   if (
     typedResponse &&
-    typeof typedResponse === "object" &&
-    "status" in typedResponse
+    typeof typedResponse === 'object' &&
+    'status' in typedResponse
   ) {
     if (isSuccessResponse(typedResponse)) {
       return {
         success: true,
         message:
           typedResponse.message ||
-          "Account created successfully! Please check your email for verification.",
+          'Account created successfully! Please check your email for verification.',
       };
     }
 
@@ -53,7 +53,7 @@ export function parseSignUpResponse(response: unknown): SignUpParseResult {
       return {
         success: false,
         fieldErrors,
-        message: errorMessage || "Registration failed. Please try again.",
+        message: errorMessage || 'Registration failed. Please try again.',
       };
     }
   }
@@ -61,7 +61,7 @@ export function parseSignUpResponse(response: unknown): SignUpParseResult {
   // Bilinmeyen response type
   return {
     success: false,
-    message: "Unknown response format",
+    message: 'Unknown response format',
   };
 }
 
@@ -76,7 +76,7 @@ export function convertFieldErrorsToFormErrors(
   // Convert to React Hook Form format
   Object.entries(fieldErrors).forEach(([field, message]) => {
     formErrors[field] = {
-      type: "manual",
+      type: 'manual',
       message: String(message),
     };
   });
@@ -94,10 +94,10 @@ export function mapBackendFieldsToFormFields(
   Object.entries(fieldErrors).forEach(([key, value]) => {
     // Backend to form field mapping
     const formField =
-      key === "first_name"
-        ? "firstName"
-        : key === "last_name"
-          ? "lastName"
+      key === 'first_name'
+        ? 'firstName'
+        : key === 'last_name'
+          ? 'lastName'
           : key;
 
     mappedErrors[formField] = value;
@@ -113,32 +113,32 @@ export function getSignUpErrorMessage(
   response: BaseResponseModel<unknown>
 ): string {
   if (!isErrorResponse(response)) {
-    return "";
+    return '';
   }
 
   const backendMessage = getResponseErrorMessage(response);
 
   // Eğer backend'den anlamlı bir message geliyorsa onu kullan
-  if (backendMessage && backendMessage.trim() !== "") {
+  if (backendMessage && backendMessage.trim() !== '') {
     return backendMessage;
   }
 
   // Fallback: Common sign-up error message translations
   const errorTranslations: Record<string, string> = {
-    "Email already registered": "This email address is already registered",
-    "Username already taken": "This username is already taken",
-    "Invalid email format": "Invalid email format",
-    "Password too weak": "Password is too weak",
-    "Username contains invalid characters":
-      "Username contains invalid characters",
-    "Email domain not allowed": "Email domain not allowed for registration",
-    "Registration temporarily disabled": "Registration is temporarily disabled",
+    'Email already registered': 'This email address is already registered',
+    'Username already taken': 'This username is already taken',
+    'Invalid email format': 'Invalid email format',
+    'Password too weak': 'Password is too weak',
+    'Username contains invalid characters':
+      'Username contains invalid characters',
+    'Email domain not allowed': 'Email domain not allowed for registration',
+    'Registration temporarily disabled': 'Registration is temporarily disabled',
   };
 
   return (
     errorTranslations[backendMessage] ||
     backendMessage ||
-    "Registration failed. Please try again."
+    'Registration failed. Please try again.'
   );
 }
 
@@ -151,8 +151,8 @@ export function logSignUpAttempt(email: string, response: unknown): void {
 
   if (
     typedResponse &&
-    typeof typedResponse === "object" &&
-    "status" in typedResponse
+    typeof typedResponse === 'object' &&
+    'status' in typedResponse
   ) {
     if (isSuccessResponse(typedResponse)) {
       console.log(`✅ [${timestamp}] Sign-up successful for: ${email}`);

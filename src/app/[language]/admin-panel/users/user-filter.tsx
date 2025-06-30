@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
-import { Role, RoleEnum } from "@/services/api/types/role";
-import { useTranslation } from "@/services/i18n/client";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import Popover from "@mui/material/Popover";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { UserFilterType } from "./user-filter-types";
+import FormMultipleSelectInput from '@/components/form/multiple-select/form-multiple-select';
+import { Role, RoleEnum } from '@/services/api/types/role';
+import { useTranslation } from '@/services/i18n/client';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import Popover from '@mui/material/Popover';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { UserFilterType } from './user-filter-types';
 
 type UserFilterFormData = UserFilterType;
 
 function UserFilter() {
-  const { t } = useTranslation("admin-panel-users");
+  const { t } = useTranslation('admin-panel-users');
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -38,10 +38,10 @@ function UserFilter() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "user-filter-popover" : undefined;
+  const id = open ? 'user-filter-popover' : undefined;
 
   useEffect(() => {
-    const filter = searchParams.get("filter");
+    const filter = searchParams.get('filter');
     if (filter) {
       handleClose();
       const filterParsed = JSON.parse(filter);
@@ -57,8 +57,8 @@ function UserFilter() {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
+          vertical: 'bottom',
+          horizontal: 'left',
         }}
       >
         <Container
@@ -69,18 +69,18 @@ function UserFilter() {
           <form
             onSubmit={handleSubmit((data) => {
               const searchParams = new URLSearchParams(window.location.search);
-              searchParams.set("filter", JSON.stringify(data));
+              searchParams.set('filter', JSON.stringify(data));
               router.push(
-                window.location.pathname + "?" + searchParams.toString()
+                window.location.pathname + '?' + searchParams.toString()
               );
             })}
           >
             <Grid container spacing={2} mb={3} mt={3}>
               <Grid size={{ xs: 12 }}>
-                <FormMultipleSelectInput<UserFilterFormData, Pick<Role, "id">>
+                <FormMultipleSelectInput<UserFilterFormData, Pick<Role, 'id'>>
                   name="roles"
                   testId="roles"
-                  label={t("admin-panel-users:filter.inputs.role.label")}
+                  label={t('admin-panel-users:filter.inputs.role.label')}
                   options={[
                     {
                       id: RoleEnum.ADMIN,
@@ -102,13 +102,13 @@ function UserFilter() {
                           `admin-panel-users:filter.inputs.role.options.${value.id}`
                         )
                       )
-                      .join(", ")
+                      .join(', ')
                   }
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <Button variant="contained" type="submit">
-                  {t("admin-panel-users:filter.actions.apply")}
+                  {t('admin-panel-users:filter.actions.apply')}
                 </Button>
               </Grid>
             </Grid>
@@ -116,7 +116,7 @@ function UserFilter() {
         </Container>
       </Popover>
       <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-        {t("admin-panel-users:filter.actions.filter")}
+        {t('admin-panel-users:filter.actions.filter')}
       </Button>
     </FormProvider>
   );

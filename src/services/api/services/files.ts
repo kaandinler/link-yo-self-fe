@@ -1,10 +1,10 @@
-import { useCallback } from "react";
-import useFetch from "../use-fetch";
-import { API_URL } from "../config";
-import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { FileEntity } from "../types/file-entity";
-import { RequestConfigType } from "./types/request-config";
-import HTTP_CODES_ENUM from "../types/http-codes";
+import { useCallback } from 'react';
+import useFetch from '../use-fetch';
+import { API_URL } from '../config';
+import wrapperFetchJsonResponse from '../wrapper-fetch-json-response';
+import { FileEntity } from '../types/file-entity';
+import { RequestConfigType } from './types/request-config';
+import HTTP_CODES_ENUM from '../types/http-codes';
 
 export type FileUploadRequest = File;
 
@@ -18,9 +18,9 @@ export function useFileUploadService() {
 
   return useCallback(
     async (data: FileUploadRequest, requestConfig?: RequestConfigType) => {
-      if (process.env.NEXT_PUBLIC_FILE_DRIVER === "s3-presigned") {
+      if (process.env.NEXT_PUBLIC_FILE_DRIVER === 's3-presigned') {
         const result = await fetchClient(`${API_URL}/v1/files/upload`, {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify({
             fileName: data.name,
             fileSize: data.size,
@@ -30,10 +30,10 @@ export function useFileUploadService() {
 
         if (result.status === HTTP_CODES_ENUM.CREATED) {
           await fetch(result.data.uploadSignedUrl, {
-            method: "PUT",
+            method: 'PUT',
             body: data,
             headers: {
-              "Content-Type": data.type,
+              'Content-Type': data.type,
             },
           });
         }
@@ -41,10 +41,10 @@ export function useFileUploadService() {
         return result;
       } else {
         const formData = new FormData();
-        formData.append("file", data);
+        formData.append('file', data);
 
         return fetchClient(`${API_URL}/v1/files/upload`, {
-          method: "POST",
+          method: 'POST',
           body: formData,
           ...requestConfig,
         }).then(wrapperFetchJsonResponse<FileUploadResponse>);
