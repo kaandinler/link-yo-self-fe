@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { ForwardedRef, forwardRef } from "react";
+import { ForwardedRef, forwardRef } from 'react';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormHelperText from "@mui/material/FormHelperText";
-import OutlinedInput from "@mui/material/OutlinedInput";
+} from 'react-hook-form';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 type MultipleSelectInputProps<T extends object> = {
   label: string;
@@ -45,7 +45,7 @@ function MultipleSelectInputRaw<T extends object>(
         labelId={`select-label-${props.name}`}
         id={`select-${props.name}`}
         value={props.value?.map(
-          (value) => value?.[props.keyValue]?.toString() ?? ""
+          (value) => value?.[props.keyValue]?.toString() ?? ''
         )}
         input={<OutlinedInput label={props.label} />}
         multiple
@@ -55,7 +55,7 @@ function MultipleSelectInputRaw<T extends object>(
         onChange={(event) => {
           const value = event.target.value;
           const selectedStrings =
-            typeof value === "string" ? value.split(",") : value;
+            typeof value === 'string' ? value.split(',') : value;
 
           const newValue = selectedStrings
             .map((selectedString) => {
@@ -113,7 +113,7 @@ function FormMultipleSelectInput<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
   props: MultipleSelectInputProps<T> &
-    Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue">
+    Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'>
 ) {
   return (
     <Controller

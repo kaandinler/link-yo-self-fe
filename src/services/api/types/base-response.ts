@@ -1,12 +1,12 @@
 // API yanıt durumları
-export type ResponseStatus = "success" | "error" | "warning" | "info";
+export type ResponseStatus = 'success' | 'error' | 'warning' | 'info';
 
 // API yanıtı için durum enumu
 export const API_STATUS = {
-  SUCCESS: "success" as const,
-  ERROR: "error" as const,
-  WARNING: "warning" as const,
-  INFO: "info" as const,
+  SUCCESS: 'success' as const,
+  ERROR: 'error' as const,
+  WARNING: 'warning' as const,
+  INFO: 'info' as const,
 } as const;
 
 // Tüm API yanıtları için temel model

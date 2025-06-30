@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+'use client';
+import React, { useState } from 'react';
 import {
   Plus,
   Eye,
@@ -11,20 +12,20 @@ import {
   TrendingUp,
   Copy,
   ExternalLink,
-} from "lucide-react";
+} from 'lucide-react';
 
 const Dashboard = () => {
   const [copied, setCopied] = useState(false);
 
   // Mock user data - gerçek projede context'ten gelecek
   const user = {
-    username: "johndoe",
-    displayName: "John Doe",
+    username: 'johndoe',
+    displayName: 'John Doe',
     profileImage: null,
     totalClicks: 1247,
     totalLinks: 8,
     profileViews: 342,
-    profileUrl: "linkyoself.com/johndoe",
+    profileUrl: 'linkyoself.com/johndoe',
   };
 
   const handleCopyProfile = () => {
@@ -36,29 +37,29 @@ const Dashboard = () => {
   const recentLinks = [
     {
       id: 1,
-      title: "Instagram Profile",
-      url: "instagram.com/johndoe",
+      title: 'Instagram Profile',
+      url: 'instagram.com/johndoe',
       clicks: 324,
       isActive: true,
     },
     {
       id: 2,
-      title: "Twitter Account",
-      url: "twitter.com/johndoe",
+      title: 'Twitter Account',
+      url: 'twitter.com/johndoe',
       clicks: 256,
       isActive: true,
     },
     {
       id: 3,
-      title: "Personal Website",
-      url: "johndoe.dev",
+      title: 'Personal Website',
+      url: 'johndoe.dev',
       clicks: 189,
       isActive: true,
     },
     {
       id: 4,
-      title: "YouTube Channel",
-      url: "youtube.com/@johndoe",
+      title: 'YouTube Channel',
+      url: 'youtube.com/@johndoe',
       clicks: 167,
       isActive: false,
     },
@@ -108,7 +109,7 @@ const Dashboard = () => {
                 className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
                 <Copy className="h-4 w-4" />
-                {copied ? "Copied!" : "Copy"}
+                {copied ? 'Copied!' : 'Copy'}
               </button>
               <button className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
                 <Share2 className="h-4 w-4" />
@@ -205,7 +206,7 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-3 h-3 rounded-full ${link.isActive ? "bg-green-400" : "bg-gray-500"}`}
+                    className={`w-3 h-3 rounded-full ${link.isActive ? 'bg-green-400' : 'bg-gray-500'}`}
                   ></div>
                   <div>
                     <p className="text-white font-medium">{link.title}</p>

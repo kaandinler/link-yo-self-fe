@@ -1,5 +1,5 @@
-import { useContext, useEffect } from "react";
-import { LeavePageActionsContext } from "./leave-page-context";
+import { useContext, useEffect } from 'react';
+import { LeavePageActionsContext } from './leave-page-context';
 
 const useLeavePage = (isDirty: boolean) => {
   const { trackLeavePage, untrackLeavePage } = useContext(
@@ -9,18 +9,18 @@ const useLeavePage = (isDirty: boolean) => {
   useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      e.returnValue = "";
+      e.returnValue = '';
     };
 
     if (isDirty) {
       trackLeavePage();
-      window.addEventListener("beforeunload", onBeforeUnload);
+      window.addEventListener('beforeunload', onBeforeUnload);
     }
 
     return () => {
       if (isDirty) {
         untrackLeavePage();
-        window.removeEventListener("beforeunload", onBeforeUnload);
+        window.removeEventListener('beforeunload', onBeforeUnload);
       }
     };
   }, [isDirty, trackLeavePage, untrackLeavePage]);

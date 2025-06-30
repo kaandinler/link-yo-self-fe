@@ -1,7 +1,7 @@
 // src/app/[language]/dashboard/page.tsx
-import type { Metadata } from "next";
-import { getServerTranslation } from "@/services/i18n";
-import Dashboard from "./page-content";
+import type { Metadata } from 'next';
+import { getServerTranslation } from '@/services/i18n';
+import Dashboard from './page-content';
 
 type Props = {
   params: Promise<{ language: string }>;
@@ -9,10 +9,10 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
-  const { t } = await getServerTranslation(params.language, "common");
+  const { t } = await getServerTranslation(params.language, 'common');
 
   return {
-    title: `Dashboard - ${t("app-name")}`,
+    title: `Dashboard - ${t('app-name')}`,
   };
 }
 

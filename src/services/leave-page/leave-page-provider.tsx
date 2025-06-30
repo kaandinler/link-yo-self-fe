@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { PropsWithChildren, useContext, useMemo, useState } from "react";
+import { PropsWithChildren, useContext, useMemo, useState } from 'react';
 import {
   LeavePageActionsContext,
   LeavePageContext,
   LeavePageContextParamsType,
   LeavePageInfoContext,
   LeavePageModalContext,
-} from "./leave-page-context";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
+} from './leave-page-context';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 // Need for leave page logic
 
-import NextLink from "next/link";
-import { useTranslation } from "../i18n/client";
+import NextLink from 'next/link';
+import { useTranslation } from '../i18n/client';
 
 function Provider(props: PropsWithChildren<{}>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,12 +81,12 @@ function Provider(props: PropsWithChildren<{}>) {
 }
 
 function Modal() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common');
   const { isOpen } = useContext(LeavePageModalContext);
   const { leavePage } = useContext(LeavePageInfoContext);
   const { closeModal } = useContext(LeavePageActionsContext);
 
-  const href = (leavePage?.push ?? leavePage?.replace) || "";
+  const href = (leavePage?.push ?? leavePage?.replace) || '';
 
   return (
     <Dialog
@@ -97,11 +97,11 @@ function Modal() {
       data-testid="want-to-leave-modal"
     >
       <DialogTitle id="alert-dialog-title">
-        {t("common:leavePage.title")}
+        {t('common:leavePage.title')}
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {t("common:leavePage.message")}
+          {t('common:leavePage.message')}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -111,7 +111,7 @@ function Modal() {
           autoFocus
           data-testid="stay"
         >
-          {t("common:leavePage.stay")}
+          {t('common:leavePage.stay')}
         </Button>
 
         <Button
@@ -125,7 +125,7 @@ function Modal() {
           replace={!!leavePage?.replace}
           data-testid="leave"
         >
-          {t("common:leavePage.leave")}
+          {t('common:leavePage.leave')}
         </Button>
       </DialogActions>
     </Dialog>

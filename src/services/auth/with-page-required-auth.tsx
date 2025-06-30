@@ -1,9 +1,9 @@
-"use client";
-import { useRouter } from "next/navigation";
-import useAuth from "./use-auth";
-import React, { FunctionComponent, useEffect } from "react";
-import useLanguage from "../i18n/use-language";
-import { RoleEnum } from "../api/types/role";
+'use client';
+import { useRouter } from 'next/navigation';
+import useAuth from './use-auth';
+import React, { FunctionComponent, useEffect } from 'react';
+import useLanguage from '../i18n/use-language';
+import { RoleEnum } from '../api/types/role';
 
 type PropsType = {
   params?: { [key: string]: string | string[] | undefined };
@@ -41,7 +41,7 @@ function withPageRequiredAuth(
 
         const currentLocation = window.location.toString();
         const returnToPath =
-          currentLocation.replace(new URL(currentLocation).origin, "") ||
+          currentLocation.replace(new URL(currentLocation).origin, '') ||
           `/${language}`;
         const params = new URLSearchParams({
           returnTo: returnToPath,

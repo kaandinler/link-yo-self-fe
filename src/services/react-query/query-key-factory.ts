@@ -8,7 +8,7 @@ type KeyType<K = unknown> = {
 type BodyType = (...params: any[]) => KeyType;
 
 type AllType = {
-  all: () => Pick<KeyType, "key">;
+  all: () => Pick<KeyType, 'key'>;
 };
 
 /*

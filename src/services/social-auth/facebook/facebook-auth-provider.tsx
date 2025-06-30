@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo } from "react";
-import { FacebookAuthLoginResponse, FacebookContext } from "./facebook-context";
-import { facebookAppId, isFacebookAuthEnabled } from "./facebook-config";
-import { languages } from "@/services/i18n/config";
-import useLanguage from "@/services/i18n/use-language";
+import { useCallback, useEffect, useMemo } from 'react';
+import { FacebookAuthLoginResponse, FacebookContext } from './facebook-context';
+import { facebookAppId, isFacebookAuthEnabled } from './facebook-config';
+import { languages } from '@/services/i18n/config';
+import useLanguage from '@/services/i18n/use-language';
 
 type FacebookAuthProviderProps = {
   children: React.ReactNode;
@@ -29,14 +29,14 @@ declare global {
 
 // Add new languages here
 const languageToCode: Record<LanguageCode, string> = {
-  en: "en_US",
+  en: 'en_US',
 };
 
 const useCodeFromLanguage = () => {
   const languageOrCode = useLanguage();
   const language = languageOrCode
-    .replace("_", "-")
-    .split("-")[0] as LanguageCode;
+    .replace('_', '-')
+    .split('-')[0] as LanguageCode;
 
   return languageToCode[language] || languageToCode.en;
 };
@@ -51,18 +51,18 @@ function FacebookProvider({ children }: FacebookAuthProviderProps) {
           appId: facebookAppId,
           cookie: true,
           xfbml: true,
-          version: "v11.0",
+          version: 'v11.0',
         });
       } else {
-        throw Error("Facebook App ID not found");
+        throw Error('Facebook App ID not found');
       }
     };
 
-    const scriptTag = document.createElement("script");
+    const scriptTag = document.createElement('script');
     scriptTag.src = `https://connect.facebook.net/${code}/sdk.js`;
     scriptTag.async = true;
     scriptTag.defer = true;
-    scriptTag.crossOrigin = "anonymous";
+    scriptTag.crossOrigin = 'anonymous';
 
     document.body.appendChild(scriptTag);
 

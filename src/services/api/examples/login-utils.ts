@@ -5,15 +5,15 @@ import {
   BaseResponseModel,
   API_STATUS,
   TokenResponse,
-} from "../types/base-response";
-import { User } from "../types/user";
+} from '../types/base-response';
+import { User } from '../types/user';
 import {
   isSuccessResponse,
   isErrorResponse,
   getResponseData,
   getResponseErrorMessage,
   getResponseFieldErrors,
-} from "../fastapi-utils";
+} from '../fastapi-utils';
 
 export interface LoginFormData {
   email: string;
@@ -52,13 +52,13 @@ export function parseLoginResponse(
     if (tokenData && tokenData.access_token) {
       return {
         success: true,
-        message: response.message || "Login successful",
+        message: response.message || 'Login successful',
         tokenData,
       };
     } else {
       return {
         success: false,
-        message: "Invalid token data received",
+        message: 'Invalid token data received',
       };
     }
   }
@@ -71,9 +71,9 @@ export function parseLoginResponse(
     const formErrors: Record<string, { type: string; message: string }> = {};
     Object.entries(fieldErrors).forEach(([field, message]) => {
       // Map backend field names to frontend field names
-      const formField = field === "username" ? "email" : field;
+      const formField = field === 'username' ? 'email' : field;
       formErrors[formField] = {
-        type: "manual",
+        type: 'manual',
         message: String(message),
       };
     });
@@ -81,14 +81,14 @@ export function parseLoginResponse(
     return {
       success: false,
       fieldErrors: formErrors,
-      message: errorMessage || "Login failed. Please check your credentials.",
+      message: errorMessage || 'Login failed. Please check your credentials.',
     };
   }
 
   // Unknown response format
   return {
     success: false,
-    message: "Unknown response format",
+    message: 'Unknown response format',
   };
 }
 
@@ -105,7 +105,7 @@ export function parseUserInfoResponse(
     if (userData && userData.id) {
       return {
         success: true,
-        message: "User info fetched successfully",
+        message: 'User info fetched successfully',
         userData,
       };
     }
@@ -113,15 +113,15 @@ export function parseUserInfoResponse(
 
   // Fallback user creation
   const fallbackUser: User = {
-    id: "temp-id",
+    id: 'temp-id',
     email: email,
-    firstName: "",
-    lastName: "",
+    firstName: '',
+    lastName: '',
   };
 
   return {
     success: false,
-    message: "Failed to fetch user info, using fallback",
+    message: 'Failed to fetch user info, using fallback',
     fallbackUser,
   };
 }
@@ -149,7 +149,7 @@ export function handleLoginSuccess(
   // Save tokens
   callbacks.saveTokens(tokensInfo);
 
-  console.log("✅ Tokens saved successfully");
+  console.log('✅ Tokens saved successfully');
 }
 
 /**
@@ -187,30 +187,30 @@ export function getLoginErrorMessage(
   response: BaseResponseModel<TokenResponse>
 ): string {
   if (!isErrorResponse(response)) {
-    return "";
+    return '';
   }
 
   const backendMessage = getResponseErrorMessage(response);
 
   // Use backend message if available
-  if (backendMessage && backendMessage.trim() !== "") {
+  if (backendMessage && backendMessage.trim() !== '') {
     return backendMessage;
   }
 
   // Fallback: Common login error message translations
   const errorTranslations: Record<string, string> = {
-    "Invalid credentials": "Invalid email or password",
-    "User not found": "Account not found with this email",
-    "Password incorrect": "Incorrect password",
-    "Account disabled": "Your account has been disabled",
-    "Account not verified": "Please verify your email address",
-    "Too many attempts": "Too many login attempts. Please try again later.",
-    "Session expired": "Your session has expired. Please login again.",
+    'Invalid credentials': 'Invalid email or password',
+    'User not found': 'Account not found with this email',
+    'Password incorrect': 'Incorrect password',
+    'Account disabled': 'Your account has been disabled',
+    'Account not verified': 'Please verify your email address',
+    'Too many attempts': 'Too many login attempts. Please try again later.',
+    'Session expired': 'Your session has expired. Please login again.',
   };
 
   return (
     errorTranslations[backendMessage] ||
-    "Login failed. Please check your credentials and try again."
+    'Login failed. Please check your credentials and try again.'
   );
 }
 
@@ -226,9 +226,9 @@ export function convertFieldErrorsToFormErrors(
   // Convert to React Hook Form format
   Object.entries(fieldErrors).forEach(([field, message]) => {
     // Map backend field names to frontend field names
-    const formField = field === "username" ? "email" : field;
+    const formField = field === 'username' ? 'email' : field;
     formErrors[formField] = {
-      type: "manual",
+      type: 'manual',
       message: String(message),
     };
   });
@@ -246,7 +246,7 @@ export function mapBackendFieldsToFormFields(
 
   Object.entries(fieldErrors).forEach(([key, value]) => {
     // Backend to form field mapping for login
-    const formField = key === "username" ? "email" : key;
+    const formField = key === 'username' ? 'email' : key;
     mappedErrors[formField] = value;
   });
 

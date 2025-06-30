@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import {
   ConfirmDialogActionsContext,
   ConfirmDialogOptions,
-} from "./confirm-dialog-context";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { useTranslation } from "@/services/i18n/client";
+} from './confirm-dialog-context';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from '@/services/i18n/client';
 
 function ConfirmDialogProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { t } = useTranslation("confirm-dialog");
+  const { t } = useTranslation('confirm-dialog');
 
   const defaultConfirmDialogInfo = useMemo<ConfirmDialogOptions>(
     () => ({
-      title: t("title"),
-      message: t("message"),
-      successButtonText: t("actions.yes"),
-      cancelButtonText: t("actions.no"),
+      title: t('title'),
+      message: t('message'),
+      successButtonText: t('actions.yes'),
+      cancelButtonText: t('actions.no'),
     }),
     [t]
   );

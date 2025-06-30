@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import { User } from "../types/user";
-import { BaseResponseModel } from "../types/base-response";
-import { makeFastAPIRequestWithAuth } from "../fastapi-utils";
+import { useCallback } from 'react';
+import { User } from '../types/user';
+import { BaseResponseModel } from '../types/base-response';
+import { makeFastAPIRequestWithAuth } from '../fastapi-utils';
 
 /**
  * FastAPI user info endpoint service
@@ -13,8 +13,8 @@ import { makeFastAPIRequestWithAuth } from "../fastapi-utils";
 export function useAuthMeWithFastAPIService() {
   return useCallback(
     async (accessToken: string): Promise<BaseResponseModel<User>> => {
-      return makeFastAPIRequestWithAuth<User>("/v1/users/me", accessToken, {
-        method: "GET",
+      return makeFastAPIRequestWithAuth<User>('/v1/users/me', accessToken, {
+        method: 'GET',
       });
     },
     []
@@ -35,7 +35,7 @@ export function useUserProfileWithFastAPIService() {
         `/v1/users/${userId}`,
         accessToken,
         {
-          method: "GET",
+          method: 'GET',
         }
       );
     },
@@ -64,7 +64,7 @@ export function useUpdateUserProfileWithFastAPIService() {
         `/v1/users/${userId}`,
         accessToken,
         {
-          method: "PATCH",
+          method: 'PATCH',
           body: userData,
         }
       );
@@ -88,10 +88,10 @@ export function useChangePasswordWithFastAPIService() {
       accessToken: string
     ): Promise<BaseResponseModel<void>> => {
       return makeFastAPIRequestWithAuth<void>(
-        "/v1/auth/change-password",
+        '/v1/auth/change-password',
         accessToken,
         {
-          method: "POST",
+          method: 'POST',
           body: passwordData,
         }
       );

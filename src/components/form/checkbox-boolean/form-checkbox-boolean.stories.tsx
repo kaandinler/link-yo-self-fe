@@ -1,12 +1,12 @@
-import React from "react";
-import { Meta, StoryFn } from "@storybook/react";
-import { useForm, FormProvider } from "react-hook-form";
+import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
+import { useForm, FormProvider } from 'react-hook-form';
 import FormCheckboxBooleanInput, {
   CheckboxBooleanInputProps,
-} from "./form-checkbox-boolean";
+} from './form-checkbox-boolean';
 
 export default {
-  title: "Components/Form/CheckboxBooleanInput",
+  title: 'Components/Form/CheckboxBooleanInput',
   component: FormCheckboxBooleanInput,
 } as Meta;
 
@@ -30,7 +30,7 @@ const Template: StoryFn<CheckboxBooleanInputProps & { name: string }> = (
 
 export const Default = Template.bind({});
 Default.args = {
-  label: "Sample Form Checkbox",
-  name: "sampleCheckbox",
-  testId: "sampleCheckbox",
+  label: 'Sample Form Checkbox',
+  name: 'sampleCheckbox',
+  testId: 'sampleCheckbox',
 };

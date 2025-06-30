@@ -1,16 +1,16 @@
-import { useCallback } from "react";
-import useFetch from "../use-fetch";
-import { API_URL } from "../config";
-import { User } from "../types/user";
-import { Tokens } from "../types/tokens";
-import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { RequestConfigType } from "./types/request-config";
-import { BaseResponseModel, TokenResponse } from "../types/base-response";
+import { useCallback } from 'react';
+import useFetch from '../use-fetch';
+import { API_URL } from '../config';
+import { User } from '../types/user';
+import { Tokens } from '../types/tokens';
+import wrapperFetchJsonResponse from '../wrapper-fetch-json-response';
+import { RequestConfigType } from './types/request-config';
+import { BaseResponseModel, TokenResponse } from '../types/base-response';
 import {
   parseAPIError,
   safeParseApiResponse,
   ProcessedApiError as _ProcessedApiError,
-} from "../types/fastapi-errors";
+} from '../types/fastapi-errors';
 
 export type AuthLoginRequest = {
   username: string;
@@ -27,7 +27,7 @@ export function useAuthLoginService() {
   return useCallback(
     (data: AuthLoginRequest) => {
       return fetchBase(`${API_URL}/v1/auth/token`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
       }).then(wrapperFetchJsonResponse<AuthLoginResponse>);
     },
@@ -43,11 +43,11 @@ export function useAuthLoginWithFastAPIService() {
     ): Promise<BaseResponseModel<TokenResponse>> => {
       try {
         const formData = new FormData();
-        formData.append("username", data.username); // OAuth2 'username' field'ını bekliyor
-        formData.append("password", data.password);
+        formData.append('username', data.username); // OAuth2 'username' field'ını bekliyor
+        formData.append('password', data.password);
 
         const response = await fetch(`${API_URL}/v1/auth/token`, {
-          method: "POST",
+          method: 'POST',
           body: formData,
         });
         const result = (await safeParseApiResponse(response)) as Record<
@@ -56,9 +56,9 @@ export function useAuthLoginWithFastAPIService() {
         >;
 
         // Başarılı yanıt kontrolü
-        if (response.ok && result && !("detail" in result)) {
+        if (response.ok && result && !('detail' in result)) {
           // Normal BaseResponseModel formatı
-          if ("status" in result && "data" in result) {
+          if ('status' in result && 'data' in result) {
             // Tip güvenliği için iki adımda dönüştürme
             const typedResult =
               result as unknown as BaseResponseModel<TokenResponse>;
@@ -66,10 +66,10 @@ export function useAuthLoginWithFastAPIService() {
           }
 
           // Eğer doğrudan token data'sı geliyorsa BaseResponseModel'e çevir
-          if ("access_token" in result) {
+          if ('access_token' in result) {
             return {
-              status: "success",
-              message: "Welcome back!",
+              status: 'success',
+              message: 'Welcome back!',
               data: result as unknown as TokenResponse,
             };
           }
@@ -79,7 +79,7 @@ export function useAuthLoginWithFastAPIService() {
         const parsedError = parseAPIError(result, response);
 
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
           errors: parsedError.fieldErrors,
@@ -88,7 +88,7 @@ export function useAuthLoginWithFastAPIService() {
         // Network hatası
         const parsedError = parseAPIError(error);
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
         };
@@ -112,7 +112,7 @@ export function useAuthGoogleLoginService() {
   return useCallback(
     (data: AuthGoogleLoginRequest) => {
       return fetchBase(`${API_URL}/v1/auth/google/login`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
       }).then(wrapperFetchJsonResponse<AuthGoogleLoginResponse>);
     },
@@ -134,7 +134,7 @@ export function useAuthFacebookLoginService() {
   return useCallback(
     (data: AuthFacebookLoginRequest, requestConfig?: RequestConfigType) => {
       return fetchBase(`${API_URL}/v1/auth/facebook/login`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthFacebookLoginResponse>);
@@ -157,7 +157,7 @@ export function useAuthSignUpService() {
   return useCallback(
     (data: AuthSignUpRequest, requestConfig?: RequestConfigType) => {
       return fetchBase(`${API_URL}/v1/auth/email/register`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthSignUpResponse>);
@@ -171,39 +171,39 @@ export function useAuthSignUpWithFastAPIService() {
   return useCallback(
     async (data: AuthSignUpRequest): Promise<BaseResponseModel<void>> => {
       try {
-        console.log("🔑 Auth service: Sending sign-up request to FastAPI", {
+        console.log('🔑 Auth service: Sending sign-up request to FastAPI', {
           url: `${API_URL}/v1/auth/register`,
           username: data.username,
           email: data.email,
         });
 
         const response = await fetch(`${API_URL}/v1/auth/register`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
         });
 
         console.log(
-          "🔑 Auth service: Sign-up response status:",
+          '🔑 Auth service: Sign-up response status:',
           response.status
         );
         const result = (await safeParseApiResponse(response)) as Record<
           string,
           unknown
         >;
-        console.log("🔑 Auth service: Sign-up parsed response:", result);
+        console.log('🔑 Auth service: Sign-up parsed response:', result);
 
         // Başarılı yanıt kontrolü
         if (
           response.ok &&
           result &&
-          typeof result === "object" &&
-          !("detail" in result)
+          typeof result === 'object' &&
+          !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ("status" in result) {
+          if ('status' in result) {
             // Tip güvenliği için iki adımda dönüştürme
             const typedResult = result as unknown as BaseResponseModel<void>;
             return typedResult;
@@ -211,29 +211,29 @@ export function useAuthSignUpWithFastAPIService() {
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
           return {
-            status: "success",
+            status: 'success',
             message:
-              "Account created successfully! Please check your email for verification.",
+              'Account created successfully! Please check your email for verification.',
             data: undefined,
           };
         }
 
         // Hata durumunu parse et
         const parsedError = parseAPIError(result, response);
-        console.log("🔑 Auth service: Sign-up error:", parsedError);
+        console.log('🔑 Auth service: Sign-up error:', parsedError);
 
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
           errors: parsedError.fieldErrors,
         };
       } catch (error) {
         // Network hatası
-        console.error("🔑 Auth service: Sign-up network error:", error);
+        console.error('🔑 Auth service: Sign-up network error:', error);
         const parsedError = parseAPIError(error);
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
         };
@@ -255,7 +255,7 @@ export function useAuthConfirmEmailService() {
   return useCallback(
     (data: AuthConfirmEmailRequest, requestConfig?: RequestConfigType) => {
       return fetchBase(`${API_URL}/v1/auth/email/confirm`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthConfirmEmailResponse>);
@@ -276,7 +276,7 @@ export function useAuthConfirmNewEmailService() {
   return useCallback(
     (data: AuthConfirmNewEmailRequest, requestConfig?: RequestConfigType) => {
       return fetchBase(`${API_URL}/v1/auth/email/confirm/new`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthConfirmNewEmailResponse>);
@@ -297,7 +297,7 @@ export function useAuthForgotPasswordService() {
   return useCallback(
     (data: AuthForgotPasswordRequest, requestConfig?: RequestConfigType) => {
       return fetchBase(`${API_URL}/v1/auth/forgot/password`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthForgotPasswordResponse>);
@@ -318,8 +318,8 @@ export function useAuthResetPasswordService() {
 
   return useCallback(
     (data: AuthResetPasswordRequest, requestConfig?: RequestConfigType) => {
-      return fetchBase(API_URL + "/v1/auth/password/reset", {
-        method: "POST",
+      return fetchBase(API_URL + '/v1/auth/password/reset', {
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthResetPasswordResponse>);
@@ -336,9 +336,9 @@ export function useAuthForgotPasswordWithFastAPIService() {
     ): Promise<BaseResponseModel<void>> => {
       try {
         const response = await fetch(`${API_URL}/v1/auth/forgot-password`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
         });
@@ -352,18 +352,18 @@ export function useAuthForgotPasswordWithFastAPIService() {
         if (
           response.ok &&
           result &&
-          typeof result === "object" &&
-          !("detail" in result)
+          typeof result === 'object' &&
+          !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ("status" in result) {
+          if ('status' in result) {
             return result as BaseResponseModel<void>;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
           return {
-            status: "success",
-            message: "Şifre sıfırlama bağlantısı e-postanıza gönderildi.",
+            status: 'success',
+            message: 'Şifre sıfırlama bağlantısı e-postanıza gönderildi.',
             data: undefined,
           };
         }
@@ -372,7 +372,7 @@ export function useAuthForgotPasswordWithFastAPIService() {
         const parsedError = parseAPIError(result, response);
 
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
           errors: parsedError.fieldErrors,
@@ -381,7 +381,7 @@ export function useAuthForgotPasswordWithFastAPIService() {
         // Network hatası
         const parsedError = parseAPIError(error);
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
         };
@@ -399,9 +399,9 @@ export function useAuthResetPasswordWithFastAPIService() {
     ): Promise<BaseResponseModel<void>> => {
       try {
         const response = await fetch(`${API_URL}/v1/auth/reset-password`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
         });
@@ -415,18 +415,18 @@ export function useAuthResetPasswordWithFastAPIService() {
         if (
           response.ok &&
           result &&
-          typeof result === "object" &&
-          !("detail" in result)
+          typeof result === 'object' &&
+          !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ("status" in result) {
+          if ('status' in result) {
             return result as BaseResponseModel<void>;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
           return {
-            status: "success",
-            message: "Şifreniz başarıyla sıfırlandı.",
+            status: 'success',
+            message: 'Şifreniz başarıyla sıfırlandı.',
             data: undefined,
           };
         }
@@ -435,7 +435,7 @@ export function useAuthResetPasswordWithFastAPIService() {
         const parsedError = parseAPIError(result, response);
 
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
           errors: parsedError.fieldErrors,
@@ -444,7 +444,7 @@ export function useAuthResetPasswordWithFastAPIService() {
         // Network hatası
         const parsedError = parseAPIError(error);
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
         };
@@ -460,9 +460,9 @@ export function useAuthConfirmEmailWithFastAPIService() {
     async (data: AuthConfirmEmailRequest): Promise<BaseResponseModel<void>> => {
       try {
         const response = await fetch(`${API_URL}/v1/auth/email/confirm`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
         });
@@ -476,18 +476,18 @@ export function useAuthConfirmEmailWithFastAPIService() {
         if (
           response.ok &&
           result &&
-          typeof result === "object" &&
-          !("detail" in result)
+          typeof result === 'object' &&
+          !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ("status" in result) {
+          if ('status' in result) {
             return result as BaseResponseModel<void>;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
           return {
-            status: "success",
-            message: "E-posta adresiniz başarıyla doğrulandı.",
+            status: 'success',
+            message: 'E-posta adresiniz başarıyla doğrulandı.',
             data: undefined,
           };
         }
@@ -496,7 +496,7 @@ export function useAuthConfirmEmailWithFastAPIService() {
         const parsedError = parseAPIError(result, response);
 
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
           errors: parsedError.fieldErrors,
@@ -505,7 +505,7 @@ export function useAuthConfirmEmailWithFastAPIService() {
         // Network hatası
         const parsedError = parseAPIError(error);
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
         };
@@ -521,9 +521,9 @@ export function useAuthLogoutWithFastAPIService() {
     async (accessToken: string): Promise<BaseResponseModel<void>> => {
       try {
         const response = await fetch(`${API_URL}/v1/auth/logout`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
         });
@@ -537,18 +537,18 @@ export function useAuthLogoutWithFastAPIService() {
         if (
           response.ok &&
           result &&
-          typeof result === "object" &&
-          !("detail" in result)
+          typeof result === 'object' &&
+          !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ("status" in result) {
+          if ('status' in result) {
             return result as BaseResponseModel<void>;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
           return {
-            status: "success",
-            message: "Başarıyla çıkış yapıldı.",
+            status: 'success',
+            message: 'Başarıyla çıkış yapıldı.',
             data: undefined,
           };
         }
@@ -557,7 +557,7 @@ export function useAuthLogoutWithFastAPIService() {
         const parsedError = parseAPIError(result, response);
 
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
           errors: parsedError.fieldErrors,
@@ -566,7 +566,7 @@ export function useAuthLogoutWithFastAPIService() {
         // Network hatası
         const parsedError = parseAPIError(error);
         return {
-          status: "error",
+          status: 'error',
           message: parsedError.message,
           data: undefined,
         };
@@ -577,7 +577,7 @@ export function useAuthLogoutWithFastAPIService() {
 }
 
 export type AuthPatchMeRequest =
-  | Partial<Pick<User, "firstName" | "lastName" | "email">>
+  | Partial<Pick<User, 'firstName' | 'lastName' | 'email'>>
   | { password: string; oldPassword: string };
 
 export type AuthPatchMeResponse = User;
@@ -588,7 +588,7 @@ export function useAuthPatchMeService() {
   return useCallback(
     (data: AuthPatchMeRequest, requestConfig?: RequestConfigType) => {
       return fetch(`${API_URL}/v1/users/me`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthPatchMeResponse>);
@@ -605,7 +605,7 @@ export function useAuthGetMeService() {
   return useCallback(
     (requestConfig?: RequestConfigType) => {
       return fetch(`${API_URL}/v1/users/me`, {
-        method: "GET",
+        method: 'GET',
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthGetMeResponse>);
     },

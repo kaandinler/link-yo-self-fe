@@ -1,26 +1,26 @@
-"use client";
-import Button from "@mui/material/Button";
-import { useForm, FormProvider, useFormState } from "react-hook-form";
-import { useAuthPatchMeService } from "@/services/api/services/auth";
-import useAuthActions from "@/services/auth/use-auth-actions";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import Typography from "@mui/material/Typography";
-import FormTextInput from "@/components/form/text-input/form-text-input";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { useEffect } from "react";
-import useAuth from "@/services/auth/use-auth";
-import { useSnackbar } from "@/hooks/use-snackbar";
-import Link from "@/components/link";
-import FormAvatarInput from "@/components/form/avatar-input/form-avatar-input";
-import { FileEntity } from "@/services/api/types/file-entity";
-import useLeavePage from "@/services/leave-page/use-leave-page";
-import Box from "@mui/material/Box";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import { useTranslation } from "@/services/i18n/client";
-import { UserProviderEnum } from "@/services/api/types/user";
+'use client';
+import Button from '@mui/material/Button';
+import { useForm, FormProvider, useFormState } from 'react-hook-form';
+import { useAuthPatchMeService } from '@/services/api/services/auth';
+import useAuthActions from '@/services/auth/use-auth-actions';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import FormTextInput from '@/components/form/text-input/form-text-input';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import withPageRequiredAuth from '@/services/auth/with-page-required-auth';
+import { useEffect } from 'react';
+import useAuth from '@/services/auth/use-auth';
+import { useSnackbar } from '@/hooks/use-snackbar';
+import Link from '@/components/link';
+import FormAvatarInput from '@/components/form/avatar-input/form-avatar-input';
+import { FileEntity } from '@/services/api/types/file-entity';
+import useLeavePage from '@/services/leave-page/use-leave-page';
+import Box from '@mui/material/Box';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import { useTranslation } from '@/services/i18n/client';
+import { UserProviderEnum } from '@/services/api/types/user';
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
@@ -40,20 +40,20 @@ type EditProfileChangeEmailFormData = {
 };
 
 const useValidationBasicInfoSchema = () => {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
 
   return yup.object().shape({
     firstName: yup
       .string()
-      .required(t("profile:inputs.firstName.validation.required")),
+      .required(t('profile:inputs.firstName.validation.required')),
     lastName: yup
       .string()
-      .required(t("profile:inputs.lastName.validation.required")),
+      .required(t('profile:inputs.lastName.validation.required')),
   });
 };
 
 const useValidationChangeEmailSchema = () => {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const { user } = useAuth();
 
   return yup.object().shape({
@@ -61,44 +61,44 @@ const useValidationChangeEmailSchema = () => {
       .string()
       .notOneOf(
         [user?.email],
-        t("profile:inputs.email.validation.currentEmail")
+        t('profile:inputs.email.validation.currentEmail')
       )
-      .email(t("profile:inputs.email.validation.email"))
-      .required(t("profile:inputs.email.validation.required")),
+      .email(t('profile:inputs.email.validation.email'))
+      .required(t('profile:inputs.email.validation.required')),
     emailConfirmation: yup
       .string()
       .oneOf(
-        [yup.ref("email")],
-        t("profile:inputs.emailConfirmation.validation.match")
+        [yup.ref('email')],
+        t('profile:inputs.emailConfirmation.validation.match')
       )
-      .required(t("profile:inputs.emailConfirmation.validation.required")),
+      .required(t('profile:inputs.emailConfirmation.validation.required')),
   });
 };
 
 const useValidationChangePasswordSchema = () => {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
 
   return yup.object().shape({
     oldPassword: yup
       .string()
-      .min(6, t("profile:inputs.password.validation.min"))
-      .required(t("profile:inputs.password.validation.required")),
+      .min(6, t('profile:inputs.password.validation.min'))
+      .required(t('profile:inputs.password.validation.required')),
     password: yup
       .string()
-      .min(6, t("profile:inputs.password.validation.min"))
-      .required(t("profile:inputs.password.validation.required")),
+      .min(6, t('profile:inputs.password.validation.min'))
+      .required(t('profile:inputs.password.validation.required')),
     passwordConfirmation: yup
       .string()
       .oneOf(
-        [yup.ref("password")],
-        t("profile:inputs.passwordConfirmation.validation.match")
+        [yup.ref('password')],
+        t('profile:inputs.passwordConfirmation.validation.match')
       )
-      .required(t("profile:inputs.passwordConfirmation.validation.required")),
+      .required(t('profile:inputs.passwordConfirmation.validation.required')),
   });
 };
 
 function BasicInfoFormActions() {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -110,13 +110,13 @@ function BasicInfoFormActions() {
       disabled={isSubmitting}
       data-testid="save-profile"
     >
-      {t("profile:actions.submit")}
+      {t('profile:actions.submit')}
     </Button>
   );
 }
 
 function ChangeEmailFormActions() {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -128,13 +128,13 @@ function ChangeEmailFormActions() {
       disabled={isSubmitting}
       data-testid="save-email"
     >
-      {t("profile:actions.submit")}
+      {t('profile:actions.submit')}
     </Button>
   );
 }
 
 function ChangePasswordFormActions() {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -146,7 +146,7 @@ function ChangePasswordFormActions() {
       disabled={isSubmitting}
       data-testid="save-password"
     >
-      {t("profile:actions.submit")}
+      {t('profile:actions.submit')}
     </Button>
   );
 }
@@ -155,15 +155,15 @@ function FormBasicInfo() {
   const { setUser } = useAuthActions();
   const { user } = useAuth();
   const fetchAuthPatchMe = useAuthPatchMeService();
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const validationSchema = useValidationBasicInfoSchema();
   const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<EditProfileBasicInfoFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstName: '',
+      lastName: '',
       photo: undefined,
     },
   });
@@ -178,7 +178,7 @@ function FormBasicInfo() {
         Object.keys(data.errors) as Array<keyof EditProfileBasicInfoFormData>
       ).forEach((key) => {
         setError(key, {
-          type: "manual",
+          type: 'manual',
           message: t(
             `profile:inputs.${key}.validation.server.${data.errors[key]}`
           ),
@@ -191,16 +191,16 @@ function FormBasicInfo() {
     if (status === HTTP_CODES_ENUM.OK) {
       setUser(data);
 
-      enqueueSnackbar(t("profile:alerts.profile.success"), {
-        variant: "success",
+      enqueueSnackbar(t('profile:alerts.profile.success'), {
+        variant: 'success',
       });
     }
   });
 
   useEffect(() => {
     reset({
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
+      firstName: user?.firstName ?? '',
+      lastName: user?.lastName ?? '',
       photo: user?.photo,
     });
   }, [user, reset]);
@@ -211,7 +211,7 @@ function FormBasicInfo() {
         <form onSubmit={onSubmit}>
           <Grid container spacing={2} mb={3} mt={3}>
             <Grid size={{ xs: 12 }}>
-              <Typography variant="h6">{t("profile:title1")}</Typography>
+              <Typography variant="h6">{t('profile:title1')}</Typography>
             </Grid>
             <Grid size={{ xs: 12 }}>
               <FormAvatarInput<EditProfileBasicInfoFormData>
@@ -223,7 +223,7 @@ function FormBasicInfo() {
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileBasicInfoFormData>
                 name="firstName"
-                label={t("profile:inputs.firstName.label")}
+                label={t('profile:inputs.firstName.label')}
                 testId="first-name"
               />
             </Grid>
@@ -231,7 +231,7 @@ function FormBasicInfo() {
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileBasicInfoFormData>
                 name="lastName"
-                label={t("profile:inputs.lastName.label")}
+                label={t('profile:inputs.lastName.label')}
                 testId="last-name"
               />
             </Grid>
@@ -246,7 +246,7 @@ function FormBasicInfo() {
                   href="/profile"
                   data-testid="cancel-edit-profile"
                 >
-                  {t("profile:actions.cancel")}
+                  {t('profile:actions.cancel')}
                 </Button>
               </Box>
             </Grid>
@@ -260,15 +260,15 @@ function FormBasicInfo() {
 function FormChangeEmail() {
   const fetchAuthPatchMe = useAuthPatchMeService();
   const { enqueueSnackbar } = useSnackbar();
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const validationSchema = useValidationChangeEmailSchema();
   const { user } = useAuth();
 
   const methods = useForm<EditProfileChangeEmailFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      email: "",
-      emailConfirmation: "",
+      email: '',
+      emailConfirmation: '',
     },
   });
 
@@ -284,7 +284,7 @@ function FormChangeEmail() {
         Object.keys(data.errors) as Array<keyof EditProfileChangeEmailFormData>
       ).forEach((key) => {
         setError(key, {
-          type: "manual",
+          type: 'manual',
           message: t(
             `profile:inputs.${key}.validation.server.${data.errors[key]}`
           ),
@@ -297,8 +297,8 @@ function FormChangeEmail() {
     if (status === HTTP_CODES_ENUM.OK) {
       reset();
 
-      enqueueSnackbar(t("profile:alerts.email.success"), {
-        variant: "success",
+      enqueueSnackbar(t('profile:alerts.email.success'), {
+        variant: 'success',
         autoHideDuration: 15000,
       });
     }
@@ -310,7 +310,7 @@ function FormChangeEmail() {
         <form onSubmit={onSubmit}>
           <Grid container spacing={2} mb={3}>
             <Grid size={{ xs: 12 }}>
-              <Typography variant="h6">{t("profile:title2")}</Typography>
+              <Typography variant="h6">{t('profile:title2')}</Typography>
             </Grid>
             <Grid size={{ xs: 12 }}>
               <Typography variant="body1">{user?.email}</Typography>
@@ -318,7 +318,7 @@ function FormChangeEmail() {
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileChangeEmailFormData>
                 name="email"
-                label={t("profile:inputs.email.label")}
+                label={t('profile:inputs.email.label')}
                 type="email"
                 testId="email"
               />
@@ -327,7 +327,7 @@ function FormChangeEmail() {
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileChangeEmailFormData>
                 name="emailConfirmation"
-                label={t("profile:inputs.emailConfirmation.label")}
+                label={t('profile:inputs.emailConfirmation.label')}
                 type="email"
                 testId="email-confirmation"
               />
@@ -343,7 +343,7 @@ function FormChangeEmail() {
                   href="/profile"
                   data-testid="cancel-edit-email"
                 >
-                  {t("profile:actions.cancel")}
+                  {t('profile:actions.cancel')}
                 </Button>
               </Box>
             </Grid>
@@ -356,16 +356,16 @@ function FormChangeEmail() {
 
 function FormChangePassword() {
   const fetchAuthPatchMe = useAuthPatchMeService();
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile');
   const validationSchema = useValidationChangePasswordSchema();
   const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<EditProfileChangePasswordFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      oldPassword: "",
-      password: "",
-      passwordConfirmation: "",
+      oldPassword: '',
+      password: '',
+      passwordConfirmation: '',
     },
   });
 
@@ -384,7 +384,7 @@ function FormChangePassword() {
         >
       ).forEach((key) => {
         setError(key, {
-          type: "manual",
+          type: 'manual',
           message: t(
             `profile:inputs.${key}.validation.server.${data.errors[key]}`
           ),
@@ -397,8 +397,8 @@ function FormChangePassword() {
     if (status === HTTP_CODES_ENUM.OK) {
       reset();
 
-      enqueueSnackbar(t("profile:alerts.password.success"), {
-        variant: "success",
+      enqueueSnackbar(t('profile:alerts.password.success'), {
+        variant: 'success',
       });
     }
   });
@@ -409,12 +409,12 @@ function FormChangePassword() {
         <form onSubmit={onSubmit}>
           <Grid container spacing={2} mb={2}>
             <Grid size={{ xs: 12 }}>
-              <Typography variant="h6">{t("profile:title3")}</Typography>
+              <Typography variant="h6">{t('profile:title3')}</Typography>
             </Grid>
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileChangePasswordFormData>
                 name="oldPassword"
-                label={t("profile:inputs.oldPassword.label")}
+                label={t('profile:inputs.oldPassword.label')}
                 type="password"
                 testId="old-password"
               />
@@ -423,7 +423,7 @@ function FormChangePassword() {
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileChangePasswordFormData>
                 name="password"
-                label={t("profile:inputs.password.label")}
+                label={t('profile:inputs.password.label')}
                 type="password"
                 testId="new-password"
               />
@@ -432,7 +432,7 @@ function FormChangePassword() {
             <Grid size={{ xs: 12 }}>
               <FormTextInput<EditProfileChangePasswordFormData>
                 name="passwordConfirmation"
-                label={t("profile:inputs.passwordConfirmation.label")}
+                label={t('profile:inputs.passwordConfirmation.label')}
                 type="password"
                 testId="password-confirmation"
               />
@@ -448,7 +448,7 @@ function FormChangePassword() {
                   href="/profile"
                   data-testid="cancel-edit-password"
                 >
-                  {t("profile:actions.cancel")}
+                  {t('profile:actions.cancel')}
                 </Button>
               </Box>
             </Grid>

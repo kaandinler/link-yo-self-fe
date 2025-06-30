@@ -1,27 +1,27 @@
-"use client";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import TextField from "@mui/material/TextField";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+'use client';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 import React, {
   ForwardedRef,
   forwardRef,
   useState,
   useRef,
   useEffect,
-} from "react";
+} from 'react';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import { ItemProps, ListProps, Virtuoso } from "react-virtuoso";
-import ListItemText from "@mui/material/ListItemText";
-import Box from "@mui/material/Box";
+} from 'react-hook-form';
+import { ItemProps, ListProps, Virtuoso } from 'react-virtuoso';
+import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box';
 
 type MultipleSelectExtendedInputProps<T extends object> = {
   label: string;
@@ -87,7 +87,7 @@ function MultipleSelectExtendedInputRaw<T extends object>(
 
   useEffect(() => {
     if (isOpen) {
-      boxRef.current?.scrollIntoView({ behavior: "smooth" });
+      boxRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isOpen]);
 
@@ -98,7 +98,7 @@ function MultipleSelectExtendedInputRaw<T extends object>(
           <TextField
             ref={ref}
             name={props.name}
-            value={props.value ? props.renderSelected(props.value) : ""}
+            value={props.value ? props.renderSelected(props.value) : ''}
             onBlur={props.onBlur}
             label={props.label}
             variant="outlined"
@@ -117,7 +117,7 @@ function MultipleSelectExtendedInputRaw<T extends object>(
                 readOnly: true,
               },
               formHelperText: {
-                ["data-testid" as string]: `${props.testId}-error`,
+                ['data-testid' as string]: `${props.testId}-error`,
               },
             }}
           />
@@ -128,7 +128,7 @@ function MultipleSelectExtendedInputRaw<T extends object>(
             <CardContent
               sx={{
                 p: 0,
-                "&:last-child": {
+                '&:last-child': {
                   pb: 0,
                 },
               }}
@@ -204,7 +204,7 @@ function FormMultipleSelectExtendedInput<
   T extends object = object,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
-  props: Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue"> &
+  props: Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'> &
     MultipleSelectExtendedInputProps<T>
 ) {
   return (
@@ -223,13 +223,13 @@ function FormMultipleSelectExtendedInput<
           renderOption={props.renderOption}
           renderSelected={props.renderSelected}
           keyExtractor={props.keyExtractor}
-          search={props.isSearchable ? props.search : ""}
+          search={props.isSearchable ? props.search : ''}
           onSearchChange={
             props.isSearchable ? props.onSearchChange : () => undefined
           }
           onEndReached={props.isSearchable ? props.onEndReached : undefined}
-          searchLabel={props.isSearchable ? props.searchLabel : ""}
-          searchPlaceholder={props.isSearchable ? props.searchPlaceholder : ""}
+          searchLabel={props.isSearchable ? props.searchLabel : ''}
+          searchPlaceholder={props.isSearchable ? props.searchPlaceholder : ''}
         />
       )}
     />

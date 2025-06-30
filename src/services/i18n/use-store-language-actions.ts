@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { StoreLanguageActionsContext } from "./store-language-context";
+import { useContext } from 'react';
+import { StoreLanguageActionsContext } from './store-language-context';
 
 function useStoreLanguageActions() {
   return useContext(StoreLanguageActionsContext);

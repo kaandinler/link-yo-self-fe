@@ -1,6 +1,6 @@
 // Using CommonJS require since this is a node script
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars
-const { execSync } = require("child_process");
+const { execSync } = require('child_process');
 
 const collectPromisesResults = (callback) => async (prevValues) => {
   const results = await callback(prevValues);
@@ -18,19 +18,19 @@ module.exports = {
         type: args.type,
         referenceType: args.referenceType,
         propertyForSelect: args.propertyForSelect,
-        isOptional: args.isOptional === "true",
-        isShowInTable: args.isShowInTable === "true",
+        isOptional: args.isOptional === 'true',
+        isShowInTable: args.isShowInTable === 'true',
       });
     }
 
     const result = await prompter
       .prompt({
-        type: "input",
-        name: "name",
+        type: 'input',
+        name: 'name',
         message: "Entity name (e.g. 'User')",
         validate: (input) => {
           if (!input.trim()) {
-            return "Entity name is required";
+            return 'Entity name is required';
           }
 
           return true;
@@ -42,12 +42,12 @@ module.exports = {
       .then(
         collectPromisesResults(() => {
           return prompter.prompt({
-            type: "input",
-            name: "property",
+            type: 'input',
+            name: 'property',
             message: "Property name (e.g. 'firstName')",
             validate: (input) => {
               if (!input.trim()) {
-                return "Property name is required";
+                return 'Property name is required';
               }
 
               return true;
@@ -62,28 +62,28 @@ module.exports = {
         collectPromisesResults((rootValues) => {
           return prompter
             .prompt({
-              type: "select",
-              name: "kind",
-              message: "Select kind of type",
+              type: 'select',
+              name: 'kind',
+              message: 'Select kind of type',
               choices: [
                 {
-                  message: "Primitive and Date (string, number, Date, etc)",
-                  value: "primitive",
+                  message: 'Primitive and Date (string, number, Date, etc)',
+                  value: 'primitive',
                 },
-                { message: "Reference to entity", value: "reference" },
+                { message: 'Reference to entity', value: 'reference' },
               ],
             })
             .then(
               collectPromisesResults((values) => {
-                if (values.kind === "reference") {
+                if (values.kind === 'reference') {
                   return prompter
                     .prompt({
-                      type: "input",
-                      name: "type",
+                      type: 'input',
+                      name: 'type',
                       message: "Entity name (e.g. 'File')",
                       validate: (input) => {
                         if (!input.trim()) {
-                          return "Entity name is required";
+                          return 'Entity name is required';
                         }
 
                         return true;
@@ -96,26 +96,26 @@ module.exports = {
                       collectPromisesResults((referenceValues) => {
                         return prompter
                           .prompt({
-                            type: "select",
-                            name: "referenceType",
-                            message: "Select type of reference",
+                            type: 'select',
+                            name: 'referenceType',
+                            message: 'Select type of reference',
                             choices: [
                               {
                                 message: `Single. ${rootValues.property}: ${referenceValues.type}`,
-                                value: "toOne",
+                                value: 'toOne',
                               },
                               {
                                 message: `Multiple. ${rootValues.property}: ${referenceValues.type}[]`,
-                                value: "toMany",
+                                value: 'toMany',
                               },
                             ],
                           })
                           .then(
                             collectPromisesResults((referenceTypeValues) => {
-                              if (referenceValues.type !== "File") {
+                              if (referenceValues.type !== 'File') {
                                 return prompter.prompt({
-                                  type: "input",
-                                  name: "propertyForSelect",
+                                  type: 'input',
+                                  name: 'propertyForSelect',
                                   message: `Property name in ${referenceValues.type} for select (e.g. 'name')`,
                                   validate: (input) => {
                                     if (!input.trim()) {
@@ -138,10 +138,10 @@ module.exports = {
                 }
 
                 return prompter.prompt({
-                  type: "select",
-                  name: "type",
-                  message: "Property type",
-                  choices: ["string", "number", "boolean", "Date"],
+                  type: 'select',
+                  name: 'type',
+                  message: 'Property type',
+                  choices: ['string', 'number', 'boolean', 'Date'],
                 });
               })
             );
@@ -150,9 +150,9 @@ module.exports = {
       .then(
         collectPromisesResults(() => {
           return prompter.prompt({
-            type: "confirm",
-            name: "isOptional",
-            message: "Is the property optional?",
+            type: 'confirm',
+            name: 'isOptional',
+            message: 'Is the property optional?',
             initial: true,
           });
         })
@@ -160,16 +160,16 @@ module.exports = {
       .then(
         collectPromisesResults(() => {
           return prompter.prompt({
-            type: "confirm",
-            name: "isShowInTable",
-            message: "Do we need to show the field in the list?",
+            type: 'confirm',
+            name: 'isShowInTable',
+            message: 'Do we need to show the field in the list?',
             initial: true,
           });
         })
       );
 
     if (!result.propertyForSelect) {
-      result.propertyForSelect = "";
+      result.propertyForSelect = '';
     }
 
     return result;

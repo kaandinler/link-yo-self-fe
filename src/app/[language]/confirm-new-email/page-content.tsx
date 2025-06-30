@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
+import { useEffect } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 import {
   useAuthConfirmNewEmailService,
   useAuthGetMeService,
-} from "@/services/api/services/auth";
-import { useRouter } from "next/navigation";
-import { useSnackbar } from "@/hooks/use-snackbar";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import { useTranslation } from "@/services/i18n/client";
-import useAuthActions from "@/services/auth/use-auth-actions";
-import useAuth from "@/services/auth/use-auth";
+} from '@/services/api/services/auth';
+import { useRouter } from 'next/navigation';
+import { useSnackbar } from '@/hooks/use-snackbar';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import { useTranslation } from '@/services/i18n/client';
+import useAuthActions from '@/services/auth/use-auth-actions';
+import useAuth from '@/services/auth/use-auth';
 
 export default function ConfirmNewEmail() {
   const { enqueueSnackbar } = useSnackbar();
   const fetchConfirmNewEmail = useAuthConfirmNewEmailService();
   const fetchAuthGetMe = useAuthGetMeService();
   const router = useRouter();
-  const { t } = useTranslation("confirm-new-email");
+  const { t } = useTranslation('confirm-new-email');
   const { setUser } = useAuthActions();
   const { user, isLoaded } = useAuth();
 
@@ -30,7 +30,7 @@ export default function ConfirmNewEmail() {
       if (!isLoaded) return;
 
       const params = new URLSearchParams(window.location.search);
-      const hash = params.get("hash");
+      const hash = params.get('hash');
 
       if (!hash) return;
 
@@ -39,8 +39,8 @@ export default function ConfirmNewEmail() {
       });
 
       if (status === HTTP_CODES_ENUM.NO_CONTENT) {
-        enqueueSnackbar(t("confirm-new-email:emailConfirmed"), {
-          variant: "success",
+        enqueueSnackbar(t('confirm-new-email:emailConfirmed'), {
+          variant: 'success',
         });
 
         if (user) {
@@ -50,15 +50,15 @@ export default function ConfirmNewEmail() {
             setUser(data);
           }
 
-          router.replace("/profile");
+          router.replace('/profile');
         } else {
-          router.replace("/");
+          router.replace('/');
         }
       } else {
-        enqueueSnackbar(t("confirm-new-email:emailConfirmFailed"), {
-          variant: "error",
+        enqueueSnackbar(t('confirm-new-email:emailConfirmFailed'), {
+          variant: 'error',
         });
-        router.replace("/");
+        router.replace('/');
       }
     };
 
@@ -79,9 +79,9 @@ export default function ConfirmNewEmail() {
         <Grid size={{ xs: 12 }}>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               p: 2,
             }}
           >

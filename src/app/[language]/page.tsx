@@ -1,12 +1,12 @@
 // app/[language]/page.tsx - Ana sayfa
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import useAuth from "@/services/auth/use-auth";
-import { determineUserDestination } from "@/services/auth/user-routing-utils";
-import LandingPage from "./landing-page/page-content";
-import LoadingSpinner from "@/components/loading-spinner";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import useAuth from '@/services/auth/use-auth';
+import { determineUserDestination } from '@/services/auth/user-routing-utils';
+import LandingPage from './landing-page/page-content';
+import LoadingSpinner from '@/components/loading-spinner';
 
 const HomePage: React.FC = () => {
   const { user, isLoaded } = useAuth();
@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     if (isLoaded && user) {
       // Giriş yapmış kullanıcıyı uygun sayfaya yönlendir
-      const destination = determineUserDestination(user, "/");
+      const destination = determineUserDestination(user, '/');
       if (destination) {
         router.push(destination);
       }

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 import {
   createTheme,
   ThemeProvider as MuiThemeProvider,
-} from "@mui/material/styles";
-import { useMemo, PropsWithChildren } from "react";
+} from '@mui/material/styles';
+import { useMemo, PropsWithChildren } from 'react';
 
 function ThemeProvider(props: PropsWithChildren<{}>) {
   const theme = useMemo(
     () =>
       createTheme({
         cssVariables: {
-          colorSchemeSelector: "class",
+          colorSchemeSelector: 'class',
         },
         colorSchemes: { light: true, dark: true },
       }),

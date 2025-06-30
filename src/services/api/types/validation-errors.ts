@@ -1,4 +1,4 @@
-import HTTP_CODES_ENUM from "./http-codes";
+import HTTP_CODES_ENUM from './http-codes';
 
 export type ValidationErrors = {
   status: HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY;

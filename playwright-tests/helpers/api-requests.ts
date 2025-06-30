@@ -1,4 +1,4 @@
-import { expect, request } from "@playwright/test";
+import { expect, request } from '@playwright/test';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -10,7 +10,7 @@ export async function apiCreateNewUser(
 ) {
   const createRequestContext = await request.newContext();
   const response = await createRequestContext.post(
-    apiUrl + "/v1/auth/email/register",
+    apiUrl + '/v1/auth/email/register',
     {
       data: {
         firstName,

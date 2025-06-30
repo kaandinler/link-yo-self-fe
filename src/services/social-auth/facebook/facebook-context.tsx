@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export type FacebookAuthResponse = {
   accessToken: string;
@@ -17,6 +17,6 @@ export const FacebookContext = createContext<{
   login: () => Promise<FacebookAuthLoginResponse>;
 }>({
   login: async () => {
-    throw new Error("FacebookAuthProvider not mounted");
+    throw new Error('FacebookAuthProvider not mounted');
   },
 });

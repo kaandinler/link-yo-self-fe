@@ -1,18 +1,18 @@
-"use client";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Visibility from "@mui/icons-material/Visibility";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
-import React, { ChangeEvent, forwardRef, useState } from "react";
+'use client';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
+import React, { ChangeEvent, forwardRef, useState } from 'react';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import { InputBaseComponentProps } from "@mui/material/InputBase/InputBase";
-import { SxProps, Theme } from "@mui/material/styles";
+} from 'react-hook-form';
+import { InputBaseComponentProps } from '@mui/material/InputBase/InputBase';
+import { SxProps, Theme } from '@mui/material/styles';
 
 type TextInputProps = {
   label: string;
@@ -27,7 +27,7 @@ type TextInputProps = {
   multiline?: boolean;
   minRows?: number;
   maxRows?: number;
-  size?: "small" | "medium";
+  size?: 'small' | 'medium';
   sx?: SxProps<Theme>;
   InputLabelProps?: {
     shrink?: boolean;
@@ -65,7 +65,7 @@ const TextInput = forwardRef<
       onBlur={props.onBlur}
       label={props.label}
       autoFocus={props.autoFocus}
-      type={props.type === "password" && isShowPassword ? "text" : props.type}
+      type={props.type === 'password' && isShowPassword ? 'text' : props.type}
       variant="outlined"
       fullWidth
       error={!!props.error}
@@ -80,13 +80,13 @@ const TextInput = forwardRef<
       InputLabelProps={props.InputLabelProps}
       slotProps={{
         formHelperText: {
-          ["data-testid" as string]: `${props.testId}-error`,
+          ['data-testid' as string]: `${props.testId}-error`,
         },
         input: {
           readOnly: props.readOnly,
           inputComponent: props.inputComponent,
           endAdornment:
-            props.type === "password" ? (
+            props.type === 'password' ? (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
@@ -108,7 +108,7 @@ function FormTextInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
-  props: Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue"> &
+  props: Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'> &
     TextInputProps
 ) {
   return (

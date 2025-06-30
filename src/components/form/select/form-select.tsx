@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { ForwardedRef, forwardRef } from "react";
+import { ForwardedRef, forwardRef } from 'react';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormHelperText from "@mui/material/FormHelperText";
+} from 'react-hook-form';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
 
 type SelectInputProps<T extends object> = {
   label: string;
@@ -23,7 +23,7 @@ type SelectInputProps<T extends object> = {
   testId?: string;
   keyValue: keyof T;
   options: T[];
-  size?: "small" | "medium";
+  size?: 'small' | 'medium';
   renderOption: (option: T) => React.ReactNode;
 };
 
@@ -44,7 +44,7 @@ function SelectInputRaw<T extends object>(
         labelId={`select-label-${props.name}`}
         id={`select-${props.name}`}
         size={props.size}
-        value={props.value?.[props.keyValue]?.toString() ?? ""}
+        value={props.value?.[props.keyValue]?.toString() ?? ''}
         label={props.label}
         inputProps={{
           readOnly: props.readOnly,
@@ -97,7 +97,7 @@ function FormSelectInput<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
   props: SelectInputProps<T> &
-    Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue">
+    Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'>
 ) {
   return (
     <Controller

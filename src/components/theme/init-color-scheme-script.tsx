@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import InitColorSchemeScriptMui from "@mui/material/InitColorSchemeScript";
+import InitColorSchemeScriptMui from '@mui/material/InitColorSchemeScript';
 
 function InitColorSchemeScript() {
   return <InitColorSchemeScriptMui attribute="class" />;

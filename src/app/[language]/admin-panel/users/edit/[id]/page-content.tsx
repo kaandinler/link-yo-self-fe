@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import Button from "@mui/material/Button";
-import { useForm, FormProvider, useFormState } from "react-hook-form";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import Typography from "@mui/material/Typography";
-import FormTextInput from "@/components/form/text-input/form-text-input";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { useEffect } from "react";
-import { useSnackbar } from "@/hooks/use-snackbar";
-import Link from "@/components/link";
-import FormAvatarInput from "@/components/form/avatar-input/form-avatar-input";
-import { FileEntity } from "@/services/api/types/file-entity";
-import useLeavePage from "@/services/leave-page/use-leave-page";
-import Box from "@mui/material/Box";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import { useTranslation } from "@/services/i18n/client";
+import Button from '@mui/material/Button';
+import { useForm, FormProvider, useFormState } from 'react-hook-form';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import FormTextInput from '@/components/form/text-input/form-text-input';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import withPageRequiredAuth from '@/services/auth/with-page-required-auth';
+import { useEffect } from 'react';
+import { useSnackbar } from '@/hooks/use-snackbar';
+import Link from '@/components/link';
+import FormAvatarInput from '@/components/form/avatar-input/form-avatar-input';
+import { FileEntity } from '@/services/api/types/file-entity';
+import useLeavePage from '@/services/leave-page/use-leave-page';
+import Box from '@mui/material/Box';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import { useTranslation } from '@/services/i18n/client';
 import {
   useGetUserService,
   usePatchUserService,
-} from "@/services/api/services/users";
-import { useParams } from "next/navigation";
-import { Role, RoleEnum } from "@/services/api/types/role";
-import FormSelectInput from "@/components/form/select/form-select";
+} from '@/services/api/services/users';
+import { useParams } from 'next/navigation';
+import { Role, RoleEnum } from '@/services/api/types/role';
+import FormSelectInput from '@/components/form/select/form-select';
 
 type EditUserFormData = {
   email: string;
@@ -40,24 +40,24 @@ type ChangeUserPasswordFormData = {
 };
 
 const useValidationEditUserSchema = () => {
-  const { t } = useTranslation("admin-panel-users-edit");
+  const { t } = useTranslation('admin-panel-users-edit');
 
   return yup.object().shape({
     email: yup
       .string()
-      .email(t("admin-panel-users-edit:inputs.email.validation.invalid"))
+      .email(t('admin-panel-users-edit:inputs.email.validation.invalid'))
       .required(
-        t("admin-panel-users-edit:inputs.firstName.validation.required")
+        t('admin-panel-users-edit:inputs.firstName.validation.required')
       ),
     firstName: yup
       .string()
       .required(
-        t("admin-panel-users-edit:inputs.firstName.validation.required")
+        t('admin-panel-users-edit:inputs.firstName.validation.required')
       ),
     lastName: yup
       .string()
       .required(
-        t("admin-panel-users-edit:inputs.lastName.validation.required")
+        t('admin-panel-users-edit:inputs.lastName.validation.required')
       ),
     role: yup
       .object()
@@ -65,36 +65,36 @@ const useValidationEditUserSchema = () => {
         id: yup.mixed<string | number>().required(),
         name: yup.string(),
       })
-      .required(t("admin-panel-users-edit:inputs.role.validation.required")),
+      .required(t('admin-panel-users-edit:inputs.role.validation.required')),
   });
 };
 
 const useValidationChangePasswordSchema = () => {
-  const { t } = useTranslation("admin-panel-users-edit");
+  const { t } = useTranslation('admin-panel-users-edit');
 
   return yup.object().shape({
     password: yup
       .string()
-      .min(6, t("admin-panel-users-edit:inputs.password.validation.min"))
+      .min(6, t('admin-panel-users-edit:inputs.password.validation.min'))
       .required(
-        t("admin-panel-users-edit:inputs.password.validation.required")
+        t('admin-panel-users-edit:inputs.password.validation.required')
       ),
     passwordConfirmation: yup
       .string()
       .oneOf(
-        [yup.ref("password")],
-        t("admin-panel-users-edit:inputs.passwordConfirmation.validation.match")
+        [yup.ref('password')],
+        t('admin-panel-users-edit:inputs.passwordConfirmation.validation.match')
       )
       .required(
         t(
-          "admin-panel-users-edit:inputs.passwordConfirmation.validation.required"
+          'admin-panel-users-edit:inputs.passwordConfirmation.validation.required'
         )
       ),
   });
 };
 
 function EditUserFormActions() {
-  const { t } = useTranslation("admin-panel-users-edit");
+  const { t } = useTranslation('admin-panel-users-edit');
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -105,13 +105,13 @@ function EditUserFormActions() {
       type="submit"
       disabled={isSubmitting}
     >
-      {t("admin-panel-users-edit:actions.submit")}
+      {t('admin-panel-users-edit:actions.submit')}
     </Button>
   );
 }
 
 function ChangePasswordUserFormActions() {
-  const { t } = useTranslation("admin-panel-users-edit");
+  const { t } = useTranslation('admin-panel-users-edit');
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -122,7 +122,7 @@ function ChangePasswordUserFormActions() {
       type="submit"
       disabled={isSubmitting}
     >
-      {t("admin-panel-users-edit:actions.submit")}
+      {t('admin-panel-users-edit:actions.submit')}
     </Button>
   );
 }
@@ -132,16 +132,16 @@ function FormEditUser() {
   const userId = params.id;
   const fetchGetUser = useGetUserService();
   const fetchPatchUser = usePatchUserService();
-  const { t } = useTranslation("admin-panel-users-edit");
+  const { t } = useTranslation('admin-panel-users-edit');
   const validationSchema = useValidationEditUserSchema();
   const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<EditUserFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      email: "",
-      firstName: "",
-      lastName: "",
+      email: '',
+      firstName: '',
+      lastName: '',
       role: undefined,
       photo: undefined,
     },
@@ -150,7 +150,7 @@ function FormEditUser() {
   const { handleSubmit, setError, reset } = methods;
 
   const onSubmit = handleSubmit(async (formData) => {
-    const isEmailDirty = methods.getFieldState("email").isDirty;
+    const isEmailDirty = methods.getFieldState('email').isDirty;
     const { data, status } = await fetchPatchUser({
       id: userId,
       data: {
@@ -162,7 +162,7 @@ function FormEditUser() {
       (Object.keys(data.errors) as Array<keyof EditUserFormData>).forEach(
         (key) => {
           setError(key, {
-            type: "manual",
+            type: 'manual',
             message: t(
               `admin-panel-users-edit:inputs.${key}.validation.server.${data.errors[key]}`
             ),
@@ -173,8 +173,8 @@ function FormEditUser() {
     }
     if (status === HTTP_CODES_ENUM.OK) {
       reset(formData);
-      enqueueSnackbar(t("admin-panel-users-edit:alerts.user.success"), {
-        variant: "success",
+      enqueueSnackbar(t('admin-panel-users-edit:alerts.user.success'), {
+        variant: 'success',
       });
     }
   });
@@ -185,9 +185,9 @@ function FormEditUser() {
 
       if (status === HTTP_CODES_ENUM.OK) {
         reset({
-          email: user?.email ?? "",
-          firstName: user?.firstName ?? "",
-          lastName: user?.lastName ?? "",
+          email: user?.email ?? '',
+          firstName: user?.firstName ?? '',
+          lastName: user?.lastName ?? '',
           role: {
             id: Number(user?.role?.id),
           },
@@ -206,7 +206,7 @@ function FormEditUser() {
           <Grid container spacing={2} mb={3} mt={3}>
             <Grid size={{ xs: 12 }}>
               <Typography variant="h6">
-                {t("admin-panel-users-edit:title1")}
+                {t('admin-panel-users-edit:title1')}
               </Typography>
             </Grid>
             <Grid size={{ xs: 12 }}>
@@ -217,7 +217,7 @@ function FormEditUser() {
               <FormTextInput<EditUserFormData>
                 name="email"
                 testId="email"
-                label={t("admin-panel-users-edit:inputs.email.label")}
+                label={t('admin-panel-users-edit:inputs.email.label')}
               />
             </Grid>
 
@@ -225,7 +225,7 @@ function FormEditUser() {
               <FormTextInput<EditUserFormData>
                 name="firstName"
                 testId="first-name"
-                label={t("admin-panel-users-edit:inputs.firstName.label")}
+                label={t('admin-panel-users-edit:inputs.firstName.label')}
               />
             </Grid>
 
@@ -233,15 +233,15 @@ function FormEditUser() {
               <FormTextInput<EditUserFormData>
                 name="lastName"
                 testId="last-name"
-                label={t("admin-panel-users-edit:inputs.lastName.label")}
+                label={t('admin-panel-users-edit:inputs.lastName.label')}
               />
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-              <FormSelectInput<EditUserFormData, Pick<Role, "id">>
+              <FormSelectInput<EditUserFormData, Pick<Role, 'id'>>
                 name="role"
                 testId="role"
-                label={t("admin-panel-users-edit:inputs.role.label")}
+                label={t('admin-panel-users-edit:inputs.role.label')}
                 options={[
                   {
                     id: RoleEnum.ADMIN,
@@ -266,7 +266,7 @@ function FormEditUser() {
                   LinkComponent={Link}
                   href="/admin-panel/users"
                 >
-                  {t("admin-panel-users-edit:actions.cancel")}
+                  {t('admin-panel-users-edit:actions.cancel')}
                 </Button>
               </Box>
             </Grid>
@@ -281,15 +281,15 @@ function FormChangePasswordUser() {
   const params = useParams<{ id: string }>();
   const userId = params.id;
   const fetchPatchUser = usePatchUserService();
-  const { t } = useTranslation("admin-panel-users-edit");
+  const { t } = useTranslation('admin-panel-users-edit');
   const validationSchema = useValidationChangePasswordSchema();
   const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<ChangeUserPasswordFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      password: "",
-      passwordConfirmation: "",
+      password: '',
+      passwordConfirmation: '',
     },
   });
 
@@ -305,7 +305,7 @@ function FormChangePasswordUser() {
         Object.keys(data.errors) as Array<keyof ChangeUserPasswordFormData>
       ).forEach((key) => {
         setError(key, {
-          type: "manual",
+          type: 'manual',
           message: t(
             `admin-panel-users-edit:inputs.${key}.validation.server.${data.errors[key]}`
           ),
@@ -315,8 +315,8 @@ function FormChangePasswordUser() {
     }
     if (status === HTTP_CODES_ENUM.OK) {
       reset();
-      enqueueSnackbar(t("admin-panel-users-edit:alerts.password.success"), {
-        variant: "success",
+      enqueueSnackbar(t('admin-panel-users-edit:alerts.password.success'), {
+        variant: 'success',
       });
     }
   });
@@ -328,7 +328,7 @@ function FormChangePasswordUser() {
           <Grid container spacing={2} mb={3} mt={3}>
             <Grid size={{ xs: 12 }}>
               <Typography variant="h6">
-                {t("admin-panel-users-edit:title2")}
+                {t('admin-panel-users-edit:title2')}
               </Typography>
             </Grid>
 
@@ -336,7 +336,7 @@ function FormChangePasswordUser() {
               <FormTextInput<ChangeUserPasswordFormData>
                 name="password"
                 type="password"
-                label={t("admin-panel-users-edit:inputs.password.label")}
+                label={t('admin-panel-users-edit:inputs.password.label')}
               />
             </Grid>
 
@@ -344,7 +344,7 @@ function FormChangePasswordUser() {
               <FormTextInput<ChangeUserPasswordFormData>
                 name="passwordConfirmation"
                 label={t(
-                  "admin-panel-users-edit:inputs.passwordConfirmation.label"
+                  'admin-panel-users-edit:inputs.passwordConfirmation.label'
                 )}
                 type="password"
               />
@@ -359,7 +359,7 @@ function FormChangePasswordUser() {
                   LinkComponent={Link}
                   href="/admin-panel/users"
                 >
-                  {t("admin-panel-users-edit:actions.cancel")}
+                  {t('admin-panel-users-edit:actions.cancel')}
                 </Button>
               </Box>
             </Grid>

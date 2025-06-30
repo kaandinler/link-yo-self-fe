@@ -1,20 +1,20 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   LocalizationProvider,
   TimePicker,
   TimeStepOptions,
   TimeView,
-} from "@mui/x-date-pickers";
+} from '@mui/x-date-pickers';
 import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-} from "react-hook-form";
-import { ForwardedRef, forwardRef } from "react";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import useLanguage from "@/services/i18n/use-language";
-import { getValueByKey } from "@/components/form/date-pickers/helper";
+} from 'react-hook-form';
+import { ForwardedRef, forwardRef } from 'react';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import useLanguage from '@/services/i18n/use-language';
+import { getValueByKey } from '@/components/form/date-pickers/helper';
 
 type ValueDateType = Date | null | undefined;
 type TimePickerFieldProps = {
@@ -92,7 +92,7 @@ function FormTimePickerInput<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
   props: TimePickerFieldProps &
-    Pick<ControllerProps<TFieldValues, TName>, "name" | "defaultValue">
+    Pick<ControllerProps<TFieldValues, TName>, 'name' | 'defaultValue'>
 ) {
   return (
     <Controller

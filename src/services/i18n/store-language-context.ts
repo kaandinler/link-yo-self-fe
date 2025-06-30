@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext } from "react";
+import { createContext } from 'react';
 export type Language = string | null;
 
 export const StoreLanguageContext = createContext<{

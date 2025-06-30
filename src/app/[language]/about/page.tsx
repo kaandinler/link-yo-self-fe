@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 import {
   Star,
   Users,
@@ -6,13 +6,13 @@ import {
   Heart,
   CheckCircle,
   ArrowRight,
-} from "lucide-react";
-import Link from "next/link";
+} from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: "About - LinkYoSelf",
+  title: 'About - LinkYoSelf',
   description:
-    "Learn more about LinkYoSelf and our mission to connect creators with their audience.",
+    'Learn more about LinkYoSelf and our mission to connect creators with their audience.',
 };
 
 export default function AboutPage() {
@@ -31,7 +31,7 @@ export default function AboutPage() {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
               About
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}
+                {' '}
                 LinkYoSelf
               </span>
             </h1>
@@ -126,7 +126,7 @@ export default function AboutPage() {
             <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
               Everything you need to
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                {" "}
+                {' '}
                 succeed
               </span>
             </h2>
@@ -233,12 +233,12 @@ export default function AboutPage() {
               <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 shadow-2xl">
                 <div className="space-y-6">
                   {[
-                    "Simple and intuitive interface",
-                    "Unlimited links and customization",
-                    "Advanced analytics and insights",
-                    "Mobile-responsive designs",
-                    "SEO-optimized pages",
-                    "Reliable 99.9% uptime",
+                    'Simple and intuitive interface',
+                    'Unlimited links and customization',
+                    'Advanced analytics and insights',
+                    'Mobile-responsive designs',
+                    'SEO-optimized pages',
+                    'Reliable 99.9% uptime',
                   ].map((feature, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">

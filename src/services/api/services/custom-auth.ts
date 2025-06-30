@@ -1,8 +1,8 @@
-import { useCallback } from "react";
-import useFetch from "../use-fetch";
-import { API_URL } from "../config";
-import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { CustomLoginResponse } from "../types/custom-user";
+import { useCallback } from 'react';
+import useFetch from '../use-fetch';
+import { API_URL } from '../config';
+import wrapperFetchJsonResponse from '../wrapper-fetch-json-response';
+import { CustomLoginResponse } from '../types/custom-user';
 
 // Login request type
 export type CustomAuthLoginRequest = {
@@ -18,7 +18,7 @@ export function useCustomAuthLoginService() {
     (data: CustomAuthLoginRequest) => {
       // Update the endpoint to match your FastAPI endpoint
       return fetchBase(`${API_URL}/auth/token`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
       }).then(wrapperFetchJsonResponse<CustomLoginResponse>);
     },
@@ -33,7 +33,7 @@ export function useCustomAuthMeService() {
   return useCallback(() => {
     // Update the endpoint to match your FastAPI endpoint for getting user info
     return fetchBase(`${API_URL}/auth/me`, {
-      method: "GET",
+      method: 'GET',
     }).then(wrapperFetchJsonResponse);
   }, [fetchBase]);
 }
@@ -45,7 +45,7 @@ export function useCustomAuthLogoutService() {
   return useCallback(() => {
     // Update the endpoint to match your FastAPI logout endpoint
     return fetchBase(`${API_URL}/auth/logout`, {
-      method: "POST",
+      method: 'POST',
     }).then(wrapperFetchJsonResponse);
   }, [fetchBase]);
 }

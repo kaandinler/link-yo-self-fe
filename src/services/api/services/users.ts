@@ -1,12 +1,12 @@
-import { useCallback } from "react";
-import useFetch from "../use-fetch";
-import { API_URL } from "../config";
-import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { User } from "../types/user";
-import { InfinityPaginationType } from "../types/infinity-pagination";
-import { Role } from "../types/role";
-import { SortEnum } from "../types/sort-type";
-import { RequestConfigType } from "./types/request-config";
+import { useCallback } from 'react';
+import useFetch from '../use-fetch';
+import { API_URL } from '../config';
+import wrapperFetchJsonResponse from '../wrapper-fetch-json-response';
+import { User } from '../types/user';
+import { InfinityPaginationType } from '../types/infinity-pagination';
+import { Role } from '../types/role';
+import { SortEnum } from '../types/sort-type';
+import { RequestConfigType } from './types/request-config';
 
 export type UsersRequest = {
   page: number;
@@ -28,17 +28,17 @@ export function useGetUsersService() {
   return useCallback(
     (data: UsersRequest, requestConfig?: RequestConfigType) => {
       const requestUrl = new URL(`${API_URL}/v1/users`);
-      requestUrl.searchParams.append("page", data.page.toString());
-      requestUrl.searchParams.append("limit", data.limit.toString());
+      requestUrl.searchParams.append('page', data.page.toString());
+      requestUrl.searchParams.append('limit', data.limit.toString());
       if (data.filters) {
-        requestUrl.searchParams.append("filters", JSON.stringify(data.filters));
+        requestUrl.searchParams.append('filters', JSON.stringify(data.filters));
       }
       if (data.sort) {
-        requestUrl.searchParams.append("sort", JSON.stringify(data.sort));
+        requestUrl.searchParams.append('sort', JSON.stringify(data.sort));
       }
 
       return fetch(requestUrl, {
-        method: "GET",
+        method: 'GET',
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<UsersResponse>);
     },
@@ -47,7 +47,7 @@ export function useGetUsersService() {
 }
 
 export type UserRequest = {
-  id: User["id"];
+  id: User['id'];
 };
 
 export type UserResponse = User;
@@ -58,7 +58,7 @@ export function useGetUserService() {
   return useCallback(
     (data: UserRequest, requestConfig?: RequestConfigType) => {
       return fetch(`${API_URL}/v1/users/${data.id}`, {
-        method: "GET",
+        method: 'GET',
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<UserResponse>);
     },
@@ -68,7 +68,7 @@ export function useGetUserService() {
 
 export type UserPostRequest = Pick<
   User,
-  "email" | "firstName" | "lastName" | "photo" | "role"
+  'email' | 'firstName' | 'lastName' | 'photo' | 'role'
 > & {
   password: string;
 };
@@ -81,7 +81,7 @@ export function usePostUserService() {
   return useCallback(
     (data: UserPostRequest, requestConfig?: RequestConfigType) => {
       return fetch(`${API_URL}/v1/users`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<UserPostResponse>);
@@ -91,9 +91,9 @@ export function usePostUserService() {
 }
 
 export type UserPatchRequest = {
-  id: User["id"];
+  id: User['id'];
   data: Partial<
-    Pick<User, "email" | "firstName" | "lastName" | "photo" | "role"> & {
+    Pick<User, 'email' | 'firstName' | 'lastName' | 'photo' | 'role'> & {
       password: string;
     }
   >;
@@ -107,7 +107,7 @@ export function usePatchUserService() {
   return useCallback(
     (data: UserPatchRequest, requestConfig?: RequestConfigType) => {
       return fetch(`${API_URL}/v1/users/${data.id}`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify(data.data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<UserPatchResponse>);
@@ -117,7 +117,7 @@ export function usePatchUserService() {
 }
 
 export type UsersDeleteRequest = {
-  id: User["id"];
+  id: User['id'];
 };
 
 export type UsersDeleteResponse = undefined;
@@ -128,7 +128,7 @@ export function useDeleteUsersService() {
   return useCallback(
     (data: UsersDeleteRequest, requestConfig?: RequestConfigType) => {
       return fetch(`${API_URL}/v1/users/${data.id}`, {
-        method: "DELETE",
+        method: 'DELETE',
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<UsersDeleteResponse>);
     },

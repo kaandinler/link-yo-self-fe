@@ -1,12 +1,12 @@
-"use client";
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
-import useAuth from "@/services/auth/use-auth";
-import useAuthActions from "@/services/auth/use-auth-actions";
-import { useTranslation } from "@/services/i18n/client";
-import Link from "@/components/link";
-import { RoleEnum } from "@/services/api/types/role";
-import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
+'use client';
+import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import useAuth from '@/services/auth/use-auth';
+import useAuthActions from '@/services/auth/use-auth-actions';
+import { useTranslation } from '@/services/i18n/client';
+import Link from '@/components/link';
+import { RoleEnum } from '@/services/api/types/role';
+import { IS_SIGN_UP_ENABLED } from '@/services/auth/config';
 import {
   Menu,
   X,
@@ -23,7 +23,7 @@ import {
   Plus,
   Eye,
   TrendingUp,
-} from "lucide-react";
+} from 'lucide-react';
 
 // Navigation item type definitions
 type DashboardNavItem = {
@@ -38,7 +38,7 @@ type PublicNavItem = {
 };
 
 function ResponsiveAppBar() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common');
   const { user, isLoaded } = useAuth();
   const { logOut } = useAuthActions();
   const pathname = usePathname();
@@ -48,17 +48,17 @@ function ResponsiveAppBar() {
 
   // Giriş yapmış kullanıcı için dashboard navigation
   const dashboardNavItems: DashboardNavItem[] = [
-    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-    { href: "/links", label: "Links", icon: Link2 },
-    { href: "/analytics", label: "Analytics", icon: TrendingUp },
-    { href: "/profile/edit", label: "Profile", icon: User },
+    { href: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { href: '/links', label: 'Links', icon: Link2 },
+    { href: '/analytics', label: 'Analytics', icon: TrendingUp },
+    { href: '/profile/edit', label: 'Profile', icon: User },
   ];
 
   // Giriş yapmamış kullanıcı için genel navigation
   const publicNavItems: PublicNavItem[] = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   const handleMobileMenuToggle = () => {
@@ -76,8 +76,8 @@ function ResponsiveAppBar() {
 
   // User profile URL için güvenli link oluşturma
   const getUserProfileUrl = () => {
-    if (!user) return "#";
-    const username = user.username || user.email?.split("@")[0] || "user";
+    if (!user) return '#';
+    const username = user.username || user.email?.split('@')[0] || 'user';
     return `/@${username}`;
   };
 
@@ -86,7 +86,7 @@ function ResponsiveAppBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo - Dashboard'a veya Home'a link */}
-          <Link href={user ? "/dashboard" : "/"}>
+          <Link href={user ? '/dashboard' : '/'}>
             <div className="flex items-center gap-3 cursor-pointer">
               <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Link2 className="h-6 w-6 text-white" />
@@ -106,8 +106,8 @@ function ResponsiveAppBar() {
                     flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer
                     ${
                       pathname === item.href
-                        ? "bg-purple-600 text-white"
-                        : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+                        ? 'bg-purple-600 text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                     }
                   `}
                     >
@@ -130,7 +130,7 @@ function ResponsiveAppBar() {
               [RoleEnum.ADMIN].includes(Number(user?.role?.id)) && (
                 <Link href="/admin-panel/users">
                   <span className="text-gray-300 hover:text-white transition-colors font-medium cursor-pointer">
-                    {t("common:navigation.users")}
+                    {t('common:navigation.users')}
                   </span>
                 </Link>
               )}
@@ -200,7 +200,7 @@ function ResponsiveAppBar() {
                             onClick={() => setUserMenuOpen(false)}
                           >
                             <User className="h-4 w-4" />
-                            {t("common:navigation.profile")}
+                            {t('common:navigation.profile')}
                           </div>
                         </Link>
                         <button
@@ -208,7 +208,7 @@ function ResponsiveAppBar() {
                           className="w-full flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
                         >
                           <LogOut className="h-4 w-4" />
-                          {t("common:navigation.logout")}
+                          {t('common:navigation.logout')}
                         </button>
                       </div>
                     </>
@@ -219,13 +219,13 @@ function ResponsiveAppBar() {
               <div className="flex items-center gap-4">
                 <Link href="/sign-in">
                   <button className="text-gray-300 hover:text-white transition-colors font-medium">
-                    {t("common:navigation.signIn")}
+                    {t('common:navigation.signIn')}
                   </button>
                 </Link>
                 {IS_SIGN_UP_ENABLED && (
                   <Link href="/sign-up">
                     <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg">
-                      {t("common:navigation.signUp")}
+                      {t('common:navigation.signUp')}
                     </button>
                   </Link>
                 )}
@@ -256,8 +256,8 @@ function ResponsiveAppBar() {
                     <div
                       className={`flex items-center gap-2 px-4 py-2 transition-colors rounded-lg mx-2 ${
                         pathname === item.href
-                          ? "bg-purple-600 text-white"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+                          ? 'bg-purple-600 text-white'
+                          : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -286,7 +286,7 @@ function ResponsiveAppBar() {
                     className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg mx-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {t("common:navigation.users")}
+                    {t('common:navigation.users')}
                   </div>
                 </Link>
               )}
@@ -321,7 +321,7 @@ function ResponsiveAppBar() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <User className="h-4 w-4" />
-                      {t("common:navigation.profile")}
+                      {t('common:navigation.profile')}
                     </div>
                   </Link>
                   <button
@@ -332,7 +332,7 @@ function ResponsiveAppBar() {
                     className="w-full flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg"
                   >
                     <LogOut className="h-4 w-4" />
-                    {t("common:navigation.logout")}
+                    {t('common:navigation.logout')}
                   </button>
                 </div>
               ) : (
@@ -342,7 +342,7 @@ function ResponsiveAppBar() {
                       className="w-full text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg px-4 py-2 text-left"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {t("common:navigation.signIn")}
+                      {t('common:navigation.signIn')}
                     </button>
                   </Link>
                   {IS_SIGN_UP_ENABLED && (
@@ -351,7 +351,7 @@ function ResponsiveAppBar() {
                         className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        {t("common:navigation.signUp")}
+                        {t('common:navigation.signUp')}
                       </button>
                     </Link>
                   )}

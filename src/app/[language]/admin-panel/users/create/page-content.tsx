@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import Button from "@mui/material/Button";
-import { useForm, FormProvider, useFormState } from "react-hook-form";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import Typography from "@mui/material/Typography";
-import FormTextInput from "@/components/form/text-input/form-text-input";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { useSnackbar } from "@/hooks/use-snackbar";
-import Link from "@/components/link";
-import FormAvatarInput from "@/components/form/avatar-input/form-avatar-input";
-import { FileEntity } from "@/services/api/types/file-entity";
-import useLeavePage from "@/services/leave-page/use-leave-page";
-import Box from "@mui/material/Box";
-import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
-import { useTranslation } from "@/services/i18n/client";
-import { usePostUserService } from "@/services/api/services/users";
-import { useRouter } from "next/navigation";
-import { Role, RoleEnum } from "@/services/api/types/role";
-import FormSelectInput from "@/components/form/select/form-select";
+import Button from '@mui/material/Button';
+import { useForm, FormProvider, useFormState } from 'react-hook-form';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import FormTextInput from '@/components/form/text-input/form-text-input';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import withPageRequiredAuth from '@/services/auth/with-page-required-auth';
+import { useSnackbar } from '@/hooks/use-snackbar';
+import Link from '@/components/link';
+import FormAvatarInput from '@/components/form/avatar-input/form-avatar-input';
+import { FileEntity } from '@/services/api/types/file-entity';
+import useLeavePage from '@/services/leave-page/use-leave-page';
+import Box from '@mui/material/Box';
+import HTTP_CODES_ENUM from '@/services/api/types/http-codes';
+import { useTranslation } from '@/services/i18n/client';
+import { usePostUserService } from '@/services/api/services/users';
+import { useRouter } from 'next/navigation';
+import { Role, RoleEnum } from '@/services/api/types/role';
+import FormSelectInput from '@/components/form/select/form-select';
 
 type CreateFormData = {
   email: string;
@@ -33,42 +33,42 @@ type CreateFormData = {
 };
 
 const useValidationSchema = () => {
-  const { t } = useTranslation("admin-panel-users-create");
+  const { t } = useTranslation('admin-panel-users-create');
 
   return yup.object().shape({
     email: yup
       .string()
-      .email(t("admin-panel-users-create:inputs.email.validation.invalid"))
+      .email(t('admin-panel-users-create:inputs.email.validation.invalid'))
       .required(
-        t("admin-panel-users-create:inputs.firstName.validation.required")
+        t('admin-panel-users-create:inputs.firstName.validation.required')
       ),
     firstName: yup
       .string()
       .required(
-        t("admin-panel-users-create:inputs.firstName.validation.required")
+        t('admin-panel-users-create:inputs.firstName.validation.required')
       ),
     lastName: yup
       .string()
       .required(
-        t("admin-panel-users-create:inputs.lastName.validation.required")
+        t('admin-panel-users-create:inputs.lastName.validation.required')
       ),
     password: yup
       .string()
-      .min(6, t("admin-panel-users-create:inputs.password.validation.min"))
+      .min(6, t('admin-panel-users-create:inputs.password.validation.min'))
       .required(
-        t("admin-panel-users-create:inputs.password.validation.required")
+        t('admin-panel-users-create:inputs.password.validation.required')
       ),
     passwordConfirmation: yup
       .string()
       .oneOf(
-        [yup.ref("password")],
+        [yup.ref('password')],
         t(
-          "admin-panel-users-create:inputs.passwordConfirmation.validation.match"
+          'admin-panel-users-create:inputs.passwordConfirmation.validation.match'
         )
       )
       .required(
         t(
-          "admin-panel-users-create:inputs.passwordConfirmation.validation.required"
+          'admin-panel-users-create:inputs.passwordConfirmation.validation.required'
         )
       ),
     role: yup
@@ -77,12 +77,12 @@ const useValidationSchema = () => {
         id: yup.mixed<string | number>().required(),
         name: yup.string(),
       })
-      .required(t("admin-panel-users-create:inputs.role.validation.required")),
+      .required(t('admin-panel-users-create:inputs.role.validation.required')),
   });
 };
 
 function CreateUserFormActions() {
-  const { t } = useTranslation("admin-panel-users-create");
+  const { t } = useTranslation('admin-panel-users-create');
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -93,7 +93,7 @@ function CreateUserFormActions() {
       type="submit"
       disabled={isSubmitting}
     >
-      {t("admin-panel-users-create:actions.submit")}
+      {t('admin-panel-users-create:actions.submit')}
     </Button>
   );
 }
@@ -101,7 +101,7 @@ function CreateUserFormActions() {
 function FormCreateUser() {
   const router = useRouter();
   const fetchPostUser = usePostUserService();
-  const { t } = useTranslation("admin-panel-users-create");
+  const { t } = useTranslation('admin-panel-users-create');
   const validationSchema = useValidationSchema();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -109,11 +109,11 @@ function FormCreateUser() {
   const methods = useForm<CreateFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      email: "",
-      firstName: "",
-      lastName: "",
-      password: "",
-      passwordConfirmation: "",
+      email: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+      passwordConfirmation: '',
       role: {
         id: RoleEnum.USER,
       },
@@ -129,7 +129,7 @@ function FormCreateUser() {
       (Object.keys(data.errors) as Array<keyof CreateFormData>).forEach(
         (key) => {
           setError(key, {
-            type: "manual",
+            type: 'manual',
             message: t(
               `admin-panel-users-create:inputs.${key}.validation.server.${data.errors[key]}`
             ),
@@ -139,10 +139,10 @@ function FormCreateUser() {
       return;
     }
     if (status === HTTP_CODES_ENUM.CREATED) {
-      enqueueSnackbar(t("admin-panel-users-create:alerts.user.success"), {
-        variant: "success",
+      enqueueSnackbar(t('admin-panel-users-create:alerts.user.success'), {
+        variant: 'success',
       });
-      router.push("/admin-panel/users");
+      router.push('/admin-panel/users');
     }
   });
 
@@ -153,7 +153,7 @@ function FormCreateUser() {
           <Grid container spacing={2} mb={3} mt={3}>
             <Grid size={{ xs: 12 }}>
               <Typography variant="h6">
-                {t("admin-panel-users-create:title")}
+                {t('admin-panel-users-create:title')}
               </Typography>
             </Grid>
             <Grid size={{ xs: 12 }}>
@@ -165,7 +165,7 @@ function FormCreateUser() {
                 name="email"
                 testId="new-user-email"
                 autoComplete="new-user-email"
-                label={t("admin-panel-users-create:inputs.email.label")}
+                label={t('admin-panel-users-create:inputs.email.label')}
               />
             </Grid>
 
@@ -175,7 +175,7 @@ function FormCreateUser() {
                 type="password"
                 testId="new-user-password"
                 autoComplete="new-user-password"
-                label={t("admin-panel-users-create:inputs.password.label")}
+                label={t('admin-panel-users-create:inputs.password.label')}
               />
             </Grid>
 
@@ -184,7 +184,7 @@ function FormCreateUser() {
                 name="passwordConfirmation"
                 testId="new-user-password-confirmation"
                 label={t(
-                  "admin-panel-users-create:inputs.passwordConfirmation.label"
+                  'admin-panel-users-create:inputs.passwordConfirmation.label'
                 )}
                 type="password"
               />
@@ -194,7 +194,7 @@ function FormCreateUser() {
               <FormTextInput<CreateFormData>
                 name="firstName"
                 testId="first-name"
-                label={t("admin-panel-users-create:inputs.firstName.label")}
+                label={t('admin-panel-users-create:inputs.firstName.label')}
               />
             </Grid>
 
@@ -202,15 +202,15 @@ function FormCreateUser() {
               <FormTextInput<CreateFormData>
                 name="lastName"
                 testId="last-name"
-                label={t("admin-panel-users-create:inputs.lastName.label")}
+                label={t('admin-panel-users-create:inputs.lastName.label')}
               />
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-              <FormSelectInput<CreateFormData, Pick<Role, "id">>
+              <FormSelectInput<CreateFormData, Pick<Role, 'id'>>
                 name="role"
                 testId="role"
-                label={t("admin-panel-users-create:inputs.role.label")}
+                label={t('admin-panel-users-create:inputs.role.label')}
                 options={[
                   {
                     id: RoleEnum.ADMIN,
@@ -235,7 +235,7 @@ function FormCreateUser() {
                   LinkComponent={Link}
                   href="/admin-panel/users"
                 >
-                  {t("admin-panel-users-create:actions.cancel")}
+                  {t('admin-panel-users-create:actions.cancel')}
                 </Button>
               </Box>
             </Grid>
