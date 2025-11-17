@@ -1,0 +1,49 @@
+{
+  "app-name": "Link Yo Self",
+  "loading": "Loading ...",
+  "description": "Link Yo Self is a social media platform that allows you to connect with others by sharing your profile links.",
+  "error": {
+    "notFound": "Page not found",
+    "unauthorized": "You are not authorized to view this page",
+    "serverError": "An unexpected error occurred. Please try again later.",
+    "networkError": "Network error. Please check your internet connection."
+  },
+  "navigation": {
+    "home": "Home",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "profile": "Profile",
+    "users": "Users",
+    "logout": "Logout",
+    "settings": "Settings",
+    "about": "About"
+  },
+  "formInputs": {
+    "avatarInput": {
+      "dropzoneText": "Drop the image here ...",
+      "dragAndDrop": "Or drag 'n' drop some image here",
+      "selectFile": "Select an image"
+    },
+    "multipleImageInput": {
+      "dropzoneText": "Drop the image here ...",
+      "dragAndDrop": "Or drag 'n' drop some images here",
+      "selectFile": "Select an image"
+    },
+    "singleImageInput": {
+      "dropzoneText": "Drop the image here ...",
+      "dragAndDrop": "Or drag 'n' drop some images here",
+      "selectFile": "Select an image"
+    }
+  },
+  "leavePage": {
+    "title": "Leave this page?",
+    "message": "Changes you made may not be saved",
+    "stay": "Stay on Page",
+    "leave": "Leave Page"
+  },
+  "auth": {
+    "facebook": {
+      "action": "Login with Facebook"
+    }
+  }
+}
