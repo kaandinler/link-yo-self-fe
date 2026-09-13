@@ -18,8 +18,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # --ext ESLint 9 flat config'de kaldirildi; kullanildiginda
+      # "Unknown options: extensions" hatasiyla adim basarisiz oluyordu.
+      # Hangi uzantilarin taranacagi artik eslint.config.mjs'te tanimli.
       - name: Run ESLint
-        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+        run: npx eslint .
 
       - name: Run Prettier check
         run: npx prettier . --check
