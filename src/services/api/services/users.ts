@@ -27,7 +27,7 @@ export function useGetUsersService() {
 
   return useCallback(
     (data: UsersRequest, requestConfig?: RequestConfigType) => {
-      const requestUrl = new URL(`${API_URL}/v1/users`);
+      const requestUrl = new URL(`${API_URL}/v1/users/`);
       requestUrl.searchParams.append('page', data.page.toString());
       requestUrl.searchParams.append('limit', data.limit.toString());
       if (data.filters) {
@@ -80,7 +80,7 @@ export function usePostUserService() {
 
   return useCallback(
     (data: UserPostRequest, requestConfig?: RequestConfigType) => {
-      return fetch(`${API_URL}/v1/users`, {
+      return fetch(`${API_URL}/v1/users/`, {
         method: 'POST',
         body: JSON.stringify(data),
         ...requestConfig,

@@ -77,7 +77,7 @@ function useLinksAPI() {
     // Get user's links
     getLinks: async (includeInactive = false): Promise<Link[]> => {
       const response = await fetch(
-        `${API_URL}/v1/links?include_inactive=${includeInactive}`
+        `${API_URL}/v1/links/?include_inactive=${includeInactive}`
       );
 
       if (!response.ok) {
@@ -102,7 +102,7 @@ function useLinksAPI() {
 
     // Create new link
     createLink: async (linkData: CreateLinkRequest): Promise<Link> => {
-      const response = await fetch(`${API_URL}/v1/links`, {
+      const response = await fetch(`${API_URL}/v1/links/`, {
         method: 'POST',
         body: JSON.stringify(linkData),
       });
