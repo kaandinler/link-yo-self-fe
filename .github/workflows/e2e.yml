@@ -1,5 +1,19 @@
 name: E2E tests
-on: [push, pull_request]
+
+# DEVRE DISI: sadece manuel calistirilabilir (Actions sekmesinden "Run workflow").
+#
+# Buradaki 23 test brocoders boilerplate'inden geliyor ve LinkYoSelf
+# backend'ine karsi yapisal olarak gecemez:
+#   - playwright-tests/helpers/api-requests.ts POST /v1/auth/email/register
+#     cagirip 204 bekliyor; bu uc FastAPI backend'inde yok.
+#   - Testler e-posta dogrulamasi icin IMAP hesabi istiyor; backend'de
+#     e-posta akisi yok.
+#   - Bu workflow hicbir backend ayaga kaldirmiyor (postgres/uvicorn yok).
+#
+# Yeniden acmak icin: testleri FastAPI uclarina gore yeniden yazin, bu
+# workflow'a backend servisini ekleyin ve asagidaki satiri
+# `on: [push, pull_request]` yapin.
+on: [workflow_dispatch]
 jobs:
   test:
     timeout-minutes: 60
