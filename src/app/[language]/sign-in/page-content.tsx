@@ -60,7 +60,9 @@ const FormInput = ({
   name: string;
   label: string;
   type?: string;
-  icon?: unknown;
+  // lucide-react ikon bileseni. `unknown` idi; JSX'te <Icon /> olarak
+  // kullanildigi icin bileşen tipi olmali.
+  icon?: React.ComponentType<{ className?: string }>;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;

@@ -23,6 +23,24 @@ export function parseBaseResponse<T>(response: unknown): BaseResponseModel<T> {
 }
 
 /**
+ * Ham bir yanıt gövdesinin BaseResponseModel biçiminde olup olmadığını kontrol eder.
+ *
+ * `Record<string, unknown>` üzerinden doğrudan `as BaseResponseModel<T>` cast'i
+ * TypeScript tarafından reddediliyor: index signature yüzünden `status` alanı
+ * `unknown` görünüyor ve iki tip yeterince örtüşmüyor. Bu guard daraltmayı
+ * çalışma zamanı kontrolüyle güvenli şekilde yapar.
+ */
+export function isBaseResponseModel<T>(
+  value: unknown
+): value is BaseResponseModel<T> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as { status?: unknown }).status === 'string'
+  );
+}
+
+/**
  * API response'unu kontrol eder ve tip güvenliği sağlar
  */
 export function isSuccessResponse<T>(
@@ -103,8 +121,11 @@ export async function makeFastAPIRequest<T>(
     // Başarılı yanıt kontrolü
     if (response.ok && result && !('detail' in result)) {
       // Normal BaseResponseModel formatı
-      if ('status' in result && (result.data !== undefined || result.message)) {
-        return result as BaseResponseModel<T>;
+      if (
+        isBaseResponseModel<T>(result) &&
+        (result.data !== undefined || result.message)
+      ) {
+        return result;
       }
 
       // Eğer doğrudan data geliyorsa BaseResponseModel'e çevir

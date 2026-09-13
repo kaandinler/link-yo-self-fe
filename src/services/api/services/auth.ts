@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import useFetch from '../use-fetch';
 import { API_URL } from '../config';
+import { isBaseResponseModel } from '../fastapi-utils';
 import { User } from '../types/user';
 import { Tokens } from '../types/tokens';
 import wrapperFetchJsonResponse from '../wrapper-fetch-json-response';
@@ -356,8 +357,8 @@ export function useAuthForgotPasswordWithFastAPIService() {
           !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ('status' in result) {
-            return result as BaseResponseModel<void>;
+          if (isBaseResponseModel<void>(result)) {
+            return result;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
@@ -419,8 +420,8 @@ export function useAuthResetPasswordWithFastAPIService() {
           !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ('status' in result) {
-            return result as BaseResponseModel<void>;
+          if (isBaseResponseModel<void>(result)) {
+            return result;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
@@ -480,8 +481,8 @@ export function useAuthConfirmEmailWithFastAPIService() {
           !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ('status' in result) {
-            return result as BaseResponseModel<void>;
+          if (isBaseResponseModel<void>(result)) {
+            return result;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
@@ -541,8 +542,8 @@ export function useAuthLogoutWithFastAPIService() {
           !('detail' in result)
         ) {
           // Normal BaseResponseModel formatı
-          if ('status' in result) {
-            return result as BaseResponseModel<void>;
+          if (isBaseResponseModel<void>(result)) {
+            return result;
           }
 
           // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir

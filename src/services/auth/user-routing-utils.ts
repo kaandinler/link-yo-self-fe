@@ -18,9 +18,10 @@ const getUserProperty = <T>(
   fallback: T
 ): T => {
   if (!user) return fallback;
-  return (user as Record<string, unknown>)[propertyName] !== undefined
-    ? (user as Record<string, unknown>)[propertyName]
-    : fallback;
+  // Dinamik property okumasi oldugu icin donen deger `unknown`; fonksiyonun
+  // sozlesmesi zaten T oldugundan daraltmayi burada yapiyoruz.
+  const value = (user as Record<string, unknown>)[propertyName];
+  return value !== undefined ? (value as T) : fallback;
 };
 
 /**
