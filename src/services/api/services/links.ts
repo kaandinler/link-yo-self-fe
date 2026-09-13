@@ -1,7 +1,12 @@
 // src/services/api/services/links.ts - Daha iyi versiyon
 "use client";
 
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { API_URL } from "@/services/api/config";
 import useFetch from "@/services/api/use-fetch";
 
@@ -81,7 +86,7 @@ function useLinksAPI() {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch links');
+        throw new Error("Failed to fetch links");
       }
 
       const result: ApiResponse<Link[]> = await response.json();
@@ -93,7 +98,7 @@ function useLinksAPI() {
       const response = await fetch(`${API_URL}/v1/links/${linkId}`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch link');
+        throw new Error("Failed to fetch link");
       }
 
       const result: ApiResponse<Link> = await response.json();
@@ -103,13 +108,13 @@ function useLinksAPI() {
     // Create new link
     createLink: async (linkData: CreateLinkRequest): Promise<Link> => {
       const response = await fetch(`${API_URL}/v1/links/`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(linkData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create link');
+        throw new Error(errorData.message || "Failed to create link");
       }
 
       const result: ApiResponse<Link> = await response.json();
@@ -117,15 +122,18 @@ function useLinksAPI() {
     },
 
     // Update link
-    updateLink: async (linkId: number, linkData: UpdateLinkRequest): Promise<Link> => {
+    updateLink: async (
+      linkId: number,
+      linkData: UpdateLinkRequest
+    ): Promise<Link> => {
       const response = await fetch(`${API_URL}/v1/links/${linkId}`, {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(linkData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update link');
+        throw new Error(errorData.message || "Failed to update link");
       }
 
       const result: ApiResponse<Link> = await response.json();
@@ -135,23 +143,23 @@ function useLinksAPI() {
     // Delete link
     deleteLink: async (linkId: number): Promise<void> => {
       const response = await fetch(`${API_URL}/v1/links/${linkId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete link');
+        throw new Error("Failed to delete link");
       }
     },
 
     // Reorder links
     reorderLinks: async (linkIds: number[]): Promise<Link[]> => {
       const response = await fetch(`${API_URL}/v1/links/reorder`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ link_ids: linkIds }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to reorder links');
+        throw new Error("Failed to reorder links");
       }
 
       const result: ApiResponse<Link[]> = await response.json();
@@ -161,11 +169,11 @@ function useLinksAPI() {
     // Toggle link status
     toggleLinkStatus: async (linkId: number): Promise<Link> => {
       const response = await fetch(`${API_URL}/v1/links/${linkId}/toggle`, {
-        method: 'PATCH',
+        method: "PATCH",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to toggle link status');
+        throw new Error("Failed to toggle link status");
       }
 
       const result: ApiResponse<Link> = await response.json();
@@ -177,7 +185,7 @@ function useLinksAPI() {
       const response = await fetch(`${API_URL}/v1/links/analytics/summary`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch analytics');
+        throw new Error("Failed to fetch analytics");
       }
 
       const result: ApiResponse<LinkAnalytics> = await response.json();
@@ -193,7 +201,7 @@ export const useLinks = (includeInactive = false) => {
   const api = useLinksAPI();
 
   return useQuery({
-    queryKey: ['links', includeInactive],
+    queryKey: ["links", includeInactive],
     queryFn: () => api.getLinks(includeInactive),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -203,7 +211,7 @@ export const useLink = (linkId: number) => {
   const api = useLinksAPI();
 
   return useQuery({
-    queryKey: ['links', linkId],
+    queryKey: ["links", linkId],
     queryFn: () => api.getLink(linkId),
     enabled: !!linkId,
   });
@@ -217,7 +225,7 @@ export const useCreateLink = () => {
     mutationFn: api.createLink,
     onSuccess: () => {
       // Invalidate and refetch links
-      queryClient.invalidateQueries({ queryKey: ['links'] });
+      queryClient.invalidateQueries({ queryKey: ["links"] });
     },
   });
 };
@@ -227,10 +235,15 @@ export const useUpdateLink = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ linkId, linkData }: { linkId: number; linkData: UpdateLinkRequest }) =>
-      api.updateLink(linkId, linkData),
+    mutationFn: ({
+      linkId,
+      linkData,
+    }: {
+      linkId: number;
+      linkData: UpdateLinkRequest;
+    }) => api.updateLink(linkId, linkData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['links'] });
+      queryClient.invalidateQueries({ queryKey: ["links"] });
     },
   });
 };
@@ -242,7 +255,7 @@ export const useDeleteLink = () => {
   return useMutation({
     mutationFn: api.deleteLink,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['links'] });
+      queryClient.invalidateQueries({ queryKey: ["links"] });
     },
   });
 };
@@ -254,7 +267,7 @@ export const useReorderLinks = () => {
   return useMutation({
     mutationFn: api.reorderLinks,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['links'] });
+      queryClient.invalidateQueries({ queryKey: ["links"] });
     },
   });
 };
@@ -266,7 +279,7 @@ export const useToggleLinkStatus = () => {
   return useMutation({
     mutationFn: api.toggleLinkStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['links'] });
+      queryClient.invalidateQueries({ queryKey: ["links"] });
     },
   });
 };
@@ -275,7 +288,7 @@ export const useLinkAnalytics = () => {
   const api = useLinksAPI();
 
   return useQuery({
-    queryKey: ['link-analytics'],
+    queryKey: ["link-analytics"],
     queryFn: api.getAnalytics,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });

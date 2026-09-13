@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import {
@@ -152,7 +152,8 @@ const LinkModal = ({
     if (!formData.url.trim()) {
       newErrors.url = "URL is required";
     } else if (!/^https?:\/\/.+/.test(formData.url)) {
-      newErrors.url = "Please enter a valid URL starting with http:// or https://";
+      newErrors.url =
+        "Please enter a valid URL starting with http:// or https://";
     }
 
     setErrors(newErrors);
@@ -237,7 +238,10 @@ const LinkModal = ({
             <textarea
               value={formData.description}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, description: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
               }
               placeholder="Optional description for your link"
               rows={3}
@@ -247,8 +251,10 @@ const LinkModal = ({
 
           {/* Appearance Settings */}
           <div className="border-t border-gray-600 pt-4">
-            <h4 className="text-sm font-medium text-gray-300 mb-4">Appearance Settings</h4>
-            
+            <h4 className="text-sm font-medium text-gray-300 mb-4">
+              Appearance Settings
+            </h4>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -258,7 +264,10 @@ const LinkModal = ({
                   type="url"
                   value={formData.icon_url}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, icon_url: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      icon_url: e.target.value,
+                    }))
                   }
                   placeholder="https://example.com/icon.png"
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
@@ -275,7 +284,10 @@ const LinkModal = ({
                   max="50"
                   value={formData.border_radius}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, border_radius: parseInt(e.target.value) || 8 }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      border_radius: parseInt(e.target.value) || 8,
+                    }))
                   }
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                 />
@@ -292,7 +304,10 @@ const LinkModal = ({
                     type="color"
                     value={formData.background_color}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, background_color: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        background_color: e.target.value,
+                      }))
                     }
                     className="w-12 h-12 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer"
                   />
@@ -300,7 +315,10 @@ const LinkModal = ({
                     type="text"
                     value={formData.background_color}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, background_color: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        background_color: e.target.value,
+                      }))
                     }
                     placeholder="#1383eb"
                     className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
@@ -317,7 +335,10 @@ const LinkModal = ({
                     type="color"
                     value={formData.text_color}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, text_color: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        text_color: e.target.value,
+                      }))
                     }
                     className="w-12 h-12 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer"
                   />
@@ -325,7 +346,10 @@ const LinkModal = ({
                     type="text"
                     value={formData.text_color}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, text_color: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        text_color: e.target.value,
+                      }))
                     }
                     placeholder="#ffffff"
                     className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
@@ -339,7 +363,7 @@ const LinkModal = ({
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Preview
               </label>
-              <div 
+              <div
                 className="p-4 rounded-lg text-center transition-all"
                 style={{
                   backgroundColor: formData.background_color,
@@ -349,12 +373,12 @@ const LinkModal = ({
               >
                 <div className="flex items-center justify-center gap-2">
                   {formData.icon_url && (
-                    <img 
-                      src={formData.icon_url} 
+                    <img
+                      src={formData.icon_url}
                       alt="Icon"
                       className="w-5 h-5"
                       onError={(e) => {
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   )}
@@ -372,7 +396,10 @@ const LinkModal = ({
               id="is_active"
               checked={formData.is_active}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, is_active: e.target.checked }))
+                setFormData((prev) => ({
+                  ...prev,
+                  is_active: e.target.checked,
+                }))
               }
               className="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
             />
@@ -437,30 +464,32 @@ const LinkItem = ({
   };
 
   return (
-    <div 
+    <div
       className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-4 hover:border-gray-600 transition-colors ${
-        isDragging ? 'opacity-50 scale-105 shadow-2xl' : ''
+        isDragging ? "opacity-50 scale-105 shadow-2xl" : ""
       }`}
     >
       <div className="flex items-center gap-4">
         {/* Drag Handle */}
-        <div 
+        <div
           {...dragHandleProps}
-          className={`flex-shrink-0 ${!isDragDisabled ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
+          className={`flex-shrink-0 ${!isDragDisabled ? "cursor-grab active:cursor-grabbing" : "cursor-default"}`}
         >
-          <GripVertical className={`h-5 w-5 ${!isDragDisabled ? 'text-gray-500 hover:text-gray-400' : 'text-gray-600'} transition-colors`} />
+          <GripVertical
+            className={`h-5 w-5 ${!isDragDisabled ? "text-gray-500 hover:text-gray-400" : "text-gray-600"} transition-colors`}
+          />
         </div>
 
         {/* Link Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             {link.icon_url && (
-              <img 
-                src={link.icon_url} 
+              <img
+                src={link.icon_url}
                 alt="Icon"
                 className="w-4 h-4 flex-shrink-0"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.style.display = "none";
                 }}
               />
             )}
@@ -473,19 +502,21 @@ const LinkItem = ({
           </div>
           <p className="text-gray-400 text-sm truncate">{link.url}</p>
           {link.description && (
-            <p className="text-gray-500 text-xs mt-1 truncate">{link.description}</p>
+            <p className="text-gray-500 text-xs mt-1 truncate">
+              {link.description}
+            </p>
           )}
           {(link.background_color || link.text_color) && (
             <div className="flex items-center gap-2 mt-1">
               {link.background_color && (
-                <div 
+                <div
                   className="w-3 h-3 rounded border border-gray-500"
                   style={{ backgroundColor: link.background_color }}
                   title={`Background: ${link.background_color}`}
                 />
               )}
               {link.text_color && (
-                <div 
+                <div
                   className="w-3 h-3 rounded border border-gray-500"
                   style={{ backgroundColor: link.text_color }}
                   title={`Text: ${link.text_color}`}
@@ -562,13 +593,13 @@ const LinkItem = ({
 };
 
 // Simple Drag & Drop Implementation
-const DraggableList = ({ 
-  links, 
-  onReorder, 
-  onEdit, 
-  onDelete, 
+const DraggableList = ({
+  links,
+  onReorder,
+  onEdit,
+  onDelete,
   onToggle,
-  isReordering 
+  isReordering,
 }: {
   links: Link[];
   onReorder: (newOrder: number[]) => void;
@@ -582,31 +613,35 @@ const DraggableList = ({
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedItem(index);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropEffect = "move";
     setDragOverItem(index);
   };
 
   const handleDragEnd = () => {
-    if (draggedItem !== null && dragOverItem !== null && draggedItem !== dragOverItem) {
+    if (
+      draggedItem !== null &&
+      dragOverItem !== null &&
+      draggedItem !== dragOverItem
+    ) {
       const newLinks = [...links];
       const draggedLink = newLinks[draggedItem];
-      
+
       // Remove dragged item
       newLinks.splice(draggedItem, 1);
-      
+
       // Insert at new position
       newLinks.splice(dragOverItem, 0, draggedLink);
-      
+
       // Create new order array
-      const newOrder = newLinks.map(link => link.id);
+      const newOrder = newLinks.map((link) => link.id);
       onReorder(newOrder);
     }
-    
+
     setDraggedItem(null);
     setDragOverItem(null);
   };
@@ -620,7 +655,7 @@ const DraggableList = ({
           onDragStart={(e) => handleDragStart(e, index)}
           onDragOver={(e) => handleDragOver(e, index)}
           onDragEnd={handleDragEnd}
-          className={`transition-all ${dragOverItem === index ? 'transform translate-y-1' : ''}`}
+          className={`transition-all ${dragOverItem === index ? "transform translate-y-1" : ""}`}
         >
           <LinkItem
             link={link}
@@ -630,7 +665,7 @@ const DraggableList = ({
             isDragDisabled={isReordering}
             isDragging={draggedItem === index}
             dragHandleProps={{
-              style: { cursor: isReordering ? 'default' : 'grab' }
+              style: { cursor: isReordering ? "default" : "grab" },
             }}
           />
         </div>
@@ -650,7 +685,11 @@ const Links: React.FC = () => {
   }>({ isOpen: false });
 
   // API Hooks
-  const { data: links = [], isLoading: linksLoading, error: linksError } = useLinks(showInactive);
+  const {
+    data: links = [],
+    isLoading: linksLoading,
+    error: linksError,
+  } = useLinks(showInactive);
   const { data: analytics, isLoading: analyticsLoading } = useLinkAnalytics();
   const createLinkMutation = useCreateLink();
   const updateLinkMutation = useUpdateLink();
@@ -869,10 +908,9 @@ const Links: React.FC = () => {
                 {showInactive ? "No links found" : "No active links"}
               </h3>
               <p className="text-gray-400 mb-6">
-                {showInactive 
+                {showInactive
                   ? "You haven't created any links yet"
-                  : "Add your first link to get started sharing your content"
-                }
+                  : "Add your first link to get started sharing your content"}
               </p>
               <button
                 onClick={handleAddLink}
@@ -898,7 +936,9 @@ const Links: React.FC = () => {
           <div className="bg-blue-900/30 backdrop-blur-sm border border-blue-700/50 rounded-xl p-4">
             <div className="flex items-center gap-3">
               <Loader2 className="h-5 w-5 text-blue-400 animate-spin" />
-              <span className="text-blue-400 font-medium">Updating link order...</span>
+              <span className="text-blue-400 font-medium">
+                Updating link order...
+              </span>
             </div>
           </div>
         )}
@@ -906,7 +946,9 @@ const Links: React.FC = () => {
         {/* Quick Actions */}
         {filteredLinks.length > 0 && (
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Quick Actions
+            </h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleCopyProfileUrl}
@@ -917,7 +959,7 @@ const Links: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  filteredLinks.forEach(link => {
+                  filteredLinks.forEach((link) => {
                     if (link.is_active) {
                       handleToggleLink(link.id);
                     }
@@ -930,7 +972,7 @@ const Links: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  filteredLinks.forEach(link => {
+                  filteredLinks.forEach((link) => {
                     if (!link.is_active) {
                       handleToggleLink(link.id);
                     }
@@ -956,28 +998,40 @@ const Links: React.FC = () => {
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
                 <div className="text-white font-medium">Use clear titles</div>
-                <div className="text-gray-400">Make it easy for visitors to understand what each link is for</div>
+                <div className="text-gray-400">
+                  Make it easy for visitors to understand what each link is for
+                </div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
                 <div className="text-white font-medium">Order by priority</div>
-                <div className="text-gray-400">Drag links to put your most important ones at the top</div>
+                <div className="text-gray-400">
+                  Drag links to put your most important ones at the top
+                </div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-white font-medium">Customize appearance</div>
-                <div className="text-gray-400">Use colors and icons to make your links stand out</div>
+                <div className="text-white font-medium">
+                  Customize appearance
+                </div>
+                <div className="text-gray-400">
+                  Use colors and icons to make your links stand out
+                </div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-white font-medium">Monitor performance</div>
-                <div className="text-gray-400">Check click counts to see what resonates with your audience</div>
+                <div className="text-white font-medium">
+                  Monitor performance
+                </div>
+                <div className="text-gray-400">
+                  Check click counts to see what resonates with your audience
+                </div>
               </div>
             </div>
           </div>

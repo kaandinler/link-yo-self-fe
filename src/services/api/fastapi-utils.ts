@@ -1,23 +1,23 @@
 // Generic FastAPI service utility
 // Tüm API servisleri için kullanılabilecek genel utility fonksiyonları
 
-import { BaseResponseModel, API_STATUS } from './types/base-response';
-import { parseAPIError, safeParseApiResponse } from './types/fastapi-errors';
-import { API_URL } from './config';
+import { BaseResponseModel, API_STATUS } from "./types/base-response";
+import { parseAPIError, safeParseApiResponse } from "./types/fastapi-errors";
+import { API_URL } from "./config";
 
 /**
  * BaseResponseModel'i parse eder ve tip güvenliği sağlar
  */
 export function parseBaseResponse<T>(response: unknown): BaseResponseModel<T> {
   // Eğer zaten BaseResponseModel formatındaysa direkt döndür
-  if (response && typeof response === 'object' && 'status' in response) {
+  if (response && typeof response === "object" && "status" in response) {
     return response as BaseResponseModel<T>;
   }
 
   // Eğer sadece data varsa BaseResponseModel'e çevir
   return {
     status: API_STATUS.SUCCESS,
-    message: 'İşlem başarılı',
+    message: "İşlem başarılı",
     data: response as T,
   };
 }
@@ -34,9 +34,9 @@ export function isBaseResponseModel<T>(
   value: unknown
 ): value is BaseResponseModel<T> {
   return (
-    typeof value === 'object' &&
+    typeof value === "object" &&
     value !== null &&
-    typeof (value as { status?: unknown }).status === 'string'
+    typeof (value as { status?: unknown }).status === "string"
   );
 }
 
@@ -45,7 +45,7 @@ export function isBaseResponseModel<T>(
  */
 export function isSuccessResponse<T>(
   response: BaseResponseModel<T>
-): response is BaseResponseModel<T> & { status: 'success' } {
+): response is BaseResponseModel<T> & { status: "success" } {
   return response.status === API_STATUS.SUCCESS;
 }
 
@@ -54,7 +54,7 @@ export function isSuccessResponse<T>(
  */
 export function isErrorResponse<T>(
   response: BaseResponseModel<T>
-): response is BaseResponseModel<T> & { status: 'error' } {
+): response is BaseResponseModel<T> & { status: "error" } {
   return response.status === API_STATUS.ERROR;
 }
 
@@ -74,9 +74,9 @@ export function getResponseErrorMessage<T>(
   response: BaseResponseModel<T>
 ): string {
   if (isErrorResponse(response)) {
-    return response.message || 'Bir hata oluştu';
+    return response.message || "Bir hata oluştu";
   }
-  return '';
+  return "";
 }
 
 /**
@@ -98,17 +98,17 @@ export function getResponseFieldErrors<T>(
 export async function makeFastAPIRequest<T>(
   endpoint: string,
   options: {
-    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: unknown;
     headers?: Record<string, string>;
   } = {}
 ): Promise<BaseResponseModel<T>> {
   try {
-    const { method = 'GET', body, headers = {} } = options;
+    const { method = "GET", body, headers = {} } = options;
     const response = await fetch(`${API_URL}${endpoint}`, {
       method,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...headers,
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
@@ -119,7 +119,7 @@ export async function makeFastAPIRequest<T>(
     >;
 
     // Başarılı yanıt kontrolü
-    if (response.ok && result && !('detail' in result)) {
+    if (response.ok && result && !("detail" in result)) {
       // Normal BaseResponseModel formatı
       if (
         isBaseResponseModel<T>(result) &&
@@ -129,18 +129,18 @@ export async function makeFastAPIRequest<T>(
       }
 
       // Eğer doğrudan data geliyorsa BaseResponseModel'e çevir
-      if (result && typeof result === 'object' && !('status' in result)) {
+      if (result && typeof result === "object" && !("status" in result)) {
         return {
-          status: 'success',
-          message: 'İşlem başarılı',
+          status: "success",
+          message: "İşlem başarılı",
           data: result as T,
         };
       }
 
       // Boş başarılı yanıt
       return {
-        status: 'success',
-        message: 'İşlem başarılı',
+        status: "success",
+        message: "İşlem başarılı",
         data: undefined,
       };
     }
@@ -149,7 +149,7 @@ export async function makeFastAPIRequest<T>(
     const parsedError = parseAPIError(result, response);
 
     return {
-      status: 'error',
+      status: "error",
       message: parsedError.message,
       data: undefined,
       errors: parsedError.fieldErrors,
@@ -158,7 +158,7 @@ export async function makeFastAPIRequest<T>(
     // Network hatası
     const parsedError = parseAPIError(error);
     return {
-      status: 'error',
+      status: "error",
       message: parsedError.message,
       data: undefined,
     };
@@ -173,13 +173,13 @@ export async function submitFormToFastAPI<TRequest, TResponse>(
   endpoint: string,
   formData: TRequest,
   options?: {
-    method?: 'POST' | 'PUT' | 'PATCH';
+    method?: "POST" | "PUT" | "PATCH";
     onSuccess?: (response: BaseResponseModel<TResponse>) => void;
     onError?: (response: BaseResponseModel<TResponse>) => void;
     onFieldErrors?: (errors: Record<string, string>) => void;
   }
 ): Promise<BaseResponseModel<TResponse>> {
-  const { method = 'POST', onSuccess, onError, onFieldErrors } = options || {};
+  const { method = "POST", onSuccess, onError, onFieldErrors } = options || {};
 
   const response = await makeFastAPIRequest<TResponse>(endpoint, {
     method,
@@ -187,9 +187,9 @@ export async function submitFormToFastAPI<TRequest, TResponse>(
   });
 
   // Callback'leri çağır
-  if (response.status === 'success') {
+  if (response.status === "success") {
     onSuccess?.(response);
-  } else if (response.status === 'error') {
+  } else if (response.status === "error") {
     onError?.(response);
 
     // Field errors varsa callback'i çağır
@@ -208,7 +208,7 @@ export async function makeFastAPIRequestWithAuth<T>(
   endpoint: string,
   token: string,
   options: {
-    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: unknown;
   } = {}
 ): Promise<BaseResponseModel<T>> {
