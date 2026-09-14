@@ -13,9 +13,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const { t } = await getServerTranslation(params.language, "common");
   const profile = await getPublicProfile(params.username);
 
-  if (!profile) {
-    return { title: `${t("error.notFound")} - ${t("app-name")}` };
-  }
+  // Profil yoksa metadata uretmeye gerek yok; notFound() burada da
+  // cagriliyor ki eksik profil icin baslik hesaplanmasin.
+  if (!profile) notFound();
 
   const title =
     profile.page_title ?? `${profile.display_name} - ${t("app-name")}`;

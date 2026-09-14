@@ -8,6 +8,8 @@
 // calisabilmesi gerekiyor. useFetch token ekleyip 401'de yonlendirme
 // yaptigindan burada uygun degil.
 
+import { cache } from "react";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface PublicLink {
@@ -54,8 +56,11 @@ interface ApiResponse<T> {
  *
  * Kullanici yoksa (404) veya API'ye ulasilamiyorsa null doner; cagiran taraf
  * bunu notFound() ile 404 sayfasina cevirir.
+ *
+ * React cache() ile sarmalanmis: generateMetadata ve sayfa ayni istegi
+ * yaptigi icin backend'e iki kez gidilmesini engelliyor.
  */
-export async function getPublicProfile(
+export const getPublicProfile = cache(async function getPublicProfile(
   username: string
 ): Promise<PublicProfile | null> {
   if (!API_URL) return null;
@@ -76,7 +81,7 @@ export async function getPublicProfile(
     // Backend kapaliysa sayfa patlamak yerine 404 vermeli.
     return null;
   }
-}
+});
 
 /**
  * Link tiklanmasini backend'e bildirir.
