@@ -38,8 +38,10 @@ export const useGetUsersQuery = ({
         {
           page: pageParam,
           limit: 10,
-          filters: filter,
-          sort: sort ? [sort] : undefined,
+          search: filter?.search,
+          isAdmin: filter?.isAdmin,
+          orderBy: sort?.orderBy,
+          order: sort?.order,
         },
         {
           signal,
@@ -47,9 +49,12 @@ export const useGetUsersQuery = ({
       );
 
       if (status === HTTP_CODES_ENUM.OK) {
+        // Backend ortak zarf donuyor: kullanicilar data icinde, sayfalama
+        // bilgisi meta icinde. Onceki hali {data, hasNextPage} bekliyordu ve
+        // liste hep bos kaliyordu.
         return {
           data: data.data,
-          nextPage: data.hasNextPage ? pageParam + 1 : undefined,
+          nextPage: data.meta?.has_next_page ? pageParam + 1 : undefined,
         };
       }
     },

@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import { useRouter } from "next/navigation";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
+import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
 import { useTranslation } from "@/services/i18n/client";
 import { useEffect, useMemo, useState } from "react";
 import Alert from "@mui/material/Alert";
@@ -128,18 +129,25 @@ function Form() {
       token,
     });
 
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (Object.keys(data.errors) as Array<keyof PasswordChangeFormData>).forEach(
-        (key) => {
-          setError(key, {
-            type: "manual",
-            message: t(
-              `password-change:inputs.${key}.validation.server.${data.errors[key]}`
-            ),
-          });
-        }
-      );
+    if (status !== HTTP_CODES_ENUM.NO_CONTENT) {
+      // FastAPI dogrulama hatalari {detail:[{loc,msg}]} yapisinda geliyor;
+      // onceki hal boilerplate'in {errors:{alan:kod}} yapisini okuyordu.
+      const fieldErrors = getFieldErrors(data);
+      const keys = Object.keys(fieldErrors) as Array<
+        keyof PasswordChangeFormData
+      >;
 
+      if (keys.length > 0) {
+        keys.forEach((key) => {
+          setError(key, { type: "manual", message: fieldErrors[key] });
+        });
+        return;
+      }
+
+      enqueueSnackbar(
+        getErrorMessage(data, t("password-change:alerts.error")),
+        { variant: "error" }
+      );
       return;
     }
 

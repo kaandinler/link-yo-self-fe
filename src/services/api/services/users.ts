@@ -3,24 +3,39 @@ import useFetch from "../use-fetch";
 import { API_URL } from "../config";
 import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
 import { User } from "../types/user";
-import { InfinityPaginationType } from "../types/infinity-pagination";
-import { Role } from "../types/role";
 import { SortEnum } from "../types/sort-type";
 import { RequestConfigType } from "./types/request-config";
+
+/**
+ * Backend'in ortak yanit zarfi: {status, message, data}.
+ * Sayfalanmis uclar ayrica meta dondurur.
+ */
+type ApiEnvelope<T> = {
+  status: string;
+  message?: string | null;
+  data: T;
+};
+
+type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+  has_next_page: boolean;
+};
 
 export type UsersRequest = {
   page: number;
   limit: number;
-  filters?: {
-    roles?: Role[];
-  };
-  sort?: Array<{
-    orderBy: keyof User;
-    order: SortEnum;
-  }>;
+  /** Kullanici adi, e-posta, ad veya soyadda arar. */
+  search?: string;
+  /** undefined: filtre yok, true: sadece adminler, false: sadece normaller. */
+  isAdmin?: boolean;
+  orderBy?: keyof User;
+  order?: SortEnum;
 };
 
-export type UsersResponse = InfinityPaginationType<User>;
+export type UsersResponse = ApiEnvelope<User[]> & { meta: PaginationMeta };
 
 export function useGetUsersService() {
   const fetch = useFetch();
@@ -30,11 +45,20 @@ export function useGetUsersService() {
       const requestUrl = new URL(`${API_URL}/v1/users/`);
       requestUrl.searchParams.append("page", data.page.toString());
       requestUrl.searchParams.append("limit", data.limit.toString());
-      if (data.filters) {
-        requestUrl.searchParams.append("filters", JSON.stringify(data.filters));
+
+      // Backend duz sorgu parametreleri bekliyor. Onceki hali filters/sort'u
+      // JSON string olarak gonderiyordu; boyle bir uc hicbir zaman olmadi.
+      if (data.search) {
+        requestUrl.searchParams.append("search", data.search);
       }
-      if (data.sort) {
-        requestUrl.searchParams.append("sort", JSON.stringify(data.sort));
+      if (data.isAdmin !== undefined) {
+        requestUrl.searchParams.append("is_admin", String(data.isAdmin));
+      }
+      if (data.orderBy) {
+        requestUrl.searchParams.append("order_by", data.orderBy);
+      }
+      if (data.order) {
+        requestUrl.searchParams.append("order", data.order);
       }
 
       return fetch(requestUrl, {
@@ -50,7 +74,7 @@ export type UserRequest = {
   id: User["id"];
 };
 
-export type UserResponse = User;
+export type UserResponse = ApiEnvelope<User>;
 
 export function useGetUserService() {
   const fetch = useFetch();
@@ -66,14 +90,22 @@ export function useGetUserService() {
   );
 }
 
-export type UserPostRequest = Pick<
-  User,
-  "email" | "first_name" | "last_name" | "role"
-> & {
+/**
+ * Backend'in UserCreateAdmin modeli.
+ *
+ * username zorunlu: profil sayfasi /{username} adresinde yayinlaniyor ve
+ * kolon UNIQUE NOT NULL. Onceki form bu alani hic sormuyordu.
+ */
+export type UserPostRequest = {
+  username: string;
+  email: string;
   password: string;
+  first_name?: string;
+  last_name?: string;
+  is_admin?: boolean;
 };
 
-export type UserPostResponse = User;
+export type UserPostResponse = ApiEnvelope<User>;
 
 export function usePostUserService() {
   const fetch = useFetch();
@@ -90,16 +122,16 @@ export function usePostUserService() {
   );
 }
 
+/**
+ * Backend'in UserUpdateAdmin modeli; gonderilmeyen alan degistirilmez.
+ * Bu yuzden degismeyen alanlari govdeye hic koymamak gerekiyor.
+ */
 export type UserPatchRequest = {
   id: User["id"];
-  data: Partial<
-    Pick<User, "email" | "first_name" | "last_name" | "role"> & {
-      password: string;
-    }
-  >;
+  data: Partial<UserPostRequest>;
 };
 
-export type UserPatchResponse = User;
+export type UserPatchResponse = ApiEnvelope<User>;
 
 export function usePatchUserService() {
   const fetch = useFetch();

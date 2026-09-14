@@ -17,38 +17,48 @@ import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
 import { usePostUserService } from "@/services/api/services/users";
 import { useRouter } from "next/navigation";
-import { Role, RoleEnum } from "@/services/api/types/role";
 import FormSelectInput from "@/components/form/select/form-select";
+import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
+
+/** Backend'de rol tablosu yok; yetki tek bir is_admin bayragi. */
+type AccessOption = { id: "user" | "admin" };
+
+const ACCESS_OPTIONS: AccessOption[] = [{ id: "user" }, { id: "admin" }];
 
 type CreateFormData = {
+  username: string;
   email: string;
   firstName: string;
   lastName: string;
   password: string;
   passwordConfirmation: string;
-  role: Role;
+  access: AccessOption;
 };
 
 const useValidationSchema = () => {
   const { t } = useTranslation("admin-panel-users-create");
 
   return yup.object().shape({
+    // Backend kurallari: 3-30 karakter, harf/rakam/_.- ve rezerve adlar
+    // yasak. Buradaki kontrol yalnizca erken geri bildirim; son soz
+    // backend'in (core/validators.py).
+    username: yup
+      .string()
+      .min(3, t("admin-panel-users-create:inputs.username.validation.min"))
+      .max(30, t("admin-panel-users-create:inputs.username.validation.max"))
+      .matches(
+        /^[a-zA-Z0-9_.-]+$/,
+        t("admin-panel-users-create:inputs.username.validation.invalid")
+      )
+      .required(
+        t("admin-panel-users-create:inputs.username.validation.required")
+      ),
     email: yup
       .string()
       .email(t("admin-panel-users-create:inputs.email.validation.invalid"))
-      .required(
-        t("admin-panel-users-create:inputs.firstName.validation.required")
-      ),
-    firstName: yup
-      .string()
-      .required(
-        t("admin-panel-users-create:inputs.firstName.validation.required")
-      ),
-    lastName: yup
-      .string()
-      .required(
-        t("admin-panel-users-create:inputs.lastName.validation.required")
-      ),
+      .required(t("admin-panel-users-create:inputs.email.validation.required")),
+    firstName: yup.string().default(""),
+    lastName: yup.string().default(""),
     password: yup
       .string()
       .min(6, t("admin-panel-users-create:inputs.password.validation.min"))
@@ -68,13 +78,12 @@ const useValidationSchema = () => {
           "admin-panel-users-create:inputs.passwordConfirmation.validation.required"
         )
       ),
-    role: yup
+    access: yup
       .object()
       .shape({
-        id: yup.mixed<string | number>().required(),
-        name: yup.string(),
+        id: yup.mixed<AccessOption["id"]>().oneOf(["user", "admin"]).required(),
       })
-      .required(t("admin-panel-users-create:inputs.role.validation.required")),
+      .required(),
   });
 };
 
@@ -106,40 +115,57 @@ function FormCreateUser() {
   const methods = useForm<CreateFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
+      username: "",
       email: "",
       firstName: "",
       lastName: "",
       password: "",
       passwordConfirmation: "",
-      role: {
-        id: RoleEnum.USER,
-      },
+      access: { id: "user" },
     },
   });
 
   const { handleSubmit, setError } = methods;
 
   const onSubmit = handleSubmit(async (formData) => {
-    const { data, status } = await fetchPostUser(formData);
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (Object.keys(data.errors) as Array<keyof CreateFormData>).forEach(
-        (key) => {
-          setError(key, {
-            type: "manual",
-            message: t(
-              `admin-panel-users-create:inputs.${key}.validation.server.${data.errors[key]}`
-            ),
-          });
-        }
-      );
-      return;
-    }
+    const { data, status } = await fetchPostUser({
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      // Bos birakilan ad/soyad backend'e hic gonderilmiyor.
+      first_name: formData.firstName.trim() || undefined,
+      last_name: formData.lastName.trim() || undefined,
+      is_admin: formData.access.id === "admin",
+    });
+
     if (status === HTTP_CODES_ENUM.CREATED) {
       enqueueSnackbar(t("admin-panel-users-create:alerts.user.success"), {
         variant: "success",
       });
       router.push("/admin-panel/users");
+      return;
     }
+
+    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
+      // Backend FastAPI'nin {detail:[{loc, msg}]} yapisini donuyor; alan
+      // adlari snake_case oldugu icin form adlarina cevriliyor.
+      const fieldErrors = getFieldErrors(data);
+      const keys = Object.keys(fieldErrors) as Array<keyof CreateFormData>;
+
+      if (keys.length > 0) {
+        keys.forEach((key) => {
+          setError(key, { type: "manual", message: fieldErrors[key] });
+        });
+        return;
+      }
+    }
+
+    // 409 (kullanici adi/e-posta zaten var) ve digerleri: backend'in mesaji
+    // hangi alanin cakistigini zaten soyluyor.
+    enqueueSnackbar(
+      getErrorMessage(data, t("admin-panel-users-create:alerts.user.error")),
+      { variant: "error" }
+    );
   });
 
   return (
@@ -151,6 +177,15 @@ function FormCreateUser() {
               <Typography variant="h6">
                 {t("admin-panel-users-create:title")}
               </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<CreateFormData>
+                name="username"
+                testId="new-user-username"
+                autoComplete="new-user-username"
+                label={t("admin-panel-users-create:inputs.username.label")}
+              />
             </Grid>
 
             <Grid size={{ xs: 12 }}>
@@ -200,21 +235,16 @@ function FormCreateUser() {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-              <FormSelectInput<CreateFormData, Pick<Role, "id">>
-                name="role"
-                testId="role"
-                label={t("admin-panel-users-create:inputs.role.label")}
-                options={[
-                  {
-                    id: RoleEnum.ADMIN,
-                  },
-                  {
-                    id: RoleEnum.USER,
-                  },
-                ]}
+              <FormSelectInput<CreateFormData, AccessOption>
+                name="access"
+                testId="access"
+                label={t("admin-panel-users-create:inputs.access.label")}
+                options={ACCESS_OPTIONS}
                 keyValue="id"
                 renderOption={(option) =>
-                  t(`admin-panel-users-create:inputs.role.options.${option.id}`)
+                  t(
+                    `admin-panel-users-create:inputs.access.options.${option.id}`
+                  )
                 }
               />
             </Grid>
@@ -243,4 +273,6 @@ function CreateUser() {
   return <FormCreateUser />;
 }
 
-export default withPageRequiredAuth(CreateUser);
+// Bu sayfa admin uclarina yaziyor; guard da admin istemeli.
+// Onceki hali yalnizca "giris yapmis" kontrolu yapiyordu.
+export default withPageRequiredAuth(CreateUser, { requireAdmin: true });

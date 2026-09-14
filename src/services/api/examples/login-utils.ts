@@ -31,7 +31,6 @@ export interface UserInfoParseResult {
   success: boolean;
   message: string;
   userData?: User;
-  fallbackUser?: User;
 }
 
 export interface TokensInfo {
@@ -96,8 +95,7 @@ export function parseLoginResponse(
  * User info response'unu parse eder
  */
 export function parseUserInfoResponse(
-  response: BaseResponseModel<User>,
-  email: string
+  response: BaseResponseModel<User>
 ): UserInfoParseResult {
   if (isSuccessResponse(response)) {
     const userData = getResponseData(response);
@@ -111,16 +109,12 @@ export function parseUserInfoResponse(
     }
   }
 
-  // Fallback user creation
-  const fallbackUser: User = {
-    id: "temp-id",
-    email: email,
-  };
-
+  // Uydurma bir kullanici (orn. {id: "temp-id"}) donmuyoruz: is_admin ve
+  // username gibi alanlar eksik kaldigi icin arayuz kullaniciyi yanlis
+  // yetkiyle ciziyordu. Basarisizlikta cagiran taraf karar versin.
   return {
     success: false,
-    message: "Failed to fetch user info, using fallback",
-    fallbackUser,
+    message: "Failed to fetch user info",
   };
 }
 
