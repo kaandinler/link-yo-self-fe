@@ -115,8 +115,6 @@ export function parseUserInfoResponse(
   const fallbackUser: User = {
     id: "temp-id",
     email: email,
-    firstName: "",
-    lastName: "",
   };
 
   return {

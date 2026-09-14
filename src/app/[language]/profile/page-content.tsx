@@ -23,14 +23,14 @@ function Profile() {
       <Grid container spacing={3} wrap="nowrap" pt={3}>
         <Grid size="auto">
           <StyledAvatar
-            alt={user?.firstName + " " + user?.lastName}
+            alt={user?.first_name + " " + user?.last_name}
             data-testid="user-icon"
             src={user?.profile_image_url}
           />
         </Grid>
         <Grid size="grow">
           <Typography variant="h3" gutterBottom data-testid="user-name">
-            {user?.firstName} {user?.lastName}
+            {user?.first_name} {user?.last_name}
           </Typography>
           <Typography variant="h5" gutterBottom data-testid="user-email">
             {user?.email}

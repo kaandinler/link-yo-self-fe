@@ -5,7 +5,6 @@ import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
 import Link from "@/components/link";
-import { RoleEnum } from "@/services/api/types/role";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import {
   Menu,
@@ -126,14 +125,13 @@ function ResponsiveAppBar() {
                 ))}
 
             {/* Admin panel link */}
-            {user?.role &&
-              [RoleEnum.ADMIN].includes(Number(user?.role?.id)) && (
-                <Link href="/admin-panel/users">
-                  <span className="text-gray-300 hover:text-white transition-colors font-medium cursor-pointer">
-                    {t("common:navigation.users")}
-                  </span>
-                </Link>
-              )}
+            {user?.is_admin && (
+              <Link href="/admin-panel/users">
+                <span className="text-gray-300 hover:text-white transition-colors font-medium cursor-pointer">
+                  {t("common:navigation.users")}
+                </span>
+              </Link>
+            )}
           </nav>
 
           {/* Desktop Auth/User Area */}
@@ -172,7 +170,7 @@ function ResponsiveAppBar() {
                     {user.profile_image_url ? (
                       <img
                         src={user.profile_image_url}
-                        alt={`${user.firstName} ${user.lastName}`}
+                        alt={`${user.first_name} ${user.last_name}`}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
@@ -181,7 +179,7 @@ function ResponsiveAppBar() {
                       </div>
                     )}
                     <span className="text-white font-medium">
-                      {user.firstName || user.email}
+                      {user.first_name || user.email}
                     </span>
                     <ChevronDown className="h-4 w-4 text-gray-400" />
                   </button>
@@ -279,17 +277,16 @@ function ResponsiveAppBar() {
                 ))}
 
             {/* Admin panel for mobile */}
-            {user?.role &&
-              [RoleEnum.ADMIN].includes(Number(user?.role?.id)) && (
-                <Link href="/admin-panel/users">
-                  <div
-                    className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg mx-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {t("common:navigation.users")}
-                  </div>
-                </Link>
-              )}
+            {user?.is_admin && (
+              <Link href="/admin-panel/users">
+                <div
+                  className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg mx-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {t("common:navigation.users")}
+                </div>
+              </Link>
+            )}
 
             {/* Mobile Auth Section */}
             <div className="border-t border-gray-700 pt-4 mt-4">
@@ -303,7 +300,7 @@ function ResponsiveAppBar() {
                     {user.profile_image_url ? (
                       <img
                         src={user.profile_image_url}
-                        alt={`${user.firstName} ${user.lastName}`}
+                        alt={`${user.first_name} ${user.last_name}`}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
@@ -312,7 +309,7 @@ function ResponsiveAppBar() {
                       </div>
                     )}
                     <span className="text-white font-medium">
-                      {user.firstName || user.email}
+                      {user.first_name || user.email}
                     </span>
                   </div>
                   <Link href="/profile">

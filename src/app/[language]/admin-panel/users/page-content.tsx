@@ -1,6 +1,5 @@
 "use client";
 
-import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useTranslation } from "@/services/i18n/client";
 import Container from "@mui/material/Container";
@@ -372,13 +371,13 @@ function Users() {
               <>
                 <TableCell style={{ width: 50 }}>
                   <Avatar
-                    alt={user?.firstName + " " + user?.lastName}
+                    alt={user?.first_name + " " + user?.last_name}
                     src={user?.profile_image_url}
                   />
                 </TableCell>
                 <TableCell style={{ width: 100 }}>{user?.id}</TableCell>
                 <TableCell style={{ width: 200 }}>
-                  {user?.firstName} {user?.lastName}
+                  {user?.first_name} {user?.last_name}
                 </TableCell>
                 <TableCell>{user?.email}</TableCell>
                 <TableCell style={{ width: 80 }}>
@@ -396,4 +395,4 @@ function Users() {
   );
 }
 
-export default withPageRequiredAuth(Users, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Users, { requireAdmin: true });

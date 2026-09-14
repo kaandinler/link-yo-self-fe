@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import useAuth from "./use-auth";
 import React, { FunctionComponent, useEffect } from "react";
 import useLanguage from "../i18n/use-language";
-import { RoleEnum } from "../api/types/role";
 
 type PropsType = {
   params?: { [key: string]: string | string[] | undefined };
@@ -11,59 +10,54 @@ type PropsType = {
 };
 
 type OptionsType = {
-  roles: RoleEnum[];
+  /** Sayfa yalnizca admin kullanicilara acik olsun mu? */
+  requireAdmin?: boolean;
 };
 
-const roles = Object.values(RoleEnum).filter(
-  (value) => !Number.isNaN(Number(value))
-) as RoleEnum[];
-
+/**
+ * Sayfayi giris yapmis kullaniciyla sinirlar.
+ *
+ * ONCEKI HALI BOZUKTU: boilerplate'ten geldigi icin `user.role.id` degerini
+ * RoleEnum listesine karsi kontrol ediyordu. FastAPI backend'inin UserRead
+ * modelinde rol alani yok, dolayisiyla kosul hicbir zaman saglanmiyor ve
+ * giris yapmis kullanici bile sayfayi goremeden ana sayfaya atiliyordu.
+ *
+ * Artik yalnizca kullanicinin varligina, admin sayfalarinda ise backend'in
+ * dondugu is_admin bayragina bakiliyor. Bu yalnizca arayuz katmani: asil
+ * yetki kontrolu backend'de (deps.get_current_admin_user).
+ */
 function withPageRequiredAuth(
   Component: FunctionComponent<PropsType>,
   options?: OptionsType
 ) {
-  const optionRoles = options?.roles || roles;
+  const requireAdmin = options?.requireAdmin ?? false;
 
   return function WithPageRequiredAuth(props: PropsType) {
     const { user, isLoaded } = useAuth();
     const router = useRouter();
     const language = useLanguage();
 
-    useEffect(() => {
-      const check = () => {
-        if (
-          (user &&
-            user?.role?.id &&
-            optionRoles.includes(Number(user?.role.id))) ||
-          !isLoaded
-        )
-          return;
+    const isAllowed = Boolean(user) && (!requireAdmin || user?.is_admin);
 
+    useEffect(() => {
+      if (!isLoaded || isAllowed) return;
+
+      // Giris yapmamissa sign-in'e, giris yapmis ama yetkisi yoksa ana sayfaya.
+      if (!user) {
         const currentLocation = window.location.toString();
         const returnToPath =
           currentLocation.replace(new URL(currentLocation).origin, "") ||
           `/${language}`;
-        const params = new URLSearchParams({
-          returnTo: returnToPath,
-        });
+        const params = new URLSearchParams({ returnTo: returnToPath });
 
-        let redirectTo = `/${language}/sign-in?${params.toString()}`;
+        router.replace(`/${language}/sign-in?${params.toString()}`);
+        return;
+      }
 
-        if (user) {
-          redirectTo = `/${language}`;
-        }
+      router.replace(`/${language}`);
+    }, [user, isLoaded, isAllowed, router, language]);
 
-        router.replace(redirectTo);
-      };
-
-      check();
-    }, [user, isLoaded, router, language]);
-
-    return user &&
-      user?.role?.id &&
-      optionRoles.includes(Number(user?.role.id)) ? (
-      <Component {...props} />
-    ) : null;
+    return isAllowed ? <Component {...props} /> : null;
   };
 }
 
