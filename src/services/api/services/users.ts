@@ -148,6 +148,31 @@ export function usePatchUserService() {
   );
 }
 
+/**
+ * Kullanicinin kendi hesabini kapatmasi: DELETE /v1/users/me
+ *
+ * Backend govdede mevcut sifreyi istiyor; geri alinamayan bir islem oldugu
+ * icin acik birakilmis bir oturum tek basina hesabi kapatamamali.
+ */
+export type DeleteMyAccountRequest = {
+  password: string;
+};
+
+export function useDeleteMyAccountService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (data: DeleteMyAccountRequest, requestConfig?: RequestConfigType) => {
+      return fetch(`${API_URL}/v1/users/me`, {
+        method: "DELETE",
+        body: JSON.stringify(data),
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<undefined>);
+    },
+    [fetch]
+  );
+}
+
 export type UsersDeleteRequest = {
   id: User["id"];
 };
