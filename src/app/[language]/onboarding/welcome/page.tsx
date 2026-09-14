@@ -1,13 +1,48 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
-  CheckCircle,
-  Palette,
-  Link2,
   BarChart3,
+  CheckCircle,
+  Link2,
+  Loader2,
+  Palette,
 } from "lucide-react";
+import useLanguage from "@/services/i18n/use-language";
+import {
+  useOnboardingStatus,
+  useSkipOnboarding,
+} from "@/services/api/services/onboarding";
 
 const OnboardingWelcome = () => {
+  const router = useRouter();
+  const language = useLanguage();
+  const skipOnboarding = useSkipOnboarding();
+  const { data: status } = useOnboardingStatus();
+  const [error, setError] = useState<string | null>(null);
+
+  // Kullanici daha once bir adimi tamamladiysa kaldigi yerden devam etsin.
+  // Backend onboarding-status ile siradaki adimi zaten hesapliyor.
+  const nextStep = Math.min(Math.max(status?.step ?? 1, 1), 4);
+
+  const handleStart = () => router.push(`/${language}/onboarding/${nextStep}`);
+
+  const handleSkip = async () => {
+    setError(null);
+    try {
+      await skipOnboarding.mutateAsync();
+      router.push(`/${language}/dashboard`);
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "Something went wrong. Please try again."
+      );
+    }
+  };
+
   const steps = [
     {
       icon: CheckCircle,
@@ -83,27 +118,52 @@ const OnboardingWelcome = () => {
         {/* Progress Indicator */}
         <div className="mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-8 h-2 bg-purple-600 rounded-full"></div>
-            <div className="w-8 h-2 bg-gray-600 rounded-full"></div>
-            <div className="w-8 h-2 bg-gray-600 rounded-full"></div>
-            <div className="w-8 h-2 bg-gray-600 rounded-full"></div>
+            {[1, 2, 3, 4].map((index) => (
+              <div
+                key={index}
+                className={`w-8 h-2 rounded-full ${
+                  status?.completed_steps?.includes(index)
+                    ? "bg-purple-600"
+                    : "bg-gray-600"
+                }`}
+              ></div>
+            ))}
           </div>
-          <p className="text-gray-400 text-sm">Step 1 of 4</p>
+          <p className="text-gray-400 text-sm">Step {nextStep} of 4</p>
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-          <button className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-2xl">
-            Let's Get Started
+          <button
+            type="button"
+            onClick={handleStart}
+            disabled={skipOnboarding.isPending}
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 transform hover:scale-105 shadow-2xl disabled:opacity-50"
+          >
+            Let&apos;s Get Started
             <ArrowRight className="h-5 w-5" />
           </button>
 
-          <button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 border border-gray-600 hover:border-gray-500">
+          <button
+            type="button"
+            onClick={handleSkip}
+            disabled={skipOnboarding.isPending}
+            className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 border border-gray-600 hover:border-gray-500 disabled:opacity-50"
+          >
+            {skipOnboarding.isPending ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : null}
             Skip Setup
           </button>
         </div>
 
         {/* Skip Note */}
+        {error ? (
+          <p role="alert" className="text-red-400 text-sm mt-4">
+            {error}
+          </p>
+        ) : null}
+
         <p className="text-gray-500 text-sm mt-4">
           You can always complete these steps later from your dashboard
         </p>

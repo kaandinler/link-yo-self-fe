@@ -30,6 +30,8 @@ import {
   type CreateLinkRequest,
   type UpdateLinkRequest,
 } from "@/services/api/services/links";
+import useAuth from "@/services/auth/use-auth";
+import useLanguage from "@/services/i18n/use-language";
 
 // Types
 interface LinkFormData {
@@ -676,6 +678,8 @@ const DraggableList = ({
 
 // Main Component
 const Links: React.FC = () => {
+  const { user } = useAuth();
+  const language = useLanguage();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [showInactive, setShowInactive] = useState(false);
@@ -760,7 +764,12 @@ const Links: React.FC = () => {
   };
 
   const handleCopyProfileUrl = () => {
-    const profileUrl = `${window.location.origin}/@username`;
+    // Public profil rotasi /{language}/{username}. Onceki hali sabit bir
+    // "/@username" yer tutucusuydu: kopyalanan adres hicbir kullaniciyi
+    // gostermiyordu (@ ayrica Next.js'te parallel route slot'u demek).
+    if (!user?.username) return;
+
+    const profileUrl = `${window.location.origin}/${language}/${user.username}`;
     navigator.clipboard.writeText(profileUrl);
   };
 

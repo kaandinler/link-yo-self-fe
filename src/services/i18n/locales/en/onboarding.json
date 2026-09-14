@@ -1,0 +1,52 @@
+{
+  "loading": "Loading ...",
+  "progress": {
+    "label": "Onboarding progress",
+    "step": "Step {{current}} of {{total}}",
+    "completion": "profile {{percent}}% complete"
+  },
+  "actions": {
+    "start": "Let's Get Started",
+    "next": "Continue",
+    "back": "Back",
+    "skip": "Skip setup",
+    "finish": "Finish setup"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again."
+  },
+  "steps": {
+    "1": {
+      "title": "Complete your profile",
+      "description": "Add your name, a short bio and a photo. This is what people see at the top of your page."
+    },
+    "2": {
+      "title": "Set up your page",
+      "description": "Give your page a title and description, and link your main website."
+    },
+    "3": {
+      "title": "Add social links",
+      "description": "Connect your social accounts. Leave any of them blank if you'd rather not."
+    },
+    "4": {
+      "title": "Customize appearance",
+      "description": "Pick a theme color and background for your public page."
+    }
+  },
+  "fields": {
+    "first_name": "First name",
+    "last_name": "Last name",
+    "display_name": "Display name",
+    "bio": "Bio",
+    "profile_image_url": "Profile image URL",
+    "page_title": "Page title",
+    "page_description": "Page description",
+    "website": "Website",
+    "twitter_username": "Twitter username",
+    "instagram_username": "Instagram username",
+    "linkedin_username": "LinkedIn username",
+    "theme_color": "Theme color",
+    "background_type": "Background type",
+    "background_value": "Background color or image URL"
+  }
+}
