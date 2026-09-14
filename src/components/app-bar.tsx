@@ -169,9 +169,9 @@ function ResponsiveAppBar() {
                     onClick={handleUserMenuToggle}
                     className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 rounded-lg px-3 py-2 transition-all duration-200"
                   >
-                    {user.photo?.path ? (
+                    {user.profile_image_url ? (
                       <img
-                        src={user.photo.path}
+                        src={user.profile_image_url}
                         alt={`${user.firstName} ${user.lastName}`}
                         className="w-8 h-8 rounded-full object-cover"
                       />
@@ -300,9 +300,9 @@ function ResponsiveAppBar() {
               ) : user ? (
                 <div className="space-y-2 mx-2">
                   <div className="flex items-center gap-3 px-4 py-2 bg-gray-700/50 rounded-lg">
-                    {user.photo?.path ? (
+                    {user.profile_image_url ? (
                       <img
-                        src={user.photo.path}
+                        src={user.profile_image_url}
                         alt={`${user.firstName} ${user.lastName}`}
                         className="w-8 h-8 rounded-full object-cover"
                       />

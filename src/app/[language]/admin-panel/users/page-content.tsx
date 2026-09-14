@@ -373,7 +373,7 @@ function Users() {
                 <TableCell style={{ width: 50 }}>
                   <Avatar
                     alt={user?.firstName + " " + user?.lastName}
-                    src={user?.photo?.path}
+                    src={user?.profile_image_url}
                   />
                 </TableCell>
                 <TableCell style={{ width: 100 }}>{user?.id}</TableCell>

@@ -62,13 +62,19 @@ function ExpiresAlert() {
   const { t } = useTranslation("password-change");
   const [currentTime, setCurrentTime] = useState(() => Date.now());
 
+  // Baglantida expires parametresi olmayabilir (backend yalnizca token
+  // gonderiyor; gecerlilik suresi zaten sunucuda kontrol ediliyor).
+  // Onceki hali Number(null) = 0 uretip uyariyi her zaman gosteriyordu.
   const expires = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
+    const raw = Number(params.get("expires"));
 
-    return Number(params.get("expires"));
+    return Number.isFinite(raw) && raw > 0 ? raw : null;
   }, []);
 
   useEffect(() => {
+    if (expires === null) return;
+
     const interval = setInterval(() => {
       const now = Date.now();
       setCurrentTime(now);
@@ -81,7 +87,7 @@ function ExpiresAlert() {
     return () => clearInterval(interval);
   }, [expires]);
 
-  const isExpired = expires < currentTime;
+  const isExpired = expires !== null && expires < currentTime;
 
   return (
     isExpired && (
@@ -113,12 +119,13 @@ function Form() {
 
   const onSubmit = handleSubmit(async (formData) => {
     const params = new URLSearchParams(window.location.search);
-    const hash = params.get("hash");
-    if (!hash) return;
+    // Backend'in gonderdigi baglanti: /password-change?token=...
+    const token = params.get("token");
+    if (!token) return;
 
     const { data, status } = await fetchAuthResetPassword({
       password: formData.password,
-      hash,
+      token,
     });
 
     if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {

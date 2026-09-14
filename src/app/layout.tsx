@@ -16,8 +16,6 @@ import LeavePageProvider from "@/services/leave-page/leave-page-provider";
 import QueryClientProvider from "@/services/react-query/query-client-provider";
 import queryClient from "@/services/react-query/query-client";
 import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
-import GoogleAuthProvider from "@/services/social-auth/google/google-auth-provider";
-import FacebookAuthProvider from "@/services/social-auth/facebook/facebook-auth-provider";
 import ConfirmDialogProvider from "@/components/confirm-dialog/confirm-dialog-provider";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 
@@ -59,15 +57,11 @@ export default function RootLayout({
             <StoreLanguageProvider>
               <ConfirmDialogProvider>
                 <AuthProvider>
-                  <GoogleAuthProvider>
-                    <FacebookAuthProvider>
-                      <LeavePageProvider>
-                        <ResponsiveAppBar />
-                        {children}
-                        <SnackbarProvider />
-                      </LeavePageProvider>
-                    </FacebookAuthProvider>
-                  </GoogleAuthProvider>
+                  <LeavePageProvider>
+                    <ResponsiveAppBar />
+                    {children}
+                    <SnackbarProvider />
+                  </LeavePageProvider>
                 </AuthProvider>
               </ConfirmDialogProvider>
             </StoreLanguageProvider>
