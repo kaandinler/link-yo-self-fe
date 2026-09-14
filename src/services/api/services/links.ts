@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { API_URL } from "@/services/api/config";
 import useFetch from "@/services/api/use-fetch";
+import { ANALYTICS_QUERY_KEY } from "@/services/api/services/analytics";
 
 // Types
 export interface Link {
@@ -52,19 +53,6 @@ export interface UpdateLinkRequest {
 
 export interface ReorderLinksRequest {
   link_ids: number[];
-}
-
-export interface LinkAnalytics {
-  total_links: number;
-  active_links: number;
-  total_clicks: number;
-  links: Array<{
-    id: number;
-    title: string;
-    url: string;
-    click_count: number;
-    is_active: boolean;
-  }>;
 }
 
 // API Response wrapper
@@ -179,18 +167,6 @@ function useLinksAPI() {
       const result: ApiResponse<Link> = await response.json();
       return result.data;
     },
-
-    // Get analytics
-    getAnalytics: async (): Promise<LinkAnalytics> => {
-      const response = await fetch(`${API_URL}/v1/links/analytics/summary`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch analytics");
-      }
-
-      const result: ApiResponse<LinkAnalytics> = await response.json();
-      return result.data;
-    },
   };
 
   return api;
@@ -226,6 +202,8 @@ export const useCreateLink = () => {
     onSuccess: () => {
       // Invalidate and refetch links
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      // Link sayisi/aktiflik degisti; ozet de tazelenmeli.
+      queryClient.invalidateQueries({ queryKey: ANALYTICS_QUERY_KEY });
     },
   });
 };
@@ -244,6 +222,8 @@ export const useUpdateLink = () => {
     }) => api.updateLink(linkId, linkData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      // Link sayisi/aktiflik degisti; ozet de tazelenmeli.
+      queryClient.invalidateQueries({ queryKey: ANALYTICS_QUERY_KEY });
     },
   });
 };
@@ -256,6 +236,8 @@ export const useDeleteLink = () => {
     mutationFn: api.deleteLink,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      // Link sayisi/aktiflik degisti; ozet de tazelenmeli.
+      queryClient.invalidateQueries({ queryKey: ANALYTICS_QUERY_KEY });
     },
   });
 };
@@ -268,6 +250,8 @@ export const useReorderLinks = () => {
     mutationFn: api.reorderLinks,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      // Link sayisi/aktiflik degisti; ozet de tazelenmeli.
+      queryClient.invalidateQueries({ queryKey: ANALYTICS_QUERY_KEY });
     },
   });
 };
@@ -280,16 +264,8 @@ export const useToggleLinkStatus = () => {
     mutationFn: api.toggleLinkStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      // Link sayisi/aktiflik degisti; ozet de tazelenmeli.
+      queryClient.invalidateQueries({ queryKey: ANALYTICS_QUERY_KEY });
     },
-  });
-};
-
-export const useLinkAnalytics = () => {
-  const api = useLinksAPI();
-
-  return useQuery({
-    queryKey: ["link-analytics"],
-    queryFn: api.getAnalytics,
-    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 };
