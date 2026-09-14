@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import withPageRequiredGuest from "@/services/auth/with-page-required-guest";
 import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
+import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import useAuthTokens from "@/services/auth/use-auth-tokens";
 import { useTranslation } from "@/services/i18n/client";
@@ -123,6 +124,7 @@ function LinkYoSelfSignInForm() {
   const { setUser } = useAuthActions();
   const { setTokensInfo } = useAuthTokens();
   const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService();
+  const fetchAuthMeFastAPI = useAuthMeWithFastAPIService();
   const { t } = useTranslation("sign-in");
   const { showApiResponse, enqueueSnackbar } = useSnackbar();
 
@@ -214,11 +216,22 @@ function LinkYoSelfSignInForm() {
           setUser: (user) => user && setUser(user), // Only call setUser if user is not null
         });
 
-        // Create a simple user object since we have the email
-        setUser({
-          id: "temp-id",
-          email: formData.email,
-        });
+        // Kullaniciyi backend'den cek.
+        //
+        // ONCEKI HALI BOZUKTU: burada {id: "temp-id", email} seklinde sahte
+        // bir kullanici yaziliyordu. Token yaniti kullanici icermedigi icin
+        // is_admin/username gibi alanlar undefined kaliyor, admin sayfalari
+        // giris sonrasi -- sayfa yenilenene kadar -- admin'i bile disari
+        // atiyordu.
+        const me = await fetchAuthMeFastAPI(loginResult.tokenData.access_token);
+        const userInfo = parseUserInfoResponse(me);
+        if (userInfo.userData) {
+          setUser(userInfo.userData);
+        } else {
+          // Token kaydedildi; kullanici bilgisi sayfa yenilendiginde
+          // AuthProvider tarafindan yeniden cekilecek.
+          console.warn(userInfo.message);
+        }
 
         console.log("✅ Login successful");
       } else if (loginResult.fieldErrors) {

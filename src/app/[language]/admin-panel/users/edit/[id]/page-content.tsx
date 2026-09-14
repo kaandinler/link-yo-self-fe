@@ -19,16 +19,23 @@ import { useTranslation } from "@/services/i18n/client";
 import {
   useGetUserService,
   usePatchUserService,
+  UserPostRequest,
 } from "@/services/api/services/users";
 import { useParams } from "next/navigation";
-import { Role, RoleEnum } from "@/services/api/types/role";
 import FormSelectInput from "@/components/form/select/form-select";
+import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
+
+/** Backend'de rol tablosu yok; yetki tek bir is_admin bayragi. */
+type AccessOption = { id: "user" | "admin" };
+
+const ACCESS_OPTIONS: AccessOption[] = [{ id: "user" }, { id: "admin" }];
 
 type EditUserFormData = {
+  username: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: Role;
+  access: AccessOption;
 };
 
 type ChangeUserPasswordFormData = {
@@ -40,29 +47,29 @@ const useValidationEditUserSchema = () => {
   const { t } = useTranslation("admin-panel-users-edit");
 
   return yup.object().shape({
+    username: yup
+      .string()
+      .min(3, t("admin-panel-users-edit:inputs.username.validation.min"))
+      .max(30, t("admin-panel-users-edit:inputs.username.validation.max"))
+      .matches(
+        /^[a-zA-Z0-9_.-]+$/,
+        t("admin-panel-users-edit:inputs.username.validation.invalid")
+      )
+      .required(
+        t("admin-panel-users-edit:inputs.username.validation.required")
+      ),
     email: yup
       .string()
       .email(t("admin-panel-users-edit:inputs.email.validation.invalid"))
-      .required(
-        t("admin-panel-users-edit:inputs.firstName.validation.required")
-      ),
-    firstName: yup
-      .string()
-      .required(
-        t("admin-panel-users-edit:inputs.firstName.validation.required")
-      ),
-    lastName: yup
-      .string()
-      .required(
-        t("admin-panel-users-edit:inputs.lastName.validation.required")
-      ),
-    role: yup
+      .required(t("admin-panel-users-edit:inputs.email.validation.required")),
+    firstName: yup.string().default(""),
+    lastName: yup.string().default(""),
+    access: yup
       .object()
       .shape({
-        id: yup.mixed<string | number>().required(),
-        name: yup.string(),
+        id: yup.mixed<AccessOption["id"]>().oneOf(["user", "admin"]).required(),
       })
-      .required(t("admin-panel-users-edit:inputs.role.validation.required")),
+      .required(),
   });
 };
 
@@ -126,7 +133,7 @@ function ChangePasswordUserFormActions() {
 
 function FormEditUser() {
   const params = useParams<{ id: string }>();
-  const userId = params.id;
+  const userId = Number(params.id);
   const fetchGetUser = useGetUserService();
   const fetchPatchUser = usePatchUserService();
   const { t } = useTranslation("admin-panel-users-edit");
@@ -136,57 +143,73 @@ function FormEditUser() {
   const methods = useForm<EditUserFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
+      username: "",
       email: "",
       firstName: "",
       lastName: "",
-      role: undefined,
+      access: { id: "user" },
     },
   });
 
-  const { handleSubmit, setError, reset } = methods;
+  const { handleSubmit, setError, reset, getFieldState } = methods;
 
   const onSubmit = handleSubmit(async (formData) => {
-    const isEmailDirty = methods.getFieldState("email").isDirty;
-    const { data, status } = await fetchPatchUser({
-      id: userId,
-      data: {
-        ...formData,
-        email: isEmailDirty ? formData.email : undefined,
-      },
-    });
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (Object.keys(data.errors) as Array<keyof EditUserFormData>).forEach(
-        (key) => {
-          setError(key, {
-            type: "manual",
-            message: t(
-              `admin-panel-users-edit:inputs.${key}.validation.server.${data.errors[key]}`
-            ),
-          });
-        }
-      );
-      return;
-    }
+    // Backend PATCH semantigi uyguluyor: gonderilmeyen alan degistirilmez.
+    // Degismemis alanlari govdeye koymazsak gereksiz benzersizlik kontrolu
+    // ve catisma riski de olusmuyor.
+    const body: Partial<UserPostRequest> = {
+      first_name: formData.firstName.trim(),
+      last_name: formData.lastName.trim(),
+      is_admin: formData.access.id === "admin",
+    };
+
+    if (getFieldState("username").isDirty) body.username = formData.username;
+    if (getFieldState("email").isDirty) body.email = formData.email;
+
+    const { data, status } = await fetchPatchUser({ id: userId, data: body });
+
     if (status === HTTP_CODES_ENUM.OK) {
       reset(formData);
       enqueueSnackbar(t("admin-panel-users-edit:alerts.user.success"), {
         variant: "success",
       });
+      return;
     }
+
+    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
+      const fieldErrors = getFieldErrors(data);
+      const keys = Object.keys(fieldErrors) as Array<keyof EditUserFormData>;
+
+      if (keys.length > 0) {
+        keys.forEach((key) => {
+          setError(key, { type: "manual", message: fieldErrors[key] });
+        });
+        return;
+      }
+    }
+
+    // 422 alan hatasi degilse (orn. admin kendi yetkisini indirmeye
+    // calisiyorsa) ve 409/404 durumlarinda backend'in mesaji gosteriliyor.
+    enqueueSnackbar(
+      getErrorMessage(data, t("admin-panel-users-edit:alerts.user.error")),
+      { variant: "error" }
+    );
   });
 
   useEffect(() => {
+    if (!Number.isFinite(userId)) return;
+
     const getInitialDataForEdit = async () => {
-      const { status, data: user } = await fetchGetUser({ id: userId });
+      const { status, data } = await fetchGetUser({ id: userId });
 
       if (status === HTTP_CODES_ENUM.OK) {
+        const user = data.data;
         reset({
+          username: user?.username ?? "",
           email: user?.email ?? "",
           firstName: user?.first_name ?? "",
           lastName: user?.last_name ?? "",
-          role: {
-            id: Number(user?.role?.id),
-          },
+          access: { id: user?.is_admin ? "admin" : "user" },
         });
       }
     };
@@ -203,6 +226,14 @@ function FormEditUser() {
               <Typography variant="h6">
                 {t("admin-panel-users-edit:title1")}
               </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditUserFormData>
+                name="username"
+                testId="username"
+                label={t("admin-panel-users-edit:inputs.username.label")}
+              />
             </Grid>
 
             <Grid size={{ xs: 12 }}>
@@ -230,21 +261,14 @@ function FormEditUser() {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-              <FormSelectInput<EditUserFormData, Pick<Role, "id">>
-                name="role"
-                testId="role"
-                label={t("admin-panel-users-edit:inputs.role.label")}
-                options={[
-                  {
-                    id: RoleEnum.ADMIN,
-                  },
-                  {
-                    id: RoleEnum.USER,
-                  },
-                ]}
+              <FormSelectInput<EditUserFormData, AccessOption>
+                name="access"
+                testId="access"
+                label={t("admin-panel-users-edit:inputs.access.label")}
+                options={ACCESS_OPTIONS}
                 keyValue="id"
                 renderOption={(option) =>
-                  t(`admin-panel-users-edit:inputs.role.options.${option.id}`)
+                  t(`admin-panel-users-edit:inputs.access.options.${option.id}`)
                 }
               />
             </Grid>
@@ -271,7 +295,7 @@ function FormEditUser() {
 
 function FormChangePasswordUser() {
   const params = useParams<{ id: string }>();
-  const userId = params.id;
+  const userId = Number(params.id);
   const fetchPatchUser = usePatchUserService();
   const { t } = useTranslation("admin-panel-users-edit");
   const validationSchema = useValidationChangePasswordSchema();
@@ -290,27 +314,37 @@ function FormChangePasswordUser() {
   const onSubmit = handleSubmit(async (formData) => {
     const { data, status } = await fetchPatchUser({
       id: userId,
-      data: formData,
+      // passwordConfirmation yalnizca istemci tarafi kontrolu; backend'de
+      // boyle bir alan yok ve gonderilirse 422 alinir.
+      data: { password: formData.password },
     });
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (
-        Object.keys(data.errors) as Array<keyof ChangeUserPasswordFormData>
-      ).forEach((key) => {
-        setError(key, {
-          type: "manual",
-          message: t(
-            `admin-panel-users-edit:inputs.${key}.validation.server.${data.errors[key]}`
-          ),
-        });
-      });
-      return;
-    }
+
     if (status === HTTP_CODES_ENUM.OK) {
       reset();
       enqueueSnackbar(t("admin-panel-users-edit:alerts.password.success"), {
         variant: "success",
       });
+      return;
     }
+
+    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
+      const fieldErrors = getFieldErrors(data);
+      const keys = Object.keys(fieldErrors) as Array<
+        keyof ChangeUserPasswordFormData
+      >;
+
+      if (keys.length > 0) {
+        keys.forEach((key) => {
+          setError(key, { type: "manual", message: fieldErrors[key] });
+        });
+        return;
+      }
+    }
+
+    enqueueSnackbar(
+      getErrorMessage(data, t("admin-panel-users-edit:alerts.password.error")),
+      { variant: "error" }
+    );
   });
 
   return (
@@ -371,4 +405,5 @@ function EditUser() {
   );
 }
 
-export default withPageRequiredAuth(EditUser);
+// Bu sayfa admin uclarina yaziyor; guard da admin istemeli.
+export default withPageRequiredAuth(EditUser, { requireAdmin: true });

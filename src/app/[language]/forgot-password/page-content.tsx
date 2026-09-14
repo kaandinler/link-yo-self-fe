@@ -11,6 +11,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
+import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
 import { useTranslation } from "@/services/i18n/client";
 
 type ForgotPasswordFormData = {
@@ -63,26 +64,31 @@ function Form() {
   const onSubmit = handleSubmit(async (formData) => {
     const { data, status } = await fetchAuthForgotPassword(formData);
 
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (Object.keys(data.errors) as Array<keyof ForgotPasswordFormData>).forEach(
-        (key) => {
-          setError(key, {
-            type: "manual",
-            message: t(
-              `forgot-password:inputs.${key}.validation.server.${data.errors[key]}`
-            ),
-          });
-        }
-      );
-
-      return;
-    }
-
     if (status === HTTP_CODES_ENUM.NO_CONTENT) {
       enqueueSnackbar(t("forgot-password:alerts.success"), {
         variant: "success",
       });
+      return;
     }
+
+    // Backend dogrulama hatalarini FastAPI'nin {detail:[{loc,msg}]} yapisiyla
+    // donuyor; onceki hal boilerplate'in {errors:{alan:kod}} yapisini
+    // okudugu icin her zaman Object.keys(undefined) ile patliyordu.
+    const fieldErrors = getFieldErrors(data);
+    const keys = Object.keys(fieldErrors) as Array<
+      keyof ForgotPasswordFormData
+    >;
+
+    if (keys.length > 0) {
+      keys.forEach((key) => {
+        setError(key, { type: "manual", message: fieldErrors[key] });
+      });
+      return;
+    }
+
+    enqueueSnackbar(getErrorMessage(data, t("forgot-password:alerts.error")), {
+      variant: "error",
+    });
   });
 
   return (

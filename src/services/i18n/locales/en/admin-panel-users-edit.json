@@ -6,36 +6,33 @@
     "cancel": "Cancel"
   },
   "inputs": {
+    "username": {
+      "label": "Username",
+      "validation": {
+        "required": "Username is required",
+        "min": "Username must be at least 3 characters long",
+        "max": "Username must be at most 30 characters long",
+        "invalid": "Username can only contain letters, numbers, dot, dash and underscore"
+      }
+    },
     "email": {
       "label": "Email",
       "validation": {
         "invalid": "Email is invalid",
-        "required": "Email is required",
-        "server": {
-          "emailAlreadyExists": "Email already exists"
-        }
+        "required": "Email is required"
       }
     },
     "firstName": {
-      "label": "First Name",
-      "validation": {
-        "required": "First Name is required"
-      }
+      "label": "First Name"
     },
     "lastName": {
-      "label": "Last Name",
-      "validation": {
-        "required": "Last Name is required"
-      }
+      "label": "Last Name"
     },
-    "role": {
-      "label": "Role",
-      "validation": {
-        "required": "Last Name is required"
-      },
+    "access": {
+      "label": "Access",
       "options": {
-        "1": "Admin",
-        "2": "User"
+        "admin": "Admin",
+        "user": "User"
       }
     },
     "password": {
@@ -56,10 +53,12 @@
   },
   "alerts": {
     "password": {
-      "success": "Password has been updated successfully"
+      "success": "Password has been updated successfully",
+      "error": "Password could not be updated"
     },
     "user": {
-      "success": "User's profile has been updated successfully"
+      "success": "User's profile has been updated successfully",
+      "error": "User could not be updated"
     }
   }
 }

@@ -1,6 +1,3 @@
-// src/services/api/types/user.ts - Mevcut dosyayı güncelle
-import { Role } from "./role";
-
 // Backend'in UserRead modelini yansitir.
 //
 // NOT: Alan adlari backend ile ayni (snake_case). Onceki halinde
@@ -8,16 +5,11 @@ import { Role } from "./role";
 // backend bunlari hic gondermiyor, yani her zaman undefined'dilar ve bu
 // alanlari okuyan yerler (app-bar, profil sayfasi) bos gorunuyordu.
 export type User = {
-  id: string;
+  // Backend'de Integer primary key; onceki hali string diyordu.
+  id: number;
   email: string;
   first_name?: string;
   last_name?: string;
-
-  /**
-   * Backend UserRead'de rol alani YOK; bu alan yalnizca henuz backend'e
-   * baglanmamis admin paneli sayfalari derlensin diye duruyor.
-   */
-  role?: Role;
 
   username?: string;
   display_name?: string;

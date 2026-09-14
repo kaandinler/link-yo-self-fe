@@ -2,9 +2,13 @@
   "title": "Users",
   "table": {
     "column1": "ID",
-    "column2": "Name",
+    "column2": "Username",
     "column3": "Email",
-    "column4": "Role"
+    "column4": "Access",
+    "access": {
+      "admin": "Admin",
+      "user": "User"
+    }
   },
   "actions": {
     "add": "Add User",
@@ -24,11 +28,15 @@
       "apply": "Apply"
     },
     "inputs": {
-      "role": {
-        "label": "Role",
+      "search": {
+        "label": "Search by username, email or name"
+      },
+      "access": {
+        "label": "Access",
         "options": {
-          "1": "Admin",
-          "2": "User"
+          "all": "All",
+          "admin": "Admins",
+          "user": "Users"
         }
       }
     }

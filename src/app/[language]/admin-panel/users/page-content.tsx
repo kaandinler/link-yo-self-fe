@@ -120,12 +120,18 @@ function Actions({ user }: { user: User }) {
         orderBy: "id",
       };
 
-      if (searchParamsFilter) {
-        filter = JSON.parse(searchParamsFilter);
-      }
+      // Adres cubugundan gelen deger bozuk olabilir; iyimser guncellemenin
+      // dogru onbellek anahtarini bulamamasi silme islemini engellememeli.
+      try {
+        if (searchParamsFilter) {
+          filter = JSON.parse(searchParamsFilter);
+        }
 
-      if (searchParamsSort) {
-        sort = JSON.parse(searchParamsSort);
+        if (searchParamsSort) {
+          sort = JSON.parse(searchParamsSort);
+        }
+      } catch {
+        // varsayilan siralama ve filtresiz anahtar kullanilir
       }
 
       const previousData = queryClient.getQueryData<
@@ -236,7 +242,6 @@ function Actions({ user }: { user: User }) {
 
 function Users() {
   const { t: tUsers } = useTranslation("admin-panel-users");
-  const { t: tRoles } = useTranslation("admin-panel-roles");
   const searchParams = useSearchParams();
   const router = useRouter();
   const [{ order, orderBy }, setSort] = useState<{
@@ -341,9 +346,15 @@ function Users() {
                   >
                     {tUsers("admin-panel-users:table.column1")}
                   </TableSortCellWrapper>
-                  <TableCell style={{ width: 200 }}>
+                  <TableSortCellWrapper
+                    width={200}
+                    orderBy={orderBy}
+                    order={order}
+                    column="username"
+                    handleRequestSort={handleRequestSort}
+                  >
                     {tUsers("admin-panel-users:table.column2")}
-                  </TableCell>
+                  </TableSortCellWrapper>
                   <TableSortCellWrapper
                     orderBy={orderBy}
                     order={order}
@@ -376,12 +387,14 @@ function Users() {
                   />
                 </TableCell>
                 <TableCell style={{ width: 100 }}>{user?.id}</TableCell>
-                <TableCell style={{ width: 200 }}>
-                  {user?.first_name} {user?.last_name}
-                </TableCell>
+                <TableCell style={{ width: 200 }}>{user?.username}</TableCell>
                 <TableCell>{user?.email}</TableCell>
                 <TableCell style={{ width: 80 }}>
-                  {tRoles(`role.${user?.role?.id}`)}
+                  {tUsers(
+                    user?.is_admin
+                      ? "admin-panel-users:table.access.admin"
+                      : "admin-panel-users:table.access.user"
+                  )}
                 </TableCell>
                 <TableCell style={{ width: 130 }}>
                   {!!user && <Actions user={user} />}

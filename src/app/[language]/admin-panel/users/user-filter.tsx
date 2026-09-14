@@ -1,7 +1,7 @@
 "use client";
 
-import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
-import { Role, RoleEnum } from "@/services/api/types/role";
+import FormTextInput from "@/components/form/text-input/form-text-input";
+import FormSelectInput from "@/components/form/select/form-select";
 import { useTranslation } from "@/services/i18n/client";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -12,7 +12,34 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { UserFilterType } from "./user-filter-types";
 
-type UserFilterFormData = UserFilterType;
+/**
+ * Backend'de rol tablosu yok, yetki tek bir is_admin bayragi. Onceki filtre
+ * cok secimli bir rol listesiydi ve karsiligi olmayan bir uca gidiyordu.
+ */
+type AccessOption = { id: "all" | "admin" | "user" };
+
+const ACCESS_OPTIONS: AccessOption[] = [
+  { id: "all" },
+  { id: "admin" },
+  { id: "user" },
+];
+
+type UserFilterFormData = {
+  access: AccessOption;
+  search: string;
+};
+
+function accessToIsAdmin(access: AccessOption["id"]): boolean | undefined {
+  if (access === "admin") return true;
+  if (access === "user") return false;
+  return undefined;
+}
+
+function isAdminToAccess(isAdmin: boolean | undefined): AccessOption["id"] {
+  if (isAdmin === true) return "admin";
+  if (isAdmin === false) return "user";
+  return "all";
+}
 
 function UserFilter() {
   const { t } = useTranslation("admin-panel-users");
@@ -21,7 +48,8 @@ function UserFilter() {
 
   const methods = useForm<UserFilterFormData>({
     defaultValues: {
-      roles: [],
+      access: { id: "all" },
+      search: "",
     },
   });
 
@@ -42,10 +70,17 @@ function UserFilter() {
 
   useEffect(() => {
     const filter = searchParams.get("filter");
-    if (filter) {
-      handleClose();
-      const filterParsed = JSON.parse(filter);
-      reset(filterParsed);
+    if (!filter) return;
+
+    handleClose();
+    try {
+      const parsed = JSON.parse(filter) as UserFilterType;
+      reset({
+        access: { id: isAdminToAccess(parsed.isAdmin) },
+        search: parsed.search ?? "",
+      });
+    } catch {
+      // Adres cubugundaki bozuk filtre sayfayi patlatmamali.
     }
   }, [searchParams, reset]);
 
@@ -68,8 +103,13 @@ function UserFilter() {
         >
           <form
             onSubmit={handleSubmit((data) => {
+              const filter: UserFilterType = {
+                isAdmin: accessToIsAdmin(data.access.id),
+                search: data.search.trim() || undefined,
+              };
+
               const searchParams = new URLSearchParams(window.location.search);
-              searchParams.set("filter", JSON.stringify(data));
+              searchParams.set("filter", JSON.stringify(filter));
               router.push(
                 window.location.pathname + "?" + searchParams.toString()
               );
@@ -77,32 +117,23 @@ function UserFilter() {
           >
             <Grid container spacing={2} mb={3} mt={3}>
               <Grid size={{ xs: 12 }}>
-                <FormMultipleSelectInput<UserFilterFormData, Pick<Role, "id">>
-                  name="roles"
-                  testId="roles"
-                  label={t("admin-panel-users:filter.inputs.role.label")}
-                  options={[
-                    {
-                      id: RoleEnum.ADMIN,
-                    },
-                    {
-                      id: RoleEnum.USER,
-                    },
-                  ]}
+                <FormTextInput<UserFilterFormData>
+                  name="search"
+                  testId="search"
+                  label={t("admin-panel-users:filter.inputs.search.label")}
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <FormSelectInput<UserFilterFormData, AccessOption>
+                  name="access"
+                  testId="access"
+                  label={t("admin-panel-users:filter.inputs.access.label")}
+                  options={ACCESS_OPTIONS}
                   keyValue="id"
                   renderOption={(option) =>
                     t(
-                      `admin-panel-users:filter.inputs.role.options.${option.id}`
+                      `admin-panel-users:filter.inputs.access.options.${option.id}`
                     )
-                  }
-                  renderValue={(values) =>
-                    values
-                      .map((value) =>
-                        t(
-                          `admin-panel-users:filter.inputs.role.options.${value.id}`
-                        )
-                      )
-                      .join(", ")
                   }
                 />
               </Grid>
