@@ -62,14 +62,23 @@
         "required": "Password Confirmation is required",
         "match": "Password Confirmation must match password"
       }
+    },
+    "currentPassword": {
+      "label": "Current Password",
+      "validation": {
+        "required": "Current Password is required",
+        "incorrect": "Current Password is not valid"
+      }
     }
   },
   "alerts": {
     "email": {
-      "success": "Request to change email has been sent to your new email address. Please check your email and click on the link to confirm the change."
+      "success": "Your email address has been updated",
+      "error": "Your email address could not be updated"
     },
     "password": {
-      "success": "Password has been updated successfully"
+      "success": "Password has been updated successfully",
+      "error": "Your password could not be updated"
     },
     "profile": {
       "success": "Profile has been updated successfully"

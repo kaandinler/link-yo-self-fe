@@ -240,6 +240,71 @@ export function useAuthResetPasswordService() {
   );
 }
 
+/**
+ * Giris yapmis kullanicinin kendi sifresini degistirmesi.
+ *
+ * Backend mevcut sifreyi dogruluyor, diger cihazlardaki oturumlari kapatiyor
+ * ve bu oturumun devam edebilmesi icin yeni bir token cifti donuyor -- yani
+ * yanit token'lari saklanmali, yoksa kullanici bir sonraki yenilemede
+ * oturumdan duser.
+ */
+export type AuthChangePasswordRequest = {
+  current_password: string;
+  new_password: string;
+};
+
+export type AuthChangePasswordResponse = {
+  status: string;
+  message?: string | null;
+  data: {
+    access_token: string;
+    refresh_token: string;
+    token_type: string;
+  };
+};
+
+export function useAuthChangePasswordService() {
+  const fetchBase = useFetch();
+
+  return useCallback(
+    (data: AuthChangePasswordRequest, requestConfig?: RequestConfigType) => {
+      return fetchBase(`${API_URL}/v1/auth/change-password`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<AuthChangePasswordResponse>);
+    },
+    [fetchBase]
+  );
+}
+
+/** Sifre onayi ile e-posta degistirme; guncel kullaniciyi doner. */
+export type AuthChangeEmailRequest = {
+  password: string;
+  new_email: string;
+};
+
+export type AuthChangeEmailResponse = {
+  status: string;
+  message?: string | null;
+  data: User;
+};
+
+export function useAuthChangeEmailService() {
+  const fetchBase = useFetch();
+
+  return useCallback(
+    (data: AuthChangeEmailRequest, requestConfig?: RequestConfigType) => {
+      return fetchBase(`${API_URL}/v1/auth/change-email`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<AuthChangeEmailResponse>);
+    },
+    [fetchBase]
+  );
+}
+
 export function useAuthLogoutWithFastAPIService() {
   return useCallback(
     async (accessToken: string): Promise<BaseResponseModel<void>> => {

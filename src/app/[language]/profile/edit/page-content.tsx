@@ -18,6 +18,12 @@ import useLeavePage from "@/services/leave-page/use-leave-page";
 import Box from "@mui/material/Box";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
+import {
+  useAuthChangeEmailService,
+  useAuthChangePasswordService,
+} from "@/services/api/services/auth";
+import useAuthTokens from "@/services/auth/use-auth-tokens";
+import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
@@ -33,6 +39,15 @@ type EditProfileChangePasswordFormData = {
 type EditProfileChangeEmailFormData = {
   email: string;
   emailConfirmation: string;
+  /**
+   * Backend sifre onayi istiyor: e-posta, sifirlama baglantisinin adresi.
+   *
+   * Alan adi bilerek "password" DEGIL: sifre degistirme formundaki yeni sifre
+   * alani da o adi kullaniyor ve ayni sayfada iki input ayni name ile
+   * bulununca hem tarayici otomatik doldurmasi hem sifre yoneticileri yanlis
+   * alani hedefliyor.
+   */
+  currentPassword: string;
 };
 
 const useValidationBasicInfoSchema = () => {
@@ -68,6 +83,9 @@ const useValidationChangeEmailSchema = () => {
         t("profile:inputs.emailConfirmation.validation.match")
       )
       .required(t("profile:inputs.emailConfirmation.validation.required")),
+    currentPassword: yup
+      .string()
+      .required(t("profile:inputs.currentPassword.validation.required")),
   });
 };
 
@@ -205,14 +223,284 @@ function FormBasicInfo() {
   );
 }
 
-// NOT: E-posta ve sifre degistirme formlari kaldirildi. Ikisi de
-// PATCH /v1/users/me cagiriyordu (backend'de yalnizca GET var) ve zaten
-// user.provider === "email" kosuluyla korunuyorlardi; backend provider
-// alanini hic gondermedigi icin hicbir zaman ekrana gelmiyorlardi.
-// Sifresini degistirmek isteyen kullanici su an sifre sifirlama akisini
-// kullanabiliyor (/forgot-password).
+function ChangeEmailFormActions() {
+  const { t } = useTranslation("profile");
+  const { isSubmitting, isDirty } = useFormState();
+  useLeavePage(isDirty);
+
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      type="submit"
+      disabled={isSubmitting}
+      data-testid="save-email"
+    >
+      {t("profile:actions.submit")}
+    </Button>
+  );
+}
+
+/**
+ * E-posta degistirme.
+ *
+ * Bu form daha once dosyada sema olarak duruyordu ama ekrana hic gelmiyordu:
+ * PATCH /v1/users/me cagiriyordu (backend'de yalnizca GET vardi) ve
+ * user.provider === "email" kosuluyla korunuyordu -- backend provider alanini
+ * hic gondermedigi icin kosul asla saglanmiyordu. Artik POST
+ * /v1/auth/change-email var.
+ */
+function FormChangeEmail() {
+  const { setUser } = useAuthActions();
+  const { t } = useTranslation("profile");
+  const validationSchema = useValidationChangeEmailSchema();
+  const { enqueueSnackbar } = useSnackbar();
+  const changeEmail = useAuthChangeEmailService();
+
+  const methods = useForm<EditProfileChangeEmailFormData>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      email: "",
+      emailConfirmation: "",
+      currentPassword: "",
+    },
+  });
+
+  const { handleSubmit, setError, reset } = methods;
+
+  const onSubmit = handleSubmit(async (formData) => {
+    const { status, data } = await changeEmail({
+      password: formData.currentPassword,
+      new_email: formData.email,
+    });
+
+    if (status === HTTP_CODES_ENUM.OK) {
+      setUser(data.data);
+      reset();
+      enqueueSnackbar(t("profile:alerts.email.success"), {
+        variant: "success",
+      });
+      return;
+    }
+
+    if (status === HTTP_CODES_ENUM.FORBIDDEN) {
+      // Backend yanlis sifreyi 403 ile bildiriyor; hatayi ilgili alana koy.
+      setError("currentPassword", {
+        type: "manual",
+        message: t("profile:inputs.currentPassword.validation.incorrect"),
+      });
+      return;
+    }
+
+    if (status === HTTP_CODES_ENUM.CONFLICT) {
+      setError("email", {
+        type: "manual",
+        message: t("profile:inputs.email.validation.server.emailExists"),
+      });
+      return;
+    }
+
+    const fieldErrors = getFieldErrors(data);
+    if (fieldErrors.email) {
+      setError("email", { type: "manual", message: fieldErrors.email });
+      return;
+    }
+
+    enqueueSnackbar(getErrorMessage(data, t("profile:alerts.email.error")), {
+      variant: "error",
+    });
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <Container maxWidth="xs">
+        <form onSubmit={onSubmit}>
+          <Grid container spacing={2} mb={3}>
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="h6">{t("profile:title2")}</Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileChangeEmailFormData>
+                name="email"
+                label={t("profile:inputs.email.label")}
+                testId="email"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileChangeEmailFormData>
+                name="emailConfirmation"
+                label={t("profile:inputs.emailConfirmation.label")}
+                testId="email-confirmation"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileChangeEmailFormData>
+                name="currentPassword"
+                type="password"
+                autoComplete="current-password"
+                label={t("profile:inputs.currentPassword.label")}
+                testId="email-current-password"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <ChangeEmailFormActions />
+            </Grid>
+          </Grid>
+        </form>
+      </Container>
+    </FormProvider>
+  );
+}
+
+function ChangePasswordFormActions() {
+  const { t } = useTranslation("profile");
+  const { isSubmitting, isDirty } = useFormState();
+  useLeavePage(isDirty);
+
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      type="submit"
+      disabled={isSubmitting}
+      data-testid="save-password"
+    >
+      {t("profile:actions.submit")}
+    </Button>
+  );
+}
+
+/**
+ * Sifre degistirme.
+ *
+ * Backend diger cihazlardaki oturumlari kapatip bu oturum icin yeni bir
+ * token cifti donuyor; token'lari saklamazsak kullanici bir sonraki
+ * yenilemede oturumdan duserdi.
+ */
+function FormChangePassword() {
+  const { t } = useTranslation("profile");
+  const validationSchema = useValidationChangePasswordSchema();
+  const { enqueueSnackbar } = useSnackbar();
+  const { setTokensInfo } = useAuthTokens();
+  const changePassword = useAuthChangePasswordService();
+
+  const methods = useForm<EditProfileChangePasswordFormData>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      oldPassword: "",
+      password: "",
+      passwordConfirmation: "",
+    },
+  });
+
+  const { handleSubmit, setError, reset } = methods;
+
+  const onSubmit = handleSubmit(async (formData) => {
+    const { status, data } = await changePassword({
+      current_password: formData.oldPassword,
+      new_password: formData.password,
+    });
+
+    if (status === HTTP_CODES_ENUM.OK) {
+      setTokensInfo({
+        token: data.data.access_token,
+        refreshToken: data.data.refresh_token,
+        // Backend ACCESS_TOKEN_EXPIRE_MINUTES varsayilani 30 dakika;
+        // giris akisi da ayni varsayimi kullaniyor.
+        tokenExpires: Date.now() + 30 * 60 * 1000,
+      });
+      reset();
+      enqueueSnackbar(t("profile:alerts.password.success"), {
+        variant: "success",
+      });
+      return;
+    }
+
+    if (status === HTTP_CODES_ENUM.FORBIDDEN) {
+      setError("oldPassword", {
+        type: "manual",
+        message: t(
+          "profile:inputs.oldPassword.validation.server.incorrectOldPassword"
+        ),
+      });
+      return;
+    }
+
+    const fieldErrors = getFieldErrors(data);
+    if (fieldErrors.new_password) {
+      setError("password", {
+        type: "manual",
+        message: fieldErrors.new_password,
+      });
+      return;
+    }
+
+    enqueueSnackbar(getErrorMessage(data, t("profile:alerts.password.error")), {
+      variant: "error",
+    });
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <Container maxWidth="xs">
+        <form onSubmit={onSubmit}>
+          <Grid container spacing={2} mb={3}>
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="h6">{t("profile:title3")}</Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileChangePasswordFormData>
+                name="oldPassword"
+                type="password"
+                autoComplete="current-password"
+                label={t("profile:inputs.oldPassword.label")}
+                testId="old-password"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileChangePasswordFormData>
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                label={t("profile:inputs.password.label")}
+                testId="new-password"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileChangePasswordFormData>
+                name="passwordConfirmation"
+                type="password"
+                autoComplete="new-password"
+                label={t("profile:inputs.passwordConfirmation.label")}
+                testId="password-confirmation"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <ChangePasswordFormActions />
+            </Grid>
+          </Grid>
+        </form>
+      </Container>
+    </FormProvider>
+  );
+}
+
 function EditProfile() {
-  return <FormBasicInfo />;
+  return (
+    <>
+      <FormBasicInfo />
+      <FormChangeEmail />
+      <FormChangePassword />
+    </>
+  );
 }
 
 export default withPageRequiredAuth(EditProfile);
