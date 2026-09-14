@@ -6,8 +6,6 @@ import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import useAuthTokens from "@/services/auth/use-auth-tokens";
 import { useTranslation } from "@/services/i18n/client";
-import { isGoogleAuthEnabled } from "@/services/social-auth/google/google-config";
-import { isFacebookAuthEnabled } from "@/services/social-auth/facebook/facebook-config";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import {
@@ -333,28 +331,6 @@ function LinkYoSelfSignInForm() {
                 "Sign In"
               )}
             </button>
-
-            {/* Social Auth */}
-            {[isGoogleAuthEnabled, isFacebookAuthEnabled].some(Boolean) && (
-              <>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-600" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-gray-800 text-gray-400">
-                      or continue with
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-400">
-                    Social login coming soon
-                  </p>
-                </div>
-              </>
-            )}
 
             {/* Sign Up Link */}
             {IS_SIGN_UP_ENABLED && (

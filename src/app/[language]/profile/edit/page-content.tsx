@@ -14,8 +14,6 @@ import { useEffect } from "react";
 import useAuth from "@/services/auth/use-auth";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import Link from "@/components/link";
-import FormAvatarInput from "@/components/form/avatar-input/form-avatar-input";
-import { FileEntity } from "@/services/api/types/file-entity";
 import useLeavePage from "@/services/leave-page/use-leave-page";
 import Box from "@mui/material/Box";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
@@ -25,7 +23,6 @@ import { UserProviderEnum } from "@/services/api/types/user";
 type EditProfileBasicInfoFormData = {
   firstName: string;
   lastName: string;
-  photo?: FileEntity;
 };
 
 type EditProfileChangePasswordFormData = {
@@ -164,7 +161,6 @@ function FormBasicInfo() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      photo: undefined,
     },
   });
 
@@ -201,7 +197,6 @@ function FormBasicInfo() {
     reset({
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
-      photo: user?.photo,
     });
   }, [user, reset]);
 
@@ -212,12 +207,6 @@ function FormBasicInfo() {
           <Grid container spacing={2} mb={3} mt={3}>
             <Grid size={{ xs: 12 }}>
               <Typography variant="h6">{t("profile:title1")}</Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormAvatarInput<EditProfileBasicInfoFormData>
-                name="photo"
-                testId="photo"
-              />
             </Grid>
 
             <Grid size={{ xs: 12 }}>

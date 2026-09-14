@@ -12,8 +12,6 @@ import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useEffect } from "react";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import Link from "@/components/link";
-import FormAvatarInput from "@/components/form/avatar-input/form-avatar-input";
-import { FileEntity } from "@/services/api/types/file-entity";
 import useLeavePage from "@/services/leave-page/use-leave-page";
 import Box from "@mui/material/Box";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
@@ -30,7 +28,6 @@ type EditUserFormData = {
   email: string;
   firstName: string;
   lastName: string;
-  photo?: FileEntity;
   role: Role;
 };
 
@@ -143,7 +140,6 @@ function FormEditUser() {
       firstName: "",
       lastName: "",
       role: undefined,
-      photo: undefined,
     },
   });
 
@@ -191,7 +187,6 @@ function FormEditUser() {
           role: {
             id: Number(user?.role?.id),
           },
-          photo: user?.photo,
         });
       }
     };
@@ -208,9 +203,6 @@ function FormEditUser() {
               <Typography variant="h6">
                 {t("admin-panel-users-edit:title1")}
               </Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormAvatarInput<EditUserFormData> name="photo" testId="photo" />
             </Grid>
 
             <Grid size={{ xs: 12 }}>

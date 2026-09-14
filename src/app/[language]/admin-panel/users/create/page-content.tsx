@@ -11,8 +11,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import Link from "@/components/link";
-import FormAvatarInput from "@/components/form/avatar-input/form-avatar-input";
-import { FileEntity } from "@/services/api/types/file-entity";
 import useLeavePage from "@/services/leave-page/use-leave-page";
 import Box from "@mui/material/Box";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
@@ -28,7 +26,6 @@ type CreateFormData = {
   lastName: string;
   password: string;
   passwordConfirmation: string;
-  photo?: FileEntity;
   role: Role;
 };
 
@@ -117,7 +114,6 @@ function FormCreateUser() {
       role: {
         id: RoleEnum.USER,
       },
-      photo: undefined,
     },
   });
 
@@ -155,9 +151,6 @@ function FormCreateUser() {
               <Typography variant="h6">
                 {t("admin-panel-users-create:title")}
               </Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormAvatarInput<CreateFormData> name="photo" testId="photo" />
             </Grid>
 
             <Grid size={{ xs: 12 }}>
