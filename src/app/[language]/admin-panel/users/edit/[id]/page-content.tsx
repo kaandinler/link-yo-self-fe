@@ -182,8 +182,8 @@ function FormEditUser() {
       if (status === HTTP_CODES_ENUM.OK) {
         reset({
           email: user?.email ?? "",
-          firstName: user?.firstName ?? "",
-          lastName: user?.lastName ?? "",
+          firstName: user?.first_name ?? "",
+          lastName: user?.last_name ?? "",
           role: {
             id: Number(user?.role?.id),
           },

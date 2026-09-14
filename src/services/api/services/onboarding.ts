@@ -1,4 +1,7 @@
 // src/services/api/services/onboarding.ts
+//
+// Backend'in /v1/profile/* ucları: onboarding adimlari, profil okuma ve
+// toplu profil guncelleme.
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -42,6 +45,9 @@ export interface Step4Data {
 }
 
 export type StepData = Step1Data | Step2Data | Step3Data | Step4Data;
+
+/** PUT /v1/profile/update - tum alanlar opsiyonel, kismi guncelleme. */
+export type ProfileUpdateData = Step1Data & Step2Data & Step3Data & Step4Data;
 
 /** Sihirbazdaki toplam adim sayisi; backend'de complete-step-1..4 mevcut. */
 export const TOTAL_STEPS = 4;
@@ -144,6 +150,20 @@ function useOnboardingAPI() {
       return result.data;
     },
 
+    updateProfile: async (data: ProfileUpdateData): Promise<User> => {
+      const response = await fetch(`${API_URL}/v1/profile/update`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(await readError(response, "Failed to update profile"));
+      }
+
+      const result: ApiResponse<User> = await response.json();
+      return result.data;
+    },
+
     getProfile: async (): Promise<User> => {
       const response = await fetch(`${API_URL}/v1/profile/me`);
 
@@ -214,6 +234,25 @@ export const useSkipOnboarding = () => {
 
   return useMutation({
     mutationFn: api.skipOnboarding,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
+    },
+  });
+};
+
+/**
+ * Profili topluca gunceller (PUT /v1/profile/update).
+ *
+ * profile/edit sayfasi daha once PATCH /v1/users/me cagiriyordu; backend'de o
+ * yolda yalnizca GET var, yani kaydetme hicbir zaman calismiyordu.
+ */
+export const useUpdateProfile = () => {
+  const api = useOnboardingAPI();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: api.updateProfile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });

@@ -1,7 +1,7 @@
 "use client";
 import Button from "@mui/material/Button";
 import { useForm, FormProvider, useFormState } from "react-hook-form";
-import { useAuthPatchMeService } from "@/services/api/services/auth";
+import { useUpdateProfile } from "@/services/api/services/onboarding";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid2";
@@ -18,7 +18,6 @@ import useLeavePage from "@/services/leave-page/use-leave-page";
 import Box from "@mui/material/Box";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
-import { UserProviderEnum } from "@/services/api/types/user";
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
@@ -112,46 +111,10 @@ function BasicInfoFormActions() {
   );
 }
 
-function ChangeEmailFormActions() {
-  const { t } = useTranslation("profile");
-  const { isSubmitting, isDirty } = useFormState();
-  useLeavePage(isDirty);
-
-  return (
-    <Button
-      variant="contained"
-      color="primary"
-      type="submit"
-      disabled={isSubmitting}
-      data-testid="save-email"
-    >
-      {t("profile:actions.submit")}
-    </Button>
-  );
-}
-
-function ChangePasswordFormActions() {
-  const { t } = useTranslation("profile");
-  const { isSubmitting, isDirty } = useFormState();
-  useLeavePage(isDirty);
-
-  return (
-    <Button
-      variant="contained"
-      color="primary"
-      type="submit"
-      disabled={isSubmitting}
-      data-testid="save-password"
-    >
-      {t("profile:actions.submit")}
-    </Button>
-  );
-}
-
 function FormBasicInfo() {
   const { setUser } = useAuthActions();
   const { user } = useAuth();
-  const fetchAuthPatchMe = useAuthPatchMeService();
+  const updateProfile = useUpdateProfile();
   const { t } = useTranslation("profile");
   const validationSchema = useValidationBasicInfoSchema();
   const { enqueueSnackbar } = useSnackbar();
@@ -167,36 +130,32 @@ function FormBasicInfo() {
   const { handleSubmit, setError, reset } = methods;
 
   const onSubmit = handleSubmit(async (formData) => {
-    const { data, status } = await fetchAuthPatchMe(formData);
-
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (
-        Object.keys(data.errors) as Array<keyof EditProfileBasicInfoFormData>
-      ).forEach((key) => {
-        setError(key, {
-          type: "manual",
-          message: t(
-            `profile:inputs.${key}.validation.server.${data.errors[key]}`
-          ),
-        });
+    try {
+      // Form alanlari camelCase, backend snake_case bekliyor.
+      const updated = await updateProfile.mutateAsync({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
       });
 
-      return;
-    }
-
-    if (status === HTTP_CODES_ENUM.OK) {
-      setUser(data);
-
+      setUser(updated);
       enqueueSnackbar(t("profile:alerts.profile.success"), {
         variant: "success",
+      });
+    } catch (caught) {
+      setError("firstName", {
+        type: "manual",
+        message:
+          caught instanceof Error
+            ? caught.message
+            : t("profile:alerts.profile.success"),
       });
     }
   });
 
   useEffect(() => {
     reset({
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
+      firstName: user?.first_name ?? "",
+      lastName: user?.last_name ?? "",
     });
   }, [user, reset]);
 
@@ -246,230 +205,14 @@ function FormBasicInfo() {
   );
 }
 
-function FormChangeEmail() {
-  const fetchAuthPatchMe = useAuthPatchMeService();
-  const { enqueueSnackbar } = useSnackbar();
-  const { t } = useTranslation("profile");
-  const validationSchema = useValidationChangeEmailSchema();
-  const { user } = useAuth();
-
-  const methods = useForm<EditProfileChangeEmailFormData>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      email: "",
-      emailConfirmation: "",
-    },
-  });
-
-  const { handleSubmit, reset, setError } = methods;
-
-  const onSubmit = handleSubmit(async (formData) => {
-    const { data, status } = await fetchAuthPatchMe({
-      email: formData.email,
-    });
-
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (
-        Object.keys(data.errors) as Array<keyof EditProfileChangeEmailFormData>
-      ).forEach((key) => {
-        setError(key, {
-          type: "manual",
-          message: t(
-            `profile:inputs.${key}.validation.server.${data.errors[key]}`
-          ),
-        });
-      });
-
-      return;
-    }
-
-    if (status === HTTP_CODES_ENUM.OK) {
-      reset();
-
-      enqueueSnackbar(t("profile:alerts.email.success"), {
-        variant: "success",
-        autoHideDuration: 15000,
-      });
-    }
-  });
-
-  return (
-    <FormProvider {...methods}>
-      <Container maxWidth="xs">
-        <form onSubmit={onSubmit}>
-          <Grid container spacing={2} mb={3}>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="h6">{t("profile:title2")}</Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="body1">{user?.email}</Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormTextInput<EditProfileChangeEmailFormData>
-                name="email"
-                label={t("profile:inputs.email.label")}
-                type="email"
-                testId="email"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <FormTextInput<EditProfileChangeEmailFormData>
-                name="emailConfirmation"
-                label={t("profile:inputs.emailConfirmation.label")}
-                type="email"
-                testId="email-confirmation"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <ChangeEmailFormActions />
-              <Box ml={1} component="span">
-                <Button
-                  variant="contained"
-                  color="inherit"
-                  LinkComponent={Link}
-                  href="/profile"
-                  data-testid="cancel-edit-email"
-                >
-                  {t("profile:actions.cancel")}
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </form>
-      </Container>
-    </FormProvider>
-  );
-}
-
-function FormChangePassword() {
-  const fetchAuthPatchMe = useAuthPatchMeService();
-  const { t } = useTranslation("profile");
-  const validationSchema = useValidationChangePasswordSchema();
-  const { enqueueSnackbar } = useSnackbar();
-
-  const methods = useForm<EditProfileChangePasswordFormData>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      oldPassword: "",
-      password: "",
-      passwordConfirmation: "",
-    },
-  });
-
-  const { handleSubmit, setError, reset } = methods;
-
-  const onSubmit = handleSubmit(async (formData) => {
-    const { data, status } = await fetchAuthPatchMe({
-      password: formData.password,
-      oldPassword: formData.oldPassword,
-    });
-
-    if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
-      (
-        Object.keys(data.errors) as Array<
-          keyof EditProfileChangePasswordFormData
-        >
-      ).forEach((key) => {
-        setError(key, {
-          type: "manual",
-          message: t(
-            `profile:inputs.${key}.validation.server.${data.errors[key]}`
-          ),
-        });
-      });
-
-      return;
-    }
-
-    if (status === HTTP_CODES_ENUM.OK) {
-      reset();
-
-      enqueueSnackbar(t("profile:alerts.password.success"), {
-        variant: "success",
-      });
-    }
-  });
-
-  return (
-    <FormProvider {...methods}>
-      <Container maxWidth="xs">
-        <form onSubmit={onSubmit}>
-          <Grid container spacing={2} mb={2}>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="h6">{t("profile:title3")}</Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormTextInput<EditProfileChangePasswordFormData>
-                name="oldPassword"
-                label={t("profile:inputs.oldPassword.label")}
-                type="password"
-                testId="old-password"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <FormTextInput<EditProfileChangePasswordFormData>
-                name="password"
-                label={t("profile:inputs.password.label")}
-                type="password"
-                testId="new-password"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <FormTextInput<EditProfileChangePasswordFormData>
-                name="passwordConfirmation"
-                label={t("profile:inputs.passwordConfirmation.label")}
-                type="password"
-                testId="password-confirmation"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <ChangePasswordFormActions />
-              <Box ml={1} component="span">
-                <Button
-                  variant="contained"
-                  color="inherit"
-                  LinkComponent={Link}
-                  href="/profile"
-                  data-testid="cancel-edit-password"
-                >
-                  {t("profile:actions.cancel")}
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </form>
-      </Container>
-    </FormProvider>
-  );
-}
-
-function FormChangeEmailWrapper() {
-  const { user } = useAuth();
-
-  return user?.provider === UserProviderEnum.EMAIL ? <FormChangeEmail /> : null;
-}
-
-function FormChangePasswordWrapper() {
-  const { user } = useAuth();
-
-  return user?.provider === UserProviderEnum.EMAIL ? (
-    <FormChangePassword />
-  ) : null;
-}
-
+// NOT: E-posta ve sifre degistirme formlari kaldirildi. Ikisi de
+// PATCH /v1/users/me cagiriyordu (backend'de yalnizca GET var) ve zaten
+// user.provider === "email" kosuluyla korunuyorlardi; backend provider
+// alanini hic gondermedigi icin hicbir zaman ekrana gelmiyorlardi.
+// Sifresini degistirmek isteyen kullanici su an sifre sifirlama akisini
+// kullanabiliyor (/forgot-password).
 function EditProfile() {
-  return (
-    <>
-      <FormBasicInfo />
-      <FormChangeEmailWrapper />
-      <FormChangePasswordWrapper />
-    </>
-  );
+  return <FormBasicInfo />;
 }
 
 export default withPageRequiredAuth(EditProfile);

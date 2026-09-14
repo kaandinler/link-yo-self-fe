@@ -1,22 +1,24 @@
 // src/services/api/types/user.ts - Mevcut dosyayı güncelle
 import { Role } from "./role";
 
-export enum UserProviderEnum {
-  EMAIL = "email",
-  GOOGLE = "google",
-}
-
-// Backend User modelini tam olarak yansıtan extended type
+// Backend'in UserRead modelini yansitir.
+//
+// NOT: Alan adlari backend ile ayni (snake_case). Onceki halinde
+// boilerplate'ten kalan firstName/lastName/provider/socialId alanlari vardi;
+// backend bunlari hic gondermiyor, yani her zaman undefined'dilar ve bu
+// alanlari okuyan yerler (app-bar, profil sayfasi) bos gorunuyordu.
 export type User = {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  provider?: UserProviderEnum;
-  socialId?: string;
+  first_name?: string;
+  last_name?: string;
+
+  /**
+   * Backend UserRead'de rol alani YOK; bu alan yalnizca henuz backend'e
+   * baglanmamis admin paneli sayfalari derlensin diye duruyor.
+   */
   role?: Role;
 
-  // Backend'den gelen ek alanlar
   username?: string;
   display_name?: string;
   bio?: string;
@@ -32,6 +34,8 @@ export type User = {
   background_value?: string;
 
   // Profile completion fields
+  /** Backend UserRead.is_admin - admin sayfalarini gostermek icin. */
+  is_admin?: boolean;
   profile_completed?: boolean;
   onboarding_completed?: boolean;
   profile_completion_percentage?: number;

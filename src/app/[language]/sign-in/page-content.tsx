@@ -218,8 +218,6 @@ function LinkYoSelfSignInForm() {
         setUser({
           id: "temp-id",
           email: formData.email,
-          firstName: "",
-          lastName: "",
         });
 
         console.log("✅ Login successful");
