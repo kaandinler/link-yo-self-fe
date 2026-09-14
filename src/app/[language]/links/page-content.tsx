@@ -25,11 +25,11 @@ import {
   useDeleteLink,
   useToggleLinkStatus,
   useReorderLinks,
-  useLinkAnalytics,
   type Link,
   type CreateLinkRequest,
   type UpdateLinkRequest,
 } from "@/services/api/services/links";
+import { useAnalyticsSummary } from "@/services/api/services/analytics";
 import useAuth from "@/services/auth/use-auth";
 import useLanguage from "@/services/i18n/use-language";
 
@@ -694,7 +694,8 @@ const Links: React.FC = () => {
     isLoading: linksLoading,
     error: linksError,
   } = useLinks(showInactive);
-  const { data: analytics, isLoading: analyticsLoading } = useLinkAnalytics();
+  const { data: analytics, isLoading: analyticsLoading } =
+    useAnalyticsSummary();
   const createLinkMutation = useCreateLink();
   const updateLinkMutation = useUpdateLink();
   const deleteLinkMutation = useDeleteLink();
