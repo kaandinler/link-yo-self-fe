@@ -21,6 +21,8 @@ type TextInputProps = {
   disabled?: boolean;
   readOnly?: boolean;
   error?: string;
+  /** Hata yokken alanin altinda gorunen aciklama. */
+  helperText?: string;
   testId?: string;
   autoComplete?: string;
   inputComponent?: React.ElementType<InputBaseComponentProps>;
@@ -70,7 +72,7 @@ const TextInput = forwardRef<
       fullWidth
       error={!!props.error}
       data-testid={props.testId}
-      helperText={props.error}
+      helperText={props.error ?? props.helperText}
       disabled={props.disabled}
       autoComplete={props.autoComplete}
       multiline={props.multiline}
@@ -122,6 +124,7 @@ function FormTextInput<
           autoFocus={props.autoFocus}
           type={props.type}
           error={fieldState.error?.message}
+          helperText={props.helperText}
           disabled={props.disabled}
           readOnly={props.readOnly}
           testId={props.testId}

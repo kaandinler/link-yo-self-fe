@@ -3,6 +3,8 @@
   "title1": "Edit Profile",
   "title2": "Change Email",
   "title3": "Change Password",
+  "title4": "Your public page",
+  "title5": "Social links",
   "actions": {
     "edit": "Edit",
     "submit": "Save",
@@ -72,6 +74,44 @@
         "required": "Current Password is required",
         "incorrect": "Current Password is not valid"
       }
+    },
+    "displayName": {
+      "label": "Display name",
+      "helper": "Shown as the heading of your public page. Defaults to your name."
+    },
+    "bio": {
+      "label": "Bio",
+      "helper": "A sentence or two under your name."
+    },
+    "profileImageUrl": {
+      "label": "Profile image URL",
+      "validation": {
+        "url": "Must start with http:// or https://"
+      }
+    },
+    "pageTitle": {
+      "label": "Page title",
+      "helper": "Browser tab title and search result heading."
+    },
+    "pageDescription": {
+      "label": "Page description",
+      "helper": "Shown under the title in search results."
+    },
+    "website": {
+      "label": "Website",
+      "helper": "https:// is added if you leave it out."
+    },
+    "twitterUsername": {
+      "label": "Twitter username",
+      "helper": "Without the @."
+    },
+    "instagramUsername": {
+      "label": "Instagram username",
+      "helper": "Without the @."
+    },
+    "linkedinUsername": {
+      "label": "LinkedIn username",
+      "helper": "Without the @."
     }
   },
   "alerts": {
@@ -85,6 +125,14 @@
     },
     "profile": {
       "success": "Profile has been updated successfully"
+    },
+    "page": {
+      "success": "Your page details have been updated",
+      "error": "Your page details could not be updated"
+    },
+    "social": {
+      "success": "Your social links have been updated",
+      "error": "Your social links could not be updated"
     }
   },
   "overview": {
