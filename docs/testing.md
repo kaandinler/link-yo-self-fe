@@ -33,7 +33,8 @@ and no test depends on data left behind by another.
 | `playwright-tests/auth/email-verification.spec.ts` | Confirmation link, invalid token, settings warning       |
 | `playwright-tests/auth/password-reset.spec.ts`     | Forgot password → email → new password → sign in         |
 | `playwright-tests/profile/public-profile.spec.ts`  | Public page, 404, profile view counter                   |
-| `playwright-tests/profile/links.spec.ts`           | Empty state, creating a link, auth guard                 |
+| `playwright-tests/profile/links.spec.ts`           | Empty state, creating a link, `?new=1`, auth guard       |
+| `playwright-tests/profile/onboarding.spec.ts`      | Where the wizard sends you when it ends                  |
 | `playwright-tests/profile/customize.spec.ts`       | Theme/background, preview, validation                    |
 | `playwright-tests/profile/profile-edit.spec.ts`    | Name, password change, email change flow                 |
 | `playwright-tests/profile/account.spec.ts`         | Closing your own account                                 |

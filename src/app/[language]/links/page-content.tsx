@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Plus,
   Edit3,
@@ -33,6 +33,7 @@ import {
 import { useAnalyticsSummary } from "@/services/api/services/analytics";
 import useAuth from "@/services/auth/use-auth";
 import useLanguage from "@/services/i18n/use-language";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // Types
 interface LinkFormData {
@@ -681,6 +682,9 @@ const DraggableList = ({
 const Links: React.FC = () => {
   const { user } = useAuth();
   const language = useLanguage();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [showInactive, setShowInactive] = useState(false);
@@ -711,6 +715,20 @@ const Links: React.FC = () => {
     setEditingLink(null);
     setModalOpen(true);
   };
+
+  // ?new=1 ile gelindiginde form dogrudan acilir. Onboarding sihirbazi,
+  // pano ve ust menudeki "Add Link" buraya isaret ediyor; eskiden hepsi
+  // "coming soon" yazan /links/add sayfasina gidiyordu.
+  //
+  // Parametre acilisdan sonra adres cubugundan siliniyor: sayfa yenilendiginde
+  // ya da kullanici geri geldiginde form tekrar acilmasin.
+  useEffect(() => {
+    if (searchParams.get("new") === null) return;
+
+    setEditingLink(null);
+    setModalOpen(true);
+    router.replace(pathname);
+  }, [searchParams, pathname, router]);
 
   const handleEditLink = (link: Link) => {
     setEditingLink(link);

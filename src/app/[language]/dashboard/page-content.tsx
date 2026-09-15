@@ -112,7 +112,7 @@ function Dashboard() {
               Preview Page
             </Link>
             <Link
-              href={`/${language}/links/add`}
+              href={`/${language}/links?new=1`}
               className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg transition-all"
             >
               <Plus className="h-4 w-4" />
@@ -206,7 +206,7 @@ function Dashboard() {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
-              href={`/${language}/links/add`}
+              href={`/${language}/links?new=1`}
               className="flex flex-col items-center gap-2 p-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-xl transition-colors group"
             >
               <Plus className="h-6 w-6 text-purple-400 group-hover:scale-110 transition-transform" />
@@ -256,7 +256,7 @@ function Dashboard() {
                 You haven&apos;t added any links yet.
               </p>
               <Link
-                href={`/${language}/links/add`}
+                href={`/${language}/links?new=1`}
                 className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
                 <Plus className="h-4 w-4" />

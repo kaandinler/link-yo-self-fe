@@ -99,7 +99,7 @@ export default function OnboardingWizard({ step }: Props) {
 
       if (isLastStep) {
         await completeOnboarding.mutateAsync();
-        goTo("/links/add?welcome=true");
+        goTo("/links?new=1");
         return;
       }
 

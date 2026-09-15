@@ -137,7 +137,7 @@ function ResponsiveAppBar() {
               <>
                 {/* Quick Action Buttons */}
                 <div className="flex items-center gap-2">
-                  <Link href="/links/add">
+                  <Link href="/links?new=1">
                     <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg transition-all">
                       <Plus className="h-4 w-4" />
                       <span className="hidden sm:inline">Add Link</span>
