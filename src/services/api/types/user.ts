@@ -25,6 +25,12 @@ export type User = {
   background_type?: string;
   background_value?: string;
 
+  /**
+   * Adres sahipligi dogrulandi mi? Sifre sifirlama baglantisi bu adrese
+   * gittigi icin arayuz dogrulanmamis adres icin uyari gosteriyor.
+   */
+  email_verified?: boolean;
+
   // Profile completion fields
   /** Backend UserRead.is_admin - admin sayfalarini gostermek icin. */
   is_admin?: boolean;

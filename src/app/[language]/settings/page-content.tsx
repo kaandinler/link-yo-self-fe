@@ -5,10 +5,12 @@ import {
   AlertTriangle,
   ExternalLink,
   Link2,
+  MailWarning,
   User as UserIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useDeleteMyAccountService } from "@/services/api/services/users";
+import { useAuthResendVerificationService } from "@/services/api/services/auth";
 import { useProfile } from "@/services/api/services/onboarding";
 import { getErrorMessage } from "@/services/api/api-errors";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
@@ -23,10 +25,28 @@ function Settings() {
   const { confirmDialog } = useConfirmDialog();
   const { data: profile } = useProfile();
   const deleteMyAccount = useDeleteMyAccountService();
+  const resendVerification = useAuthResendVerificationService();
 
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [verificationSentTo, setVerificationSentTo] = useState<string | null>(
+    null
+  );
+  const [isResending, setIsResending] = useState(false);
+
+  const handleResendVerification = async () => {
+    setIsResending(true);
+    try {
+      const { status, data } = await resendVerification();
+
+      if (status === HTTP_CODES_ENUM.OK) {
+        setVerificationSentTo(data.data.pending_email);
+      }
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleDelete = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -80,12 +100,50 @@ function Settings() {
           <p className="text-gray-400 mt-1">Manage your account and profile</p>
         </div>
 
+        {/* Dogrulanmamis adres uyarisi: sifre sifirlama baglantisi bu adrese
+            gidiyor, yani dogrulanmamis bir adres kurtarma yolunu calismaz
+            hale getiriyor. */}
+        {profile && !profile.email_verified && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6">
+            <div className="flex items-start gap-3">
+              <MailWarning className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-white">
+                  Your email is not confirmed
+                </h2>
+                <p className="text-gray-300 text-sm mt-1">
+                  Password reset links go to this address. Confirm it so you can
+                  get back in if you forget your password.
+                </p>
+
+                {verificationSentTo ? (
+                  <p className="text-amber-200 text-sm mt-3">
+                    Confirmation link sent to {verificationSentTo}.
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={isResending}
+                    className="mt-3 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    {isResending ? "Sending…" : "Send confirmation link"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-4">
           <h2 className="text-lg font-semibold text-white">Account</h2>
 
           <div className="flex items-center gap-3 text-gray-300">
             <UserIcon className="h-4 w-4 shrink-0 text-gray-400" />
             <span className="break-all">{profile?.email ?? "—"}</span>
+            {profile?.email_verified && (
+              <span className="text-green-400 text-xs shrink-0">confirmed</span>
+            )}
           </div>
           <div className="flex items-center gap-3 text-gray-300">
             <Link2 className="h-4 w-4 shrink-0 text-gray-400" />

@@ -477,9 +477,19 @@ function LinkYoSelfSignUpForm() {
 
             {submitSuccess && (
               <div className="p-4 bg-green-900/30 border border-green-500/50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Check className="h-5 w-5 text-green-400" />
-                  <p className="text-sm text-green-300">{submitSuccess}</p>
+                <div className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-green-300">{submitSuccess}</p>
+                    {/* Kayit artik dogrulama maili gonderiyor; sifre sifirlama
+                        baglantisi bu adrese gidecegi icin kullaniciya
+                        soylenmeli. */}
+                    <p className="text-sm text-green-300/80 mt-1">
+                      We sent a confirmation link to your email address. You can
+                      sign in right away, but please confirm it so password
+                      reset links reach you.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

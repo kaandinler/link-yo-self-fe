@@ -278,17 +278,25 @@ export function useAuthChangePasswordService() {
   );
 }
 
-/** Sifre onayi ile e-posta degistirme; guncel kullaniciyi doner. */
+/**
+ * E-posta degistirme TALEBI.
+ *
+ * Adres hemen degismiyor: backend yeni adrese dogrulama baglantisi
+ * gonderiyor ve degisiklik ancak kullanici o baglantiya tikladiginda
+ * uygulaniyor (202 doner).
+ */
 export type AuthChangeEmailRequest = {
   password: string;
   new_email: string;
 };
 
-export type AuthChangeEmailResponse = {
+export type AuthPendingEmailResponse = {
   status: string;
   message?: string | null;
-  data: User;
+  data: { pending_email: string };
 };
+
+export type AuthChangeEmailResponse = AuthPendingEmailResponse;
 
 export function useAuthChangeEmailService() {
   const fetchBase = useFetch();
@@ -300,6 +308,47 @@ export function useAuthChangeEmailService() {
         body: JSON.stringify(data),
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<AuthChangeEmailResponse>);
+    },
+    [fetchBase]
+  );
+}
+
+/** E-postadaki dogrulama baglantisini isler; token istemez. */
+export type AuthVerifyEmailRequest = {
+  token: string;
+};
+
+export type AuthVerifyEmailResponse = {
+  status: string;
+  message?: string | null;
+  data: User;
+};
+
+export function useAuthVerifyEmailService() {
+  const fetchBase = useFetch();
+
+  return useCallback(
+    (data: AuthVerifyEmailRequest, requestConfig?: RequestConfigType) => {
+      return fetchBase(`${API_URL}/v1/auth/verify-email`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<AuthVerifyEmailResponse>);
+    },
+    [fetchBase]
+  );
+}
+
+/** Dogrulama baglantisini yeniden gonderir; gittigi adresi doner. */
+export function useAuthResendVerificationService() {
+  const fetchBase = useFetch();
+
+  return useCallback(
+    (requestConfig?: RequestConfigType) => {
+      return fetchBase(`${API_URL}/v1/auth/resend-verification`, {
+        method: "POST",
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<AuthPendingEmailResponse>);
     },
     [fetchBase]
   );
