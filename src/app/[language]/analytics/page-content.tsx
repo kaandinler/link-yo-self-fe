@@ -1,9 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { BarChart3, Eye, Link2, MousePointerClick, Plus } from "lucide-react";
 import Link from "next/link";
-import { useAnalyticsSummary } from "@/services/api/services/analytics";
+import {
+  TIMESERIES_RANGES,
+  type TimeseriesRange,
+  useAnalyticsSummary,
+  useAnalyticsTimeseries,
+} from "@/services/api/services/analytics";
+import ActivityChart, {
+  ActivityLegend,
+  ActivityTable,
+} from "@/components/charts/activity-chart";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
 
@@ -43,12 +52,55 @@ function IstatistikKarti({
   );
 }
 
+/** Zaman araligi secici. Yalnizca altindaki grafigi ve tabloyu kapsiyor. */
+function AralikSecici({
+  secili,
+  sec,
+}: {
+  secili: TimeseriesRange;
+  sec: (gun: TimeseriesRange) => void;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label="Date range"
+      className="inline-flex rounded-lg border border-gray-700 p-1"
+    >
+      {TIMESERIES_RANGES.map((gun) => (
+        <button
+          key={gun}
+          type="button"
+          onClick={() => sec(gun)}
+          aria-pressed={secili === gun}
+          className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+            secili === gun
+              ? "bg-purple-600 text-white"
+              : "text-gray-300 hover:bg-gray-700"
+          }`}
+        >
+          Last {gun} days
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function Analytics() {
   const language = useLanguage();
   const { data, isLoading, isError } = useAnalyticsSummary();
+  const [gun, setGun] = useState<TimeseriesRange>(7);
+  const {
+    data: seri,
+    isLoading: seriYukleniyor,
+    isFetching: seriTazeleniyor,
+    isError: seriHatasi,
+  } = useAnalyticsTimeseries(gun);
 
   const links = data?.links ?? [];
   const enCokTiklanan = links[0]?.click_count ?? 0;
+  const noktalar = seri?.points ?? [];
+  const aralikBos =
+    !!seri && seri.total_clicks === 0 && seri.total_profile_views === 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
@@ -68,6 +120,11 @@ function Analytics() {
           </div>
         ) : (
           <>
+            {/* Ozetteki sayilar hesabin tum gecmisini kapsiyor; asagidaki
+                grafik yalnizca secili araligi. Ikisi birbirini tutmak zorunda
+                degil, bu yuzden basliklari ayri. */}
+            <h2 className="text-lg font-semibold text-white">All time</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <IstatistikKarti
                 baslik="Profile Views"
@@ -97,6 +154,58 @@ function Analytics() {
                 icon={BarChart3}
                 renk="bg-orange-500"
               />
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-2">
+              <h2 className="text-lg font-semibold text-white">Over time</h2>
+              <AralikSecici secili={gun} sec={setGun} />
+            </div>
+
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-4">
+              {seriHatasi ? (
+                <p className="text-red-300">
+                  The activity chart could not be loaded.
+                </p>
+              ) : seriYukleniyor ? (
+                <p className="text-gray-400">Loading…</p>
+              ) : (
+                <>
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
+                    <ActivityLegend />
+                    <p className="text-sm text-gray-400">
+                      <span className="text-white font-semibold tabular-nums">
+                        {seri?.total_clicks.toLocaleString()}
+                      </span>{" "}
+                      clicks ·{" "}
+                      <span className="text-white font-semibold tabular-nums">
+                        {seri?.total_profile_views.toLocaleString()}
+                      </span>{" "}
+                      profile views in this range
+                    </p>
+                  </div>
+
+                  <ActivityChart points={noktalar} soluk={seriTazeleniyor} />
+
+                  {aralikBos && (
+                    /* Bos grafik "hic olmadi" demiyor: gunluk kayit yeni
+                       basladi, ondan oncesi yalnizca toplamlarda duruyor. */
+                    <p className="text-sm text-gray-400">
+                      No activity recorded in this range. Daily history starts
+                      from the day activity tracking was added, so older visits
+                      only appear in the all-time totals above.
+                    </p>
+                  )}
+
+                  <details className="group">
+                    <summary className="cursor-pointer text-sm text-gray-400 hover:text-gray-200">
+                      Show data table
+                    </summary>
+                    <div className="mt-3 overflow-x-auto">
+                      <ActivityTable points={noktalar} />
+                    </div>
+                  </details>
+                </>
+              )}
             </div>
 
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">

@@ -154,3 +154,24 @@ export async function apiLoginStatus(user: TestUser): Promise<number> {
   await api.dispose();
   return response.status();
 }
+
+/** POST /v1/links/{id}/click — herkese acik, token istemiyor. */
+export async function apiClickLink(linkId: number) {
+  const api = await ctx();
+  const response = await api.post(`${apiUrl}/v1/links/${linkId}/click`);
+  expect(response.status(), await response.text()).toBe(200);
+  await api.dispose();
+}
+
+/** GET /v1/analytics/timeseries */
+export async function apiTimeseries(token: string, days = 7) {
+  const api = await ctx();
+  const response = await api.get(
+    `${apiUrl}/v1/analytics/timeseries?days=${days}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  expect(response.status(), await response.text()).toBe(200);
+  const body = await response.json();
+  await api.dispose();
+  return body.data;
+}
