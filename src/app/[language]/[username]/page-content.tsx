@@ -8,42 +8,11 @@ import {
   PublicProfile,
   trackLinkClick,
 } from "@/services/api/services/public-profile";
-
-const DEFAULT_THEME_COLOR = "#1383eb";
-const DEFAULT_BACKGROUND = "#ffffff";
-
-const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
-
-/** Kullanici verisinden gelen rengi yalnizca gecerli hex ise kabul eder. */
-function safeColor(value: string | null | undefined, fallback: string): string {
-  return value && HEX_COLOR.test(value) ? value : fallback;
-}
-
-/**
- * Arka plan gorseli icin URL'i dogrular.
- *
- * Deger CSS'e `url(...)` icinde girdigi icin serbest birakilirsa stil
- * enjeksiyonuna acik olur; sadece http(s) adreslerine ve icinde tirnak veya
- * parantez olmayan degerlere izin veriyoruz.
- */
-function safeImageUrl(value: string | null | undefined): string | null {
-  if (!value) return null;
-  if (!/^https?:\/\//i.test(value)) return null;
-  if (/["'()\\]/.test(value)) return null;
-  return value;
-}
-
-/**
- * Arka plan acik mi koyu mu; metin renginin okunabilir kalmasi icin.
- * Kullanici herhangi bir renk secebildiginden sabit bir metin rengi kullanilamiyor.
- */
-function isLightColor(hex: string): boolean {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  // ITU-R BT.601 luma
-  return (r * 299 + g * 587 + b * 114) / 1000 > 150;
-}
+import {
+  isLightColor,
+  resolveTheme,
+  safeColor,
+} from "@/services/profile-theme";
 
 /**
  * Dis baglanti adresini mutlak hale getirir.
@@ -81,36 +50,10 @@ type Props = {
 const PublicProfilePage: React.FC<Props> = ({ profile }) => {
   const { t } = useTranslation("public-profile");
 
-  const themeColor = safeColor(profile.theme_color, DEFAULT_THEME_COLOR);
-  const backgroundColor = safeColor(
-    profile.background_value,
-    DEFAULT_BACKGROUND
-  );
-  const backgroundImage = safeImageUrl(profile.background_value);
-
-  const pageStyle: React.CSSProperties = (() => {
-    if (profile.background_type === "image" && backgroundImage) {
-      return {
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      };
-    }
-    if (profile.background_type === "gradient") {
-      return {
-        backgroundImage: `linear-gradient(160deg, ${backgroundColor}, ${themeColor})`,
-      };
-    }
-    return { backgroundColor };
-  })();
-
-  // Gorselin uzerindeki metin her zaman acik renk; duz/gradient zeminde
-  // zeminin parlakligina gore karar veriyoruz.
-  const onLightBackground =
-    profile.background_type === "image" ? false : isLightColor(backgroundColor);
-
-  const textColor = onLightBackground ? "text-gray-900" : "text-white";
-  const mutedTextColor = onLightBackground ? "text-gray-600" : "text-gray-200";
+  // Tema kurallari ortak modulde; duzenleme ekranindaki onizleme ayni
+  // fonksiyonu kullaniyor, boylece onizleme ile yayindaki sayfa ayrisamiyor.
+  const { themeColor, pageStyle, textColor, mutedTextColor } =
+    resolveTheme(profile);
 
   const socials = [
     { key: "twitter", base: "https://twitter.com/", Icon: Twitter },
