@@ -6,7 +6,7 @@ import {
 } from "@mui/material/styles";
 import { useMemo, PropsWithChildren } from "react";
 
-function ThemeProvider(props: PropsWithChildren<{}>) {
+function ThemeProvider(props: PropsWithChildren) {
   const theme = useMemo(
     () =>
       createTheme({

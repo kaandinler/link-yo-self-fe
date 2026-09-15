@@ -1,11 +1,7 @@
 // Login işlemi için gelişmiş utility fonksiyonları
 // Bu dosya sign-in page'inde kullanılmak üzere oluşturulmuştur
 
-import {
-  BaseResponseModel,
-  API_STATUS,
-  TokenResponse,
-} from "../types/base-response";
+import { BaseResponseModel, TokenResponse } from "../types/base-response";
 import { User } from "../types/user";
 import {
   isSuccessResponse,

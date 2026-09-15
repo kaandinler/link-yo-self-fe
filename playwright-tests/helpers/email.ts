@@ -5,7 +5,9 @@ const imap = new Imap({
   user: process.env.TEST_IMAP_USER ?? "",
   password: process.env.TEST_IMAP_PASSWORD ?? "",
   host: process.env.TEST_IMAP_HOST ?? "",
-  port: Number(process.env.TEST_IMAP_PORT) ?? 993,
+  // NOT: ?? degil ||. Number(undefined) NaN doner ve NaN nullish olmadigi
+  // icin ?? hicbir zaman devreye girmiyordu.
+  port: Number(process.env.TEST_IMAP_PORT) || 993,
   tls: process.env.TEST_IMAP_TLS === "true",
 });
 

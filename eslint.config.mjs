@@ -19,11 +19,11 @@ const customRules = {
   "prefer-const": "warn",
   "no-extra-semi": "warn",
   semi: ["warn", "always"],
-  quotes: [
-    "warn",
-    "single",
-    { avoidEscape: true, allowTemplateLiterals: true },
-  ],
+  // NOT: Burada bir `quotes: ["warn", "single"]` kurali vardi ama
+  // .prettierrc `singleQuote: false` diyor ve pre-commit once eslint --fix,
+  // sonra prettier calistiriyor -- yani prettier her seferinde kurali geri
+  // aliyordu. Sonuc: ~2700 kalici uyari ve aralarinda kaybolan gercek
+  // bulgular. Tirnak bicimi prettier'in isi.
   // Add other rules as needed from your .eslintrc.json file
 };
 

@@ -6,11 +6,9 @@ import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
 import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import useAuthTokens from "@/services/auth/use-auth-tokens";
-import { useTranslation } from "@/services/i18n/client";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import {
-  isSuccessResponse,
   isErrorResponse,
   getResponseErrorMessage,
 } from "@/services/api/fastapi-utils";
@@ -27,20 +25,8 @@ type SignInFormData = {
   password: string;
 };
 
-// Validation function
-const validateForm = (data: SignInFormData) => {
-  const errors: Partial<Record<keyof SignInFormData, string>> = {};
-
-  if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-    errors.email = "Please enter a valid email address";
-  }
-
-  if (!data.password || data.password.length < 6) {
-    errors.password = "Password must be at least 6 characters";
-  }
-
-  return errors;
-};
+// NOT: Burada ayni adla ikinci bir validateForm vardi ama hicbir yerden
+// cagrilmiyordu; bilesen kendi kopyasini tanimliyor.
 
 // Input Component
 const FormInput = ({
@@ -125,8 +111,7 @@ function LinkYoSelfSignInForm() {
   const { setTokensInfo } = useAuthTokens();
   const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService();
   const fetchAuthMeFastAPI = useAuthMeWithFastAPIService();
-  const { t } = useTranslation("sign-in");
-  const { showApiResponse, enqueueSnackbar } = useSnackbar();
+  const { showApiResponse } = useSnackbar();
 
   const [formData, setFormData] = useState<SignInFormData>({
     email: "",
