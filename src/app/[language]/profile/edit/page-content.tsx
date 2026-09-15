@@ -242,16 +242,14 @@ function ChangeEmailFormActions() {
 }
 
 /**
- * E-posta degistirme.
+ * E-posta degistirme TALEBI.
  *
- * Bu form daha once dosyada sema olarak duruyordu ama ekrana hic gelmiyordu:
- * PATCH /v1/users/me cagiriyordu (backend'de yalnizca GET vardi) ve
- * user.provider === "email" kosuluyla korunuyordu -- backend provider alanini
- * hic gondermedigi icin kosul asla saglanmiyordu. Artik POST
- * /v1/auth/change-email var.
+ * Adres bu formla degismiyor: backend yeni adrese dogrulama baglantisi
+ * gonderiyor (202) ve degisiklik ancak kullanici o baglantiya tikladiginda
+ * uygulaniyor. Bu yuzden burada setUser cagrilmiyor -- kullanicinin adresi
+ * hala eski.
  */
 function FormChangeEmail() {
-  const { setUser } = useAuthActions();
   const { t } = useTranslation("profile");
   const validationSchema = useValidationChangeEmailSchema();
   const { enqueueSnackbar } = useSnackbar();
@@ -274,12 +272,13 @@ function FormChangeEmail() {
       new_email: formData.email,
     });
 
-    if (status === HTTP_CODES_ENUM.OK) {
-      setUser(data.data);
+    // 202: adres HENUZ degismedi; yeni adrese dogrulama baglantisi gitti.
+    if (status === HTTP_CODES_ENUM.ACCEPTED) {
       reset();
-      enqueueSnackbar(t("profile:alerts.email.success"), {
-        variant: "success",
-      });
+      enqueueSnackbar(
+        t("profile:alerts.email.success", { email: data.data.pending_email }),
+        { variant: "success" }
+      );
       return;
     }
 

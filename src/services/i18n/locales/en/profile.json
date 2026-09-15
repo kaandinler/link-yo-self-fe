@@ -73,8 +73,8 @@
   },
   "alerts": {
     "email": {
-      "success": "Your email address has been updated",
-      "error": "Your email address could not be updated"
+      "success": "We sent a confirmation link to {{email}}. Your address changes once you click it.",
+      "error": "The confirmation link could not be sent"
     },
     "password": {
       "success": "Password has been updated successfully",

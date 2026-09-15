@@ -1,0 +1,20 @@
+{
+  "title": "Confirm your email",
+  "loading": {
+    "title": "Confirming your email address…"
+  },
+  "success": {
+    "title": "Email confirmed",
+    "message": "Your email address is verified. Password reset links will now reach you.",
+    "action": "Go to dashboard"
+  },
+  "error": {
+    "title": "Could not confirm your email",
+    "hint": "The link may have expired or already been used. You can send yourself a new one from settings.",
+    "action": "Go to settings"
+  },
+  "errors": {
+    "missingToken": "This link is missing its confirmation token.",
+    "invalidToken": "This confirmation link is no longer valid."
+  }
+}
