@@ -13,6 +13,7 @@ import { useSnackbar } from "@/hooks/use-snackbar";
 import { useRouter } from "next/navigation";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
+import { passwordSchema } from "@/services/api/password-schema";
 import { useTranslation } from "@/services/i18n/client";
 import { useEffect, useMemo, useState } from "react";
 import Alert from "@mui/material/Alert";
@@ -26,10 +27,9 @@ const useValidationSchema = () => {
   const { t } = useTranslation("password-change");
 
   return yup.object().shape({
-    password: yup
-      .string()
-      .min(6, t("password-change:inputs.password.validation.min"))
-      .required(t("password-change:inputs.password.validation.required")),
+    password: passwordSchema(
+      t("password-change:inputs.password.validation.required")
+    ),
     passwordConfirmation: yup
       .string()
       .oneOf(

@@ -24,6 +24,7 @@ import {
 import { useParams } from "next/navigation";
 import FormSelectInput from "@/components/form/select/form-select";
 import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
+import { passwordSchema } from "@/services/api/password-schema";
 
 /** Backend'de rol tablosu yok; yetki tek bir is_admin bayragi. */
 type AccessOption = { id: "user" | "admin" };
@@ -77,12 +78,9 @@ const useValidationChangePasswordSchema = () => {
   const { t } = useTranslation("admin-panel-users-edit");
 
   return yup.object().shape({
-    password: yup
-      .string()
-      .min(6, t("admin-panel-users-edit:inputs.password.validation.min"))
-      .required(
-        t("admin-panel-users-edit:inputs.password.validation.required")
-      ),
+    password: passwordSchema(
+      t("admin-panel-users-edit:inputs.password.validation.required")
+    ),
     passwordConfirmation: yup
       .string()
       .oneOf(

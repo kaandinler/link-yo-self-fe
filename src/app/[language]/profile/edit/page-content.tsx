@@ -24,6 +24,7 @@ import {
 } from "@/services/api/services/auth";
 import useAuthTokens from "@/services/auth/use-auth-tokens";
 import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
+import { passwordSchema } from "@/services/api/password-schema";
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
@@ -93,14 +94,12 @@ const useValidationChangePasswordSchema = () => {
   const { t } = useTranslation("profile");
 
   return yup.object().shape({
+    // Mevcut sifre eski kuralla belirlenmis olabilir; burada yalnizca
+    // dolu olmasi yeterli, dogrulamayi backend yapiyor.
     oldPassword: yup
       .string()
-      .min(6, t("profile:inputs.password.validation.min"))
-      .required(t("profile:inputs.password.validation.required")),
-    password: yup
-      .string()
-      .min(6, t("profile:inputs.password.validation.min"))
-      .required(t("profile:inputs.password.validation.required")),
+      .required(t("profile:inputs.oldPassword.validation.required")),
+    password: passwordSchema(t("profile:inputs.password.validation.required")),
     passwordConfirmation: yup
       .string()
       .oneOf(
