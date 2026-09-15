@@ -53,7 +53,8 @@ test.describe("Pano ve analytics", () => {
       page.getByRole("heading", { name: "Analytics" })
     ).toBeVisible();
     await expect(page.getByText("Total Clicks")).toBeVisible();
-    await expect(page.getByText("Olculen link")).toBeVisible();
+    // Link hem aralik kiriliminda hem "tum zamanlar" listesinde geciyor.
+    await expect(page.getByText("Olculen link").first()).toBeVisible();
   });
 
   test("giris yapmamis ziyaretci panoya giremiyor", async ({ page }) => {

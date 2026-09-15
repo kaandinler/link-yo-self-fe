@@ -1,6 +1,6 @@
 // src/services/api/services/analytics.ts
 //
-// Backend: GET /v1/analytics/summary ve GET /v1/analytics/timeseries
+// Backend: GET /v1/analytics/summary, /timeseries ve /timeseries/by-link
 //
 // Pano, analytics sayfasi ve link yonetimi ekrani ayni ozeti okuyor.
 // Onceki karsiligi links.ts icindeki useLinkAnalytics idi ve
@@ -108,6 +108,58 @@ export const useAnalyticsTimeseries = (days: TimeseriesRange) => {
     },
     // Aralik degisince eski seri bir an icin kaybolmasin: grafik onceki
     // render'ini tutup solgunlasiyor (bkz. ActivityChart).
+    placeholderData: (previous) => previous,
+  });
+};
+
+/** Bir linkin bir gunku tiklanma sayisi. */
+export interface LinkDayPoint {
+  date: string;
+  clicks: number;
+}
+
+export interface LinkTimeseries {
+  id: number;
+  title: string;
+  url: string;
+  is_active: boolean;
+  /** Yalnizca secili araligi kapsiyor; ozetteki click_count linkin tum gecmisini. */
+  total_clicks: number;
+  points: LinkDayPoint[];
+}
+
+export interface LinkTimeseriesResponse {
+  days: number;
+  start_date: string;
+  end_date: string;
+  /** Aralikta tiklanmayan linkler de sifir degerlerle geliyor. */
+  links: LinkTimeseries[];
+}
+
+export const linkTimeseriesQueryKey = (days: number) => [
+  "analytics",
+  "timeseries",
+  "by-link",
+  days,
+];
+
+export const useLinkTimeseries = (days: TimeseriesRange) => {
+  const fetch = useFetch();
+
+  return useQuery({
+    queryKey: linkTimeseriesQueryKey(days),
+    queryFn: async (): Promise<LinkTimeseriesResponse> => {
+      const response = await fetch(
+        `${API_URL}/v1/analytics/timeseries/by-link?days=${days}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load link timeseries");
+      }
+
+      const result: ApiResponse<LinkTimeseriesResponse> = await response.json();
+      return result.data;
+    },
     placeholderData: (previous) => previous,
   });
 };

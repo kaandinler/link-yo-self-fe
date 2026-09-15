@@ -374,7 +374,7 @@ export function ActivityLegend() {
 /** Grafigin verisi tabloyla da okunabiliyor; hover'a mahkum degil. */
 export function ActivityTable({ points }: { points: AnalyticsDayPoint[] }) {
   return (
-    <table className="w-full text-sm">
+    <table data-testid="activity-table" className="w-full text-sm">
       <thead>
         <tr className="text-left text-gray-400">
           <th className="py-2 font-medium">Day</th>

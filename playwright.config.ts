@@ -80,5 +80,8 @@ export default defineConfig({
       : "npm run dev",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
+    // Varsayilan 60sn; CI'da "next build" tek basina ona yaklasiyor ve yavas
+    // bir makinede suite hic baslamadan dusuyor.
+    timeout: 180 * 1000,
   },
 });
