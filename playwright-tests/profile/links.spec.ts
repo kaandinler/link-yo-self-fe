@@ -61,6 +61,49 @@ test.describe("Link yonetimi", () => {
     ).toBeVisible();
   });
 
+  test("?new=1 ile gelindiginde form dogrudan aciliyor", async ({ page }) => {
+    await signInAsNewUser(page);
+
+    await page.goto("/en/links?new=1");
+
+    await expect(
+      page.getByRole("heading", { name: "Add New Link" })
+    ).toBeVisible();
+    // Parametre adres cubugundan siliniyor; yenilemede form tekrar acilmamali.
+    await expect(page).toHaveURL(/\/en\/links$/);
+  });
+
+  test("eski /links/add adresi forma yonlendiriyor", async ({ page }) => {
+    await signInAsNewUser(page);
+
+    await page.goto("/en/links/add");
+
+    await expect(page).toHaveURL(/\/en\/links/);
+    await expect(
+      page.getByRole("heading", { name: "Add New Link" })
+    ).toBeVisible();
+  });
+
+  test("panodaki 'Add Link' baglantisi formu aciyor", async ({ page }) => {
+    await signInAsNewUser(page);
+
+    await page.goto("/en/dashboard");
+    // Panoda ve ust menude ayni hedefe giden birden fazla giris var.
+    const baglantilar = page.getByRole("link", {
+      name: "Add Link",
+      exact: true,
+    });
+    await expect(baglantilar.first()).toHaveAttribute(
+      "href",
+      "/en/links?new=1"
+    );
+    await baglantilar.first().click();
+
+    await expect(
+      page.getByRole("heading", { name: "Add New Link" })
+    ).toBeVisible();
+  });
+
   test("giris yapmamis ziyaretci link sayfasina giremiyor", async ({
     page,
   }) => {
