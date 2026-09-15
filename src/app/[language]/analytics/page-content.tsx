@@ -8,11 +8,16 @@ import {
   type TimeseriesRange,
   useAnalyticsSummary,
   useAnalyticsTimeseries,
+  useLinkTimeseries,
 } from "@/services/api/services/analytics";
 import ActivityChart, {
   ActivityLegend,
   ActivityTable,
 } from "@/components/charts/activity-chart";
+import LinkSparkline, {
+  ButunLinklerTablosu,
+  ortakTavan,
+} from "@/components/charts/link-sparkline";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
 
@@ -95,12 +100,19 @@ function Analytics() {
     isFetching: seriTazeleniyor,
     isError: seriHatasi,
   } = useAnalyticsTimeseries(gun);
+  const {
+    data: linkSerisi,
+    isLoading: linkSerisiYukleniyor,
+    isError: linkSerisiHatasi,
+  } = useLinkTimeseries(gun);
 
   const links = data?.links ?? [];
   const enCokTiklanan = links[0]?.click_count ?? 0;
   const noktalar = seri?.points ?? [];
   const aralikBos =
     !!seri && seri.total_clicks === 0 && seri.total_profile_views === 0;
+  const linkSerileri = linkSerisi?.links ?? [];
+  const linkTavani = ortakTavan(linkSerileri);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
@@ -197,7 +209,10 @@ function Analytics() {
                   )}
 
                   <details className="group">
-                    <summary className="cursor-pointer text-sm text-gray-400 hover:text-gray-200">
+                    <summary
+                      data-testid="activity-table-toggle"
+                      className="cursor-pointer text-sm text-gray-400 hover:text-gray-200"
+                    >
                       Show data table
                     </summary>
                     <div className="mt-3 overflow-x-auto">
@@ -208,9 +223,74 @@ function Analytics() {
               )}
             </div>
 
+            {/* Link kirilimi da secili araliga bagli; ayni AralikSecici'nin
+                altinda duruyor ki sayilar ust taraftaki grafikle ayni donemi
+                anlatsin. */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-white">
+                Clicks by link in this range
+              </h2>
+
+              {linkSerisiHatasi ? (
+                <p className="text-red-300">
+                  The link breakdown could not be loaded.
+                </p>
+              ) : linkSerisiYukleniyor ? (
+                <p className="text-gray-400">Loading…</p>
+              ) : linkSerileri.length === 0 ? (
+                <p className="text-gray-400">
+                  No links yet — there is nothing to measure.
+                </p>
+              ) : (
+                <>
+                  <ul className="space-y-3">
+                    {linkSerileri.map((link) => (
+                      <li
+                        key={link.id}
+                        className="flex items-center justify-between gap-4"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-white font-medium truncate">
+                            {link.title}
+                            {!link.is_active && (
+                              <span className="ml-2 text-xs text-gray-400 font-normal">
+                                (inactive)
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-gray-400 text-sm truncate">
+                            {link.url}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-4 shrink-0">
+                          <p className="text-white font-medium tabular-nums w-12 text-right">
+                            {link.total_clicks.toLocaleString()}
+                          </p>
+                          <LinkSparkline link={link} tavan={linkTavani} />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <details>
+                    <summary
+                      data-testid="link-table-toggle"
+                      className="cursor-pointer text-sm text-gray-400 hover:text-gray-200"
+                    >
+                      Show data table
+                    </summary>
+                    <div className="mt-3 overflow-x-auto">
+                      <ButunLinklerTablosu links={linkSerileri} />
+                    </div>
+                  </details>
+                </>
+              )}
+            </div>
+
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
               <h2 className="text-lg font-semibold text-white mb-4">
-                Clicks by link
+                Clicks by link, all time
               </h2>
 
               {isLoading ? (

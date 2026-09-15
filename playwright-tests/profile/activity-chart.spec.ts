@@ -31,8 +31,9 @@ test.describe("Zaman serisi grafigi", () => {
     await expect(page.getByText(/2\s*clicks/)).toBeVisible();
 
     // Ayni degerler hover'a gerek kalmadan tablodan da okunabilmeli.
-    await page.getByText("Show data table").click();
-    const bugun = page.locator("table tbody tr").last();
+    // Sayfada link kiriliminin de tablosu var; bu ana grafigin tablosu.
+    await page.getByTestId("activity-table-toggle").click();
+    const bugun = page.getByTestId("activity-table").locator("tbody tr").last();
     await expect(bugun).toContainText("2");
   });
 
@@ -40,7 +41,9 @@ test.describe("Zaman serisi grafigi", () => {
     const { token } = await signInAsNewUser(page);
 
     await page.goto("/en/analytics");
-    await expect(page.locator("svg[role=img]")).toBeVisible();
+    await expect(
+      page.getByLabel(/Daily link clicks and profile views/)
+    ).toBeVisible();
 
     await page.getByRole("button", { name: "Last 30 days" }).click();
 
@@ -48,8 +51,10 @@ test.describe("Zaman serisi grafigi", () => {
       page.getByRole("button", { name: "Last 30 days" })
     ).toHaveAttribute("aria-pressed", "true");
 
-    await page.getByText("Show data table").click();
-    await expect(page.locator("table tbody tr")).toHaveCount(30);
+    await page.getByTestId("activity-table-toggle").click();
+    await expect(
+      page.getByTestId("activity-table").locator("tbody tr")
+    ).toHaveCount(30);
 
     // Backend de ayni araligi doner.
     expect((await apiTimeseries(token, 30)).points).toHaveLength(30);
@@ -75,7 +80,8 @@ test.describe("Zaman serisi grafigi", () => {
     await apiClickLink(link.id);
 
     await page.goto("/en/analytics");
-    const grafik = page.locator("svg[role=img]");
+    // Link kirilimindaki kucuk egriler de svg[role=img]; ana grafik bu.
+    const grafik = page.getByLabel(/Daily link clicks and profile views/);
     await expect(grafik).toBeVisible();
 
     // Fare hic kullanilmiyor.

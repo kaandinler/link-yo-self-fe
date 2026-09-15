@@ -36,6 +36,7 @@ and no test depends on data left behind by another.
 | `playwright-tests/profile/links.spec.ts`           | Empty state, creating a link, `?new=1`, auth guard       |
 | `playwright-tests/profile/onboarding.spec.ts`      | Where the wizard sends you when it ends                  |
 | `playwright-tests/profile/activity-chart.spec.ts`  | Daily activity chart, range switch, table view, keyboard |
+| `playwright-tests/profile/link-breakdown.spec.ts`  | Per-link sparklines, shared scale, table view            |
 | `playwright-tests/profile/customize.spec.ts`       | Theme/background, preview, validation                    |
 | `playwright-tests/profile/profile-edit.spec.ts`    | Name, password change, email change flow                 |
 | `playwright-tests/profile/profile-fields.spec.ts`  | Display name, bio, page details, social links            |
