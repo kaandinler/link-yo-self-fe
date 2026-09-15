@@ -1,6 +1,6 @@
 // src/services/api/services/analytics.ts
 //
-// Backend: GET /v1/analytics/summary
+// Backend: GET /v1/analytics/summary ve GET /v1/analytics/timeseries
 //
 // Pano, analytics sayfasi ve link yonetimi ekrani ayni ozeti okuyor.
 // Onceki karsiligi links.ts icindeki useLinkAnalytics idi ve
@@ -57,5 +57,57 @@ export const useAnalyticsSummary = () => {
       const result: ApiResponse<AnalyticsSummary> = await response.json();
       return result.data;
     },
+  });
+};
+
+/** Bir gunun toplamlari. */
+export interface AnalyticsDayPoint {
+  /** ISO tarih, orn. "2026-09-15". */
+  date: string;
+  clicks: number;
+  profile_views: number;
+}
+
+export interface AnalyticsTimeseries {
+  days: number;
+  start_date: string;
+  end_date: string;
+  /** DIKKAT: yalnizca secili araligi kapsiyor, ozetteki toplamlar hesabin tamamini. */
+  total_clicks: number;
+  total_profile_views: number;
+  /** Olaysiz gunler de sifir degerlerle geliyor; bosluk doldurmak gerekmiyor. */
+  points: AnalyticsDayPoint[];
+}
+
+/** Grafikte secilebilen araliklar. */
+export const TIMESERIES_RANGES = [7, 30, 90] as const;
+export type TimeseriesRange = (typeof TIMESERIES_RANGES)[number];
+
+export const timeseriesQueryKey = (days: number) => [
+  "analytics",
+  "timeseries",
+  days,
+];
+
+export const useAnalyticsTimeseries = (days: TimeseriesRange) => {
+  const fetch = useFetch();
+
+  return useQuery({
+    queryKey: timeseriesQueryKey(days),
+    queryFn: async (): Promise<AnalyticsTimeseries> => {
+      const response = await fetch(
+        `${API_URL}/v1/analytics/timeseries?days=${days}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load analytics timeseries");
+      }
+
+      const result: ApiResponse<AnalyticsTimeseries> = await response.json();
+      return result.data;
+    },
+    // Aralik degisince eski seri bir an icin kaybolmasin: grafik onceki
+    // render'ini tutup solgunlasiyor (bkz. ActivityChart).
+    placeholderData: (previous) => previous,
   });
 };
