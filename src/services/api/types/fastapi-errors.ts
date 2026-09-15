@@ -55,15 +55,10 @@ export interface ProcessedApiError {
   originalError?: unknown;
 }
 
-// Field name mapping for translation
-const FIELD_NAME_MAP: Record<string, string> = {
-  username: "Kullanıcı adı",
-  password: "Şifre",
-  email: "E-posta",
-  firstName: "Ad",
-  lastName: "Soyad",
-  confirmPassword: "Şifre tekrarı",
-};
+// NOT: Burada bir FIELD_NAME_MAP vardi (alan adlarinin Turkce karsiliklari)
+// ama hicbir yere yazilmiyordu: hesaplanan ceviri kullanilmadan atiliyor,
+// fieldErrors ham alan adiyla anahtarlaniyordu -- ki dogrusu da o, formlar
+// alanlari kendi adlariyla esliyor. Olu kod oldugu icin kaldirildi.
 
 // Error message translation
 const ERROR_MESSAGE_MAP: Record<string, string> = {
@@ -130,9 +125,6 @@ export function parseAPIError(
       (validationError: ValidationErrorDetail) => {
         const fieldPath = validationError.loc.slice(1); // Remove 'body' from path
         const fieldName = fieldPath[fieldPath.length - 1] as string;
-
-        // Translate field name
-        const translatedFieldName = FIELD_NAME_MAP[fieldName] || fieldName;
 
         // Translate error message
         const translatedMessage =

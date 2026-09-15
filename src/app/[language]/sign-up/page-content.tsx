@@ -4,19 +4,16 @@ import {
   Eye,
   EyeOff,
   Link,
-  User,
   Mail,
   Lock,
   Check,
   AlertCircle,
 } from "lucide-react";
 import { useAuthSignUpWithFastAPIService } from "@/services/api/services/auth";
-import { API_STATUS } from "@/services/api/types/base-response";
 import {
   parseSignUpResponse,
   mapBackendFieldsToFormFields,
   logSignUpAttempt,
-  getSignUpErrorMessage,
 } from "@/services/api/examples/sign-up-utils";
 import {
   PASSWORD_MIN_LENGTH,

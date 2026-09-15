@@ -1,12 +1,7 @@
 // src/services/api/services/links.ts - Daha iyi versiyon
 "use client";
 
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_URL } from "@/services/api/config";
 import useFetch from "@/services/api/use-fetch";
 import { ANALYTICS_QUERY_KEY } from "@/services/api/services/analytics";

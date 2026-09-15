@@ -34,7 +34,7 @@ import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
  * - Graceful fallback between different API formats
  */
 
-function AuthProvider(props: PropsWithChildren<{}>) {
+function AuthProvider(props: PropsWithChildren) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const fetchBase = useFetch();

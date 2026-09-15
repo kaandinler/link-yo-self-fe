@@ -1,11 +1,10 @@
 // Sign-up işlemi için gelişmiş utility fonksiyonları
 // Bu dosya sign-up page'inde kullanılmak üzere oluşturulmuştur
 
-import { BaseResponseModel, API_STATUS } from "../types/base-response";
+import { BaseResponseModel } from "../types/base-response";
 import {
   isSuccessResponse,
   isErrorResponse,
-  getResponseData,
   getResponseErrorMessage,
   getResponseFieldErrors,
 } from "../fastapi-utils";
