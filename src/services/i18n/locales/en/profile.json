@@ -6,7 +6,10 @@
   "actions": {
     "edit": "Edit",
     "submit": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "customize": "Customize page",
+    "viewPublic": "View public page",
+    "manageLinks": "Manage links"
   },
   "inputs": {
     "firstName": {
@@ -83,5 +86,14 @@
     "profile": {
       "success": "Profile has been updated successfully"
     }
+  },
+  "overview": {
+    "subtitle": "How you appear on your public page",
+    "noName": "Your name",
+    "noBio": "No bio yet",
+    "emailVerified": "confirmed",
+    "emailUnverified": "not confirmed",
+    "completion": "Profile completion",
+    "completionHint": "Add a bio, a photo, links and page details to reach 100%."
   }
 }
