@@ -305,6 +305,7 @@ function LinkYoSelfSignInForm() {
             {/* Submit Button */}
             <button
               type="button"
+              data-testid="sign-in-submit"
               onClick={handleSubmit}
               disabled={isSubmitting}
               className={`

@@ -18,6 +18,7 @@ import {
   Save,
   Loader2,
 } from "lucide-react";
+import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import {
   useLinks,
   useCreateLink,
@@ -834,6 +835,8 @@ const Links: React.FC = () => {
           <button
             onClick={handleAddLink}
             disabled={createLinkMutation.isPending}
+            // Butonun icinde yalnizca ikon var; erisilebilir bir adi olmali.
+            aria-label="Add new link"
             className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:opacity-50"
           >
             {createLinkMutation.isPending ? (
@@ -1072,4 +1075,6 @@ const Links: React.FC = () => {
   );
 };
 
-export default Links;
+// Link yonetimi kullaniciya ozel veriyi gosteriyor ve token'siz istek atiyor;
+// giris yapmamis ziyaretci giris ekranina yonlendirilmeli.
+export default withPageRequiredAuth(Links);
