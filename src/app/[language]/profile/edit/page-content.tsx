@@ -29,6 +29,21 @@ import { passwordSchema } from "@/services/api/password-schema";
 type EditProfileBasicInfoFormData = {
   firstName: string;
   lastName: string;
+  displayName: string;
+  bio: string;
+  profileImageUrl: string;
+};
+
+type EditProfilePageFormData = {
+  pageTitle: string;
+  pageDescription: string;
+  website: string;
+};
+
+type EditProfileSocialFormData = {
+  twitterUsername: string;
+  instagramUsername: string;
+  linkedinUsername: string;
 };
 
 type EditProfileChangePasswordFormData = {
@@ -61,8 +76,37 @@ const useValidationBasicInfoSchema = () => {
     lastName: yup
       .string()
       .required(t("profile:inputs.lastName.validation.required")),
+    // .defined(): yup'un opsiyonel string'i `string | undefined` uretiyor ve
+    // form tipiyle uyusmuyor. Alanlar zaten bos string ile basliyor.
+    displayName: yup.string().defined(),
+    bio: yup.string().defined(),
+    // Backend de ayni kurali uyguluyor (core/validators.py); burasi sunucuya
+    // gitmeden geri bildirim vermek icin, son soz backend'in.
+    profileImageUrl: yup
+      .string()
+      .defined()
+      .test(
+        "http",
+        t("profile:inputs.profileImageUrl.validation.url"),
+        (value) => !value || /^https?:\/\//.test(value)
+      ),
   });
 };
+
+const useValidationPageSchema = () =>
+  yup.object().shape({
+    pageTitle: yup.string().defined(),
+    pageDescription: yup.string().defined(),
+    // Sema eksikse backend https:// ekliyor, bu yuzden burada zorunlu degil.
+    website: yup.string().defined(),
+  });
+
+const useValidationSocialSchema = () =>
+  yup.object().shape({
+    twitterUsername: yup.string().defined(),
+    instagramUsername: yup.string().defined(),
+    linkedinUsername: yup.string().defined(),
+  });
 
 const useValidationChangeEmailSchema = () => {
   const { t } = useTranslation("profile");
@@ -141,6 +185,9 @@ function FormBasicInfo() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      displayName: "",
+      bio: "",
+      profileImageUrl: "",
     },
   });
 
@@ -152,6 +199,9 @@ function FormBasicInfo() {
       const updated = await updateProfile.mutateAsync({
         first_name: formData.firstName,
         last_name: formData.lastName,
+        display_name: formData.displayName,
+        bio: formData.bio,
+        profile_image_url: formData.profileImageUrl,
       });
 
       setUser(updated);
@@ -173,6 +223,9 @@ function FormBasicInfo() {
     reset({
       firstName: user?.first_name ?? "",
       lastName: user?.last_name ?? "",
+      displayName: user?.display_name ?? "",
+      bio: user?.bio ?? "",
+      profileImageUrl: user?.profile_image_url ?? "",
     });
   }, [user, reset]);
 
@@ -202,6 +255,35 @@ function FormBasicInfo() {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileBasicInfoFormData>
+                name="displayName"
+                label={t("profile:inputs.displayName.label")}
+                helperText={t("profile:inputs.displayName.helper")}
+                testId="display-name"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileBasicInfoFormData>
+                name="bio"
+                label={t("profile:inputs.bio.label")}
+                helperText={t("profile:inputs.bio.helper")}
+                multiline
+                minRows={2}
+                maxRows={5}
+                testId="bio"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileBasicInfoFormData>
+                name="profileImageUrl"
+                label={t("profile:inputs.profileImageUrl.label")}
+                testId="profile-image-url"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
               <BasicInfoFormActions />
               <Box ml={1} component="span">
                 <Button
@@ -214,6 +296,233 @@ function FormBasicInfo() {
                   {t("profile:actions.cancel")}
                 </Button>
               </Box>
+            </Grid>
+          </Grid>
+        </form>
+      </Container>
+    </FormProvider>
+  );
+}
+
+/**
+ * Herkese acik sayfanin ayarlari ve sosyal baglantilar.
+ *
+ * NEDEN VAR: bu alanlar yalnizca onboarding sihirbazinda toplaniyordu.
+ * Sihirbaz bir kez calisiyor ve bir daha acilmiyor, dolayisiyla yanlis
+ * yazilan bir kullanici adi ya da sonradan degisen bir web sitesi
+ * duzeltilemiyordu. Backend ucu (PUT /v1/profile/update) hepsini zaten
+ * kabul ediyordu; eksik olan arayuzdu.
+ */
+function SectionFormActions({ testId }: { testId: string }) {
+  const { t } = useTranslation("profile");
+  const { isSubmitting, isDirty } = useFormState();
+  useLeavePage(isDirty);
+
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      type="submit"
+      disabled={isSubmitting}
+      data-testid={testId}
+    >
+      {t("profile:actions.submit")}
+    </Button>
+  );
+}
+
+function FormPublicPage() {
+  const { setUser } = useAuthActions();
+  const { user } = useAuth();
+  const updateProfile = useUpdateProfile();
+  const { t } = useTranslation("profile");
+  const { enqueueSnackbar } = useSnackbar();
+
+  const methods = useForm<EditProfilePageFormData>({
+    resolver: yupResolver(useValidationPageSchema()),
+    defaultValues: { pageTitle: "", pageDescription: "", website: "" },
+  });
+
+  const { handleSubmit, setError, reset } = methods;
+
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      const updated = await updateProfile.mutateAsync({
+        page_title: formData.pageTitle,
+        page_description: formData.pageDescription,
+        website: formData.website,
+      });
+
+      setUser(updated);
+      // Backend adresi normalize ediyor (sema ekliyor); kaydedilen degeri
+      // forma geri yaziyoruz ki kullanici ne saklandigini gorsun.
+      reset({
+        pageTitle: updated.page_title ?? "",
+        pageDescription: updated.page_description ?? "",
+        website: updated.website ?? "",
+      });
+      enqueueSnackbar(t("profile:alerts.page.success"), { variant: "success" });
+    } catch (caught) {
+      setError("website", {
+        type: "manual",
+        message:
+          caught instanceof Error
+            ? caught.message
+            : t("profile:alerts.page.error"),
+      });
+    }
+  });
+
+  useEffect(() => {
+    reset({
+      pageTitle: user?.page_title ?? "",
+      pageDescription: user?.page_description ?? "",
+      website: user?.website ?? "",
+    });
+  }, [user, reset]);
+
+  return (
+    <FormProvider {...methods}>
+      <Container maxWidth="xs">
+        <form onSubmit={onSubmit}>
+          <Grid container spacing={2} mb={3}>
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="h6">{t("profile:title4")}</Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfilePageFormData>
+                name="pageTitle"
+                label={t("profile:inputs.pageTitle.label")}
+                helperText={t("profile:inputs.pageTitle.helper")}
+                testId="page-title"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfilePageFormData>
+                name="pageDescription"
+                label={t("profile:inputs.pageDescription.label")}
+                helperText={t("profile:inputs.pageDescription.helper")}
+                multiline
+                minRows={2}
+                maxRows={5}
+                testId="page-description"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfilePageFormData>
+                name="website"
+                label={t("profile:inputs.website.label")}
+                helperText={t("profile:inputs.website.helper")}
+                testId="website"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <SectionFormActions testId="save-page" />
+            </Grid>
+          </Grid>
+        </form>
+      </Container>
+    </FormProvider>
+  );
+}
+
+function FormSocialLinks() {
+  const { setUser } = useAuthActions();
+  const { user } = useAuth();
+  const updateProfile = useUpdateProfile();
+  const { t } = useTranslation("profile");
+  const { enqueueSnackbar } = useSnackbar();
+
+  const methods = useForm<EditProfileSocialFormData>({
+    resolver: yupResolver(useValidationSocialSchema()),
+    defaultValues: {
+      twitterUsername: "",
+      instagramUsername: "",
+      linkedinUsername: "",
+    },
+  });
+
+  const { handleSubmit, setError, reset } = methods;
+
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      const updated = await updateProfile.mutateAsync({
+        twitter_username: formData.twitterUsername,
+        instagram_username: formData.instagramUsername,
+        linkedin_username: formData.linkedinUsername,
+      });
+
+      setUser(updated);
+      // Backend bastaki @ isaretini kirpiyor; temizlenmis hali forma donuyor.
+      reset({
+        twitterUsername: updated.twitter_username ?? "",
+        instagramUsername: updated.instagram_username ?? "",
+        linkedinUsername: updated.linkedin_username ?? "",
+      });
+      enqueueSnackbar(t("profile:alerts.social.success"), {
+        variant: "success",
+      });
+    } catch (caught) {
+      setError("twitterUsername", {
+        type: "manual",
+        message:
+          caught instanceof Error
+            ? caught.message
+            : t("profile:alerts.social.error"),
+      });
+    }
+  });
+
+  useEffect(() => {
+    reset({
+      twitterUsername: user?.twitter_username ?? "",
+      instagramUsername: user?.instagram_username ?? "",
+      linkedinUsername: user?.linkedin_username ?? "",
+    });
+  }, [user, reset]);
+
+  return (
+    <FormProvider {...methods}>
+      <Container maxWidth="xs">
+        <form onSubmit={onSubmit}>
+          <Grid container spacing={2} mb={3}>
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="h6">{t("profile:title5")}</Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileSocialFormData>
+                name="twitterUsername"
+                label={t("profile:inputs.twitterUsername.label")}
+                helperText={t("profile:inputs.twitterUsername.helper")}
+                testId="twitter-username"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileSocialFormData>
+                name="instagramUsername"
+                label={t("profile:inputs.instagramUsername.label")}
+                helperText={t("profile:inputs.instagramUsername.helper")}
+                testId="instagram-username"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<EditProfileSocialFormData>
+                name="linkedinUsername"
+                label={t("profile:inputs.linkedinUsername.label")}
+                helperText={t("profile:inputs.linkedinUsername.helper")}
+                testId="linkedin-username"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <SectionFormActions testId="save-social" />
             </Grid>
           </Grid>
         </form>
@@ -495,6 +804,8 @@ function EditProfile() {
   return (
     <>
       <FormBasicInfo />
+      <FormPublicPage />
+      <FormSocialLinks />
       <FormChangeEmail />
       <FormChangePassword />
     </>
