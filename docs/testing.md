@@ -43,6 +43,7 @@ and no test depends on data left behind by another.
 | `playwright-tests/profile/account.spec.ts`         | Closing your own account                                 |
 | `playwright-tests/profile/dashboard.spec.ts`       | Dashboard and analytics summaries                        |
 | `playwright-tests/navigation.spec.ts`              | Language prefix, landing page, signed-in redirects       |
+| `playwright-tests/theme.spec.ts`                   | MUI pages default to dark, Tailwind pages unaffected     |
 
 ## Requirements
 
