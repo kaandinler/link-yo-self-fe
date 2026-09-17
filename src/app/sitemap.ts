@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { listPublicProfiles } from "@/services/api/services/public-profile";
 import { fallbackLanguage } from "@/services/i18n/config";
+import { PARCA_BOYU, parcaSayisi } from "@/services/sitemap-shards";
 import { SITE_URL, profileUrl } from "@/services/site-url";
 
 /**
@@ -15,27 +16,53 @@ import { SITE_URL, profileUrl } from "@/services/site-url";
 /** Bir istekte alinan satir sayisi; backend en fazla 5000'e izin veriyor. */
 const SAYFA = 1000;
 
-/**
- * Sitemap standardinin tek dosya icin siniri 50.000 URL. Bunun ustune
- * cikildiginda dosyayi bolmek gerekiyor (Next: generateSitemaps). Simdilik
- * sinira geldigimizde sessizce kirpmak yerine burada duruyoruz; sayinin
- * yaklastigi, uretilen dosyanin uzunlugundan gorulur.
- */
-const EN_FAZLA = 50_000;
-
 export const revalidate = 3600;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const girisler: MetadataRoute.Sitemap = [
-    {
+/**
+ * Kac parca uretilecek; Next bunu `/sitemap/0.xml`, `/sitemap/1.xml` ...
+ * adreslerine ceviriyor.
+ *
+ * Sayi ve boyut ortak modulden (sitemap-shards.ts): indeks de ayni
+ * kaynaktan okuyor, ikisi ayrisamiyor.
+ *
+ * DIKKAT: generateSitemaps kullanilinca `/sitemap.xml` uretilmiyor ve
+ * uygulamanin 404 sayfasini HTTP 200 ile donuyor. Kaziyicilar
+ * `/sitemap-index.xml` adresine yonlendiriliyor (robots.txt).
+ */
+export async function generateSitemaps() {
+  return Array.from({ length: await parcaSayisi() }, (_, id) => ({ id }));
+}
+
+export default async function sitemap({
+  id,
+}: {
+  id: number;
+}): Promise<MetadataRoute.Sitemap> {
+  // DIKKAT - Number(): tip imzasi number diyor ama Next `id`i adresteki
+  // segmentten, yani DIZGE olarak veriyor. `id === 0` bu yuzden hep
+  // false donuyordu ve ana sayfa hicbir parcaya girmiyordu -- sitemap
+  // gecerli gorundugu, parcalar dogru dilimleri verdigi ve tip kontrolu
+  // temiz gectigi icin yalnizca uretilen XML'e bakinca goruldu.
+  // Carpma isleminde JS dizgeyi kendiliginden cevirdigi icin
+  // dilimlerin dogru olmasi tesadufdu.
+  const parca = Number(id);
+  const girisler: MetadataRoute.Sitemap = [];
+
+  // Ana sayfa yalnizca ilk parcada: her parcaya konsaydi ayni adres
+  // birden fazla dosyada bildirilirdi.
+  if (parca === 0) {
+    girisler.push({
       url: `${SITE_URL}/${fallbackLanguage}`,
       changeFrequency: "weekly",
       priority: 1,
-    },
-  ];
+    });
+  }
 
-  for (let offset = 0; offset < EN_FAZLA; offset += SAYFA) {
-    const sayfa = await listPublicProfiles(SAYFA, offset);
+  const parcaBasi = parca * PARCA_BOYU;
+
+  for (let okunan = 0; okunan < PARCA_BOYU; okunan += SAYFA) {
+    const istenen = Math.min(SAYFA, PARCA_BOYU - okunan);
+    const sayfa = await listPublicProfiles(istenen, parcaBasi + okunan);
 
     // null: backend'e ulasilamadi. Sitemap'i yarim vermek, derlemeyi ya da
     // istegi dusurmekten iyi -- eldeki adresler yine de bildiriliyor.
@@ -51,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // Istenen kadar satir gelmediyse liste bitti.
-    if (sayfa.length < SAYFA) break;
+    if (sayfa.length < istenen) break;
   }
 
   return girisler;

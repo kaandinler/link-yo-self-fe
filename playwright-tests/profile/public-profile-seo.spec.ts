@@ -160,8 +160,10 @@ test.describe("Public profil SEO", () => {
     // gosteriyor; dizine girerlerse profillerle yarisirlar.
     expect(metin).toContain("Disallow: /*/dashboard");
     expect(metin).toContain("Disallow: /*/settings");
-    // Kaziyici sitemap'i once burada ariyor.
-    expect(metin).toMatch(/Sitemap: \S+\/sitemap\.xml/);
+    // Kaziyici sitemap'i once burada ariyor. Adres indeks: sitemap
+    // parcalara bolundugu icin Next `/sitemap.xml` uretmiyor
+    // (bkz. sitemap-shards.spec.ts).
+    expect(metin).toMatch(/Sitemap: \S+\/sitemap-index\.xml/);
   });
 
   /**
@@ -182,11 +184,25 @@ test.describe("Public profil SEO", () => {
     // Ayni anda acilan, hicbir sey eklenmemis hesap.
     const { user: bos } = await signInAsNewUser(page);
 
-    const yanit = await request.get("/sitemap.xml");
-    expect(yanit.status()).toBe(200);
-    expect(yanit.headers()["content-type"]).toContain("xml");
+    // Parcalarin hepsi birlestirilip bakiliyor: bir profilin hangi
+    // parcaya dustugu siralamaya bagli ve testin konusu o degil.
+    const indeks = await (await request.get("/sitemap-index.xml")).text();
+    const parcalar: string[] = [];
+    const desen = /<loc>([^<]+)<\/loc>/g;
+    let esleme = desen.exec(indeks);
+    while (esleme) {
+      parcalar.push(esleme[1]);
+      esleme = desen.exec(indeks);
+    }
+    expect(parcalar.length).toBeGreaterThan(0);
 
-    const xml = await yanit.text();
+    let xml = "";
+    for (const parca of parcalar) {
+      const yanit = await request.get(parca);
+      expect(yanit.status()).toBe(200);
+      expect(yanit.headers()["content-type"]).toContain("xml");
+      xml += await yanit.text();
+    }
     expect(xml).toContain(`/${linkli.username}<`);
     // Bos sayfayi arama motoruna onermek hem ziyaretciyi hem sitenin
     // genel degerlendirmesini asagi cekiyor.

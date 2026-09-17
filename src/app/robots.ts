@@ -33,7 +33,12 @@ export default function robots(): MetadataRoute.Robots {
     },
     // Profiller birbirine bagli degil; kaziyici onlari sitemap olmadan
     // ancak disaridan gelen bir baglantiyla bulabiliyor.
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    //
+    // INDEKS, `/sitemap.xml` DEGIL: sitemap parcalara bolundugu icin Next
+    // `/sitemap.xml` uretmiyor ve o adres uygulamanin 404 sayfasini HTTP
+    // 200 ile donuyor. Kaziyici sitemap yerine HTML alirdi ve bu hicbir
+    // yerde hata olarak gorunmezdi.
+    sitemap: `${SITE_URL}/sitemap-index.xml`,
     host: SITE_URL,
   };
 }

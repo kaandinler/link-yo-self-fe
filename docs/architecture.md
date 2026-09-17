@@ -93,6 +93,23 @@ a scraper sees there is part of the feature, not an afterthought.
   filling it with empty ones costs the whole site. `lastmod` is the newest change
   across the profile _and_ its links.
 
+  The sitemap is **sharded** — one file caps at 50,000 URLs by spec, and
+  `SITEMAP_SHARD_SIZE` (default 10,000) sets how many go in each. The shard count
+  comes from one call to `GET /v1/p/sitemap/count`; counting by reading the list
+  would mean fetching the whole list for every shard. Both numbers live in
+  `src/services/sitemap-shards.ts` so the index and the shards cannot disagree.
+
+  **There is no `/sitemap.xml`.** With `generateSitemaps` Next only produces
+  `/sitemap/0.xml`, `/sitemap/1.xml`, … and `/sitemap.xml` returns the app's 404
+  page with **HTTP 200** — a crawler pointed there gets HTML and nothing reports
+  an error. So `robots.txt` points at `/sitemap-index.xml`, a hand-written index
+  listing the shards.
+
+  One trap worth knowing: Next passes the shard `id` as a **string** even though
+  the type says `number`. `id === 0` is therefore always false, which silently
+  dropped the landing page from the sitemap while types, build and the XML's
+  shape all stayed valid.
+
 - **Caching.** The page itself stays `no-store` on purpose: an edit has to show
   up immediately. The card image is the opposite — expensive to produce and
   requested again on every share — so it is served with a one-hour
