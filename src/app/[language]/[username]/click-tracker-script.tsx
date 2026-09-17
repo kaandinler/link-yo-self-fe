@@ -16,9 +16,16 @@
 // Tek kaydedici bu: page-content.tsx'teki onClick bilincli olarak
 // kaldirildi, aksi halde hidrasyondan sonraki tiklamalar iki kez sayilirdi.
 //
-// KAPSAM: Yalnizca `click` dinleniyor -- klavyeyle (Enter) etkinlestirme de
-// `click` uretiyor. Orta tik `auxclick` uretiyor ve burada da, onceki
-// halinde de sayilmiyor.
+// KAPSAM: `click` ve `auxclick` birlikte dinleniyor.
+//  - `click`: sol tik, dokunma ve klavyeyle (Enter) etkinlestirme.
+//  - `auxclick`: yalnizca orta tik. Orta tik gercek bir ziyaret --
+//    ziyaretci linke gidiyor, yalnizca sekmeyi arkada aciyor -- ama
+//    tarayici bunun icin `click` uretmiyor, dolayisiyla sadece `click`
+//    dinleyen bir kaydedici onu hic gormuyor.
+//
+// Sag tik de `auxclick` uretiyor ve bilerek elenmis: menuyu acmak bir
+// ziyaret degil. Sag tiktan sonra "yeni sekmede ac" secilse bile bunu
+// buradan bilmenin yolu yok, o yuzden saymak fazla sayardi.
 
 /**
  * <a> uzerindeki bu oznitelik, kaydedilecek link kimligini tasiyor.
@@ -37,30 +44,50 @@ const LINK_ID_ATTRIBUTE = "data-link-id";
 function betik(apiUrl: string): string {
   return `(function () {
   var api = ${guvenliMetin(apiUrl)};
+
+  function kaydet(olay) {
+    var hedef = olay.target;
+    if (!hedef || !hedef.closest) return;
+    var baglanti = hedef.closest("[${LINK_ID_ATTRIBUTE}]");
+    if (!baglanti) return;
+    var id = baglanti.getAttribute("${LINK_ID_ATTRIBUTE}");
+    if (!id) return;
+    try {
+      fetch(api + "/v1/links/" + encodeURIComponent(id) + "/click", {
+        method: "POST",
+        // Ziyaretci ayni anda hedefe gidiyor; keepalive, sayfa arkada
+        // kalsa bile istegin tamamlanmasini sagliyor.
+        keepalive: true,
+        headers: { "Content-Type": "application/json" },
+        // document.referrer: ziyaretci bu sayfaya gelmeden once neredeydi.
+        // Istegin kendi Referer basligi bunun yerine gecemiyor -- o her
+        // zaman bu sayfayi gosterir.
+        body: JSON.stringify({ referrer: document.referrer || null }),
+      }).catch(function () {});
+    } catch (hata) {
+      // Yut: olcum, ziyaretcinin linke gitmesini engellememeli.
+    }
+  }
+
   document.addEventListener(
     "click",
     function (olay) {
-      var hedef = olay.target;
-      if (!hedef || !hedef.closest) return;
-      var baglanti = hedef.closest("[${LINK_ID_ATTRIBUTE}]");
-      if (!baglanti) return;
-      var id = baglanti.getAttribute("${LINK_ID_ATTRIBUTE}");
-      if (!id) return;
-      try {
-        fetch(api + "/v1/links/" + encodeURIComponent(id) + "/click", {
-          method: "POST",
-          // Ziyaretci ayni anda hedefe gidiyor; keepalive, sayfa arkada
-          // kalsa bile istegin tamamlanmasini sagliyor.
-          keepalive: true,
-          headers: { "Content-Type": "application/json" },
-          // document.referrer: ziyaretci bu sayfaya gelmeden once
-          // neredeydi. Istegin kendi Referer basligi bunun yerine
-          // gecemiyor -- o her zaman bu sayfayi gosterir.
-          body: JSON.stringify({ referrer: document.referrer || null }),
-        }).catch(function () {});
-      } catch (hata) {
-        // Yut: olcum, ziyaretcinin linke gitmesini engellememeli.
-      }
+      // 0 = birincil dugme; undefined = fare olmayan sentetik bir olay.
+      // Birincil olmayan bir dugme burayi da tetikleyen eski bir
+      // tarayicida, ayni tiklama auxclick'te de gorunup iki kez
+      // sayilabilirdi; bu eleme onu engelliyor.
+      if (olay.button) return;
+      kaydet(olay);
+    },
+    true
+  );
+
+  document.addEventListener(
+    "auxclick",
+    function (olay) {
+      // Yalnizca orta tik. 2 (sag tik) bir ziyaret degil.
+      if (olay.button !== 1) return;
+      kaydet(olay);
     },
     true
   );
