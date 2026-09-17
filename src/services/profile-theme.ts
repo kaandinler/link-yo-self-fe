@@ -101,6 +101,11 @@ export function resolveTheme(profile: ThemeInput): ResolvedTheme {
     backgroundColor,
     pageStyle,
     onLightBackground,
+    // SABIT TONLAR, token degil: bu renkler herkese acik profil sayfasi
+    // icin ve orada karari ziyaretcinin acik/koyu tercihi degil, profil
+    // sahibinin sectigi arka plan veriyor (onLightBackground). Token
+    // kullanilsaydi koyu zeminli bir profili acik temadaki bir ziyaretci
+    // koyu metinle, yani okunmaz gorurdu.
     textColor: onLightBackground ? "text-gray-900" : "text-white",
     mutedTextColor: onLightBackground ? "text-gray-600" : "text-gray-200",
   };

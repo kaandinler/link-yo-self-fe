@@ -17,7 +17,7 @@ export default async function NotFound() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-      <p className="text-6xl font-bold text-gray-300">404</p>
+      <p className="text-6xl font-bold text-ink-soft">404</p>
       <h1 className="mt-4 text-xl font-semibold">{t("error.notFound")}</h1>
       <Link
         href={`/${fallbackLanguage}`}

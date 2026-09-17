@@ -5,6 +5,7 @@ import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
 import Link from "@/components/link";
+import ThemeSwitchButton from "@/components/switch-theme-button";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import {
   Menu,
@@ -76,16 +77,16 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 border-b border-gray-800 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-page via-page-accent to-page border-b border-line backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo - Dashboard'a veya Home'a link */}
           <Link href={user ? "/dashboard" : "/"}>
             <div className="flex items-center gap-3 cursor-pointer">
               <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Link2 className="h-6 w-6 text-white" />
+                <Link2 className="h-6 w-6 text-ink" />
               </div>
-              <h1 className="text-2xl font-bold text-white">LinkYoSelf</h1>
+              <h1 className="text-2xl font-bold text-ink">LinkYoSelf</h1>
             </div>
           </Link>
 
@@ -101,7 +102,7 @@ function ResponsiveAppBar() {
                     ${
                       pathname === item.href
                         ? "bg-purple-600 text-white"
-                        : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+                        : "text-ink-soft hover:text-ink hover:bg-field/50"
                     }
                   `}
                     >
@@ -113,7 +114,7 @@ function ResponsiveAppBar() {
               : // Public navigation for non-logged-in users
                 publicNavItems.map((item) => (
                   <Link key={item.href} href={item.href}>
-                    <span className="text-gray-300 hover:text-white transition-colors font-medium cursor-pointer">
+                    <span className="text-ink-soft hover:text-ink transition-colors font-medium cursor-pointer">
                       {item.label}
                     </span>
                   </Link>
@@ -122,7 +123,7 @@ function ResponsiveAppBar() {
             {/* Admin panel link */}
             {user?.is_admin && (
               <Link href="/admin-panel/users">
-                <span className="text-gray-300 hover:text-white transition-colors font-medium cursor-pointer">
+                <span className="text-ink-soft hover:text-ink transition-colors font-medium cursor-pointer">
                   {t("common:navigation.users")}
                 </span>
               </Link>
@@ -131,6 +132,10 @@ function ResponsiveAppBar() {
 
           {/* Desktop Auth/User Area */}
           <div className="hidden md:flex items-center gap-4">
+            {/* Tema dugmesi kosullu bloklarin disinda: giris yapilmis olsun
+                ya da olmasin her zaman erisilebilir olmali. */}
+            <ThemeSwitchButton />
+
             {!isLoaded ? (
               <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
             ) : user ? (
@@ -149,7 +154,7 @@ function ResponsiveAppBar() {
                     href={getUserProfileUrl()}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors"
+                    className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 rounded-lg border border-line-strong transition-colors"
                   >
                     <Eye className="h-4 w-4" />
                     <span className="hidden sm:inline">Preview</span>
@@ -160,7 +165,7 @@ function ResponsiveAppBar() {
                 <div className="relative">
                   <button
                     onClick={handleUserMenuToggle}
-                    className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 rounded-lg px-3 py-2 transition-all duration-200"
+                    className="flex items-center gap-2 bg-surface/50 hover:bg-field/50 border border-line rounded-lg px-3 py-2 transition-all duration-200"
                   >
                     {user.profile_image_url ? (
                       <img
@@ -170,13 +175,13 @@ function ResponsiveAppBar() {
                       />
                     ) : (
                       <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-white" />
+                        <User className="h-4 w-4 text-ink" />
                       </div>
                     )}
-                    <span className="text-white font-medium">
+                    <span className="text-ink font-medium">
                       {user.first_name || user.email}
                     </span>
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                    <ChevronDown className="h-4 w-4 text-ink-muted" />
                   </button>
 
                   {/* User Dropdown Menu */}
@@ -186,10 +191,10 @@ function ResponsiveAppBar() {
                         className="fixed inset-0 z-10"
                         onClick={() => setUserMenuOpen(false)}
                       ></div>
-                      <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl z-20 py-2">
+                      <div className="absolute right-0 mt-2 w-48 bg-surface-raised border border-line rounded-lg shadow-2xl z-20 py-2">
                         <Link href="/profile">
                           <div
-                            className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors cursor-pointer"
+                            className="flex items-center gap-2 px-4 py-2 text-ink-soft hover:text-ink hover:bg-field transition-colors cursor-pointer"
                             onClick={() => setUserMenuOpen(false)}
                           >
                             <User className="h-4 w-4" />
@@ -198,7 +203,7 @@ function ResponsiveAppBar() {
                         </Link>
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
+                          className="w-full flex items-center gap-2 px-4 py-2 text-ink-soft hover:text-ink hover:bg-field transition-colors"
                         >
                           <LogOut className="h-4 w-4" />
                           {t("common:navigation.logout")}
@@ -211,7 +216,7 @@ function ResponsiveAppBar() {
             ) : (
               <div className="flex items-center gap-4">
                 <Link href="/sign-in">
-                  <button className="text-gray-300 hover:text-white transition-colors font-medium">
+                  <button className="text-ink-soft hover:text-ink transition-colors font-medium">
                     {t("common:navigation.signIn")}
                   </button>
                 </Link>
@@ -229,7 +234,7 @@ function ResponsiveAppBar() {
           {/* Mobile Menu Button */}
           <button
             onClick={handleMobileMenuToggle}
-            className="md:hidden p-2 text-white hover:text-purple-300 transition-colors"
+            className="md:hidden p-2 text-ink hover:text-accent transition-colors"
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />
@@ -241,7 +246,7 @@ function ResponsiveAppBar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-gray-800/95 backdrop-blur-lg border-t border-gray-700 py-4 space-y-2">
+          <div className="md:hidden bg-overlay/95 backdrop-blur-lg border-t border-line py-4 space-y-2">
             {user
               ? // Dashboard navigation for mobile
                 dashboardNavItems.map((item) => (
@@ -250,7 +255,7 @@ function ResponsiveAppBar() {
                       className={`flex items-center gap-2 px-4 py-2 transition-colors rounded-lg mx-2 ${
                         pathname === item.href
                           ? "bg-purple-600 text-white"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+                          : "text-ink-soft hover:text-ink hover:bg-field/50"
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -263,7 +268,7 @@ function ResponsiveAppBar() {
                 publicNavItems.map((item) => (
                   <Link key={item.href} href={item.href}>
                     <div
-                      className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg mx-2"
+                      className="block px-4 py-2 text-ink-soft hover:text-ink hover:bg-field/50 transition-colors rounded-lg mx-2"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {item.label}
@@ -275,7 +280,7 @@ function ResponsiveAppBar() {
             {user?.is_admin && (
               <Link href="/admin-panel/users">
                 <div
-                  className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg mx-2"
+                  className="block px-4 py-2 text-ink-soft hover:text-ink hover:bg-field/50 transition-colors rounded-lg mx-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t("common:navigation.users")}
@@ -283,15 +288,21 @@ function ResponsiveAppBar() {
               </Link>
             )}
 
+            {/* Mobil tema dugmesi: masaustundekiyle ayni yerde degil ama
+                ayni erisilebilirlikte. */}
+            <div className="px-2 pt-2">
+              <ThemeSwitchButton genis />
+            </div>
+
             {/* Mobile Auth Section */}
-            <div className="border-t border-gray-700 pt-4 mt-4">
+            <div className="border-t border-line pt-4 mt-4">
               {!isLoaded ? (
                 <div className="flex justify-center py-4">
                   <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               ) : user ? (
                 <div className="space-y-2 mx-2">
-                  <div className="flex items-center gap-3 px-4 py-2 bg-gray-700/50 rounded-lg">
+                  <div className="flex items-center gap-3 px-4 py-2 bg-field/50 rounded-lg">
                     {user.profile_image_url ? (
                       <img
                         src={user.profile_image_url}
@@ -300,16 +311,16 @@ function ResponsiveAppBar() {
                       />
                     ) : (
                       <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-white" />
+                        <User className="h-4 w-4 text-ink" />
                       </div>
                     )}
-                    <span className="text-white font-medium">
+                    <span className="text-ink font-medium">
                       {user.first_name || user.email}
                     </span>
                   </div>
                   <Link href="/profile">
                     <div
-                      className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg"
+                      className="flex items-center gap-2 px-4 py-2 text-ink-soft hover:text-ink hover:bg-field/50 transition-colors rounded-lg"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <User className="h-4 w-4" />
@@ -321,7 +332,7 @@ function ResponsiveAppBar() {
                       handleLogout();
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg"
+                    className="w-full flex items-center gap-2 px-4 py-2 text-ink-soft hover:text-ink hover:bg-field/50 transition-colors rounded-lg"
                   >
                     <LogOut className="h-4 w-4" />
                     {t("common:navigation.logout")}
@@ -331,7 +342,7 @@ function ResponsiveAppBar() {
                 <div className="space-y-2 mx-2">
                   <Link href="/sign-in">
                     <button
-                      className="w-full text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors rounded-lg px-4 py-2 text-left"
+                      className="w-full text-ink-soft hover:text-ink hover:bg-field/50 transition-colors rounded-lg px-4 py-2 text-left"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {t("common:navigation.signIn")}

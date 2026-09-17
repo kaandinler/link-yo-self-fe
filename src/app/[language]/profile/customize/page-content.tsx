@@ -128,15 +128,15 @@ function Customize() {
   };
 
   const inputClass =
-    "w-full bg-gray-900/60 border border-gray-600 focus:border-purple-400 outline-none text-white rounded-lg px-3 py-2";
+    "w-full bg-overlay/60 border border-line-strong focus:border-purple-400 outline-none text-ink rounded-lg px-3 py-2";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">Customize Profile</h1>
-            <p className="text-gray-400 mt-1">
+            <h1 className="text-3xl font-bold text-ink">Customize Profile</h1>
+            <p className="text-ink-muted mt-1">
               Choose how your public page looks
             </p>
           </div>
@@ -144,7 +144,7 @@ function Customize() {
           {profile?.username && (
             <NextLink
               href={`/${language}/${profile.username}`}
-              className="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
             >
               <ExternalLink className="h-4 w-4" />
               View public page
@@ -156,17 +156,17 @@ function Customize() {
           {/* Ayarlar */}
           <form
             onSubmit={handleSave}
-            className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-6"
+            className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-6"
           >
             <div className="space-y-2">
               <label
                 htmlFor="theme-color"
-                className="flex items-center gap-2 text-sm font-medium text-gray-300"
+                className="flex items-center gap-2 text-sm font-medium text-ink-soft"
               >
                 <Palette className="h-4 w-4" />
                 Theme color
               </label>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-ink-muted">
                 Used for your links and the second half of a gradient.
               </p>
               <div className="flex items-center gap-3">
@@ -180,7 +180,7 @@ function Customize() {
                       : DEFAULT_THEME_COLOR
                   }
                   onChange={(event) => setThemeColor(event.target.value)}
-                  className="h-11 w-16 cursor-pointer rounded-lg border border-gray-600 bg-gray-900"
+                  className="h-11 w-16 cursor-pointer rounded-lg border border-line-strong bg-overlay"
                 />
                 <input
                   aria-label="Theme color hex"
@@ -194,7 +194,7 @@ function Customize() {
             </div>
 
             <div className="space-y-2">
-              <span className="block text-sm font-medium text-gray-300">
+              <span className="block text-sm font-medium text-ink-soft">
                 Background
               </span>
               <div className="grid grid-cols-3 gap-2">
@@ -206,14 +206,14 @@ function Customize() {
                     className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                       backgroundType === type
                         ? "bg-purple-600 text-white"
-                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                        : "bg-field text-ink-soft hover:bg-field-strong"
                     }`}
                   >
                     {TYPE_LABELS[type]}
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-ink-muted">
                 {TYPE_HINTS[backgroundType]}
               </p>
             </div>
@@ -222,7 +222,7 @@ function Customize() {
               <div className="space-y-2">
                 <label
                   htmlFor="background-image"
-                  className="flex items-center gap-2 text-sm font-medium text-gray-300"
+                  className="flex items-center gap-2 text-sm font-medium text-ink-soft"
                 >
                   <ImageIcon className="h-4 w-4" />
                   Image URL
@@ -248,7 +248,7 @@ function Customize() {
               <div className="space-y-2">
                 <label
                   htmlFor="background-color"
-                  className="block text-sm font-medium text-gray-300"
+                  className="block text-sm font-medium text-ink-soft"
                 >
                   Background color
                 </label>
@@ -263,7 +263,7 @@ function Customize() {
                         : DEFAULT_BACKGROUND
                     }
                     onChange={(event) => setBackgroundColor(event.target.value)}
-                    className="h-11 w-16 cursor-pointer rounded-lg border border-gray-600 bg-gray-900"
+                    className="h-11 w-16 cursor-pointer rounded-lg border border-line-strong bg-overlay"
                   />
                   <input
                     aria-label="Background color hex"
@@ -291,14 +291,14 @@ function Customize() {
 
           {/* Onizleme */}
           <div className="space-y-2">
-            <p className="text-sm text-gray-400">Preview</p>
+            <p className="text-sm text-ink-muted">Preview</p>
             <div
               data-testid="theme-preview"
-              className="rounded-2xl border border-gray-700 overflow-hidden min-h-[320px] p-6 flex flex-col items-center justify-center gap-4"
+              className="rounded-2xl border border-line overflow-hidden min-h-[320px] p-6 flex flex-col items-center justify-center gap-4"
               style={preview.pageStyle}
             >
               <div
-                className="h-16 w-16 rounded-full flex items-center justify-center text-white text-xl font-semibold"
+                className="h-16 w-16 rounded-full flex items-center justify-center text-ink text-xl font-semibold"
                 style={{ backgroundColor: preview.themeColor }}
               >
                 {(profile?.display_name ?? profile?.username ?? "?")
@@ -317,7 +317,7 @@ function Customize() {
                 {["Your first link", "Another link"].map((title) => (
                   <div
                     key={title}
-                    className="w-full text-center py-2 rounded-lg text-white text-sm"
+                    className="w-full text-center py-2 rounded-lg text-ink text-sm"
                     style={{ backgroundColor: preview.themeColor }}
                   >
                     {title}
@@ -325,7 +325,7 @@ function Customize() {
                 ))}
               </div>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-ink-faint">
               The preview uses the same rules as your public page.
             </p>
           </div>

@@ -88,17 +88,17 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-ink">
               {profileLoading
                 ? "Welcome back!"
                 : `Welcome back, ${displayName}! 👋`}
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-ink-muted mt-1">
               Manage your links and track your performance
             </p>
           </div>
@@ -106,7 +106,7 @@ function Dashboard() {
           <div className="flex gap-3">
             <Link
               href={profilePath || `/${language}`}
-              className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors"
+              className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 rounded-lg border border-line-strong transition-colors"
             >
               <Eye className="h-4 w-4" />
               Preview Page
@@ -122,13 +122,13 @@ function Dashboard() {
         </div>
 
         {/* Profile URL Card */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">
+              <h3 className="text-lg font-semibold text-ink mb-2">
                 Your Profile URL
               </h3>
-              <div className="flex items-center gap-2 text-purple-400 font-mono break-all">
+              <div className="flex items-center gap-2 text-accent font-mono break-all">
                 <Link2 className="h-4 w-4 shrink-0" />
                 {username ? profileUrl : YUKLENIYOR}
               </div>
@@ -145,7 +145,7 @@ function Dashboard() {
               <button
                 onClick={handleShare}
                 disabled={!username}
-                className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center gap-2 bg-field hover:bg-field-strong disabled:opacity-50 text-ink px-4 py-2 rounded-lg transition-colors"
               >
                 <Share2 className="h-4 w-4" />
                 Share
@@ -159,11 +159,11 @@ function Dashboard() {
           <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 backdrop-blur-sm border border-blue-500/30 rounded-2xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-white" />
+                <BarChart3 className="h-6 w-6 text-ink" />
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Total Clicks</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-ink-muted text-sm">Total Clicks</p>
+                <p className="text-2xl font-bold text-ink">
                   {formatSayi(analytics?.total_clicks, analyticsLoading)}
                 </p>
               </div>
@@ -173,11 +173,11 @@ function Dashboard() {
           <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <Link2 className="h-6 w-6 text-white" />
+                <Link2 className="h-6 w-6 text-ink" />
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Active Links</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-ink-muted text-sm">Active Links</p>
+                <p className="text-2xl font-bold text-ink">
                   {formatSayi(analytics?.active_links, analyticsLoading)}
                 </p>
               </div>
@@ -187,11 +187,11 @@ function Dashboard() {
           <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-green-500/30 rounded-2xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <Users className="h-6 w-6 text-white" />
+                <Users className="h-6 w-6 text-ink" />
               </div>
               <div>
-                <p className="text-gray-400 text-sm">Profile Views</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-ink-muted text-sm">Profile Views</p>
+                <p className="text-2xl font-bold text-ink">
                   {formatSayi(analytics?.profile_view_count, analyticsLoading)}
                 </p>
               </div>
@@ -200,59 +200,57 @@ function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Quick Actions
-          </h3>
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
               href={`/${language}/links?new=1`}
-              className="flex flex-col items-center gap-2 p-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-xl transition-colors group"
+              className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
-              <Plus className="h-6 w-6 text-purple-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-gray-300">Add Link</span>
+              <Plus className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
+              <span className="text-sm text-ink-soft">Add Link</span>
             </Link>
             <Link
               href={`/${language}/profile/edit`}
-              className="flex flex-col items-center gap-2 p-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-xl transition-colors group"
+              className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <Edit3 className="h-6 w-6 text-blue-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-gray-300">Edit Profile</span>
+              <span className="text-sm text-ink-soft">Edit Profile</span>
             </Link>
             <Link
               href={`/${language}/profile/customize`}
-              className="flex flex-col items-center gap-2 p-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-xl transition-colors group"
+              className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <Settings className="h-6 w-6 text-green-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-gray-300">Customize</span>
+              <span className="text-sm text-ink-soft">Customize</span>
             </Link>
             <Link
               href={`/${language}/analytics`}
-              className="flex flex-col items-center gap-2 p-4 bg-gray-700/50 hover:bg-gray-600/50 rounded-xl transition-colors group"
+              className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <BarChart3 className="h-6 w-6 text-orange-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-gray-300">Analytics</span>
+              <span className="text-sm text-ink-soft">Analytics</span>
             </Link>
           </div>
         </div>
 
         {/* Recent Links */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-white">Your Links</h3>
+            <h3 className="text-lg font-semibold text-ink">Your Links</h3>
             <Link
               href={`/${language}/links`}
-              className="text-purple-400 hover:text-purple-300 transition-colors"
+              className="text-accent hover:text-accent transition-colors"
             >
               View All
             </Link>
           </div>
 
           {analyticsLoading ? (
-            <p className="text-gray-400">Loading your links…</p>
+            <p className="text-ink-muted">Loading your links…</p>
           ) : recentLinks.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-400 mb-4">
+              <p className="text-ink-muted mb-4">
                 You haven&apos;t added any links yet.
               </p>
               <Link
@@ -268,34 +266,34 @@ function Dashboard() {
               {recentLinks.map((link) => (
                 <div
                   key={link.id}
-                  className="flex items-center justify-between p-4 bg-gray-700/30 hover:bg-gray-700/50 rounded-xl transition-colors"
+                  className="flex items-center justify-between p-4 bg-field/30 hover:bg-field/50 rounded-xl transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={`w-3 h-3 rounded-full shrink-0 ${link.is_active ? "bg-green-400" : "bg-gray-500"}`}
                     ></div>
                     <div className="min-w-0">
-                      <p className="text-white font-medium truncate">
+                      <p className="text-ink font-medium truncate">
                         {link.title}
                       </p>
-                      <p className="text-gray-400 text-sm truncate">
+                      <p className="text-ink-muted text-sm truncate">
                         {link.url}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="text-right">
-                      <p className="text-white font-medium">
+                      <p className="text-ink font-medium">
                         {link.click_count.toLocaleString()}
                       </p>
-                      <p className="text-gray-400 text-xs">clicks</p>
+                      <p className="text-ink-muted text-xs">clicks</p>
                     </div>
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Open ${link.title}`}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-ink-muted hover:text-ink transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>

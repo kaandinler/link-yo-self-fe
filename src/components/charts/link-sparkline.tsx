@@ -12,10 +12,11 @@
 
 import React, { useCallback, useRef, useState } from "react";
 import type { LinkTimeseries } from "@/services/api/services/analytics";
+import { CHART } from "./palette";
 
-/** Ana grafikteki tiklama serisiyle ayni mavi. */
-const CLICK_COLOR = "#3987e5";
-const PLOT_SURFACE = "#1a1a24";
+/** Ana grafikteki tiklama serisiyle ayni renk. */
+const CLICK_COLOR = CHART.clicks;
+const PLOT_SURFACE = CHART.surface;
 
 const WIDTH = 140;
 const HEIGHT = 36;
@@ -116,7 +117,7 @@ export default function LinkSparkline({ link, tavan }: Props) {
             x2={x(seciliIndeks)}
             y1={0}
             y2={HEIGHT}
-            stroke="rgba(255,255,255,0.35)"
+            stroke={CHART.crosshair}
             strokeWidth={1}
           />
         )}
@@ -156,10 +157,10 @@ export default function LinkSparkline({ link, tavan }: Props) {
       {secili && (
         <div
           data-testid="sparkline-tooltip"
-          className="pointer-events-none absolute -top-9 right-0 z-10 whitespace-nowrap rounded-lg border border-gray-600 bg-gray-900/95 px-2 py-1 text-xs shadow-lg"
+          className="pointer-events-none absolute -top-9 right-0 z-10 whitespace-nowrap rounded-lg border border-line-strong bg-overlay/95 px-2 py-1 text-xs shadow-lg"
         >
-          <span className="text-gray-400">{gunEtiketi(secili.date)}</span>{" "}
-          <span className="font-semibold text-white">{secili.clicks}</span>
+          <span className="text-ink-muted">{gunEtiketi(secili.date)}</span>{" "}
+          <span className="font-semibold text-ink">{secili.clicks}</span>
         </div>
       )}
     </div>
@@ -178,7 +179,7 @@ export function ButunLinklerTablosu({ links }: { links: LinkTimeseries[] }) {
   return (
     <table data-testid="link-table" className="min-w-full text-sm">
       <thead>
-        <tr className="text-left text-gray-400">
+        <tr className="text-left text-ink-muted">
           <th className="py-2 pr-4 font-medium">Day</th>
           {links.map((link) => (
             <th key={link.id} className="py-2 pr-4 font-medium text-right">
@@ -187,9 +188,9 @@ export function ButunLinklerTablosu({ links }: { links: LinkTimeseries[] }) {
           ))}
         </tr>
       </thead>
-      <tbody className="text-gray-200">
+      <tbody className="text-ink-soft">
         {gunler.map((gun, indeks) => (
-          <tr key={gun.date} className="border-t border-gray-700">
+          <tr key={gun.date} className="border-t border-line">
             <td className="py-2 pr-4 whitespace-nowrap">
               {gunEtiketi(gun.date)}
             </td>

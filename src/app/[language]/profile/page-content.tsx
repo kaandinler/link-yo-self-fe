@@ -75,19 +75,19 @@ function Profile() {
   ].filter((social) => Boolean(social.handle));
 
   const actionClass =
-    "inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors";
+    "inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">
-            {t("profile:title")}
-          </h1>
-          <p className="text-gray-400 mt-1">{t("profile:overview.subtitle")}</p>
+          <h1 className="text-3xl font-bold text-ink">{t("profile:title")}</h1>
+          <p className="text-ink-muted mt-1">
+            {t("profile:overview.subtitle")}
+          </p>
         </div>
 
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
           <div className="flex flex-col sm:flex-row gap-5">
             {profile?.profile_image_url ? (
               <img
@@ -108,13 +108,13 @@ function Profile() {
             <div className="min-w-0 space-y-2">
               <h2
                 data-testid="user-name"
-                className="text-2xl font-semibold text-white truncate"
+                className="text-2xl font-semibold text-ink truncate"
               >
                 {isLoading ? "—" : (name ?? t("profile:overview.noName"))}
               </h2>
 
               {profile?.username && (
-                <p className="flex items-center gap-2 text-purple-400 font-mono text-sm break-all">
+                <p className="flex items-center gap-2 text-accent font-mono text-sm break-all">
                   <Link2 className="h-4 w-4 shrink-0" />/{language}/
                   {profile.username}
                 </p>
@@ -122,9 +122,9 @@ function Profile() {
 
               <p
                 data-testid="user-email"
-                className="flex items-center gap-2 text-gray-300 text-sm break-all"
+                className="flex items-center gap-2 text-ink-soft text-sm break-all"
               >
-                <Mail className="h-4 w-4 shrink-0 text-gray-400" />
+                <Mail className="h-4 w-4 shrink-0 text-ink-muted" />
                 {profile?.email ?? "—"}
                 {profile && (
                   <span
@@ -141,9 +141,9 @@ function Profile() {
                 )}
               </p>
 
-              <p className="text-gray-300">
+              <p className="text-ink-soft">
                 {profile?.bio || (
-                  <span className="text-gray-500">
+                  <span className="text-ink-faint">
                     {t("profile:overview.noBio")}
                   </span>
                 )}
@@ -158,9 +158,9 @@ function Profile() {
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-white break-all"
+                  className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-ink break-all"
                 >
-                  <Globe className="h-4 w-4 shrink-0 text-gray-400" />
+                  <Globe className="h-4 w-4 shrink-0 text-ink-muted" />
                   {profile.website}
                 </a>
               )}
@@ -175,7 +175,7 @@ function Profile() {
                       href={`${href}${(handle ?? "").replace(/^@+/, "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white"
+                      className="inline-flex items-center gap-1.5 text-sm text-ink-soft hover:text-ink"
                     >
                       <Icon className="h-4 w-4" />
                       {handle}
@@ -188,21 +188,21 @@ function Profile() {
         </div>
 
         {/* Profil tamamlanma orani backend'den geliyor (UserRead) */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-3">
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-3">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-ink">
               {t("profile:overview.completion")}
             </h2>
-            <span className="text-white font-medium">{completion}%</span>
+            <span className="text-ink font-medium">{completion}%</span>
           </div>
-          <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div className="h-2 bg-field rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all"
               style={{ width: `${completion}%` }}
             />
           </div>
           {completion < 100 && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-ink-muted">
               {t("profile:overview.completionHint")}
             </p>
           )}

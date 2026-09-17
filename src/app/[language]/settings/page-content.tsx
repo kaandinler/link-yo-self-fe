@@ -93,11 +93,11 @@ function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Settings</h1>
-          <p className="text-gray-400 mt-1">Manage your account and profile</p>
+          <h1 className="text-3xl font-bold text-ink">Settings</h1>
+          <p className="text-ink-muted mt-1">Manage your account and profile</p>
         </div>
 
         {/* Dogrulanmamis adres uyarisi: sifre sifirlama baglantisi bu adrese
@@ -108,10 +108,10 @@ function Settings() {
             <div className="flex items-start gap-3">
               <MailWarning className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
               <div className="min-w-0">
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-ink">
                   Your email is not confirmed
                 </h2>
-                <p className="text-gray-300 text-sm mt-1">
+                <p className="text-ink-soft text-sm mt-1">
                   Password reset links go to this address. Confirm it so you can
                   get back in if you forget your password.
                 </p>
@@ -135,18 +135,18 @@ function Settings() {
           </div>
         )}
 
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-white">Account</h2>
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-ink">Account</h2>
 
-          <div className="flex items-center gap-3 text-gray-300">
-            <UserIcon className="h-4 w-4 shrink-0 text-gray-400" />
+          <div className="flex items-center gap-3 text-ink-soft">
+            <UserIcon className="h-4 w-4 shrink-0 text-ink-muted" />
             <span className="break-all">{profile?.email ?? "—"}</span>
             {profile?.email_verified && (
               <span className="text-green-400 text-xs shrink-0">confirmed</span>
             )}
           </div>
-          <div className="flex items-center gap-3 text-gray-300">
-            <Link2 className="h-4 w-4 shrink-0 text-gray-400" />
+          <div className="flex items-center gap-3 text-ink-soft">
+            <Link2 className="h-4 w-4 shrink-0 text-ink-muted" />
             <span className="break-all font-mono">
               {profile?.username ? `/${language}/${profile.username}` : "—"}
             </span>
@@ -155,20 +155,20 @@ function Settings() {
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
               href={`/${language}/profile/edit`}
-              className="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
             >
               Edit profile
             </Link>
             <Link
               href={`/${language}/profile/customize`}
-              className="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
             >
               Customize page
             </Link>
             {profile?.username && (
               <Link
                 href={`/${language}/${profile.username}`}
-                className="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
               >
                 <ExternalLink className="h-4 w-4" />
                 View public page
@@ -182,10 +182,10 @@ function Settings() {
           <div className="flex items-start gap-3 mb-4">
             <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-ink">
                 Close your account
               </h2>
-              <p className="text-gray-300 text-sm mt-1">
+              <p className="text-ink-soft text-sm mt-1">
                 Your profile page and all of your links will stop working, and
                 you will be signed out everywhere. This cannot be undone.
               </p>
@@ -195,7 +195,7 @@ function Settings() {
           <form onSubmit={handleDelete} className="space-y-3">
             <label
               htmlFor="delete-account-password"
-              className="block text-sm text-gray-300"
+              className="block text-sm text-ink-soft"
             >
               Confirm with your password
             </label>
@@ -209,7 +209,7 @@ function Settings() {
                 setPassword(event.target.value);
                 setError(null);
               }}
-              className="w-full md:max-w-sm bg-gray-900/60 border border-gray-600 focus:border-red-400 outline-none text-white rounded-lg px-3 py-2"
+              className="w-full md:max-w-sm bg-overlay/60 border border-line-strong focus:border-red-400 outline-none text-ink rounded-lg px-3 py-2"
             />
 
             {error && <p className="text-red-300 text-sm">{error}</p>}

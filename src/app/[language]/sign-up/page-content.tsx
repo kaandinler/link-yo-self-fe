@@ -92,10 +92,10 @@ const FormInput = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300">{label}</label>
+      <label className="block text-sm font-medium text-ink-soft">{label}</label>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          {Icon && <Icon className="h-5 w-5 text-gray-500" />}
+          {Icon && <Icon className="h-5 w-5 text-ink-faint" />}
         </div>
         <input
           type={showPasswordToggle && showPassword ? "text" : type}
@@ -105,13 +105,13 @@ const FormInput = ({
           placeholder={placeholder}
           className={`
             block w-full pl-10 pr-12 py-3 border rounded-lg text-sm
-            bg-gray-800 text-white placeholder-gray-400
+            bg-surface-raised text-ink placeholder-ink-muted
             focus:ring-2 focus:ring-purple-500 focus:border-purple-500
             transition-colors duration-200
             ${
               error
                 ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-600 hover:border-gray-500"
+                : "border-line-strong hover:border-line-stronger"
             }
           `}
         />
@@ -122,9 +122,9 @@ const FormInput = ({
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
           >
             {showPassword ? (
-              <EyeOff className="h-5 w-5 text-gray-500 hover:text-gray-300" />
+              <EyeOff className="h-5 w-5 text-ink-faint hover:text-ink-soft" />
             ) : (
-              <Eye className="h-5 w-5 text-gray-500 hover:text-gray-300" />
+              <Eye className="h-5 w-5 text-ink-faint hover:text-ink-soft" />
             )}
           </button>
         )}
@@ -265,23 +265,21 @@ function LinkYoSelfSignUpForm() {
     : "linkyoself.com/username";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
-            <Link className="h-8 w-8 text-white" />
+            <Link className="h-8 w-8 text-ink" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">
-            Join LinkYoSelf
-          </h2>
-          <p className="text-gray-300">
+          <h2 className="text-3xl font-bold text-ink mb-2">Join LinkYoSelf</h2>
+          <p className="text-ink-soft">
             Build your personal brand, share your links
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+        <div className="bg-surface-raised rounded-2xl shadow-2xl p-8 border border-line">
           <div className="space-y-6">
             {submitSuccess ? (
               /* Kayit basarili: form yerine ne oldugunu ve sonraki adimi
@@ -346,9 +344,9 @@ function LinkYoSelfSignUpForm() {
                     error={errors.username}
                     placeholder="username"
                   />
-                  <p className="mt-1 text-sm text-gray-400">
+                  <p className="mt-1 text-sm text-ink-muted">
                     Your profile:{" "}
-                    <span className="font-medium text-purple-400">
+                    <span className="font-medium text-accent">
                       {profileUrl}
                     </span>
                   </p>
@@ -382,7 +380,7 @@ function LinkYoSelfSignUpForm() {
                 />
 
                 {/* Password Requirements */}
-                <div className="text-xs text-gray-400 space-y-1">
+                <div className="text-xs text-ink-muted space-y-1">
                   <p>Your password must include:</p>
                   <div className="grid grid-cols-2 gap-2">
                     {PASSWORD_RULES.map((rule) => (
@@ -391,7 +389,7 @@ function LinkYoSelfSignUpForm() {
                         className={`flex items-center gap-1 ${
                           rule.test(formData.password)
                             ? "text-green-400"
-                            : "text-gray-500"
+                            : "text-ink-faint"
                         }`}
                       >
                         <Check className="h-3 w-3" />
@@ -419,22 +417,22 @@ function LinkYoSelfSignUpForm() {
                       ${
                         formData.policy
                           ? "bg-purple-600 border-purple-600"
-                          : "border-gray-500 hover:border-gray-400"
+                          : "border-line-stronger hover:border-line-stronger"
                       }
                       ${errors.policy ? "border-red-500" : ""}
                     `}
                       >
                         {formData.policy && (
-                          <Check className="h-3 w-3 text-white" />
+                          <Check className="h-3 w-3 text-ink" />
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-gray-300 leading-5">
+                    <span className="text-sm text-ink-soft leading-5">
                       I agree to the{" "}
                       <a
                         href="/terms"
                         target="_blank"
-                        className="text-purple-400 hover:text-purple-300 font-medium underline"
+                        className="text-accent hover:text-accent font-medium underline"
                       >
                         Terms of Service
                       </a>{" "}
@@ -442,7 +440,7 @@ function LinkYoSelfSignUpForm() {
                       <a
                         href="/privacy"
                         target="_blank"
-                        className="text-purple-400 hover:text-purple-300 font-medium underline"
+                        className="text-accent hover:text-accent font-medium underline"
                       >
                         Privacy Policy
                       </a>
@@ -463,12 +461,12 @@ function LinkYoSelfSignUpForm() {
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                   className={`
-                  w-full py-3 px-4 rounded-lg font-semibold text-white
+                  w-full py-3 px-4 rounded-lg font-semibold
                   transition-all duration-200 transform
                   ${
                     isSubmitting
-                      ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                      ? "bg-field-strong text-ink-muted cursor-not-allowed"
+                      : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
                   }
                   focus:ring-4 focus:ring-purple-300 focus:outline-none
                 `}
@@ -487,7 +485,7 @@ function LinkYoSelfSignUpForm() {
                 <div className="text-center">
                   <a
                     href="/sign-in"
-                    className="text-sm text-gray-400 hover:text-purple-400 transition-colors duration-200"
+                    className="text-sm text-ink-muted hover:text-accent transition-colors duration-200"
                   >
                     Already have an account?{" "}
                     <span className="font-medium">Sign in</span>
@@ -510,7 +508,7 @@ function LinkYoSelfSignUpForm() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-ink-muted">
             Create your digital identity with LinkYoSelf ✨
           </p>
         </div>

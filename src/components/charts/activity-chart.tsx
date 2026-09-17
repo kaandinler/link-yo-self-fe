@@ -4,12 +4,11 @@
 //
 // Kutuphane yok: tek bir SVG yetiyor ve paket agirligi eklemeye degmez.
 //
-// RENKLER: mavi (#3987e5) ve turuncu (#d95926), koyu yuzey icin secilmis
-// kategorik slot 1 ve 2. Asagidaki cizim yuzeyine (PLOT_SURFACE) karsi
-// dogrulandi: renk korlugunde ayirt edilebilirlik (en kotu cift dE 26.8) ve
-// kontrast (her ikisi de >= 3:1) gecti. Seriler ayrica hem gosterge (legend)
-// hem de ucundaki etiketle isaretleniyor; kimlik hicbir zaman yalnizca renge
-// birakilmiyor.
+// RENKLER: charts/palette.ts uzerinden, tema degiskenleriyle. Iki seri de
+// kendi cizim yuzeyine karsi >= 3:1 ve renk korlugunde ayirt edilebilir --
+// koyu ve acik tema icin ayri ayri secildi. Seriler ayrica hem gosterge
+// (legend) hem de ucundaki etiketle isaretleniyor; kimlik hicbir zaman
+// yalnizca renge birakilmiyor.
 //
 // TEK EKSEN: iki seri de "olay adedi" oldugu icin ayni olcekte cizilebiliyor.
 // Ikinci bir y ekseni asla eklenmemeli; iki olcegin hizasi keyfi olur ve
@@ -17,18 +16,19 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { AnalyticsDayPoint } from "@/services/api/services/analytics";
+import { CHART } from "./palette";
 
 const SERIES = [
-  { key: "clicks", label: "Link clicks", color: "#3987e5" },
-  { key: "profile_views", label: "Profile views", color: "#d95926" },
+  { key: "clicks", label: "Link clicks", color: CHART.clicks },
+  { key: "profile_views", label: "Profile views", color: CHART.views },
 ] as const;
 
 type SeriesKey = (typeof SERIES)[number]["key"];
 
 /** Cizim alaninin arkasina konan duz zemin. */
-const PLOT_SURFACE = "#1a1a24";
-const GRID = "rgba(255,255,255,0.10)";
-const AXIS_TEXT = "#898781";
+const PLOT_SURFACE = CHART.surface;
+const GRID = CHART.grid;
+const AXIS_TEXT = CHART.axis;
 
 // Sagdaki bosluk uc etiketleri icin: etiket cizim alaninin icine konursa
 // kendi cizgisinin uzerine biniyor.
@@ -246,7 +246,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
             x2={x(seciliIndeks)}
             y1={PADDING.top}
             y2={PADDING.top + cizimYuksekligi}
-            stroke="rgba(255,255,255,0.35)"
+            stroke={CHART.crosshair}
             strokeWidth={1}
           />
         )}
@@ -305,7 +305,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
               y={y(sonNokta[seri.key]) + 4}
               textAnchor="start"
               fontSize={11}
-              fill="#c3c2b7"
+              fill={CHART.axis}
             >
               {seri.label}
             </text>
@@ -322,19 +322,19 @@ export default function ActivityChart({ points, soluk = false }: Props) {
       {secili && seciliIndeks !== null && (
         <div
           data-testid="activity-tooltip"
-          className="pointer-events-none absolute top-2 rounded-lg border border-gray-600 bg-gray-900/95 px-3 py-2 shadow-lg"
+          className="pointer-events-none absolute top-2 rounded-lg border border-line-strong bg-overlay/95 px-3 py-2 shadow-lg"
           style={{
             left: Math.min(Math.max(x(seciliIndeks) - 70, 0), genislik - 150),
             width: 150,
           }}
         >
-          <p className="text-xs text-gray-400">{gunEtiketi(secili.date)}</p>
+          <p className="text-xs text-ink-muted">{gunEtiketi(secili.date)}</p>
           {SERIES.map((seri) => (
             <p
               key={seri.key}
               className="mt-1 flex items-center justify-between gap-2"
             >
-              <span className="flex items-center gap-2 text-xs text-gray-400">
+              <span className="flex items-center gap-2 text-xs text-ink-muted">
                 <span
                   aria-hidden
                   className="inline-block h-0.5 w-3 rounded-full"
@@ -342,7 +342,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
                 />
                 {seri.label}
               </span>
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-semibold text-ink">
                 {secili[seri.key].toLocaleString()}
               </span>
             </p>
@@ -364,7 +364,7 @@ export function ActivityLegend() {
             className="inline-block h-0.5 w-4 rounded-full"
             style={{ backgroundColor: seri.color }}
           />
-          <span className="text-gray-300">{seri.label}</span>
+          <span className="text-ink-soft">{seri.label}</span>
         </span>
       ))}
     </div>
@@ -376,15 +376,15 @@ export function ActivityTable({ points }: { points: AnalyticsDayPoint[] }) {
   return (
     <table data-testid="activity-table" className="w-full text-sm">
       <thead>
-        <tr className="text-left text-gray-400">
+        <tr className="text-left text-ink-muted">
           <th className="py-2 font-medium">Day</th>
           <th className="py-2 font-medium text-right">Link clicks</th>
           <th className="py-2 font-medium text-right">Profile views</th>
         </tr>
       </thead>
-      <tbody className="text-gray-200">
+      <tbody className="text-ink-soft">
         {points.map((nokta) => (
-          <tr key={nokta.date} className="border-t border-gray-700">
+          <tr key={nokta.date} className="border-t border-line">
             <td className="py-2">{gunEtiketi(nokta.date)}</td>
             <td className="py-2 text-right tabular-nums">
               {nokta.clicks.toLocaleString()}

@@ -67,14 +67,14 @@ const ConfirmModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6 max-w-sm mx-4">
-        <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 mb-6">{message}</p>
+      <div className="bg-surface-raised rounded-2xl border border-line p-6 max-w-sm mx-4">
+        <h3 className="text-lg font-semibold text-ink mb-2">{title}</h3>
+        <p className="text-ink-muted mb-6">{message}</p>
         <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -175,14 +175,14 @@ const LinkModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface-raised rounded-2xl border border-line p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-semibold text-white">
+          <h3 className="text-xl font-semibold text-ink">
             {link ? "Edit Link" : "Add New Link"}
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
@@ -190,7 +190,7 @@ const LinkModal = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-soft mb-2">
               Title *
             </label>
             <input
@@ -200,8 +200,8 @@ const LinkModal = ({
                 setFormData((prev) => ({ ...prev, title: e.target.value }))
               }
               placeholder="e.g., Instagram Profile"
-              className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
-                errors.title ? "border-red-500" : "border-gray-600"
+              className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
+                errors.title ? "border-red-500" : "border-line-strong"
               }`}
             />
             {errors.title && (
@@ -213,7 +213,7 @@ const LinkModal = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-soft mb-2">
               URL *
             </label>
             <input
@@ -223,8 +223,8 @@ const LinkModal = ({
                 setFormData((prev) => ({ ...prev, url: e.target.value }))
               }
               placeholder="https://example.com"
-              className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
-                errors.url ? "border-red-500" : "border-gray-600"
+              className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
+                errors.url ? "border-red-500" : "border-line-strong"
               }`}
             />
             {errors.url && (
@@ -236,7 +236,7 @@ const LinkModal = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-soft mb-2">
               Description
             </label>
             <textarea
@@ -249,19 +249,19 @@ const LinkModal = ({
               }
               placeholder="Optional description for your link"
               rows={3}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
+              className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
             />
           </div>
 
           {/* Appearance Settings */}
-          <div className="border-t border-gray-600 pt-4">
-            <h4 className="text-sm font-medium text-gray-300 mb-4">
+          <div className="border-t border-line-strong pt-4">
+            <h4 className="text-sm font-medium text-ink-soft mb-4">
               Appearance Settings
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-soft mb-2">
                   Icon URL
                 </label>
                 <input
@@ -274,12 +274,12 @@ const LinkModal = ({
                     }))
                   }
                   placeholder="https://example.com/icon.png"
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-soft mb-2">
                   Border Radius
                 </label>
                 <input
@@ -293,14 +293,14 @@ const LinkModal = ({
                       border_radius: parseInt(e.target.value) || 8,
                     }))
                   }
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-soft mb-2">
                   Background Color
                 </label>
                 <div className="flex gap-2">
@@ -313,7 +313,7 @@ const LinkModal = ({
                         background_color: e.target.value,
                       }))
                     }
-                    className="w-12 h-12 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer"
+                    className="w-12 h-12 bg-field border border-line-strong rounded-lg cursor-pointer"
                   />
                   <input
                     type="text"
@@ -325,13 +325,13 @@ const LinkModal = ({
                       }))
                     }
                     placeholder="#1383eb"
-                    className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                    className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-soft mb-2">
                   Text Color
                 </label>
                 <div className="flex gap-2">
@@ -344,7 +344,7 @@ const LinkModal = ({
                         text_color: e.target.value,
                       }))
                     }
-                    className="w-12 h-12 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer"
+                    className="w-12 h-12 bg-field border border-line-strong rounded-lg cursor-pointer"
                   />
                   <input
                     type="text"
@@ -356,7 +356,7 @@ const LinkModal = ({
                       }))
                     }
                     placeholder="#ffffff"
-                    className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                    className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                   />
                 </div>
               </div>
@@ -364,7 +364,7 @@ const LinkModal = ({
 
             {/* Preview */}
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-ink-soft mb-2">
                 Preview
               </label>
               <div
@@ -405,9 +405,9 @@ const LinkModal = ({
                   is_active: e.target.checked,
                 }))
               }
-              className="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
+              className="w-4 h-4 text-purple-600 bg-field border-line-strong rounded focus:ring-purple-500"
             />
-            <label htmlFor="is_active" className="text-sm text-gray-300">
+            <label htmlFor="is_active" className="text-sm text-ink-soft">
               Make this link active (visible on your page)
             </label>
           </div>
@@ -416,7 +416,7 @@ const LinkModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              className="flex-1 px-4 py-3 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors"
             >
               Cancel
             </button>
@@ -469,7 +469,7 @@ const LinkItem = ({
 
   return (
     <div
-      className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-4 hover:border-gray-600 transition-colors ${
+      className={`bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-4 hover:border-line-strong transition-colors ${
         isDragging ? "opacity-50 scale-105 shadow-2xl" : ""
       }`}
     >
@@ -480,7 +480,7 @@ const LinkItem = ({
           className={`flex-shrink-0 ${!isDragDisabled ? "cursor-grab active:cursor-grabbing" : "cursor-default"}`}
         >
           <GripVertical
-            className={`h-5 w-5 ${!isDragDisabled ? "text-gray-500 hover:text-gray-400" : "text-gray-600"} transition-colors`}
+            className={`h-5 w-5 ${!isDragDisabled ? "text-ink-faint hover:text-ink-muted" : "text-ink-faint"} transition-colors`}
           />
         </div>
 
@@ -497,16 +497,16 @@ const LinkItem = ({
                 }}
               />
             )}
-            <h3 className="text-white font-medium truncate">{link.title}</h3>
+            <h3 className="text-ink font-medium truncate">{link.title}</h3>
             <div
               className={`w-2 h-2 rounded-full flex-shrink-0 ${
                 link.is_active ? "bg-green-400" : "bg-gray-500"
               }`}
             />
           </div>
-          <p className="text-gray-400 text-sm truncate">{link.url}</p>
+          <p className="text-ink-muted text-sm truncate">{link.url}</p>
           {link.description && (
-            <p className="text-gray-500 text-xs mt-1 truncate">
+            <p className="text-ink-faint text-xs mt-1 truncate">
               {link.description}
             </p>
           )}
@@ -514,20 +514,20 @@ const LinkItem = ({
             <div className="flex items-center gap-2 mt-1">
               {link.background_color && (
                 <div
-                  className="w-3 h-3 rounded border border-gray-500"
+                  className="w-3 h-3 rounded border border-line-stronger"
                   style={{ backgroundColor: link.background_color }}
                   title={`Background: ${link.background_color}`}
                 />
               )}
               {link.text_color && (
                 <div
-                  className="w-3 h-3 rounded border border-gray-500"
+                  className="w-3 h-3 rounded border border-line-stronger"
                   style={{ backgroundColor: link.text_color }}
                   title={`Text: ${link.text_color}`}
                 />
               )}
               {link.border_radius !== undefined && link.border_radius !== 8 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-ink-faint">
                   r:{link.border_radius}px
                 </span>
               )}
@@ -537,15 +537,15 @@ const LinkItem = ({
 
         {/* Stats */}
         <div className="flex-shrink-0 text-center">
-          <div className="text-white font-medium">{link.click_count}</div>
-          <div className="text-gray-400 text-xs">clicks</div>
+          <div className="text-ink font-medium">{link.click_count}</div>
+          <div className="text-ink-muted text-xs">clicks</div>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={handleCopy}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
             title="Copy URL"
           >
             {copied ? (
@@ -557,7 +557,7 @@ const LinkItem = ({
 
           <button
             onClick={() => onToggle(link.id)}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
             title={link.is_active ? "Deactivate" : "Activate"}
           >
             {link.is_active ? (
@@ -569,7 +569,7 @@ const LinkItem = ({
 
           <button
             onClick={() => window.open(link.url, "_blank")}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
             title="Visit link"
           >
             <ExternalLink className="h-4 w-4" />
@@ -577,7 +577,7 @@ const LinkItem = ({
 
           <button
             onClick={() => onEdit(link)}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
             title="Edit link"
           >
             <Edit3 className="h-4 w-4" />
@@ -585,7 +585,7 @@ const LinkItem = ({
 
           <button
             onClick={() => onDelete(link.id)}
-            className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+            className="p-2 text-ink-muted hover:text-red-400 transition-colors"
             title="Delete link"
           >
             <Trash2 className="h-4 w-4" />
@@ -796,12 +796,12 @@ const Links: React.FC = () => {
   // Loading state
   if (linksLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <Loader2 className="h-12 w-12 text-purple-400 animate-spin mx-auto mb-4" />
-              <p className="text-gray-400">Loading your links...</p>
+              <Loader2 className="h-12 w-12 text-accent animate-spin mx-auto mb-4" />
+              <p className="text-ink-muted">Loading your links...</p>
             </div>
           </div>
         </div>
@@ -812,7 +812,7 @@ const Links: React.FC = () => {
   // Error state
   if (linksError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
@@ -836,16 +836,16 @@ const Links: React.FC = () => {
   const totalLinks = analytics?.total_links || 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-ink flex items-center gap-3">
               <Link2 className="h-8 w-8" />
               My Links
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-ink-muted mt-1">
               Manage your social media and other links • Drag to reorder
             </p>
           </div>
@@ -867,44 +867,44 @@ const Links: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+          <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                <Link2 className="h-6 w-6 text-purple-400" />
+                <Link2 className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-ink">
                   {analyticsLoading ? "..." : totalLinks}
                 </div>
-                <div className="text-gray-400 text-sm">Total Links</div>
+                <div className="text-ink-muted text-sm">Total Links</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+          <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
                 <Eye className="h-6 w-6 text-green-400" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-ink">
                   {analyticsLoading ? "..." : activeLinksCount}
                 </div>
-                <div className="text-gray-400 text-sm">Active Links</div>
+                <div className="text-ink-muted text-sm">Active Links</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+          <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                 <TrendingUp className="h-6 w-6 text-blue-400" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-ink">
                   {analyticsLoading ? "..." : totalClicks}
                 </div>
-                <div className="text-gray-400 text-sm">Total Clicks</div>
+                <div className="text-ink-muted text-sm">Total Clicks</div>
               </div>
             </div>
           </div>
@@ -912,18 +912,18 @@ const Links: React.FC = () => {
 
         {/* Filters */}
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-gray-300">
+          <label className="flex items-center gap-2 text-ink-soft">
             <input
               type="checkbox"
               checked={showInactive}
               onChange={(e) => setShowInactive(e.target.checked)}
-              className="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
+              className="w-4 h-4 text-purple-600 bg-field border-line-strong rounded focus:ring-purple-500"
             />
             Show inactive links
           </label>
 
           {filteredLinks.length > 1 && (
-            <div className="flex items-center gap-2 text-gray-400 text-sm">
+            <div className="flex items-center gap-2 text-ink-muted text-sm">
               <GripVertical className="h-4 w-4" />
               Drag to reorder
             </div>
@@ -933,12 +933,12 @@ const Links: React.FC = () => {
         {/* Links List with Drag & Drop */}
         <div className="space-y-4">
           {filteredLinks.length === 0 ? (
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-12 text-center">
-              <Link2 className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">
+            <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-12 text-center">
+              <Link2 className="h-12 w-12 text-ink-faint mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-ink mb-2">
                 {showInactive ? "No links found" : "No active links"}
               </h3>
-              <p className="text-gray-400 mb-6">
+              <p className="text-ink-muted mb-6">
                 {showInactive
                   ? "You haven't created any links yet"
                   : "Add your first link to get started sharing your content"}
@@ -976,8 +976,8 @@ const Links: React.FC = () => {
 
         {/* Quick Actions */}
         {filteredLinks.length > 0 && (
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
+          <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-ink mb-4">
               Quick Actions
             </h3>
             <div className="flex flex-wrap gap-3">
@@ -996,7 +996,7 @@ const Links: React.FC = () => {
                     }
                   });
                 }}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm"
+                className="px-4 py-2 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors text-sm"
                 disabled={toggleLinkMutation.isPending}
               >
                 Deactivate All Active
@@ -1009,7 +1009,7 @@ const Links: React.FC = () => {
                     }
                   });
                 }}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm"
+                className="px-4 py-2 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors text-sm"
                 disabled={toggleLinkMutation.isPending}
               >
                 Activate All Inactive
@@ -1020,7 +1020,7 @@ const Links: React.FC = () => {
 
         {/* Performance Tips */}
         <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm border border-blue-700/50 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-ink mb-3 flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-blue-400" />
             Pro Tips
           </h3>
@@ -1028,8 +1028,8 @@ const Links: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-white font-medium">Use clear titles</div>
-                <div className="text-gray-400">
+                <div className="text-ink font-medium">Use clear titles</div>
+                <div className="text-ink-muted">
                   Make it easy for visitors to understand what each link is for
                 </div>
               </div>
@@ -1037,8 +1037,8 @@ const Links: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-white font-medium">Order by priority</div>
-                <div className="text-gray-400">
+                <div className="text-ink font-medium">Order by priority</div>
+                <div className="text-ink-muted">
                   Drag links to put your most important ones at the top
                 </div>
               </div>
@@ -1046,10 +1046,8 @@ const Links: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-white font-medium">
-                  Customize appearance
-                </div>
-                <div className="text-gray-400">
+                <div className="text-ink font-medium">Customize appearance</div>
+                <div className="text-ink-muted">
                   Use colors and icons to make your links stand out
                 </div>
               </div>
@@ -1057,10 +1055,8 @@ const Links: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-white font-medium">
-                  Monitor performance
-                </div>
-                <div className="text-gray-400">
+                <div className="text-ink font-medium">Monitor performance</div>
+                <div className="text-ink-muted">
                   Check click counts to see what resonates with your audience
                 </div>
               </div>
