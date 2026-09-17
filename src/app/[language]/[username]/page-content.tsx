@@ -12,6 +12,14 @@ import {
   resolveTheme,
   safeColor,
 } from "@/services/profile-theme";
+import { socialLinks, type SocialKey } from "@/services/social-links";
+
+/** Ikonlar yalnizca burada; adresler social-links.ts'te. */
+const SOCIAL_ICONS: Record<SocialKey, typeof Twitter> = {
+  twitter: Twitter,
+  instagram: Instagram,
+  linkedin: Linkedin,
+};
 
 /**
  * Dis baglanti adresini mutlak hale getirir.
@@ -25,14 +33,7 @@ function toAbsoluteUrl(value: string): string {
   return /^https?:\/\//i.test(value) ? value : `https://${value}`;
 }
 
-/**
- * Sosyal medya kullanici adindan bastaki @ isaretini temizler.
- * Backend step-3 ucunda temizliyor ama /profile/update ucunda temizlemiyor.
- */
-function cleanHandle(value: string): string {
-  return value.replace(/^@+/, "");
-}
-
+/** Avatar yoksa cemberde gorunen bas harfler. */
 function initials(name: string): string {
   return name
     .split(/\s+/)
@@ -54,21 +55,12 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
   const { themeColor, pageStyle, textStyle, mutedTextStyle } =
     resolveTheme(profile);
 
-  const socials = [
-    { key: "twitter", base: "https://twitter.com/", Icon: Twitter },
-    { key: "instagram", base: "https://instagram.com/", Icon: Instagram },
-    { key: "linkedin", base: "https://linkedin.com/in/", Icon: Linkedin },
-  ]
-    .map((social) => {
-      const raw = {
-        twitter: profile.twitter_username,
-        instagram: profile.instagram_username,
-        linkedin: profile.linkedin_username,
-      }[social.key];
-      const handle = raw ? cleanHandle(raw) : "";
-      return { ...social, handle, href: `${social.base}${handle}` };
-    })
-    .filter((social) => social.handle.length > 0);
+  // Adresler ortak modulden: sayfadaki ikonlar ile yapisal verideki
+  // sameAs ayni listeden uretiliyor, ayrisamiyorlar (bkz. social-links.ts).
+  const socials = socialLinks(profile).map((social) => ({
+    ...social,
+    Icon: SOCIAL_ICONS[social.key],
+  }));
 
   return (
     <main className="min-h-screen px-4 py-12" style={pageStyle}>

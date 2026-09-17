@@ -6,6 +6,7 @@
   - [Introduction](#introduction)
   - [Folder structure](#folder-structure)
   - [Pages](#pages)
+  - [Public profile: sharing and search](#public-profile-sharing-and-search)
 
 ## Introduction
 
@@ -49,6 +50,39 @@ As far as this boilerplate uses [Next.js](https://nextjs.org/) framework for bui
 ## Pages
 
 Pages are located in the `src/app/[language]` folder. We use `[language]` directory to support internationalization with ability generate static website (`output: export`). Example [here](https://github.com/i18next/next-13-app-dir-i18next-example).
+
+## Public profile: sharing and search
+
+`/[language]/[username]` is the page the product is actually shared as, so what
+a scraper sees there is part of the feature, not an afterthought.
+
+- **`opengraph-image.tsx`** renders a 1200×630 card per profile — avatar (or
+  initials), display name, handle and bio, on the profile's own theme. It exists
+  because handing the avatar over as the card image failed twice: a profile with
+  no avatar produced no image at all and dropped Twitter to a small `summary`
+  card, and a profile with one had a square image stretched across a wide frame.
+  The filename is a Next.js convention; it is what emits `og:image` and its
+  width/height/alt, which is why `generateMetadata` deliberately sets no
+  `openGraph.images`.
+
+  The avatar is downloaded here, with a timeout, and embedded as a data URI. Its
+  URL is whatever the user typed, and passing it straight to `<img src>` means an
+  unreachable host takes the whole card down with it. When the download fails the
+  card falls back to initials.
+
+- **`NEXT_PUBLIC_SITE_URL`** has to be the real domain in production. `canonical`,
+  `og:url` and the card's own address are built from it, and the value is baked in
+  at build time — a build with the default points every shared link at localhost.
+
+- **Structured data** (`ProfilePage` / `Person`) carries `sameAs`. Linking a
+  person to their accounts elsewhere is what this page means to a search engine,
+  and it cannot be inferred from the text. The URLs come from
+  `src/services/social-links.ts`, the same module the rendered icons use, so the
+  two cannot drift apart.
+
+- **`robots.ts`** keeps crawlers on public profiles. The app's own screens are
+  guarded on the client, so a crawler only ever sees an empty shell there; indexed,
+  those shells would compete with the profiles.
 
 ---
 
