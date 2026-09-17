@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import {
+  ArrowDown,
+  ArrowUp,
   Plus,
   Edit3,
   Trash2,
@@ -447,6 +449,9 @@ const LinkItem = ({
   onEdit,
   onDelete,
   onToggle,
+  onMove,
+  canMoveUp,
+  canMoveDown,
   isDragDisabled = false,
   isDragging = false,
   dragHandleProps,
@@ -455,6 +460,10 @@ const LinkItem = ({
   onEdit: (link: Link) => void;
   onDelete: (linkId: number) => void;
   onToggle: (linkId: number) => void;
+  /** Siralamayi bir basamak degistirir; bkz. TASIMA notu. */
+  onMove: (yon: -1 | 1) => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
   isDragDisabled?: boolean;
   isDragging?: boolean;
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -473,123 +482,167 @@ const LinkItem = ({
         isDragging ? "opacity-50 scale-105 shadow-2xl" : ""
       }`}
     >
-      <div className="flex items-center gap-4">
-        {/* Drag Handle */}
-        <div
-          {...dragHandleProps}
-          className={`flex-shrink-0 ${!isDragDisabled ? "cursor-grab active:cursor-grabbing" : "cursor-default"}`}
-        >
-          <GripVertical
-            className={`h-5 w-5 ${!isDragDisabled ? "text-ink-faint hover:text-ink-muted" : "text-ink-faint"} transition-colors`}
-          />
-        </div>
-
-        {/* Link Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            {link.icon_url && (
-              <img
-                src={link.icon_url}
-                alt="Icon"
-                className="w-4 h-4 flex-shrink-0"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            )}
-            <h3 className="text-ink font-medium truncate">{link.title}</h3>
-            <div
-              className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                link.is_active ? "bg-green-400" : "bg-gray-500"
-              }`}
+      {/* Telefonda iki satir: baslik, sayac ve bes dugme tek satira
+          sigmiyordu. Sabit genislikteki parcalar 393 pikselin ~285'ini
+          aliyor ve basliga 100 piksel kaliyordu -- "Portfolyo s..." degil,
+          tek harf: "P...". */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <div className="flex min-w-0 items-start gap-3 sm:flex-1 sm:items-center">
+          {/* Drag Handle: yalnizca isaretleyici cihazlarda anlamli, bkz.
+              asagidaki TASIMA notu. */}
+          <div
+            {...dragHandleProps}
+            className={`hidden flex-shrink-0 sm:block ${!isDragDisabled ? "cursor-grab active:cursor-grabbing" : "cursor-default"}`}
+          >
+            <GripVertical
+              className={`h-5 w-5 ${!isDragDisabled ? "text-ink-faint hover:text-ink-muted" : "text-ink-faint"} transition-colors`}
             />
           </div>
-          <p className="text-ink-muted text-sm truncate">{link.url}</p>
-          {link.description && (
-            <p className="text-ink-faint text-xs mt-1 truncate">
-              {link.description}
-            </p>
-          )}
-          {(link.background_color || link.text_color) && (
-            <div className="flex items-center gap-2 mt-1">
-              {link.background_color && (
-                <div
-                  className="w-3 h-3 rounded border border-line-stronger"
-                  style={{ backgroundColor: link.background_color }}
-                  title={`Background: ${link.background_color}`}
+
+          {/* Link Info */}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              {link.icon_url && (
+                <img
+                  src={link.icon_url}
+                  alt="Icon"
+                  className="w-4 h-4 flex-shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
                 />
               )}
-              {link.text_color && (
-                <div
-                  className="w-3 h-3 rounded border border-line-stronger"
-                  style={{ backgroundColor: link.text_color }}
-                  title={`Text: ${link.text_color}`}
-                />
-              )}
-              {link.border_radius !== undefined && link.border_radius !== 8 && (
-                <span className="text-xs text-ink-faint">
-                  r:{link.border_radius}px
-                </span>
-              )}
+              <h3 className="text-ink font-medium truncate">{link.title}</h3>
+              <div
+                className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  link.is_active ? "bg-green-400" : "bg-gray-500"
+                }`}
+              />
             </div>
-          )}
+            <p className="text-ink-muted text-sm truncate">{link.url}</p>
+            {link.description && (
+              <p className="text-ink-faint text-xs mt-1 truncate">
+                {link.description}
+              </p>
+            )}
+            {(link.background_color || link.text_color) && (
+              <div className="flex items-center gap-2 mt-1">
+                {link.background_color && (
+                  <div
+                    className="w-3 h-3 rounded border border-line-stronger"
+                    style={{ backgroundColor: link.background_color }}
+                    title={`Background: ${link.background_color}`}
+                  />
+                )}
+                {link.text_color && (
+                  <div
+                    className="w-3 h-3 rounded border border-line-stronger"
+                    style={{ backgroundColor: link.text_color }}
+                    title={`Text: ${link.text_color}`}
+                  />
+                )}
+                {link.border_radius !== undefined &&
+                  link.border_radius !== 8 && (
+                    <span className="text-xs text-ink-faint">
+                      r:{link.border_radius}px
+                    </span>
+                  )}
+              </div>
+            )}
+          </div>
+
+          {/*
+            TASIMA: Yukari/asagi dugmeleri yalnizca telefonda gorunuyor.
+            HTML5 surukle-birak dokunmatik girdide hic olay uretmiyor, yani
+            telefonda siralama degistirmek mumkun degildi -- ustelik sayfa
+            "Drag to reorder" yaziyordu. Isaretleyici cihazlarda surukleme
+            daha hizli oldugu icin orada dugmeler gizli, tutamak duruyor.
+
+            Neden basligin yaninda, eylemlerin yaninda degil: yedi kontrol
+            tek satira sigmiyor ve en sagdaki (silme) ekranin disinda
+            kaliyordu. Ustelik siralama, linkin kimligine ait bir islem --
+            kopyala/duzenle/sil'den farkli bir is.
+          */}
+          <div className="flex flex-shrink-0 items-center sm:hidden">
+            <button
+              type="button"
+              onClick={() => onMove(-1)}
+              disabled={!canMoveUp || isDragDisabled}
+              aria-label={`Move ${link.title} up`}
+              className="p-3 text-ink-muted transition-colors hover:text-ink disabled:opacity-30"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onMove(1)}
+              disabled={!canMoveDown || isDragDisabled}
+              aria-label={`Move ${link.title} down`}
+              className="p-3 text-ink-muted transition-colors hover:text-ink disabled:opacity-30"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
-        {/* Stats */}
-        <div className="flex-shrink-0 text-center">
-          <div className="text-ink font-medium">{link.click_count}</div>
-          <div className="text-ink-muted text-xs">clicks</div>
-        </div>
+        <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-4">
+          {/* Stats */}
+          <div className="flex-shrink-0 text-center">
+            <div className="text-ink font-medium">{link.click_count}</div>
+            <div className="text-ink-muted text-xs">clicks</div>
+          </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button
-            onClick={handleCopy}
-            className="p-2 text-ink-muted hover:text-ink transition-colors"
-            title="Copy URL"
-          >
-            {copied ? (
-              <CheckCircle className="h-4 w-4 text-green-400" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </button>
+          {/* Actions. p-3 telefonda 40 piksellik dokunma hedefi veriyor;
+              fareyle kullanilan genis ekranda p-2 yeterli. */}
+          <div className="flex items-center gap-1 flex-shrink-0 sm:gap-2">
+            <button
+              onClick={handleCopy}
+              className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
+              title="Copy URL"
+            >
+              {copied ? (
+                <CheckCircle className="h-4 w-4 text-green-400" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
 
-          <button
-            onClick={() => onToggle(link.id)}
-            className="p-2 text-ink-muted hover:text-ink transition-colors"
-            title={link.is_active ? "Deactivate" : "Activate"}
-          >
-            {link.is_active ? (
-              <Eye className="h-4 w-4" />
-            ) : (
-              <EyeOff className="h-4 w-4" />
-            )}
-          </button>
+            <button
+              onClick={() => onToggle(link.id)}
+              className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
+              title={link.is_active ? "Deactivate" : "Activate"}
+            >
+              {link.is_active ? (
+                <Eye className="h-4 w-4" />
+              ) : (
+                <EyeOff className="h-4 w-4" />
+              )}
+            </button>
 
-          <button
-            onClick={() => window.open(link.url, "_blank")}
-            className="p-2 text-ink-muted hover:text-ink transition-colors"
-            title="Visit link"
-          >
-            <ExternalLink className="h-4 w-4" />
-          </button>
+            <button
+              onClick={() => window.open(link.url, "_blank")}
+              className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
+              title="Visit link"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </button>
 
-          <button
-            onClick={() => onEdit(link)}
-            className="p-2 text-ink-muted hover:text-ink transition-colors"
-            title="Edit link"
-          >
-            <Edit3 className="h-4 w-4" />
-          </button>
+            <button
+              onClick={() => onEdit(link)}
+              className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
+              title="Edit link"
+            >
+              <Edit3 className="h-4 w-4" />
+            </button>
 
-          <button
-            onClick={() => onDelete(link.id)}
-            className="p-2 text-ink-muted hover:text-red-400 transition-colors"
-            title="Delete link"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+            <button
+              onClick={() => onDelete(link.id)}
+              className="p-3 sm:p-2 text-ink-muted hover:text-red-400 transition-colors"
+              title="Delete link"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -650,6 +703,21 @@ const DraggableList = ({
     setDragOverItem(null);
   };
 
+  /**
+   * Bir linki bir basamak yukari/asagi tasir.
+   *
+   * Surukle-birak ile ayni ucu kullaniyor (onReorder); iki yol da
+   * linklerin yeni sirasini id listesi olarak gonderiyor.
+   */
+  const tasi = (index: number, yon: -1 | 1) => {
+    const hedef = index + yon;
+    if (hedef < 0 || hedef >= links.length) return;
+
+    const yeniler = [...links];
+    [yeniler[index], yeniler[hedef]] = [yeniler[hedef], yeniler[index]];
+    onReorder(yeniler.map((link) => link.id));
+  };
+
   return (
     <div className="space-y-4">
       {links.map((link, index) => (
@@ -666,6 +734,9 @@ const DraggableList = ({
             onEdit={onEdit}
             onDelete={onDelete}
             onToggle={onToggle}
+            onMove={(yon) => tasi(index, yon)}
+            canMoveUp={index > 0}
+            canMoveDown={index < links.length - 1}
             isDragDisabled={isReordering}
             isDragging={draggedItem === index}
             dragHandleProps={{
@@ -846,7 +917,7 @@ const Links: React.FC = () => {
               My Links
             </h1>
             <p className="text-ink-muted mt-1">
-              Manage your social media and other links • Drag to reorder
+              Manage your social media and other links
             </p>
           </div>
 
@@ -866,7 +937,7 @@ const Links: React.FC = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3 md:gap-4">
           <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
@@ -923,9 +994,13 @@ const Links: React.FC = () => {
           </label>
 
           {filteredLinks.length > 1 && (
+            // Telefonda surukleme yok; oradaki karsiligi satirlardaki
+            // yukari/asagi dugmeleri. Ayni cumleyi iki cihazda da
+            // gostermek kullaniciyi calismayan bir seye yonlendiriyordu.
             <div className="flex items-center gap-2 text-ink-muted text-sm">
-              <GripVertical className="h-4 w-4" />
-              Drag to reorder
+              <GripVertical className="hidden h-4 w-4 sm:block" />
+              <span className="hidden sm:inline">Drag to reorder</span>
+              <span className="sm:hidden">Use the arrows to reorder</span>
             </div>
           )}
         </div>
@@ -1039,7 +1114,7 @@ const Links: React.FC = () => {
               <div>
                 <div className="text-ink font-medium">Order by priority</div>
                 <div className="text-ink-muted">
-                  Drag links to put your most important ones at the top
+                  Put your most important links at the top
                 </div>
               </div>
             </div>

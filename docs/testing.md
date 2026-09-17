@@ -38,6 +38,7 @@ and no test depends on data left behind by another.
 | `playwright-tests/profile/activity-chart.spec.ts`   | Daily activity chart, range switch, table view, keyboard          |
 | `playwright-tests/profile/link-breakdown.spec.ts`   | Per-link sparklines, shared scale, table view                     |
 | `playwright-tests/profile/analytics-mobile.spec.ts` | Phone width: axis labels, link titles, no overflow                |
+| `playwright-tests/profile/links-mobile.spec.ts`     | Phone width: titles, arrow reordering, no overflow                |
 | `playwright-tests/profile/traffic-sources.spec.ts`  | Referrer in a real browser; clicks with JS blocked; middle click  |
 | `playwright-tests/profile/customize.spec.ts`        | Theme/background, preview, validation                             |
 | `playwright-tests/profile/profile-edit.spec.ts`     | Name, password change, email change flow                          |

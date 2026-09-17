@@ -201,3 +201,15 @@ export async function apiReferrers(token: string, days = 7) {
   await api.dispose();
   return body.data;
 }
+
+/** GET /v1/links/ — kullanicinin linkleri, order_index sirasiyla. */
+export async function apiListLinks(token: string) {
+  const api = await ctx();
+  const response = await api.get(`${apiUrl}/v1/links/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(response.status(), await response.text()).toBe(200);
+  const body = await response.json();
+  await api.dispose();
+  return body.data;
+}

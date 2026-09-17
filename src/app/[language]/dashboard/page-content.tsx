@@ -155,7 +155,7 @@ function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-3 md:gap-6">
           <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 backdrop-blur-sm border border-blue-500/30 rounded-2xl p-6">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
