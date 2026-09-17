@@ -118,3 +118,29 @@ export async function listPublicProfiles(
     return null;
   }
 }
+
+/**
+ * Sitemap'e girecek profil sayisi.
+ *
+ * Parcalama icin: kac parca gerektigi buradan ogreniliyor. Listeyi
+ * bastan sona okuyup saymak, her parca icin butun listeyi cekmek
+ * demekti.
+ *
+ * Hata durumunda null; cagiran taraf tek parcaya duserek yine de bir
+ * sitemap uretiyor.
+ */
+export async function countPublicProfiles(): Promise<number | null> {
+  if (!API_URL) return null;
+
+  try {
+    const response = await fetch(`${API_URL}/v1/p/sitemap/count`, {
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+
+    const result: ApiResponse<{ count: number }> = await response.json();
+    return result.data?.count ?? null;
+  } catch {
+    return null;
+  }
+}
