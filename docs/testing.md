@@ -26,25 +26,26 @@ and no test depends on data left behind by another.
 
 ## What the suite covers
 
-| File                                               | Covers                                                            |
-| -------------------------------------------------- | ----------------------------------------------------------------- |
-| `playwright-tests/auth/sign-up.spec.ts`            | Registration, password rules, duplicate username                  |
-| `playwright-tests/auth/sign-in.spec.ts`            | Sign in, post-login routing, wrong password, guest guard          |
-| `playwright-tests/auth/email-verification.spec.ts` | Confirmation link, invalid token, settings warning                |
-| `playwright-tests/auth/password-reset.spec.ts`     | Forgot password → email → new password → sign in                  |
-| `playwright-tests/profile/public-profile.spec.ts`  | Public page, 404, profile view counter                            |
-| `playwright-tests/profile/links.spec.ts`           | Empty state, creating a link, `?new=1`, auth guard                |
-| `playwright-tests/profile/onboarding.spec.ts`      | Where the wizard sends you when it ends                           |
-| `playwright-tests/profile/activity-chart.spec.ts`  | Daily activity chart, range switch, table view, keyboard          |
-| `playwright-tests/profile/link-breakdown.spec.ts`  | Per-link sparklines, shared scale, table view                     |
-| `playwright-tests/profile/traffic-sources.spec.ts` | Referrer in a real browser; clicks with JS blocked; middle click  |
-| `playwright-tests/profile/customize.spec.ts`       | Theme/background, preview, validation                             |
-| `playwright-tests/profile/profile-edit.spec.ts`    | Name, password change, email change flow                          |
-| `playwright-tests/profile/profile-fields.spec.ts`  | Display name, bio, page details, social links                     |
-| `playwright-tests/profile/account.spec.ts`         | Closing your own account                                          |
-| `playwright-tests/profile/dashboard.spec.ts`       | Dashboard and analytics summaries                                 |
-| `playwright-tests/navigation.spec.ts`              | Language prefix, landing page, signed-in redirects                |
-| `playwright-tests/theme.spec.ts`                   | Theme switch flips MUI + Tailwind together, persists, public page |
+| File                                                | Covers                                                            |
+| --------------------------------------------------- | ----------------------------------------------------------------- |
+| `playwright-tests/auth/sign-up.spec.ts`             | Registration, password rules, duplicate username                  |
+| `playwright-tests/auth/sign-in.spec.ts`             | Sign in, post-login routing, wrong password, guest guard          |
+| `playwright-tests/auth/email-verification.spec.ts`  | Confirmation link, invalid token, settings warning                |
+| `playwright-tests/auth/password-reset.spec.ts`      | Forgot password → email → new password → sign in                  |
+| `playwright-tests/profile/public-profile.spec.ts`   | Public page, 404, profile view counter                            |
+| `playwright-tests/profile/links.spec.ts`            | Empty state, creating a link, `?new=1`, auth guard                |
+| `playwright-tests/profile/onboarding.spec.ts`       | Where the wizard sends you when it ends                           |
+| `playwright-tests/profile/activity-chart.spec.ts`   | Daily activity chart, range switch, table view, keyboard          |
+| `playwright-tests/profile/link-breakdown.spec.ts`   | Per-link sparklines, shared scale, table view                     |
+| `playwright-tests/profile/analytics-mobile.spec.ts` | Phone width: axis labels, link titles, no overflow                |
+| `playwright-tests/profile/traffic-sources.spec.ts`  | Referrer in a real browser; clicks with JS blocked; middle click  |
+| `playwright-tests/profile/customize.spec.ts`        | Theme/background, preview, validation                             |
+| `playwright-tests/profile/profile-edit.spec.ts`     | Name, password change, email change flow                          |
+| `playwright-tests/profile/profile-fields.spec.ts`   | Display name, bio, page details, social links                     |
+| `playwright-tests/profile/account.spec.ts`          | Closing your own account                                          |
+| `playwright-tests/profile/dashboard.spec.ts`        | Dashboard and analytics summaries                                 |
+| `playwright-tests/navigation.spec.ts`               | Language prefix, landing page, signed-in redirects                |
+| `playwright-tests/theme.spec.ts`                    | Theme switch flips MUI + Tailwind together, persists, public page |
 
 ## Requirements
 

@@ -33,6 +33,22 @@ const AXIS_TEXT = CHART.axis;
 // Sagdaki bosluk uc etiketleri icin: etiket cizim alaninin icine konursa
 // kendi cizgisinin uzerine biniyor.
 const PADDING = { top: 16, right: 96, bottom: 28, left: 44 };
+
+/**
+ * Uc etiketlerinin ("Link clicks") sigmasi icin gereken en az genislik.
+ *
+ * Telefonda 96 piksellik sag bosluk, 393 piksellik ekranin dortte birini
+ * yiyordu ve geriye grafige 253 piksel kaliyordu. Dar ekranda uc etiketleri
+ * gizleniyor: ustteki gosterge zaten ayni bilgiyi veriyor ve o yer egriye
+ * gidiyor.
+ */
+const UC_ETIKETI_ESIGI = 560;
+
+/** Bir x ekseni etiketinin ("Sep 11") komsusuna girmeden istedigi yer. */
+const ETIKET_ARALIGI = 56;
+
+/** Eksende en fazla bu kadar tarih; daha fazlasi genis ekranda da gurultu. */
+const EN_FAZLA_ETIKET = 7;
 const HEIGHT = 260;
 /** Ucundaki iki etiket bundan yakinsa ikisi de gizleniyor (ust uste binmesin). */
 const LABEL_MIN_GAP = 16;
@@ -89,7 +105,11 @@ export default function ActivityChart({ points, soluk = false }: Props) {
   const [kapsayici, genislik] = useGenislik();
   const [seciliIndeks, setSeciliIndeks] = useState<number | null>(null);
 
-  const cizimGenisligi = Math.max(genislik - PADDING.left - PADDING.right, 120);
+  // Uc etiketleri yalnizca genis ekranda; dar ekranda o bosluk egriye gidiyor.
+  const ucEtiketleriSigar = genislik >= UC_ETIKETI_ESIGI;
+  const sagBosluk = ucEtiketleriSigar ? PADDING.right : 12;
+
+  const cizimGenisligi = Math.max(genislik - PADDING.left - sagBosluk, 120);
   const cizimYuksekligi = HEIGHT - PADDING.top - PADDING.bottom;
 
   const enBuyukDeger = Math.max(
@@ -128,6 +148,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
   // biraikiyoruz; dikey olarak itmek etiketi kendi cizgisinden kopariyor.
   const sonNokta = points[points.length - 1];
   const etiketleriGoster =
+    ucEtiketleriSigar &&
     !!sonNokta &&
     Math.abs(y(sonNokta.clicks) - y(sonNokta.profile_views)) >= LABEL_MIN_GAP;
 
@@ -159,9 +180,20 @@ export default function ActivityChart({ points, soluk = false }: Props) {
 
   const secili = seciliIndeks === null ? null : points[seciliIndeks];
 
-  // Uzun araliklarda her gunun etiketi sigmiyor; belirli araliklarla
-  // gosteriyoruz. Ilk ve son gun her zaman var.
-  const etiketAtlama = Math.max(1, Math.ceil(points.length / 7));
+  // Kac tarih gosterilecegi nokta sayisina degil, sigan yere bagli.
+  //
+  // Onceden yalnizca points.length / 7 idi: 7 gunluk aralikta her gunun
+  // etiketi ciziliyordu ve telefonda hepsi birbirinin uzerine biniyordu
+  // ("Sep 11Sep 13ep 18ep 15"). Ust sinir da duruyor; genis ekranda 90
+  // etiket cizmek de okunakli degil.
+  const siganEtiket = Math.max(
+    2,
+    Math.min(EN_FAZLA_ETIKET, Math.floor(cizimGenisligi / ETIKET_ARALIGI))
+  );
+  const etiketAtlama = Math.max(
+    1,
+    Math.ceil(Math.max(points.length - 1, 1) / (siganEtiket - 1))
+  );
 
   return (
     <div
@@ -222,6 +254,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
           indeks % etiketAtlama === 0 || indeks === points.length - 1 ? (
             <text
               key={nokta.date}
+              data-testid="chart-x-label"
               x={x(indeks)}
               y={HEIGHT - 8}
               textAnchor={
