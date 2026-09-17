@@ -1,7 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { apiCreateLink, apiReferrers } from "../helpers/api";
+import {
+  apiAnalyticsSummary,
+  apiCreateLink,
+  apiReferrers,
+} from "../helpers/api";
 import { signInAsNewUser } from "../helpers/auth";
-import { waitForHydration } from "../helpers/ui";
 
 /**
  * Bu dosyanin degerli kismi, tiklamanin gercek bir tarayici zincirinden
@@ -46,11 +49,6 @@ async function sahteSiteyiKur(page: Page, profilUrl: string) {
 
 /** Profil sayfasindaki ilk linke tiklar ve tiklama kaydini bekler. */
 async function linkeTikla(page: Page) {
-  // Baglanti sunucuda render ediliyor, yani React baglanmadan once de
-  // gorunuyor ve tiklanabiliyor -- ama onClick calismiyor ve tiklama
-  // sessizce kaydedilmiyor. Bu testin ilk halinde tam olarak bu oldu.
-  await waitForHydration(page, 'a[target="_blank"]');
-
   const kayit = page.waitForResponse(
     (response) =>
       response.url().includes("/click") &&
@@ -135,4 +133,99 @@ test.describe("Trafik kaynaklari", () => {
       page.getByText("No clicks in this range", { exact: false })
     ).toBeVisible();
   });
+});
+
+/**
+ * Hidrasyondan once yapilan tiklama.
+ *
+ * Baglanti sunucuda render ediliyor: ziyaretci, React sayfaya baglanmadan
+ * once de gorup tiklayabiliyor. Tiklama kaydi React'in onClick'ine bagliysa
+ * o tiklama sessizce kayboluyor -- hem sayac hem kaynak dagilimi eksik
+ * kaliyor.
+ *
+ * Testi zamanlamaya birakmiyoruz: Next'in butun JS parcalari engelleniyor,
+ * yani hidrasyon hic gerceklesmiyor. Boylece "bazen gecen" bir test yerine
+ * ya calisan ya calismayan bir test oluyor.
+ */
+test("React hic yuklenmese bile tiklama kaydediliyor", async ({ page }) => {
+  const { user, token } = await signInAsNewUser(page);
+  const link = await apiCreateLink(token, {
+    title: "Kaynak testi",
+    url: "http://hedef.test/a",
+  });
+
+  await page.route("**/_next/static/**", (route) => route.abort());
+  await page.route("http://hedef.test/**", (route) =>
+    route.fulfill({ status: 200, contentType: "text/html", body: "ok" })
+  );
+
+  await page.goto(`/en/${user.username}`, { waitUntil: "domcontentloaded" });
+
+  const kayit = page.waitForResponse(
+    (response) =>
+      response.url().includes("/click") &&
+      response.request().method() === "POST"
+  );
+  const yeniSekme = page.context().waitForEvent("page");
+  await page.getByRole("link", { name: "Kaynak testi" }).click();
+  await kayit;
+  await (await yeniSekme).close();
+
+  const dagilim = await apiReferrers(token);
+  expect(dagilim.total_clicks).toBe(1);
+
+  const ozet = await apiAnalyticsSummary(token);
+  expect(
+    ozet.links.find((l: { id: number }) => l.id === link.id).click_count
+  ).toBe(1);
+});
+
+/**
+ * Orta tik (yeni sekmede ac) ve sag tik.
+ *
+ * Orta tik gercek bir ziyaret: ziyaretci linke gidiyor, yalnizca sayfayi
+ * arkada aciyor. Tarayici bunun icin `click` degil `auxclick` uretiyor,
+ * dolayisiyla yalnizca `click` dinleyen bir kaydedici bu tiklamalari
+ * gormuyor.
+ *
+ * Sag tik de `auxclick` uretiyor ama bir ziyaret degil -- menuyu acmak
+ * tiklama sayilmamali. Ikisi ayni olayla geldigi icin ayni testte.
+ */
+test("orta tik sayiliyor, sag tik sayilmiyor", async ({ page }) => {
+  const { user, token } = await signInAsNewUser(page);
+  const link = await apiCreateLink(token, {
+    title: "Kaynak testi",
+    url: "http://hedef.test/a",
+  });
+
+  await page.route("http://hedef.test/**", (route) =>
+    route.fulfill({ status: 200, contentType: "text/html", body: "ok" })
+  );
+  await page.goto(`/en/${user.username}`);
+
+  const baglanti = page.getByRole("link", { name: "Kaynak testi" });
+
+  // Sag tik: hicbir sey kaydedilmemeli.
+  await baglanti.click({ button: "right" });
+  await page.waitForTimeout(1000);
+  expect((await apiAnalyticsSummary(token)).total_clicks).toBe(0);
+
+  // Orta tik: bir kez kaydedilmeli -- iki kez degil. Tarayici hem `click`
+  // hem `auxclick` uretseydi sayi ikiye cikardi.
+  const kayit = page.waitForResponse(
+    (response) =>
+      response.url().includes("/click") &&
+      response.request().method() === "POST"
+  );
+  const yeniSekme = page.context().waitForEvent("page");
+  await baglanti.click({ button: "middle" });
+  await kayit;
+  await (await yeniSekme).close();
+  await page.waitForTimeout(1000);
+
+  const ozet = await apiAnalyticsSummary(token);
+  expect(ozet.total_clicks).toBe(1);
+  expect(
+    ozet.links.find((l: { id: number }) => l.id === link.id).click_count
+  ).toBe(1);
 });

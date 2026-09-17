@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getServerTranslation } from "@/services/i18n";
 import { getPublicProfile } from "@/services/api/services/public-profile";
 import PublicProfilePage from "./page-content";
+import ClickTrackerScript from "./click-tracker-script";
 
 type Props = {
   params: Promise<{ language: string; username: string }>;
@@ -42,5 +43,12 @@ export default async function Page(props: Props) {
   // Olmayan kullanici, silinmis hesap veya backend'e ulasilamamasi: 404.
   if (!profile) notFound();
 
-  return <PublicProfilePage profile={profile} />;
+  return (
+    <>
+      {/* Sayfa iceriginden once: tiklama kaydi React'i beklemeden hazir
+          olmali (bkz. click-tracker-script.tsx). */}
+      <ClickTrackerScript />
+      <PublicProfilePage profile={profile} />
+    </>
+  );
 }
