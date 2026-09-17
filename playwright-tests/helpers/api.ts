@@ -188,3 +188,16 @@ export async function apiLinkTimeseries(token: string, days = 7) {
   await api.dispose();
   return body.data;
 }
+
+/** GET /v1/analytics/referrers */
+export async function apiReferrers(token: string, days = 7) {
+  const api = await ctx();
+  const response = await api.get(
+    `${apiUrl}/v1/analytics/referrers?days=${days}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  expect(response.status(), await response.text()).toBe(200);
+  const body = await response.json();
+  await api.dispose();
+  return body.data;
+}

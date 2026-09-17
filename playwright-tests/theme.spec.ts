@@ -20,7 +20,12 @@ test.describe("Tema", () => {
     // Varsayilan "system" modda acik kalip bembeyaz aciliyorlardi.
     await signInAsNewUser(page);
     await page.goto("/en/profile/edit");
-    await expect(page.getByText("Edit Profile")).toBeVisible();
+    // getByText degil: "Edit Profile" ayni zamanda sayfanin <title>'i ve o
+    // gorunmez bir dugum. Basligi rolunden yakalamak tek bir gorunur
+    // elemani hedefliyor.
+    await expect(
+      page.getByRole("heading", { name: "Edit Profile" })
+    ).toBeVisible();
 
     const zemin = await page
       .locator("body")

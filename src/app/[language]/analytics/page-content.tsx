@@ -9,6 +9,7 @@ import {
   useAnalyticsSummary,
   useAnalyticsTimeseries,
   useLinkTimeseries,
+  useReferrers,
 } from "@/services/api/services/analytics";
 import ActivityChart, {
   ActivityLegend,
@@ -18,6 +19,7 @@ import LinkSparkline, {
   ButunLinklerTablosu,
   ortakTavan,
 } from "@/components/charts/link-sparkline";
+import ReferrerBars from "@/components/charts/referrer-bars";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
 
@@ -105,6 +107,11 @@ function Analytics() {
     isLoading: linkSerisiYukleniyor,
     isError: linkSerisiHatasi,
   } = useLinkTimeseries(gun);
+  const {
+    data: kaynaklar,
+    isLoading: kaynaklarYukleniyor,
+    isError: kaynaklarHatasi,
+  } = useReferrers(gun);
 
   const links = data?.links ?? [];
   const enCokTiklanan = links[0]?.click_count ?? 0;
@@ -284,6 +291,45 @@ function Analytics() {
                       <ButunLinklerTablosu links={linkSerileri} />
                     </div>
                   </details>
+                </>
+              )}
+            </div>
+
+            {/* Kaynak dagilimi da secili araliga bagli: ustteki grafikle ayni
+                donemi anlatmasi icin AralikSecici'nin altinda kaliyor. */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 space-y-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  Traffic sources
+                </h2>
+                <p className="text-gray-400 text-sm mt-1">
+                  Where visitors were before they landed on your page and
+                  clicked a link.
+                </p>
+              </div>
+
+              {kaynaklarHatasi ? (
+                <p className="text-red-300">
+                  Traffic sources could not be loaded.
+                </p>
+              ) : kaynaklarYukleniyor ? (
+                <p className="text-gray-400">Loading…</p>
+              ) : (
+                <>
+                  <ReferrerBars
+                    sources={kaynaklar?.sources ?? []}
+                    totalClicks={kaynaklar?.total_clicks ?? 0}
+                  />
+
+                  {/* "Direct" bir kaynak degil, kaynagin bilinmedigi durum.
+                      Bunu yazmazsak yuksek bir Direct payi "dogrudan cok
+                      ziyaretcim var" diye okunuyor. */}
+                  <p className="text-sm text-gray-400">
+                    “Direct or unknown” covers visits typed straight into the
+                    address bar, apps that hide the referrer, and navigation
+                    from within this site. Source tracking starts from the day
+                    it was added, so older clicks are counted there too.
+                  </p>
                 </>
               )}
             </div>

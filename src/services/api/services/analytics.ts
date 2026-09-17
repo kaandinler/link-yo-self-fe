@@ -1,6 +1,7 @@
 // src/services/api/services/analytics.ts
 //
-// Backend: GET /v1/analytics/summary, /timeseries ve /timeseries/by-link
+// Backend: GET /v1/analytics/summary, /timeseries, /timeseries/by-link ve
+// /referrers
 //
 // Pano, analytics sayfasi ve link yonetimi ekrani ayni ozeti okuyor.
 // Onceki karsiligi links.ts icindeki useLinkAnalytics idi ve
@@ -158,6 +159,58 @@ export const useLinkTimeseries = (days: TimeseriesRange) => {
       }
 
       const result: ApiResponse<LinkTimeseriesResponse> = await response.json();
+      return result.data;
+    },
+    placeholderData: (previous) => previous,
+  });
+};
+
+/**
+ * Bir trafik kaynagi.
+ *
+ * `kind` uc degerden biri:
+ * - "host"   : gercek bir dis site; `host` dolu ("instagram.com")
+ * - "direct" : dis bir referrer yok (adres cubuguna yazilmis, referrer'i
+ *              gizleyen bir uygulamadan gelinmis ya da site ici gezinme)
+ * - "other"  : listeye sigmayan kaynaklarin toplami
+ */
+export interface ReferrerSource {
+  kind: "host" | "direct" | "other";
+  host: string | null;
+  clicks: number;
+}
+
+export interface ReferrerBreakdown {
+  days: number;
+  start_date: string;
+  end_date: string;
+  /** Yalnizca secili araligi kapsiyor. */
+  total_clicks: number;
+  /** Tiklamaya gore azalan; "other" varsa her zaman sonda. */
+  sources: ReferrerSource[];
+}
+
+export const referrersQueryKey = (days: number) => [
+  "analytics",
+  "referrers",
+  days,
+];
+
+export const useReferrers = (days: TimeseriesRange) => {
+  const fetch = useFetch();
+
+  return useQuery({
+    queryKey: referrersQueryKey(days),
+    queryFn: async (): Promise<ReferrerBreakdown> => {
+      const response = await fetch(
+        `${API_URL}/v1/analytics/referrers?days=${days}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load referrers");
+      }
+
+      const result: ApiResponse<ReferrerBreakdown> = await response.json();
       return result.data;
     },
     placeholderData: (previous) => previous,
