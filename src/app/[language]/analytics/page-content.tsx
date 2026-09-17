@@ -144,7 +144,9 @@ function Analytics() {
                 degil, bu yuzden basliklari ayri. */}
             <h2 className="text-lg font-semibold text-ink">All time</h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Telefonda 2 sutun: tek sutunda dort kart ekranin tamamini
+                yiyor ve altindaki grafik hic gorunmuyordu. */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <IstatistikKarti
                 baslik="Profile Views"
                 deger={data?.profile_view_count}
@@ -252,9 +254,13 @@ function Analytics() {
                 <>
                   <ul className="space-y-3">
                     {linkSerileri.map((link) => (
+                      // Telefonda satir alt alta: yan yana dizilince 140
+                      // piksellik egri basliga yer birakmiyor ve baslik
+                      // "Portfolyo s..." diye kirpiliyordu. Sayi ile egri
+                      // ayni satirda kaliyor -- birbirlerini anlatiyorlar.
                       <li
                         key={link.id}
-                        className="flex items-center justify-between gap-4"
+                        className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                       >
                         <div className="min-w-0">
                           <p className="text-ink font-medium truncate">
@@ -270,7 +276,7 @@ function Analytics() {
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-4 shrink-0">
+                        <div className="flex items-center justify-between gap-4 shrink-0 sm:justify-end">
                           <p className="text-ink font-medium tabular-nums w-12 text-right">
                             {link.total_clicks.toLocaleString()}
                           </p>
