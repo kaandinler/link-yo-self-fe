@@ -82,37 +82,3 @@ export const getPublicProfile = cache(async function getPublicProfile(
     return null;
   }
 });
-
-/**
- * Link tiklanmasini backend'e bildirir.
- *
- * Tarayici ayni anda linke gittigi icin istek beklenmez; `keepalive` sayfa
- * degisse bile isteğin gonderilmesini saglar. Sayac guncellenemezse
- * kullaniciya bir sey yansitmiyoruz, yonlendirme yine de gerceklesir.
- *
- * REFERRER NEDEN GOVDEDE: Bu istek, ziyaretci zaten profil sayfasindayken
- * atilan bir XHR. Tarayicinin ona koydugu Referer basligi her zaman profil
- * sayfasinin kendisi, yani "ziyaretci bize nereden geldi" sorusunu
- * cevaplamiyor. Cevabi yalnizca sayfa biliyor (document.referrer) ve
- * acikca gondermesi gerekiyor. Sunucu bu adresin sadece host'unu sakliyor.
- */
-export function trackLinkClick(linkId: number): void {
-  if (!API_URL) return;
-
-  // SSR'da document yok; bu fonksiyon yalnizca tiklama isleyicisinden
-  // cagriliyor ama tedbir ucuz.
-  const referrer = typeof document === "undefined" ? "" : document.referrer;
-
-  try {
-    void fetch(`${API_URL}/v1/links/${linkId}/click`, {
-      method: "POST",
-      keepalive: true,
-      headers: { "Content-Type": "application/json" },
-      // Dogrudan gelen ziyaretlerde document.referrer bos metin; null
-      // gonderiyoruz ki sunucu tarafindaki "kaynak yok" ile ayni sey olsun.
-      body: JSON.stringify({ referrer: referrer || null }),
-    }).catch(() => {});
-  } catch {
-    // yut: analytics kaydi kullanicinin linke gitmesini engellememeli
-  }
-}

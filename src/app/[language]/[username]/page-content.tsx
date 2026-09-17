@@ -6,7 +6,6 @@ import { useTranslation } from "@/services/i18n/client";
 import {
   PublicLink,
   PublicProfile,
-  trackLinkClick,
 } from "@/services/api/services/public-profile";
 import {
   isLightColor,
@@ -144,12 +143,7 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
             </p>
           ) : (
             profile.links.map((link) => (
-              <LinkButton
-                key={link.id}
-                link={link}
-                themeColor={themeColor}
-                onClick={() => trackLinkClick(link.id)}
-              />
+              <LinkButton key={link.id} link={link} themeColor={themeColor} />
             ))
           )}
         </section>
@@ -165,14 +159,9 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
 type LinkButtonProps = {
   link: PublicLink;
   themeColor: string;
-  onClick: () => void;
 };
 
-const LinkButton: React.FC<LinkButtonProps> = ({
-  link,
-  themeColor,
-  onClick,
-}) => {
+const LinkButton: React.FC<LinkButtonProps> = ({ link, themeColor }) => {
   const background = safeColor(link.background_color, themeColor);
   const color = safeColor(
     link.text_color,
@@ -181,12 +170,19 @@ const LinkButton: React.FC<LinkButtonProps> = ({
 
   return (
     // Gercek bir <a> kullaniyoruz: orta tik / yeni sekmede ac gibi tarayici
-    // davranislari korunsun. Tiklama kaydi beklenmeden gonderiliyor.
+    // davranislari korunsun.
+    //
+    // Tiklama kaydi burada bir onClick degil: baglanti sunucuda render
+    // edildigi icin React baglanmadan once de tiklanabiliyor ve o tiklama
+    // kaybolurdu. Kaydi, sayfaya satir ici konan bir betik ustleniyor
+    // (bkz. click-tracker-script.tsx); ona gereken tek sey asagidaki
+    // data-link-id. Iki taraf ayrisirsa traffic-sources.spec.ts'teki
+    // "React hic yuklenmese bile" testi duser.
     <a
       href={link.url}
       target="_blank"
       rel="noopener noreferrer nofollow"
-      onClick={onClick}
+      data-link-id={link.id}
       className="block px-5 py-4 text-center font-medium shadow-sm transition-transform hover:scale-[1.02]"
       style={{
         backgroundColor: background,
