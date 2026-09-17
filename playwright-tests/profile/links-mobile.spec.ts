@@ -102,3 +102,53 @@ test.describe("Links telefonda", () => {
     expect(kaydirma).toBeLessThanOrEqual(gorunen);
   });
 });
+
+test.describe("Link penceresi telefonda", () => {
+  test("kaydet dugmesi kaydirmadan gorunuyor", async ({ page }) => {
+    await ucLinkliSayfa(page);
+
+    await page
+      .getByRole("button", { name: /Edit link/i })
+      .first()
+      .click();
+    const kaydet = page.getByRole("button", { name: "Update Link" });
+    await expect(kaydet).toBeVisible();
+
+    // toBeVisible() ekranda olmayi garanti etmiyor -- kayan bir kutunun
+    // icinde, gorunur alanin altinda da "visible" sayilir. Onceki hali tam
+    // olarak boyleydi: dugme vardi ama kullanici asagi kaydirmadan
+    // goremiyordu.
+    const [kutu, yukseklik] = await Promise.all([
+      kaydet.boundingBox(),
+      page.evaluate(() => window.innerHeight),
+    ]);
+    expect(kutu!.y + kutu!.height).toBeLessThanOrEqual(yukseklik);
+    expect(kutu!.y).toBeGreaterThan(0);
+  });
+
+  test("uzun formda alanlar kaydirilabiliyor ama dugmeler sabit", async ({
+    page,
+  }) => {
+    await ucLinkliSayfa(page);
+    await page
+      .getByRole("button", { name: /Edit link/i })
+      .first()
+      .click();
+
+    const kaydet = page.getByRole("button", { name: "Update Link" });
+    const once = (await kaydet.boundingBox())!.y;
+
+    // Alanlari sonuna kadar kaydir ve gercekten kaydigini dogrula. Bu
+    // olmadan test eski duzende de gecerdi: orada kaydirilacak ayri bir
+    // kutu yok, dolayisiyla dugme de yerinden oynamiyor.
+    const alanlar = page.locator("form > div").first();
+    const kaydi = await alanlar.evaluate((el) => {
+      el.scrollTo(0, el.scrollHeight);
+      return el.scrollTop;
+    });
+    expect(kaydi, "alanlar kutusu kaymadi").toBeGreaterThan(0);
+    await page.waitForTimeout(300);
+
+    expect((await kaydet.boundingBox())!.y).toBeCloseTo(once, 0);
+  });
+});

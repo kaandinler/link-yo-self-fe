@@ -176,245 +176,255 @@ const LinkModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-surface-raised rounded-2xl border border-line p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
+    // TELEFONDA KAYDET DUGMESI: Onceden basligiyla, alanlariyla ve
+    // dugmeleriyle butun pencere birlikte kayiyordu; telefonda form
+    // ekrandan uzun oldugu icin "Create Link" gorunmuyordu ve kullanicinin
+    // once asagi kaydirmasi gerekiyordu. Pencere artik uc parca: sabit
+    // baslik, kayan alanlar, sabit dugmeler.
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-line bg-surface-raised">
+        <div className="flex shrink-0 items-center justify-between px-6 pb-4 pt-6">
           <h3 className="text-xl font-semibold text-ink">
             {link ? "Edit Link" : "Add New Link"}
           </h3>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="text-ink-muted hover:text-ink transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-ink-soft mb-2">
-              Title *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, title: e.target.value }))
-              }
-              placeholder="e.g., Instagram Profile"
-              className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
-                errors.title ? "border-red-500" : "border-line-strong"
-              }`}
-            />
-            {errors.title && (
-              <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                <AlertCircle className="h-4 w-4" />
-                {errors.title}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-ink-soft mb-2">
-              URL *
-            </label>
-            <input
-              type="url"
-              value={formData.url}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, url: e.target.value }))
-              }
-              placeholder="https://example.com"
-              className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
-                errors.url ? "border-red-500" : "border-line-strong"
-              }`}
-            />
-            {errors.url && (
-              <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                <AlertCircle className="h-4 w-4" />
-                {errors.url}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-ink-soft mb-2">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
-              placeholder="Optional description for your link"
-              rows={3}
-              className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
-            />
-          </div>
-
-          {/* Appearance Settings */}
-          <div className="border-t border-line-strong pt-4">
-            <h4 className="text-sm font-medium text-ink-soft mb-4">
-              Appearance Settings
-            </h4>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-ink-soft mb-2">
-                  Icon URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.icon_url}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      icon_url: e.target.value,
-                    }))
-                  }
-                  placeholder="https://example.com/icon.png"
-                  className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ink-soft mb-2">
-                  Border Radius
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="50"
-                  value={formData.border_radius}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      border_radius: parseInt(e.target.value) || 8,
-                    }))
-                  }
-                  className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="block text-sm font-medium text-ink-soft mb-2">
-                  Background Color
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.background_color}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        background_color: e.target.value,
-                      }))
-                    }
-                    className="w-12 h-12 bg-field border border-line-strong rounded-lg cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.background_color}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        background_color: e.target.value,
-                      }))
-                    }
-                    placeholder="#1383eb"
-                    className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ink-soft mb-2">
-                  Text Color
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={formData.text_color}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        text_color: e.target.value,
-                      }))
-                    }
-                    className="w-12 h-12 bg-field border border-line-strong rounded-lg cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.text_color}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        text_color: e.target.value,
-                      }))
-                    }
-                    placeholder="#ffffff"
-                    className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Preview */}
-            <div className="mt-4">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 pb-2">
+            <div>
               <label className="block text-sm font-medium text-ink-soft mb-2">
-                Preview
+                Title *
               </label>
-              <div
-                className="p-4 rounded-lg text-center transition-all"
-                style={{
-                  backgroundColor: formData.background_color,
-                  color: formData.text_color,
-                  borderRadius: `${formData.border_radius}px`,
-                }}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  {formData.icon_url && (
-                    <img
-                      src={formData.icon_url}
-                      alt="Icon"
-                      className="w-5 h-5"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
+                placeholder="e.g., Instagram Profile"
+                className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
+                  errors.title ? "border-red-500" : "border-line-strong"
+                }`}
+              />
+              {errors.title && (
+                <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.title}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-ink-soft mb-2">
+                URL *
+              </label>
+              <input
+                type="url"
+                value={formData.url}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, url: e.target.value }))
+                }
+                placeholder="https://example.com"
+                className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
+                  errors.url ? "border-red-500" : "border-line-strong"
+                }`}
+              />
+              {errors.url && (
+                <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.url}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-ink-soft mb-2">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                placeholder="Optional description for your link"
+                rows={3}
+                className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
+              />
+            </div>
+
+            {/* Appearance Settings */}
+            <div className="border-t border-line-strong pt-4">
+              <h4 className="text-sm font-medium text-ink-soft mb-4">
+                Appearance Settings
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-ink-soft mb-2">
+                    Icon URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.icon_url}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        icon_url: e.target.value,
+                      }))
+                    }
+                    placeholder="https://example.com/icon.png"
+                    className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink-soft mb-2">
+                    Border Radius
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={formData.border_radius}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        border_radius: parseInt(e.target.value) || 8,
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-ink-soft mb-2">
+                    Background Color
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.background_color}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          background_color: e.target.value,
+                        }))
+                      }
+                      className="w-12 h-12 bg-field border border-line-strong rounded-lg cursor-pointer"
                     />
-                  )}
-                  <span className="font-medium">
-                    {formData.title || "Link Title"}
-                  </span>
+                    <input
+                      type="text"
+                      value={formData.background_color}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          background_color: e.target.value,
+                        }))
+                      }
+                      placeholder="#1383eb"
+                      className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-ink-soft mb-2">
+                    Text Color
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.text_color}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          text_color: e.target.value,
+                        }))
+                      }
+                      className="w-12 h-12 bg-field border border-line-strong rounded-lg cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={formData.text_color}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          text_color: e.target.value,
+                        }))
+                      }
+                      placeholder="#ffffff"
+                      className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-ink-soft mb-2">
+                  Preview
+                </label>
+                <div
+                  className="p-4 rounded-lg text-center transition-all"
+                  style={{
+                    backgroundColor: formData.background_color,
+                    color: formData.text_color,
+                    borderRadius: `${formData.border_radius}px`,
+                  }}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    {formData.icon_url && (
+                      <img
+                        src={formData.icon_url}
+                        alt="Icon"
+                        className="w-5 h-5"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    )}
+                    <span className="font-medium">
+                      {formData.title || "Link Title"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="is_active"
+                checked={formData.is_active}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    is_active: e.target.checked,
+                  }))
+                }
+                className="w-4 h-4 text-purple-600 bg-field border-line-strong rounded focus:ring-purple-500"
+              />
+              <label htmlFor="is_active" className="text-sm text-ink-soft">
+                Make this link active (visible on your page)
+              </label>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={formData.is_active}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  is_active: e.target.checked,
-                }))
-              }
-              className="w-4 h-4 text-purple-600 bg-field border-line-strong rounded focus:ring-purple-500"
-            />
-            <label htmlFor="is_active" className="text-sm text-ink-soft">
-              Make this link active (visible on your page)
-            </label>
-          </div>
-
-          <div className="flex gap-3 mt-6">
+          {/* Kayan alanin disinda: pencere ne kadar uzun olursa olsun
+              gorunur kaliyor. */}
+          <div className="flex shrink-0 gap-3 border-t border-line px-6 py-4">
             <button
               type="button"
               onClick={onClose}
