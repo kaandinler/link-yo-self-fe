@@ -1,5 +1,6 @@
 import { languages } from "@/services/i18n/config";
 import { getServerTranslation } from "@/services/i18n";
+import { SITE_URL } from "@/services/site-url";
 import type { Metadata } from "next";
 
 type Props = {
@@ -11,6 +12,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const { t } = await getServerTranslation(params.language, "common");
 
   return {
+    // Alt sayfalarin goreli adreslerini (canonical, uretilen kart gorseli)
+    // mutlaklastiran taban. Tanimli olmazsa Next uyari basip localhost
+    // varsayiyor, yani yayindaki kart gorseli yanlis adresi gosterirdi.
+    metadataBase: new URL(SITE_URL),
     title: t("title"),
   };
 }

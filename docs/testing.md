@@ -34,6 +34,7 @@ and no test depends on data left behind by another.
 | `playwright-tests/auth/password-reset.spec.ts`           | Forgot password → email → new password → sign in                  |
 | `playwright-tests/profile/public-profile.spec.ts`        | Public page, 404, profile view counter                            |
 | `playwright-tests/profile/public-profile-mobile.spec.ts` | Phone width: measured text contrast, touch targets, no overflow   |
+| `playwright-tests/profile/public-profile-seo.spec.ts`    | Rendered head: canonical, og:url, generated card, JSON-LD, robots |
 | `playwright-tests/profile/links.spec.ts`                 | Empty state, creating a link, `?new=1`, auth guard                |
 | `playwright-tests/profile/onboarding.spec.ts`            | Where the wizard sends you when it ends                           |
 | `playwright-tests/profile/activity-chart.spec.ts`        | Daily activity chart, range switch, table view, keyboard          |
