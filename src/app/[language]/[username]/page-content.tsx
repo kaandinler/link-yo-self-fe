@@ -109,7 +109,11 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
 
           {socials.length > 0 || profile.website ? (
             <nav
-              className="mt-5 flex items-center gap-4"
+              // gap-4 -> gap-1: asagidaki baglantilara dokunma hedefi icin
+              // dolgu eklendi (20 piksellik ikon 44 piksellik alan
+              // icinde). Aralik daraltilmasa ikonlar birbirinden kopardi;
+              // gorunen bosluk boylece ayni kaliyor.
+              className="mt-3 flex items-center gap-1"
               aria-label={t("socialLinks")}
             >
               {profile.website ? (
@@ -117,7 +121,7 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
                   href={toAbsoluteUrl(profile.website)}
                   target="_blank"
                   rel="noopener noreferrer nofollow"
-                  className={`transition-opacity hover:opacity-70 ${textColor}`}
+                  className={`p-3 transition-opacity hover:opacity-70 ${textColor}`}
                   aria-label={t("website")}
                 >
                   <Globe className="h-5 w-5" />
@@ -129,7 +133,7 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer nofollow"
-                  className={`transition-opacity hover:opacity-70 ${textColor}`}
+                  className={`p-3 transition-opacity hover:opacity-70 ${textColor}`}
                   aria-label={key}
                 >
                   <Icon className="h-5 w-5" />
