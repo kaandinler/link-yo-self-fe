@@ -306,10 +306,10 @@ function Customize() {
                   .toUpperCase()}
               </div>
 
-              <p className={`font-semibold ${preview.textColor}`}>
+              <p className="font-semibold" style={preview.textStyle}>
                 {profile?.display_name ?? profile?.username ?? "Your name"}
               </p>
-              <p className={`text-sm ${preview.mutedTextColor}`}>
+              <p className="text-sm" style={preview.mutedTextStyle}>
                 {profile?.bio ?? "Your bio shows up here"}
               </p>
 

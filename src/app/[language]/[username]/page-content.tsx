@@ -51,7 +51,7 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
 
   // Tema kurallari ortak modulde; duzenleme ekranindaki onizleme ayni
   // fonksiyonu kullaniyor, boylece onizleme ile yayindaki sayfa ayrisamiyor.
-  const { themeColor, pageStyle, textColor, mutedTextColor } =
+  const { themeColor, pageStyle, textStyle, mutedTextStyle } =
     resolveTheme(profile);
 
   const socials = [
@@ -96,13 +96,18 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
             </div>
           )}
 
-          <h1 className={`mt-4 text-2xl font-bold ${textColor}`}>
+          <h1 className="mt-4 text-2xl font-bold" style={textStyle}>
             {profile.display_name}
           </h1>
-          <p className={`text-sm ${mutedTextColor}`}>@{profile.username}</p>
+          <p className="text-sm" style={mutedTextStyle}>
+            @{profile.username}
+          </p>
 
           {profile.bio ? (
-            <p className={`mt-3 whitespace-pre-line text-sm ${mutedTextColor}`}>
+            <p
+              className="mt-3 whitespace-pre-line text-sm"
+              style={mutedTextStyle}
+            >
               {profile.bio}
             </p>
           ) : null}
@@ -121,7 +126,8 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
                   href={toAbsoluteUrl(profile.website)}
                   target="_blank"
                   rel="noopener noreferrer nofollow"
-                  className={`p-3 transition-opacity hover:opacity-70 ${textColor}`}
+                  className="p-3 transition-opacity hover:opacity-70"
+                  style={textStyle}
                   aria-label={t("website")}
                 >
                   <Globe className="h-5 w-5" />
@@ -133,7 +139,8 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer nofollow"
-                  className={`p-3 transition-opacity hover:opacity-70 ${textColor}`}
+                  className="p-3 transition-opacity hover:opacity-70"
+                  style={textStyle}
                   aria-label={key}
                 >
                   <Icon className="h-5 w-5" />
@@ -145,7 +152,7 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
 
         <section className="mt-8 flex flex-col gap-3" aria-label={t("links")}>
           {profile.links.length === 0 ? (
-            <p className={`text-center text-sm ${mutedTextColor}`}>
+            <p className="text-center text-sm" style={mutedTextStyle}>
               {t("noLinks")}
             </p>
           ) : (
@@ -155,7 +162,7 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
           )}
         </section>
 
-        <footer className={`mt-12 text-center text-xs ${mutedTextColor}`}>
+        <footer className="mt-12 text-center text-xs" style={mutedTextStyle}>
           {t("poweredBy")}
         </footer>
       </div>

@@ -1,12 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // src/services de taranmali: profile-theme.ts, herkese acik profil
-  // sayfasinin metin renklerini sinif adi olarak donduruyor
-  // ("text-gray-900" / "text-white"). Bu yollar eksikken o siniflar
-  // yalnizca baska sayfalar da ayni tonu kullandigi surece uretiliyordu
-  // -- yani kazara. Sayfalar anlamsal token'lara gecince son kullanim da
-  // kalkti ve profil sayfasinda isim, kullanici adi ve bio beyaz zemine
-  // beyaz yazildi.
+  // src/services, hicbir sinif adi orada yasamasa da taraniyor.
+  //
+  // Bir sure profile-theme.ts, herkese acik profil sayfasinin metin
+  // renklerini sinif adi olarak donduruyordu ("text-gray-900"). Bu yol
+  // taranmadigi icin o siniflar yalnizca baska sayfalar da ayni tonu
+  // kullandigi surece, yani kazara uretiliyordu; son kullanim kalkinca
+  // sayfada isim ve bio beyaz zemine beyaz yazildi.
+  //
+  // Asil duzeltme o modulun artik sinif adi degil deger dondurmesi, yani
+  // bu satir gerekli degil. Yine de duruyor: ileride birisi buraya bir
+  // sinif adi yazarsa sessizce kaybolmasin.
   content: [
     "./src/app/**/*.{js,ts,jsx,tsx}",
     "./src/components/**/*.{js,ts,jsx,tsx}",
