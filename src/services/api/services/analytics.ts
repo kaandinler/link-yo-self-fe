@@ -80,24 +80,84 @@ export interface AnalyticsTimeseries {
   points: AnalyticsDayPoint[];
 }
 
-/** Grafikte secilebilen araliklar. */
+/** Hazir araliklar. */
 export const TIMESERIES_RANGES = [7, 30, 90] as const;
 export type TimeseriesRange = (typeof TIMESERIES_RANGES)[number];
 
-export const timeseriesQueryKey = (days: number) => [
+/** Backend'in kabul ettigi en uzun aralik (MAX_DAYS). */
+export const MAX_RANGE_DAYS = 90;
+
+/**
+ * Secili aralik.
+ *
+ * Hazir araliklar "son N gun" sorusunu soruyor; serbest aralik belirli
+ * bir pencereye bakmak icin -- bir kampanyanin kendi gunlerine mesela.
+ * Ikisi ayri bicimde sorulmali: "son 7 gun" her gun kayiyor, sabit bir
+ * aralik kaymiyor.
+ */
+export type SelectedRange =
+  | { kind: "days"; days: TimeseriesRange }
+  | { kind: "custom"; start: string; end: string };
+
+export const DEFAULT_RANGE: SelectedRange = { kind: "days", days: 7 };
+
+/** Istege eklenecek sorgu dizgisi. */
+export function rangeQuery(range: SelectedRange): string {
+  return range.kind === "days"
+    ? `days=${range.days}`
+    : `start=${range.start}&end=${range.end}`;
+}
+
+/**
+ * Query key parcasi.
+ *
+ * Sorgu dizgisinin kendisi kullaniliyor: ayri bir anahtar uretmek, iki
+ * farkli araligin ayni anahtara dusmesi riskini tasirdi ve o durumda
+ * ekranda baska bir araligin verisi gorunurdu.
+ */
+export const rangeKey = (range: SelectedRange) => rangeQuery(range);
+
+/** "2026-09-17" farkiyla gun sayisi; iki ucu da dahil. */
+export function rangeDayCount(range: SelectedRange): number {
+  if (range.kind === "days") return range.days;
+  const bas = Date.parse(`${range.start}T00:00:00Z`);
+  const son = Date.parse(`${range.end}T00:00:00Z`);
+  if (Number.isNaN(bas) || Number.isNaN(son)) return 0;
+  return Math.floor((son - bas) / 86_400_000) + 1;
+}
+
+/**
+ * Serbest araligin gecerli olup olmadigi; gecersizse sebebi.
+ *
+ * Istek gonderip 422 beklemek yerine burada kontrol ediliyor: kullanici
+ * tarihi yazarken anlik geri bildirim aliyor ve yarim girilmis bir
+ * aralik icin bosuna istek atilmiyor. Ayni kurallar backend'de de var
+ * (aralik_kur) -- burasi kolaylik, orasi otorite.
+ */
+export function rangeError(start: string, end: string): string | null {
+  if (!start || !end) return "Pick both dates.";
+  const gun = rangeDayCount({ kind: "custom", start, end });
+  if (gun <= 0) return "The start date must come before the end date.";
+  if (gun > MAX_RANGE_DAYS) {
+    return `Pick at most ${MAX_RANGE_DAYS} days.`;
+  }
+  return null;
+}
+
+export const timeseriesQueryKey = (range: SelectedRange) => [
   "analytics",
   "timeseries",
-  days,
+  rangeKey(range),
 ];
 
-export const useAnalyticsTimeseries = (days: TimeseriesRange) => {
+export const useAnalyticsTimeseries = (range: SelectedRange) => {
   const fetch = useFetch();
 
   return useQuery({
-    queryKey: timeseriesQueryKey(days),
+    queryKey: timeseriesQueryKey(range),
     queryFn: async (): Promise<AnalyticsTimeseries> => {
       const response = await fetch(
-        `${API_URL}/v1/analytics/timeseries?days=${days}`
+        `${API_URL}/v1/analytics/timeseries?${rangeQuery(range)}`
       );
 
       if (!response.ok) {
@@ -137,21 +197,21 @@ export interface LinkTimeseriesResponse {
   links: LinkTimeseries[];
 }
 
-export const linkTimeseriesQueryKey = (days: number) => [
+export const linkTimeseriesQueryKey = (range: SelectedRange) => [
   "analytics",
   "timeseries",
   "by-link",
-  days,
+  rangeKey(range),
 ];
 
-export const useLinkTimeseries = (days: TimeseriesRange) => {
+export const useLinkTimeseries = (range: SelectedRange) => {
   const fetch = useFetch();
 
   return useQuery({
-    queryKey: linkTimeseriesQueryKey(days),
+    queryKey: linkTimeseriesQueryKey(range),
     queryFn: async (): Promise<LinkTimeseriesResponse> => {
       const response = await fetch(
-        `${API_URL}/v1/analytics/timeseries/by-link?days=${days}`
+        `${API_URL}/v1/analytics/timeseries/by-link?${rangeQuery(range)}`
       );
 
       if (!response.ok) {
@@ -190,20 +250,20 @@ export interface ReferrerBreakdown {
   sources: ReferrerSource[];
 }
 
-export const referrersQueryKey = (days: number) => [
+export const referrersQueryKey = (range: SelectedRange) => [
   "analytics",
   "referrers",
-  days,
+  rangeKey(range),
 ];
 
-export const useReferrers = (days: TimeseriesRange) => {
+export const useReferrers = (range: SelectedRange) => {
   const fetch = useFetch();
 
   return useQuery({
-    queryKey: referrersQueryKey(days),
+    queryKey: referrersQueryKey(range),
     queryFn: async (): Promise<ReferrerBreakdown> => {
       const response = await fetch(
-        `${API_URL}/v1/analytics/referrers?days=${days}`
+        `${API_URL}/v1/analytics/referrers?${rangeQuery(range)}`
       );
 
       if (!response.ok) {
@@ -267,22 +327,23 @@ function tarayiciSaatDilimi(): string {
   }
 }
 
-export const bestTimesQueryKey = (days: number, tz: string) => [
+export const bestTimesQueryKey = (range: SelectedRange, tz: string) => [
   "analytics",
   "best-times",
-  days,
+  rangeKey(range),
   tz,
 ];
 
-export const useBestTimes = (days: TimeseriesRange) => {
+export const useBestTimes = (range: SelectedRange) => {
   const fetch = useFetch();
   const tz = tarayiciSaatDilimi();
 
   return useQuery({
-    queryKey: bestTimesQueryKey(days, tz),
+    queryKey: bestTimesQueryKey(range, tz),
     queryFn: async (): Promise<BestTimes> => {
       const response = await fetch(
-        `${API_URL}/v1/analytics/best-times?days=${days}&tz=${encodeURIComponent(tz)}`
+        `${API_URL}/v1/analytics/best-times?${rangeQuery(range)}` +
+          `&tz=${encodeURIComponent(tz)}`
       );
 
       if (!response.ok) {

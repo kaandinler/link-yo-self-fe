@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { BarChart3, Eye, Link2, MousePointerClick, Plus } from "lucide-react";
 import Link from "next/link";
 import {
+  DEFAULT_RANGE,
   TIMESERIES_RANGES,
-  type TimeseriesRange,
+  rangeError,
+  type SelectedRange,
   useAnalyticsSummary,
   useAnalyticsTimeseries,
   useLinkTimeseries,
@@ -66,35 +68,127 @@ function IstatistikKarti({
   );
 }
 
-/** Zaman araligi secici. Yalnizca altindaki grafigi ve tabloyu kapsiyor. */
+/** Bugunun tarihi, <input type="date"> bicimiyle. */
+function bugununTarihi(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/**
+ * Zaman araligi secici. Yalnizca altindaki bolumleri kapsiyor.
+ *
+ * Hazir araliklar ("son 7 gun") her gun kayiyor; serbest aralik sabit.
+ * Ikisi ayri sorular oldugu icin serbest alanlar yalnizca "Custom"
+ * secilince aciliyor -- aksi halde her zaman gorunen iki bos tarih
+ * kutusu, hazir araligi kullanan herkese gereksiz gurultu olurdu.
+ */
 function AralikSecici({
   secili,
   sec,
 }: {
-  secili: TimeseriesRange;
-  sec: (gun: TimeseriesRange) => void;
+  secili: SelectedRange;
+  sec: (aralik: SelectedRange) => void;
 }) {
+  const serbest = secili.kind === "custom";
+  const [acik, setAcik] = useState(serbest);
+  // IKISI DE BOS BASLIYOR. "son" bugunle baslatilinca yalnizca baslangici
+  // secmek tamamlanmis bir aralik gibi gorunuyor ve kullanici daha bitis
+  // tarihini yazmadan istek gidiyordu -- hem bosa bir istek hem de bir
+  // an icin yanlis araligin verisi.
+  const [bas, setBas] = useState(serbest ? secili.start : "");
+  const [son, setSon] = useState(serbest ? secili.end : "");
+
+  const hata = acik ? rangeError(bas, son) : null;
+
+  // Gecerli bir aralik girildiginde kendiliginden uygulaniyor: ayri bir
+  // "Apply" dugmesi, tarihleri secip sonucu bekleyen kullaniciyi bos
+  // ekranda birakiyordu.
+  React.useEffect(() => {
+    if (!acik || rangeError(bas, son)) return;
+    sec({ kind: "custom", start: bas, end: son });
+    // sec her render'da yeni bir referans olabilir; yalnizca tarihler
+    // degisince calismali.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [acik, bas, son]);
+
   return (
-    <div
-      role="group"
-      aria-label="Date range"
-      className="inline-flex rounded-lg border border-line p-1"
-    >
-      {TIMESERIES_RANGES.map((gun) => (
+    <div className="space-y-2">
+      <div
+        role="group"
+        aria-label="Date range"
+        className="inline-flex flex-wrap rounded-lg border border-line p-1"
+      >
+        {TIMESERIES_RANGES.map((gun) => {
+          const seciliMi =
+            !acik && secili.kind === "days" && secili.days === gun;
+          return (
+            <button
+              key={gun}
+              type="button"
+              onClick={() => {
+                setAcik(false);
+                sec({ kind: "days", days: gun });
+              }}
+              aria-pressed={seciliMi}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                seciliMi
+                  ? "bg-purple-600 text-white"
+                  : "text-ink-soft hover:bg-field"
+              }`}
+            >
+              Last {gun} days
+            </button>
+          );
+        })}
         <button
-          key={gun}
           type="button"
-          onClick={() => sec(gun)}
-          aria-pressed={secili === gun}
+          data-testid="range-custom"
+          onClick={() => setAcik(true)}
+          aria-pressed={acik}
           className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-            secili === gun
-              ? "bg-purple-600 text-white"
-              : "text-ink-soft hover:bg-field"
+            acik ? "bg-purple-600 text-white" : "text-ink-soft hover:bg-field"
           }`}
         >
-          Last {gun} days
+          Custom
         </button>
-      ))}
+      </div>
+
+      {acik && (
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="flex items-center gap-2 text-sm text-ink-soft">
+            <span>From</span>
+            <input
+              type="date"
+              data-testid="range-start"
+              value={bas}
+              max={son || bugununTarihi()}
+              onChange={(olay) => setBas(olay.target.value)}
+              className="rounded-md border border-line bg-field px-2 py-1 text-ink"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-sm text-ink-soft">
+            <span>to</span>
+            <input
+              type="date"
+              data-testid="range-end"
+              value={son}
+              min={bas || undefined}
+              onChange={(olay) => setSon(olay.target.value)}
+              className="rounded-md border border-line bg-field px-2 py-1 text-ink"
+            />
+          </label>
+          {hata && (
+            // Istek gonderip 422 beklemek yerine burada soyleniyor;
+            // yarim girilmis bir aralik icin istek de atilmiyor.
+            <p
+              data-testid="range-error"
+              role="status"
+              className="text-sm text-red-500"
+            >
+              {hata}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -102,28 +196,28 @@ function AralikSecici({
 function Analytics() {
   const language = useLanguage();
   const { data, isLoading, isError } = useAnalyticsSummary();
-  const [gun, setGun] = useState<TimeseriesRange>(7);
+  const [aralik, setAralik] = useState<SelectedRange>(DEFAULT_RANGE);
   const {
     data: seri,
     isLoading: seriYukleniyor,
     isFetching: seriTazeleniyor,
     isError: seriHatasi,
-  } = useAnalyticsTimeseries(gun);
+  } = useAnalyticsTimeseries(aralik);
   const {
     data: linkSerisi,
     isLoading: linkSerisiYukleniyor,
     isError: linkSerisiHatasi,
-  } = useLinkTimeseries(gun);
+  } = useLinkTimeseries(aralik);
   const {
     data: kaynaklar,
     isLoading: kaynaklarYukleniyor,
     isError: kaynaklarHatasi,
-  } = useReferrers(gun);
+  } = useReferrers(aralik);
   const {
     data: zamanlar,
     isLoading: zamanlarYukleniyor,
     isError: zamanlarHatasi,
-  } = useBestTimes(gun);
+  } = useBestTimes(aralik);
 
   const links = data?.links ?? [];
   const enCokTiklanan = links[0]?.click_count ?? 0;
@@ -191,7 +285,7 @@ function Analytics() {
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-2">
               <h2 className="text-lg font-semibold text-ink">Over time</h2>
-              <AralikSecici secili={gun} sec={setGun} />
+              <AralikSecici secili={aralik} sec={setAralik} />
             </div>
 
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
@@ -405,12 +499,14 @@ function Analytics() {
                     )}
                   </p>
 
-                  {gun < 14 && (
+                  {zamanlar.days < 14 && (
                     /* Yedi gunluk bir aralikta her haftaguno bir kez
-                       gecer; "hangi gun daha iyi" sorusu sorulamaz. */
+                       gecer; "hangi gun daha iyi" sorusu sorulamaz.
+                       Gun sayisi yanittan okunuyor: serbest aralikta
+                       secimin kac gun ettigini sunucu soyluyor. */
                     <p className="text-sm text-ink-muted">
-                      Each weekday happens only once in a {gun}-day range. Pick
-                      a longer range to compare days.
+                      Each weekday happens only once in a {zamanlar.days}-day
+                      range. Pick a longer range to compare days.
                     </p>
                   )}
 

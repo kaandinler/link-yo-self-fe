@@ -43,6 +43,7 @@ and no test depends on data left behind by another.
 | `playwright-tests/profile/links-mobile.spec.ts`          | Phone width: titles, arrow reordering, sticky modal footer        |
 | `playwright-tests/profile/traffic-sources.spec.ts`       | Referrer in a real browser; clicks with JS blocked; middle click  |
 | `playwright-tests/profile/best-times.spec.ts`            | Weekday/hour bars, browser time zone, no claim on thin data       |
+| `playwright-tests/profile/date-range.spec.ts`            | Custom range: request query, echoed range, refused input          |
 | `playwright-tests/profile/customize.spec.ts`             | Theme/background, preview, validation                             |
 | `playwright-tests/profile/profile-edit.spec.ts`          | Name, password change, email change flow                          |
 | `playwright-tests/profile/profile-fields.spec.ts`        | Display name, bio, page details, social links                     |
