@@ -1,6 +1,18 @@
 name: Lint, Format and Types
 
-on: [push, pull_request]
+# push'ta yalnizca dev ve main: acik PR'i olan bir dala push yapildiginda
+# hem push hem pull_request tetikleniyor ve ayni commit icin dort is
+# birden kosuyordu. Dal calismalari artik PR uzerinden geliyor.
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+
+concurrency:
+  # Art arda push yapildiginda eski calisma iptal ediliyor; yalnizca son
+  # commit'in sonucu onemli. dev ve main'de iptal yok.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/main' }}
 
 jobs:
   lint:

@@ -105,9 +105,20 @@ npx playwright test  # or: npx playwright test --ui
 ## CI
 
 `.github/workflows/e2e.yml` starts a `postgres:16` service, checks out the
-backend repository, runs `alembic upgrade head`, starts uvicorn, then builds the
+backend repository, runs `alembic upgrade head`, starts uvicorn, builds the
 frontend and runs the suite. On failure the Playwright report and the backend
 log are uploaded as artifacts.
+
+The frontend build runs **in the background**, kicked off right after `npm ci`,
+so the backend setup and the browser download happen while it compiles. That is
+also why `playwright.config.ts` only starts `npm run start` on CI instead of
+building first: running `CI=1 npx playwright test` by hand needs a `.next`
+directory already in place.
+
+Both workflows run on `pull_request`, and on `push` only for `dev` and `main`.
+With `on: [push, pull_request]` a branch with an open PR ran everything twice on
+the same commit, and a merge into `dev` ran it three times. They also cancel a
+superseded run on the same branch — only the newest commit's result matters.
 
 `.github/workflows/lint.yml` runs two jobs in parallel:
 

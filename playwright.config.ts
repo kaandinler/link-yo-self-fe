@@ -75,13 +75,15 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env.CI
-      ? "npm run build:e2e && npm run start"
-      : "npm run dev",
+    // CI'da derleme burada degil, is akisinda ("Start frontend build")
+    // yapiliyor: orada arka planda baslatilip backend kurulumu ve tarayici
+    // indirmeyle ayni anda kosuyor. Burada zincirlenseydi o ~35 saniye
+    // kurulumun ustune seri eklenirdi.
+    command: process.env.CI ? "npm run start" : "npm run dev",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
-    // Varsayilan 60sn; CI'da "next build" tek basina ona yaklasiyor ve yavas
-    // bir makinede suite hic baslamadan dusuyor.
+    // Varsayilan 60sn; yavas bir makinede "next dev" ilk derlemeyi bitirmeden
+    // suite dusebiliyor.
     timeout: 180 * 1000,
   },
 });

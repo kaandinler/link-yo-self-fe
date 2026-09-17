@@ -1,6 +1,20 @@
 name: E2E tests
 
-on: [push, pull_request]
+# push'ta yalnizca dev ve main: bir dalda acik PR varken hem push hem
+# pull_request tetikleniyordu ve ayni commit icin butun suite iki kez
+# kosuyordu (ornegin 6281d1b icin 87 ve 88 numarali calismalar; dev'e
+# merge'de uc kez). Dal calismalari artik PR uzerinden geliyor.
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+
+concurrency:
+  # Art arda push yapildiginda yalnizca son commit'in sonucu onemli;
+  # eskisini iptal etmek hem runner'i hem sirayi bosaltiyor. dev ve
+  # main'de iptal yok: oradaki her commit'in kendi kaydi kalsin.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/main' }}
 
 jobs:
   test:
@@ -32,6 +46,8 @@ jobs:
       # SMTP yapilandirilmadigi icin backend e-postalari log'a yaziyor;
       # dogrulama ve sifre sifirlama testleri token'i buradan okuyor.
       E2E_BACKEND_LOG: /tmp/linkyoself-backend.log
+      BUILD_LOG: /tmp/frontend-build.log
+      BUILD_STATUS: /tmp/frontend-build.status
 
     steps:
       - name: Checkout frontend
@@ -45,6 +61,32 @@ jobs:
           repository: kaandinler/link-yo-self-be
           ref: dev
           path: backend
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ARKA PLANDA: derleme ~35 saniye suruyor ve hicbir sey beklemiyor.
+      # Onu simdi baslatip backend kurulumu ile tarayici indirmeyi ayni
+      # anda kosturmak, seri dizilimin ustune ekledigi ~30 saniyeyi
+      # geri veriyor. Cikis kodu bir dosyaya yaziliyor; "Wait" adimi onu
+      # okuyor, yani derleme hatasi sessizce gecmiyor.
+      - name: Start frontend build
+        run: |
+          rm -f "$BUILD_STATUS" "$BUILD_STATUS.tmp"
+          # Cikis kodu once gecici dosyaya yazilip mv ile yerine konuyor.
+          # Dogrudan yazilsaydi yonlendirme dosyayi echo'dan once
+          # olusturur ve bekleyen adim onu bos okuyabilirdi.
+          nohup bash -c \
+            'npm run build:e2e > "$BUILD_LOG" 2>&1
+             echo $? > "$BUILD_STATUS.tmp"
+             mv "$BUILD_STATUS.tmp" "$BUILD_STATUS"' \
+            > /dev/null 2>&1 &
 
       - name: Setup Python
         uses: actions/setup-python@v7
@@ -77,20 +119,24 @@ jobs:
           cat "$E2E_BACKEND_LOG"
           exit 1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: "20"
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      # playwright.config.ts webServer'i CI'da "npm run build:e2e && npm run start"
-      # calistiriyor; Next uygulamasini ayrica baslatmaya gerek yok.
+      - name: Wait for frontend build
+        run: |
+          for i in $(seq 1 240); do
+            if [ -s "$BUILD_STATUS" ]; then
+              cat "$BUILD_LOG"
+              exit "$(cat "$BUILD_STATUS")"
+            fi
+            sleep 1
+          done
+          echo "derleme 240 saniyede bitmedi:"
+          cat "$BUILD_LOG"
+          exit 1
+
+      # Derleme yukarida bitti; playwright.config.ts webServer'i CI'da
+      # yalnizca "npm run start" calistiriyor.
       - name: Run Playwright tests
         run: npx playwright test
 

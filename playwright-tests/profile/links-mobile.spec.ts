@@ -147,7 +147,16 @@ test.describe("Link penceresi telefonda", () => {
       return el.scrollTop;
     });
     expect(kaydi, "alanlar kutusu kaymadi").toBeGreaterThan(0);
-    await page.waitForTimeout(300);
+
+    // Iki kare bekleniyor: kaydirma sonrasi yerlesim ve boyama bitsin.
+    // Sabit 300ms yerine kareye baglamak hem daha hizli hem yavas bir
+    // makinede daha guvenilir.
+    await page.evaluate(
+      () =>
+        new Promise((coz) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => coz(null)))
+        )
+    );
 
     expect((await kaydet.boundingBox())!.y).toBeCloseTo(once, 0);
   });
