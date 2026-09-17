@@ -27,6 +27,22 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Profile";
 
+/**
+ * Kart bir saat boyunca yeniden uretilmeden servis edilebilir.
+ *
+ * NEDEN ONBELLEK: sayfanin kendisi bilerek onbellege alinmiyor (profil
+ * duzenlenince hemen guncel gorunmeli), ama kart oyle degil. Uretimi
+ * pahali -- gorsel cizimi artı avatarin indirilmesi -- ve ayni baglanti
+ * her paylasildiginda yeniden isteniyor. Sayfa "no-store" oldugu icin
+ * Next bu yola da varsayilan olarak onbelleklenmez basligi koyuyordu.
+ *
+ * Bedeli: avatarini degistiren kullanicinin karti en fazla bir saat eski
+ * kalabiliyor. Sayfanin kendisi aninda guncelleniyor.
+ */
+const ONBELLEK = {
+  "cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+};
+
 type Props = {
   params: Promise<{ language: string; username: string }>;
 };
@@ -101,7 +117,7 @@ export default async function Image(props: Props) {
           Link Yo Self
         </div>
       ),
-      size
+      { ...size, headers: ONBELLEK }
     );
   }
 
@@ -217,6 +233,6 @@ export default async function Image(props: Props) {
         ) : null}
       </div>
     ),
-    size
+    { ...size, headers: ONBELLEK }
   );
 }

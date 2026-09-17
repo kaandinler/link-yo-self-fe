@@ -160,5 +160,62 @@ test.describe("Public profil SEO", () => {
     // gosteriyor; dizine girerlerse profillerle yarisirlar.
     expect(metin).toContain("Disallow: /*/dashboard");
     expect(metin).toContain("Disallow: /*/settings");
+    // Kaziyici sitemap'i once burada ariyor.
+    expect(metin).toMatch(/Sitemap: \S+\/sitemap\.xml/);
+  });
+
+  /**
+   * Sitemap olmadan bir profil ancak disaridan birisi ona baglanti
+   * verirse kesfediliyor -- yani tam olarak yeni kullanicinin sahip
+   * olmadigi sey. Profiller birbirine bagli degil.
+   */
+  test("sitemap linki olan profili listeliyor, bos profili listelemiyor", async ({
+    page,
+    request,
+  }) => {
+    const { user: linkli, token } = await signInAsNewUser(page);
+    await apiCreateLink(token, {
+      title: "Blog",
+      url: "https://ornek.test/blog",
+    });
+
+    // Ayni anda acilan, hicbir sey eklenmemis hesap.
+    const { user: bos } = await signInAsNewUser(page);
+
+    const yanit = await request.get("/sitemap.xml");
+    expect(yanit.status()).toBe(200);
+    expect(yanit.headers()["content-type"]).toContain("xml");
+
+    const xml = await yanit.text();
+    expect(xml).toContain(`/${linkli.username}<`);
+    // Bos sayfayi arama motoruna onermek hem ziyaretciyi hem sitenin
+    // genel degerlendirmesini asagi cekiyor.
+    expect(xml, "linki olmayan profil sitemap'te").not.toContain(
+      `/${bos.username}<`
+    );
+
+    // lastmod gercek bir tarih olmali; kaziyici tekrar ziyaret edip
+    // etmeyecegine buna bakarak karar veriyor.
+    const girdi = xml.split("<url>").find((p) => p.includes(linkli.username));
+    const lastmod = girdi?.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1];
+    expect(lastmod, "lastmod yok").toBeTruthy();
+    expect(Number.isNaN(Date.parse(lastmod!))).toBe(false);
+  });
+
+  /**
+   * Kart uretimi pahali (gorsel cizimi + avatarin indirilmesi) ve ayni
+   * baglanti her paylasildiginda yeniden isteniyor. Sayfa "no-store"
+   * oldugu icin Next bu yola da onbelleklenmez basligi koyuyordu.
+   */
+  test("kart gorseli onbelleklenebilir donuyor", async ({ page, request }) => {
+    const { user } = await signInAsNewUser(page);
+    await page.goto(`/en/${user.username}`);
+
+    const gorsel = await meta(page, 'meta[property="og:image"]');
+    const yanit = await request.get(gorsel!);
+
+    const basligi = yanit.headers()["cache-control"] ?? "";
+    expect(basligi).toContain("public");
+    expect(basligi).not.toContain("no-store");
   });
 });
