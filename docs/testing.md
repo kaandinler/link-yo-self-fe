@@ -105,6 +105,17 @@ backend repository, runs `alembic upgrade head`, starts uvicorn, then builds the
 frontend and runs the suite. On failure the Playwright report and the backend
 log are uploaded as artifacts.
 
+`.github/workflows/lint.yml` runs two jobs in parallel:
+
+- **lint** — `eslint .` and `prettier . --check`
+- **typecheck** — `npm run typecheck` (`tsc --noEmit`)
+
+They are separate jobs on purpose. As steps in one job, a failing ESLint run
+would stop the job before the type check ran, and a type error would stay
+hidden until the next push.
+
+Locally, `npm run check` runs all three at once.
+
 ---
 
 Previous: [Auth](auth.md)
