@@ -125,12 +125,19 @@ test.describe("Trafik kaynaklari", () => {
 
     await page.goto("/en/analytics");
 
+    const bolum = page
+      .locator("div.rounded-2xl")
+      .filter({ hasText: "Traffic sources" });
+
     await expect(
       page.getByRole("heading", { name: "Traffic sources" })
     ).toBeVisible();
     await expect(page.getByTestId("referrer-list")).toHaveCount(0);
+    // Locator bolume daraltildi: "No clicks in this range" cumlesi
+    // asagidaki "When your links get clicked" bolumunde de geciyor ve
+    // sayfa genelinde aranirsa iki elemanla eslesiyor.
     await expect(
-      page.getByText("No clicks in this range", { exact: false })
+      bolum.getByText("No clicks in this range", { exact: false })
     ).toBeVisible();
   });
 });

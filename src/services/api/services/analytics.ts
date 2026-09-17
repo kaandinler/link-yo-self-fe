@@ -1,7 +1,7 @@
 // src/services/api/services/analytics.ts
 //
-// Backend: GET /v1/analytics/summary, /timeseries, /timeseries/by-link ve
-// /referrers
+// Backend: GET /v1/analytics/summary, /timeseries, /timeseries/by-link,
+// /referrers ve /best-times
 //
 // Pano, analytics sayfasi ve link yonetimi ekrani ayni ozeti okuyor.
 // Onceki karsiligi links.ts icindeki useLinkAnalytics idi ve
@@ -211,6 +211,85 @@ export const useReferrers = (days: TimeseriesRange) => {
       }
 
       const result: ApiResponse<ReferrerBreakdown> = await response.json();
+      return result.data;
+    },
+    placeholderData: (previous) => previous,
+  });
+};
+
+/** Bir haftagununun toplam tiklamasi. 0 = Pazartesi. */
+export interface WeekdayBucket {
+  weekday: number;
+  clicks: number;
+}
+
+/** Bir saatin toplam tiklamasi. 0-23, istekte verilen saat diliminde. */
+export interface HourBucket {
+  hour: number;
+  clicks: number;
+}
+
+export interface BestTimes {
+  days: number;
+  start_date: string;
+  end_date: string;
+  /** Sunucunun gruplarken kullandigi IANA saat dilimi. */
+  timezone: string;
+
+  total_clicks: number;
+  /** Her zaman 7 ve 24 eleman; bos kutular sifirla geliyor. */
+  by_weekday: WeekdayBucket[];
+  by_hour: HourBucket[];
+
+  peak_weekday: number | null;
+  peak_hour: number | null;
+  /**
+   * Zirveyi bir cikarim olarak sunmak icin yeterli tiklama var mi?
+   *
+   * false iken peak_* yalnizca en buyuk kutunun adi -- "en iyi gunun
+   * sali" gibi bir iddiada bulunulmamali.
+   */
+  enough_data: boolean;
+}
+
+/**
+ * Tarayicinin saat dilimi, orn. "Europe/Istanbul".
+ *
+ * NEDEN GEREKLI: Olaylar sunucuda UTC saklaniyor. "En cok tiklama saat
+ * 14'te" bilgisi kullanicinin kendi saatine cevrilmeden bir sey
+ * anlatmiyor. Cevrimi sunucu yapiyor, dilimi biz soyluyoruz.
+ */
+function tarayiciSaatDilimi(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
+
+export const bestTimesQueryKey = (days: number, tz: string) => [
+  "analytics",
+  "best-times",
+  days,
+  tz,
+];
+
+export const useBestTimes = (days: TimeseriesRange) => {
+  const fetch = useFetch();
+  const tz = tarayiciSaatDilimi();
+
+  return useQuery({
+    queryKey: bestTimesQueryKey(days, tz),
+    queryFn: async (): Promise<BestTimes> => {
+      const response = await fetch(
+        `${API_URL}/v1/analytics/best-times?days=${days}&tz=${encodeURIComponent(tz)}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load best times");
+      }
+
+      const result: ApiResponse<BestTimes> = await response.json();
       return result.data;
     },
     placeholderData: (previous) => previous,
