@@ -9,6 +9,7 @@ import {
   useAnalyticsSummary,
   useAnalyticsTimeseries,
   useLinkTimeseries,
+  useBestTimes,
   useReferrers,
 } from "@/services/api/services/analytics";
 import ActivityChart, {
@@ -20,6 +21,12 @@ import LinkSparkline, {
   ortakTavan,
 } from "@/components/charts/link-sparkline";
 import ReferrerBars from "@/components/charts/referrer-bars";
+import {
+  GUN_ADLARI,
+  HourBars,
+  saatEtiketi,
+  WeekdayBars,
+} from "@/components/charts/time-bars";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
 
@@ -112,6 +119,11 @@ function Analytics() {
     isLoading: kaynaklarYukleniyor,
     isError: kaynaklarHatasi,
   } = useReferrers(gun);
+  const {
+    data: zamanlar,
+    isLoading: zamanlarYukleniyor,
+    isError: zamanlarHatasi,
+  } = useBestTimes(gun);
 
   const links = data?.links ?? [];
   const enCokTiklanan = links[0]?.click_count ?? 0;
@@ -336,6 +348,85 @@ function Analytics() {
                     from within this site. Source tracking starts from the day
                     it was added, so older clicks are counted there too.
                   </p>
+                </>
+              )}
+            </div>
+
+            {/* Kaynak dagiliminin hemen ardindan: biri "nereden", digeri
+                "ne zaman" sorusunu cevapliyor. */}
+            <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-ink">
+                  When your links get clicked
+                </h2>
+                <p className="text-ink-muted text-sm mt-1">
+                  Grouped in your own time zone
+                  {zamanlar?.timezone ? ` (${zamanlar.timezone})` : ""}.
+                </p>
+              </div>
+
+              {zamanlarHatasi ? (
+                <p className="text-red-300">
+                  Click timing could not be loaded.
+                </p>
+              ) : zamanlarYukleniyor ? (
+                <p className="text-ink-muted">Loading…</p>
+              ) : !zamanlar || zamanlar.total_clicks === 0 ? (
+                <p className="text-ink-muted">
+                  No clicks in this range yet, so there is no pattern to show.
+                </p>
+              ) : (
+                <>
+                  {/* Cumlenin kendisi zirveyi soyluyor: cubuklarda rengi
+                      degistirmek tek kanal olurdu. enough_data false iken
+                      bu bir cikarim degil, yalnizca "su ana kadar". */}
+                  <p className="text-sm text-ink-soft">
+                    {zamanlar.enough_data ? (
+                      <>
+                        Most clicks come in on{" "}
+                        <span className="font-semibold text-ink">
+                          {zamanlar.peak_weekday !== null
+                            ? GUN_ADLARI[zamanlar.peak_weekday]
+                            : "—"}
+                        </span>{" "}
+                        around{" "}
+                        <span className="font-semibold text-ink">
+                          {zamanlar.peak_hour !== null
+                            ? saatEtiketi(zamanlar.peak_hour)
+                            : "—"}
+                        </span>
+                        .
+                      </>
+                    ) : (
+                      <>
+                        Not enough clicks yet to call this a pattern — the bars
+                        below are what happened, not what to expect.
+                      </>
+                    )}
+                  </p>
+
+                  {gun < 14 && (
+                    /* Yedi gunluk bir aralikta her haftaguno bir kez
+                       gecer; "hangi gun daha iyi" sorusu sorulamaz. */
+                    <p className="text-sm text-ink-muted">
+                      Each weekday happens only once in a {gun}-day range. Pick
+                      a longer range to compare days.
+                    </p>
+                  )}
+
+                  <div>
+                    <h3 className="text-sm font-medium text-ink-soft mb-3">
+                      By day of week
+                    </h3>
+                    <WeekdayBars buckets={zamanlar.by_weekday} />
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-medium text-ink-soft mb-3">
+                      By hour
+                    </h3>
+                    <HourBars buckets={zamanlar.by_hour} />
+                  </div>
                 </>
               )}
             </div>
