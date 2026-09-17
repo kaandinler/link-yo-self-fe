@@ -8,6 +8,28 @@
 export const DEFAULT_THEME_COLOR = "#1383eb";
 export const DEFAULT_BACKGROUND = "#ffffff";
 
+/**
+ * Metin renkleri.
+ *
+ * NEDEN SINIF ADI DEGIL DEGER: Bu modul bir sure "text-gray-900" gibi
+ * Tailwind sinif adlari donduruyordu. Tailwind kullanilmayan siniflari
+ * uretmiyor ve src/services taranan yollarda olmadigi icin o siniflar
+ * yalnizca *baska* sayfalar da ayni tonu kullandigi surece, yani kazara
+ * uretiliyordu. Sayfalar anlamsal token'lara gecip son kullanim kalkinca
+ * siniflar CSS'ten dustu ve herkese acik profil sayfasinda isim, kullanici
+ * adi ve bio beyaz zemine beyaz yazildi -- derleme, lint ve butun testler
+ * temiz geciyordu.
+ *
+ * Deger dondurmek bu hata sinifini tamamen ortadan kaldiriyor: renk artik
+ * Tailwind'in neyi taradigina ya da urettigine bagli degil.
+ *
+ * Degerler Tailwind'in gri paletinden, onceki gorunumun aynisi olsun diye.
+ */
+const KOYU_METIN = "#111827"; // gray-900
+const KOYU_METIN_SONUK = "#4b5563"; // gray-600
+const ACIK_METIN = "#ffffff";
+const ACIK_METIN_SONUK = "#e5e7eb"; // gray-200
+
 export const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 
 /** Backend'in kabul ettigi arka plan tipleri (core/validators.py). */
@@ -62,8 +84,10 @@ export type ResolvedTheme = {
   pageStyle: React.CSSProperties;
   /** Zemin acik renkse metin koyu olmali. */
   onLightBackground: boolean;
-  textColor: string;
-  mutedTextColor: string;
+  /** Birincil metin (isim, sosyal ikonlar). */
+  textStyle: React.CSSProperties;
+  /** Ikincil metin (kullanici adi, bio, altbilgi). */
+  mutedTextStyle: React.CSSProperties;
 };
 
 /** Profil verisinden sayfanin gercekte kullandigi tema degerlerini uretir. */
@@ -101,12 +125,14 @@ export function resolveTheme(profile: ThemeInput): ResolvedTheme {
     backgroundColor,
     pageStyle,
     onLightBackground,
-    // SABIT TONLAR, token degil: bu renkler herkese acik profil sayfasi
-    // icin ve orada karari ziyaretcinin acik/koyu tercihi degil, profil
-    // sahibinin sectigi arka plan veriyor (onLightBackground). Token
-    // kullanilsaydi koyu zeminli bir profili acik temadaki bir ziyaretci
-    // koyu metinle, yani okunmaz gorurdu.
-    textColor: onLightBackground ? "text-gray-900" : "text-white",
-    mutedTextColor: onLightBackground ? "text-gray-600" : "text-gray-200",
+    // SABIT DEGERLER, tema token'i degil: bu renkleri ziyaretcinin
+    // acik/koyu tercihi degil, profil sahibinin sectigi arka plan
+    // belirliyor (onLightBackground). Token kullanilsaydi koyu zeminli bir
+    // profili acik temadaki bir ziyaretci koyu metinle, yani okunmaz
+    // gorurdu.
+    textStyle: { color: onLightBackground ? KOYU_METIN : ACIK_METIN },
+    mutedTextStyle: {
+      color: onLightBackground ? KOYU_METIN_SONUK : ACIK_METIN_SONUK,
+    },
   };
 }
