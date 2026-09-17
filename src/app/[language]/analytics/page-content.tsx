@@ -153,32 +153,45 @@ function AralikSecici({
       </div>
 
       {acik && (
-        <div className="flex flex-wrap items-center gap-2">
+        // TELEFONDA ALT ALTA, GENISTE YAN YANA. Tek satirda birakilinca
+        // 393 piksellik bir telefonda ikinci alanin sag kenari kullanilabilir
+        // alanin 0,1 pikseli kadar icinde kaliyordu -- bir karakter daha
+        // genis bir tarih bicimi tasirdi. 360 pikselde ise alanlar sarip
+        // hizasiz iki satira dusuyordu, cunku "From" ile "to" ayni
+        // genislikte degil.
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <label className="flex items-center gap-2 text-sm text-ink-soft">
-            <span>From</span>
+            {/* Sabit etiket sutunu: iki satirin girdileri ayni yerden
+                basliyor. */}
+            <span className="w-10 shrink-0 sm:w-auto">From</span>
             <input
               type="date"
               data-testid="range-start"
               value={bas}
               max={son || bugununTarihi()}
               onChange={(olay) => setBas(olay.target.value)}
-              className="rounded-md border border-line bg-field px-2 py-1 text-ink"
+              // h-11: 44 piksel, parmakla isabet ettirilebilen en kucuk
+              // hedef. Onceki py-1 ile 32 pikseldi.
+              className="h-11 w-full rounded-md border border-line bg-field px-2 text-ink sm:w-auto"
             />
           </label>
           <label className="flex items-center gap-2 text-sm text-ink-soft">
-            <span>to</span>
+            <span className="w-10 shrink-0 sm:w-auto">to</span>
             <input
               type="date"
               data-testid="range-end"
               value={son}
               min={bas || undefined}
               onChange={(olay) => setSon(olay.target.value)}
-              className="rounded-md border border-line bg-field px-2 py-1 text-ink"
+              className="h-11 w-full rounded-md border border-line bg-field px-2 text-ink sm:w-auto"
             />
           </label>
           {hata && (
             // Istek gonderip 422 beklemek yerine burada soyleniyor;
             // yarim girilmis bir aralik icin istek de atilmiyor.
+            //
+            // Telefonda kendi satirinda: yan yana birakilinca ikinci
+            // alanin sagina sikisip okunmaz hale geliyordu.
             <p
               data-testid="range-error"
               role="status"
