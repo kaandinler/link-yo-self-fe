@@ -85,6 +85,9 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
             />
           ) : (
             <div
+              // text-white sabit: bu sayfanin renkleri ziyaretcinin degil, profil
+              // sahibinin sectigi temadan geliyor (asagidaki themeColor).
+              // Ziyaretcinin acik/koyu tercihi burayi etkilememeli.
               className="flex h-24 w-24 items-center justify-center rounded-full text-2xl font-semibold text-white shadow-lg"
               style={{ backgroundColor: themeColor }}
               aria-hidden="true"

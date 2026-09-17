@@ -13,9 +13,10 @@
 
 import React from "react";
 import type { ReferrerSource } from "@/services/api/services/analytics";
+import { CHART } from "./palette";
 
-/** Ana grafikteki "Link clicks" serisiyle ayni mavi. */
-const KAYNAK_RENGI = "#3987e5";
+/** Ana grafikteki "Link clicks" serisiyle ayni renk. */
+const KAYNAK_RENGI = CHART.clicks;
 
 /**
  * "Direct" ve "Other" icin daha sonuk bir gri.
@@ -25,7 +26,7 @@ const KAYNAK_RENGI = "#3987e5";
  * tasimiyor -- satirin etiketi zaten acikca soyluyor; gri yalnizca goze
  * ayni ayrimi tekrar ediyor.
  */
-const BILINMEYEN_RENGI = "#737a88";
+const BILINMEYEN_RENGI = CHART.muted;
 
 function etiket(kaynak: ReferrerSource): string {
   if (kaynak.kind === "host" && kaynak.host) return kaynak.host;
@@ -46,7 +47,7 @@ export default function ReferrerBars({
 }) {
   if (sources.length === 0) {
     return (
-      <p className="text-gray-400">
+      <p className="text-ink-muted">
         No clicks in this range, so there are no traffic sources to show yet.
       </p>
     );
@@ -64,13 +65,13 @@ export default function ReferrerBars({
             <div className="flex items-baseline justify-between gap-3">
               <span
                 className={`truncate ${
-                  bilinmeyen ? "text-gray-400" : "text-white font-medium"
+                  bilinmeyen ? "text-ink-muted" : "text-ink font-medium"
                 }`}
               >
                 {etiket(kaynak)}
               </span>
-              <span className="shrink-0 text-sm text-gray-300 tabular-nums">
-                <span className="text-white font-semibold">
+              <span className="shrink-0 text-sm text-ink-soft tabular-nums">
+                <span className="text-ink font-semibold">
                   {kaynak.clicks.toLocaleString()}
                 </span>{" "}
                 · {yuzde}%
@@ -79,7 +80,8 @@ export default function ReferrerBars({
 
             <div
               aria-hidden="true"
-              className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]"
+              className="mt-1.5 h-2 w-full overflow-hidden rounded-full"
+              style={{ backgroundColor: CHART.grid }}
             >
               <div
                 className="h-full rounded-full"

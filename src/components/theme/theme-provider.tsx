@@ -18,16 +18,17 @@ function ThemeProvider(props: PropsWithChildren) {
     []
   );
 
-  // defaultMode="dark": Uygulamanin govdesi koyu -- 14 sayfa Tailwind ile
-  // koyu bir gradient ciziyor. MUI'nin varsayilani "system" ve isletim
-  // sistemi acik temadaysa light'a dusuyordu; sonucta MUI ile yazilmis
-  // sayfalar (profil duzenleme, admin paneli, sifre sifirlama, gizlilik
-  // politikasi) bembeyaz aciliyordu.
+  // colorSchemeSelector: "class" -> MUI secili semayi <html>'in class'ina
+  // yaziyor. Tailwind de ayni sinifi okuyor (tailwind.config.js ->
+  // darkMode: "class"), yani MUI sayfalari ile Tailwind sayfalari tek bir
+  // kaynaktan besleniyor ve uygulama yarisi acik yarisi koyu kalmiyor.
+  // Secimi uygulama cubugundaki ThemeSwitchButton degistiriyor.
   //
-  // Acik tema silinmedi, colorSchemes'te duruyor. Gercek bir tema secici
-  // eklenmeden once Tailwind sayfalarinin da temaya uymasi gerekir; aksi
-  // halde uygulama yarisi acik yarisi koyu kalir. (Bugun secici yok:
-  // ThemeSwitchButton hicbir yerde render edilmiyor.)
+  // defaultMode="dark": "system" degil. Uygulamanin kimligi koyu ve
+  // bugune kadar herkes koyu temayla kullaniyordu; varsayilani isletim
+  // sistemine baglamak, hicbir sey secmemis kullanicilarin yarisinin
+  // ekranini habersiz degistirirdi. Secim yapan kullanicinin tercihi
+  // saklaniyor ve oturumlar arasinda korunuyor.
   return (
     <MuiThemeProvider theme={theme} defaultMode="dark">
       {props.children}

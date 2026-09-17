@@ -60,12 +60,12 @@ function ConfirmEmail() {
   }, [verifyEmail, setUser, t]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-4 flex items-center justify-center">
-      <div className="w-full max-w-md bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 flex items-center justify-center">
+      <div className="w-full max-w-md bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-8 text-center">
         {durum === "loading" && (
           <>
-            <Loader2 className="h-10 w-10 text-purple-400 mx-auto mb-4 animate-spin" />
-            <h1 className="text-xl font-semibold text-white">
+            <Loader2 className="h-10 w-10 text-accent mx-auto mb-4 animate-spin" />
+            <h1 className="text-xl font-semibold text-ink">
               {t("confirm-email:loading.title")}
             </h1>
           </>
@@ -74,10 +74,10 @@ function ConfirmEmail() {
         {durum === "success" && (
           <>
             <CheckCircle2 className="h-10 w-10 text-green-400 mx-auto mb-4" />
-            <h1 className="text-xl font-semibold text-white mb-2">
+            <h1 className="text-xl font-semibold text-ink mb-2">
               {t("confirm-email:success.title")}
             </h1>
-            <p className="text-gray-300 mb-6">
+            <p className="text-ink-soft mb-6">
               {t("confirm-email:success.message")}
             </p>
             <Link
@@ -92,16 +92,16 @@ function ConfirmEmail() {
         {durum === "error" && (
           <>
             <XCircle className="h-10 w-10 text-red-400 mx-auto mb-4" />
-            <h1 className="text-xl font-semibold text-white mb-2">
+            <h1 className="text-xl font-semibold text-ink mb-2">
               {t("confirm-email:error.title")}
             </h1>
-            <p className="text-gray-300 mb-6">{hata}</p>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-ink-soft mb-6">{hata}</p>
+            <p className="text-ink-muted text-sm mb-6">
               {t("confirm-email:error.hint")}
             </p>
             <Link
               href={`/${language}/settings`}
-              className="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              className="inline-block bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
             >
               {t("confirm-email:error.action")}
             </Link>

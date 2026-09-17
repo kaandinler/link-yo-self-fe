@@ -128,7 +128,7 @@ export default function OnboardingWizard({ step }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 px-4 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page px-4 py-12">
       <div className="mx-auto w-full max-w-xl">
         <ProgressBar
           step={step}
@@ -136,10 +136,10 @@ export default function OnboardingWizard({ step }: Props) {
           t={t}
         />
 
-        <h1 className="mt-6 text-2xl font-bold text-white">
+        <h1 className="mt-6 text-2xl font-bold text-ink">
           {t(`steps.${step}.title`)}
         </h1>
-        <p className="mt-2 text-sm text-gray-300">
+        <p className="mt-2 text-sm text-ink-soft">
           {t(`steps.${step}.description`)}
         </p>
 
@@ -166,7 +166,7 @@ export default function OnboardingWizard({ step }: Props) {
                 type="button"
                 onClick={() => goTo(`/onboarding/${step - 1}`)}
                 disabled={busy}
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-600 px-5 py-3 font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl border border-line-strong px-5 py-3 font-medium text-ink transition-colors hover:bg-surface-raised disabled:opacity-50"
               >
                 <ArrowLeft className="h-4 w-4" />
                 {t("actions.back")}
@@ -193,7 +193,7 @@ export default function OnboardingWizard({ step }: Props) {
                 type="button"
                 onClick={handleSkip}
                 disabled={busy}
-                className="ml-auto text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-200 disabled:opacity-50"
+                className="ml-auto text-sm text-ink-muted underline underline-offset-4 transition-colors hover:text-ink-soft disabled:opacity-50"
               >
                 {t("actions.skip")}
               </button>
@@ -226,12 +226,12 @@ function ProgressBar({ step, completionPercentage, t }: ProgressBarProps) {
           <span
             key={index}
             className={`h-2 flex-1 rounded-full ${
-              index < step ? "bg-purple-500" : "bg-gray-600"
+              index < step ? "bg-purple-500" : "bg-field-strong"
             }`}
           />
         ))}
       </div>
-      <p className="mt-2 text-xs text-gray-400">
+      <p className="mt-2 text-xs text-ink-muted">
         {t("progress.step", { current: step, total: TOTAL_STEPS })}
         {typeof completionPercentage === "number"
           ? ` · ${t("progress.completion", { percent: completionPercentage })}`
@@ -251,11 +251,11 @@ type FieldProps = {
 function Field({ name, label, value, onChange }: FieldProps) {
   const id = `onboarding-${name}`;
   const shared =
-    "w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500";
+    "w-full rounded-lg border border-line bg-surface-raised px-4 py-3 text-sm text-ink placeholder-ink-muted focus:border-purple-500 focus:ring-2 focus:ring-purple-500";
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-gray-300">
+      <label htmlFor={id} className="text-sm font-medium text-ink-soft">
         {label}
       </label>
 
@@ -287,7 +287,7 @@ function Field({ name, label, value, onChange }: FieldProps) {
           type="color"
           value={value || "#1383eb"}
           onChange={(event) => onChange(event.target.value)}
-          className="h-12 w-24 cursor-pointer rounded-lg border border-gray-700 bg-gray-800"
+          className="h-12 w-24 cursor-pointer rounded-lg border border-line bg-surface-raised"
         />
       ) : (
         <input

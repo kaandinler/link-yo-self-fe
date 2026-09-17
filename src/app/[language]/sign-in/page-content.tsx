@@ -58,10 +58,10 @@ const FormInput = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300">{label}</label>
+      <label className="block text-sm font-medium text-ink-soft">{label}</label>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          {Icon && <Icon className="h-5 w-5 text-gray-500" />}
+          {Icon && <Icon className="h-5 w-5 text-ink-faint" />}
         </div>
         <input
           type={showPasswordToggle && showPassword ? "text" : type}
@@ -71,13 +71,13 @@ const FormInput = ({
           placeholder={placeholder}
           className={`
             block w-full pl-10 pr-12 py-3 border rounded-lg text-sm
-            bg-gray-800 text-white placeholder-gray-400
+            bg-surface-raised text-ink placeholder-ink-muted
             focus:ring-2 focus:ring-purple-500 focus:border-purple-500
             transition-colors duration-200
             ${
               error
                 ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-600 hover:border-gray-500"
+                : "border-line-strong hover:border-line-stronger"
             }
           `}
         />
@@ -88,9 +88,9 @@ const FormInput = ({
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
           >
             {showPassword ? (
-              <EyeOff className="h-5 w-5 text-gray-500 hover:text-gray-300" />
+              <EyeOff className="h-5 w-5 text-ink-faint hover:text-ink-soft" />
             ) : (
-              <Eye className="h-5 w-5 text-gray-500 hover:text-gray-300" />
+              <Eye className="h-5 w-5 text-ink-faint hover:text-ink-soft" />
             )}
           </button>
         )}
@@ -251,19 +251,19 @@ function LinkYoSelfSignInForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
-            <LogIn className="h-8 w-8 text-white" />
+            <LogIn className="h-8 w-8 text-ink" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p className="text-gray-300">Sign in to your LinkYoSelf account</p>
+          <h2 className="text-3xl font-bold text-ink mb-2">Welcome Back</h2>
+          <p className="text-ink-soft">Sign in to your LinkYoSelf account</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+        <div className="bg-surface-raised rounded-2xl shadow-2xl p-8 border border-line">
           <div className="space-y-6">
             {/* Email */}
             <FormInput
@@ -296,7 +296,7 @@ function LinkYoSelfSignInForm() {
             <div className="flex justify-end">
               <a
                 href="/forgot-password"
-                className="text-sm text-purple-400 hover:text-purple-300 transition-colors duration-200 font-medium"
+                className="text-sm text-accent hover:text-accent transition-colors duration-200 font-medium"
               >
                 Forgot your password?
               </a>
@@ -309,12 +309,12 @@ function LinkYoSelfSignInForm() {
               onClick={handleSubmit}
               disabled={isSubmitting}
               className={`
-                w-full py-3 px-4 rounded-lg font-semibold text-white
+                w-full py-3 px-4 rounded-lg font-semibold
                 transition-all duration-200 transform
                 ${
                   isSubmitting
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                    ? "bg-field-strong text-ink-muted cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
                 }
                 focus:ring-4 focus:ring-purple-300 focus:outline-none
               `}
@@ -334,7 +334,7 @@ function LinkYoSelfSignInForm() {
               <div className="text-center">
                 <a
                   href="/sign-up"
-                  className="text-sm text-gray-400 hover:text-purple-400 transition-colors duration-200"
+                  className="text-sm text-ink-muted hover:text-accent transition-colors duration-200"
                 >
                   Don't have an account?{" "}
                   <span className="font-medium">Create one</span>
@@ -356,7 +356,7 @@ function LinkYoSelfSignInForm() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-ink-muted">
             Access your digital world with LinkYoSelf ✨
           </p>
         </div>

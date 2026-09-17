@@ -67,15 +67,15 @@ const OnboardingWelcome = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page flex items-center justify-center p-4">
       <div className="max-w-4xl mx-auto text-center">
         {/* Welcome Header */}
         <div className="mb-12">
           <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-            <CheckCircle className="h-10 w-10 text-white" />
+            <CheckCircle className="h-10 w-10 text-ink" />
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-4">
+          <h1 className="text-4xl md:text-6xl font-black text-ink mb-4">
             Welcome to
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               {" "}
@@ -84,7 +84,7 @@ const OnboardingWelcome = () => {
             ! 🎉
           </h1>
 
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-ink-soft mb-8 max-w-2xl mx-auto">
             Let's get you set up with your personalized link page in just a few
             simple steps. It will only take a couple of minutes!
           </p>
@@ -95,15 +95,13 @@ const OnboardingWelcome = () => {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-purple-500/50 transition-all"
+              className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 hover:border-purple-500/50 transition-all"
             >
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <step.icon className="h-6 w-6 text-white" />
+                <step.icon className="h-6 w-6 text-ink" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">
-                {step.title}
-              </h3>
-              <p className="text-gray-300 text-sm">{step.description}</p>
+              <h3 className="text-lg font-bold text-ink mb-2">{step.title}</h3>
+              <p className="text-ink-soft text-sm">{step.description}</p>
 
               {/* Step Number */}
               <div className="mt-4">
@@ -124,12 +122,12 @@ const OnboardingWelcome = () => {
                 className={`w-8 h-2 rounded-full ${
                   status?.completed_steps?.includes(index)
                     ? "bg-purple-600"
-                    : "bg-gray-600"
+                    : "bg-field-strong"
                 }`}
               ></div>
             ))}
           </div>
-          <p className="text-gray-400 text-sm">Step {nextStep} of 4</p>
+          <p className="text-ink-muted text-sm">Step {nextStep} of 4</p>
         </div>
 
         {/* Action Buttons */}
@@ -148,7 +146,7 @@ const OnboardingWelcome = () => {
             type="button"
             onClick={handleSkip}
             disabled={skipOnboarding.isPending}
-            className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 border border-gray-600 hover:border-gray-500 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 bg-surface-raised hover:bg-field text-ink px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 border border-line-strong hover:border-line-stronger disabled:opacity-50"
           >
             {skipOnboarding.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -164,7 +162,7 @@ const OnboardingWelcome = () => {
           </p>
         ) : null}
 
-        <p className="text-gray-500 text-sm mt-4">
+        <p className="text-ink-faint text-sm mt-4">
           You can always complete these steps later from your dashboard
         </p>
 
@@ -174,8 +172,8 @@ const OnboardingWelcome = () => {
             <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Link2 className="h-8 w-8 text-blue-400" />
             </div>
-            <h4 className="text-white font-semibold mb-2">Unlimited Links</h4>
-            <p className="text-gray-400 text-sm">
+            <h4 className="text-ink font-semibold mb-2">Unlimited Links</h4>
+            <p className="text-ink-muted text-sm">
               Add as many links as you want - social media, websites,
               portfolios, and more
             </p>
@@ -183,12 +181,10 @@ const OnboardingWelcome = () => {
 
           <div className="text-center">
             <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Palette className="h-8 w-8 text-purple-400" />
+              <Palette className="h-8 w-8 text-accent" />
             </div>
-            <h4 className="text-white font-semibold mb-2">
-              Full Customization
-            </h4>
-            <p className="text-gray-400 text-sm">
+            <h4 className="text-ink font-semibold mb-2">Full Customization</h4>
+            <p className="text-ink-muted text-sm">
               Choose from beautiful themes and customize every aspect of your
               page
             </p>
@@ -198,10 +194,8 @@ const OnboardingWelcome = () => {
             <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <BarChart3 className="h-8 w-8 text-green-400" />
             </div>
-            <h4 className="text-white font-semibold mb-2">
-              Detailed Analytics
-            </h4>
-            <p className="text-gray-400 text-sm">
+            <h4 className="text-ink font-semibold mb-2">Detailed Analytics</h4>
+            <p className="text-ink-muted text-sm">
               Track clicks, views, and engagement to understand your audience
             </p>
           </div>

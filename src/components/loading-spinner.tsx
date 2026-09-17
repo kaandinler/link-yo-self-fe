@@ -26,7 +26,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const containerClasses = fullScreen
-    ? "min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center"
+    ? "min-h-screen bg-gradient-to-br from-page via-page-accent to-page flex items-center justify-center"
     : "flex items-center justify-center p-4";
 
   return (
@@ -36,7 +36,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           className={`${sizeClasses[size]} ${colorClasses[color]} border-2 border-t-transparent rounded-full animate-spin`}
         ></div>
         {text && (
-          <p className="text-gray-300 text-sm font-medium animate-pulse">
+          <p className="text-ink-soft text-sm font-medium animate-pulse">
             {text}
           </p>
         )}
