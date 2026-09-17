@@ -82,7 +82,22 @@ a scraper sees there is part of the feature, not an afterthought.
 
 - **`robots.ts`** keeps crawlers on public profiles. The app's own screens are
   guarded on the client, so a crawler only ever sees an empty shell there; indexed,
-  those shells would compete with the profiles.
+  those shells would compete with the profiles. It also points at the sitemap.
+
+- **`sitemap.ts`** lists the profiles. Nothing public links to them — profiles
+  don't link to each other and the app has no public directory — so without a
+  sitemap a profile is only discovered if someone outside links to it, which is
+  exactly what a new user doesn't have. The list comes from the backend's
+  `GET /v1/p/sitemap/profiles`, which returns **only profiles with at least one
+  visible link**: telling a search engine "these are my important pages" and
+  filling it with empty ones costs the whole site. `lastmod` is the newest change
+  across the profile _and_ its links.
+
+- **Caching.** The page itself stays `no-store` on purpose: an edit has to show
+  up immediately. The card image is the opposite — expensive to produce and
+  requested again on every share — so it is served with a one-hour
+  `cache-control`. The trade is that a changed avatar can take up to an hour to
+  appear in previews, while the page updates at once.
 
 ---
 

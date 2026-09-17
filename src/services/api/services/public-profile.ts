@@ -82,3 +82,39 @@ export const getPublicProfile = cache(async function getPublicProfile(
     return null;
   }
 });
+
+/** Sitemap satiri: yalnizca adres ve son degisiklik. */
+export interface PublicProfileRef {
+  username: string;
+  last_modified: string;
+}
+
+/**
+ * Sitemap'e girecek profiller.
+ *
+ * Backend yalnizca en az bir gorunur linki olan profilleri donuyor; bos
+ * bir sayfayi arama motoruna onermek istenmiyor (bkz. BE README).
+ *
+ * `limit`ten az satir donmesi listenin bittigini gosteriyor, bu yuzden
+ * ayri bir sayim cagrisi yok. Hata durumunda null: sitemap'in eksik
+ * uretilmesi, derlemenin ya da istegin patlamasindan iyi.
+ */
+export async function listPublicProfiles(
+  limit: number,
+  offset: number
+): Promise<PublicProfileRef[] | null> {
+  if (!API_URL) return null;
+
+  try {
+    const response = await fetch(
+      `${API_URL}/v1/p/sitemap/profiles?limit=${limit}&offset=${offset}`,
+      { cache: "no-store" }
+    );
+    if (!response.ok) return null;
+
+    const result: ApiResponse<PublicProfileRef[]> = await response.json();
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}

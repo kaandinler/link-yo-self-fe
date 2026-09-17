@@ -31,6 +31,9 @@ export default function robots(): MetadataRoute.Robots {
         "/*/confirm-email",
       ],
     },
+    // Profiller birbirine bagli degil; kaziyici onlari sitemap olmadan
+    // ancak disaridan gelen bir baglantiyla bulabiliyor.
+    sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
   };
 }
