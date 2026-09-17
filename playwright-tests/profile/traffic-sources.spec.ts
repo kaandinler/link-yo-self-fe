@@ -212,10 +212,24 @@ test("orta tik sayiliyor, sag tik sayilmiyor", async ({ page }) => {
 
   const baglanti = page.getByRole("link", { name: "Kaynak testi" });
 
-  // Sag tik: hicbir sey kaydedilmemeli.
+  // Sayfanin gonderdigi butun tiklama istekleri sayiliyor.
+  //
+  // NEDEN SABIT BEKLEME DEGIL: "sag tik bir sey kaydetmedi" bir yoklugun
+  // ispati; once bir sure bekleyip sunucudaki toplamin 0 kaldigina
+  // bakiliyordu. Bunun yerine sag tik orta tikin arkasina aliniyor:
+  // ikisi de ayni sayfadan, sirayla cikiyor, dolayisiyla orta tikin
+  // yaniti geldiginde sag tikin istegi -- olsaydi -- coktan gorulmus
+  // olurdu. Hem daha hizli hem daha kesin: sabit bekleme yalnizca o
+  // sureden kisa bir gecikmeyi yakalar.
+  const istekler: string[] = [];
+  page.on("request", (istek) => {
+    if (istek.method() === "POST" && istek.url().includes("/click")) {
+      istekler.push(istek.url());
+    }
+  });
+
+  // Sag tik: menuyu acar, ziyaret degil.
   await baglanti.click({ button: "right" });
-  await page.waitForTimeout(1000);
-  expect((await apiAnalyticsSummary(token)).total_clicks).toBe(0);
 
   // Orta tik: bir kez kaydedilmeli -- iki kez degil. Tarayici hem `click`
   // hem `auxclick` uretseydi sayi ikiye cikardi.
@@ -228,8 +242,10 @@ test("orta tik sayiliyor, sag tik sayilmiyor", async ({ page }) => {
   await baglanti.click({ button: "middle" });
   await kayit;
   await (await yeniSekme).close();
-  await page.waitForTimeout(1000);
 
+  expect(istekler, "beklenen tek istek orta tikinki").toHaveLength(1);
+
+  // Yanit commit sonrasinda dondugu icin ozet hemen guncel.
   const ozet = await apiAnalyticsSummary(token);
   expect(ozet.total_clicks).toBe(1);
   expect(
