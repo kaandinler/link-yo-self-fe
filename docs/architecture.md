@@ -143,6 +143,20 @@ per window instead of one per visit — measured at **five visits: 5 backend cal
   itself still runs on every call: dropping one, or answering 429, would leave
   the user looking at their own stale page.
 
+### Diagnostics on the purge endpoint
+
+A successful purge answers with `x-kimlik-kaynagi` (whether the identity came
+from the backend or the ten-second cache) and `x-profil-onbellek-saniye` (the
+window in force). These ship in production on purpose, for the same reason a CDN
+ships `x-cache: HIT/MISS` — when the page is stale, which layer answered is the
+first thing worth knowing, and turning that off by environment would remove it
+exactly where it is needed.
+
+The boundary was measured: the headers appear only on the caller's own `200`,
+never on the `401`, and they describe that caller's own request. The endpoint is
+also not an existence oracle — a non-admin asking for someone else's username and
+asking for one that does not exist get byte-identical `403`s.
+
 ### One instance is assumed
 
 `revalidateTag` only invalidates the Next.js instance that handled the call.

@@ -161,7 +161,20 @@ export async function POST(request: Request) {
   return NextResponse.json(
     { revalidated: username },
     {
+      // TANILAMA BASLIKLARI, BILINCLI OLARAK URETIMDE DE.
+      //
+      // Testler icin eklendi ama yalnizca test icin degiller: hangi
+      // katmanin cevapladigini gormek hata ayiklamanin en dogrudan
+      // yolu -- CDN'lerin x-cache: HIT/MISS basligiyla ayni is.
+      // Ortama gore kapatmak, uretimde sorun yasandiginda tam da
+      // ihtiyac duyulan bilgiyi kapatmak olurdu.
+      //
+      // Sinir olculdu: bu basliklar yalnizca kimligi dogrulanmis
+      // cagiranin KENDI 200 yanitinda donuyor; 401'de hicbiri yok.
+      // Tasidiklari sey de cagiranin kendi istegine ait -- baska bir
+      // kullanici hakkinda bir sey soylemiyorlar.
       headers: {
+        // Kimlik backend'e mi soruldu, onbellekten mi geldi.
         "x-kimlik-kaynagi": kaynak,
         // Yururlukteki tazelik penceresi. Temizlik ETKI ETMEDIGINDE
         // -- ornegin cagri baska bir Next ornegine dustugunde --
