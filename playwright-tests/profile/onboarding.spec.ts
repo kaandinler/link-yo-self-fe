@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { apiCreateLink } from "../helpers/api";
 import { signInAsNewUser } from "../helpers/auth";
+import { fillField } from "../helpers/ui";
 
 test.describe("Onboarding sihirbazi", () => {
   test("son adim tamamlaninca link ekleme formu aciliyor", async ({ page }) => {
@@ -18,6 +20,41 @@ test.describe("Onboarding sihirbazi", () => {
     await expect(page).toHaveURL(/\/en\/links/);
     await expect(
       page.getByRole("heading", { name: "Add New Link" })
+    ).toBeVisible();
+  });
+
+  test("sihirbazda kaydedilen ad herkese acik sayfaya hemen yansiyor", async ({
+    page,
+  }) => {
+    /**
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor ve temizlik
+     * use-fetch'te yapiliyor; sihirbaz da oradan gectigi icin
+     * calismasi gerekiyordu. "Gerekiyordu" yeterli degil: olculdu ve
+     * calisiyor, bu test onu tutuyor.
+     *
+     * Sira onemli: once ziyaret (onbellek dolsun), sonra kaydet. Tersi
+     * olursa ilk ziyaret zaten yeni degeri onbellege koyar ve test
+     * hicbir sey olcmez.
+     */
+    const { user, token } = await signInAsNewUser(page, { onboarding: false });
+    await apiCreateLink(token, {
+      title: "Blog",
+      url: "https://ornek.test/blog",
+    });
+
+    await page.goto(`/en/${user.username}`);
+    await expect(
+      page.getByRole("heading", { name: user.username })
+    ).toBeVisible();
+
+    await page.goto("/en/onboarding/1");
+    await fillField(page, "#onboarding-display_name", "Sihirbaz Adi");
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page).toHaveURL(/\/onboarding\/2/);
+
+    await page.goto(`/en/${user.username}`);
+    await expect(
+      page.getByRole("heading", { name: "Sihirbaz Adi" })
     ).toBeVisible();
   });
 
