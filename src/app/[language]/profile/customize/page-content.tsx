@@ -127,8 +127,14 @@ function Customize() {
     }
   };
 
+  // 44 piksel: parmakla isabet ettirilebilen en kucuk hedef (WCAG 2.5.5).
+  // Olculdu: py-2 ile alanlar 42, arka plan tipi dugmeleri 36 pikseldi.
+  //
+  // KEYFI DEGER, min-h-11 DEGIL: sayisal min-h olcegi Tailwind 3.4'te
+  // geldi, bu proje 3.3'te. "min-h-11" hic CSS uretmiyor -- derleme,
+  // tip kontrolu ve lint temiz geciyor, sinif sessizce etkisiz kaliyor.
   const inputClass =
-    "w-full bg-overlay/60 border border-line-strong focus:border-purple-400 outline-none text-ink rounded-lg px-3 py-2";
+    "w-full min-h-[44px] bg-overlay/60 border border-line-strong focus:border-purple-400 outline-none text-ink rounded-lg px-3 py-2";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
@@ -203,7 +209,7 @@ function Customize() {
                     key={type}
                     type="button"
                     onClick={() => setBackgroundType(type)}
-                    className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`min-h-[44px] px-3 py-2 rounded-lg text-sm transition-colors ${
                       backgroundType === type
                         ? "bg-purple-600 text-white"
                         : "bg-field text-ink-soft hover:bg-field-strong"
@@ -283,7 +289,7 @@ function Customize() {
               type="submit"
               disabled={isLoading || updateProfile.isPending}
               data-testid="save-appearance"
-              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
             >
               {updateProfile.isPending ? "Saving…" : "Save appearance"}
             </button>
