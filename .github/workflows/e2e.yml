@@ -49,6 +49,13 @@ jobs:
       E2E_BACKEND_LOG: /tmp/linkyoself-backend.log
       BUILD_LOG: /tmp/frontend-build.log
       BUILD_STATUS: /tmp/frontend-build.status
+      # Admin paneli yalnizca admin'e aciliyor ve kayit ucu bilincli
+      # olarak admin acmiyor (herkes kendini admin yapardi). Panelin
+      # testlerinin bir admine ihtiyaci var; backend'in kendi betigi
+      # bos veritabaninda ilkini aciyor.
+      E2E_ADMIN_USERNAME: e2eadmin
+      E2E_ADMIN_EMAIL: e2eadmin@example.com
+      E2E_ADMIN_PASSWORD: E2eAdmin.Parola1
 
     steps:
       - name: Checkout frontend
@@ -103,6 +110,17 @@ jobs:
       - name: Run database migrations
         working-directory: backend
         run: alembic upgrade head
+
+      # Migration'dan SONRA: tablolar olmadan calisamaz. Backend'ten
+      # once olmasi sart degil ama burada durmasi kurulum adimlarini
+      # bir arada tutuyor.
+      - name: Seed admin user
+        working-directory: backend
+        run: |
+          ADMIN_USERNAME="$E2E_ADMIN_USERNAME" \
+          ADMIN_EMAIL="$E2E_ADMIN_EMAIL" \
+          ADMIN_PASSWORD="$E2E_ADMIN_PASSWORD" \
+            python -m scripts.create_admin
 
       - name: Start backend
         working-directory: backend

@@ -78,6 +78,24 @@ and no test depends on data left behind by another.
 1. `.env.local` in this repo (copy `example.env.local`), where
    `E2E_BACKEND_LOG` points at that log file.
 
+1. An admin account, for the admin-panel tests:
+
+   ```bash
+   cd ../link-yo-self-be
+   ADMIN_USERNAME=e2eadmin ADMIN_EMAIL=e2eadmin@example.com \
+   ADMIN_PASSWORD='E2eAdmin.Parola1' python -m scripts.create_admin
+   ```
+
+   The sign-up endpoint deliberately cannot create admins — `is_admin` is not
+   on it, otherwise anyone could promote themselves — so the panel needs an
+   account seeded out of band. Running the command again is safe.
+
+   `signInAsAdmin()` reads `E2E_ADMIN_USERNAME` / `E2E_ADMIN_EMAIL` /
+   `E2E_ADMIN_PASSWORD` and falls back to the values above. If the account is
+   missing the admin tests **fail with that command in the message** rather
+   than skipping: a silently skipped test would hide the fact that the panel
+   is never scanned.
+
 1. Browsers:
 
    ```bash
@@ -97,7 +115,8 @@ npx playwright test  # or: npx playwright test --ui
   links, update the profile). Use it for setup; drive the UI only for what the
   test is actually about.
 - `helpers/auth.ts` — `signInAsNewUser()` creates a user and writes the auth
-  cookie, which is what `AuthProvider` reads on start. `signInThroughUi()` /
+  cookie, which is what `AuthProvider` reads on start. `signInAsAdmin()` logs
+  in as the seeded admin (see Requirements). `signInThroughUi()` /
   `signUpThroughUi()` go through the forms.
 - `helpers/mail.ts` — reads the verification / reset token out of the backend
   log.
@@ -108,8 +127,9 @@ npx playwright test  # or: npx playwright test --ui
 ## CI
 
 `.github/workflows/e2e.yml` starts a `postgres:16` service, checks out the
-backend repository, runs `alembic upgrade head`, starts uvicorn, builds the
-frontend and runs the suite. On failure the Playwright report and the backend
+backend repository, runs `alembic upgrade head`, seeds the admin account with
+`python -m scripts.create_admin`, starts uvicorn, builds the frontend and runs
+the suite. On failure the Playwright report and the backend
 log are uploaded as artifacts.
 
 The frontend build runs **in the background**, kicked off right after `npm ci`,

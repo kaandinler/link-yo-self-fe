@@ -1,5 +1,5 @@
 import { devices, expect, test } from "@playwright/test";
-import { signInAsNewUser } from "../helpers/auth";
+import { signInAsAdmin, signInAsNewUser } from "../helpers/auth";
 
 /**
  * Kontrollerin telefonda parmakla kullanilabilir olmasi.
@@ -9,6 +9,10 @@ import { signInAsNewUser } from "../helpers/auth";
  * sifre alanlari 42, gezinme dugmesi 40 pikseldi. Hicbiri tasma
  * yaratmiyordu, yani yalnizca yerlesime bakan bir test hepsini "gecti"
  * sayardi.
+ *
+ * Admin paneli de tarandi ve temiz cikti: MUI bilesenleri tema
+ * uzerinden 44 pikselden buyuk. Tek "bulgu" Select'in gorunmez native
+ * input'uydu, o da gercek bir hedef degil (asagiya bakin).
  *
  * Tarama once yalnizca dort form sayfasinda kosuyordu. Geri kalan
  * sayfalar acilinca marka baglantisi (40), dashboard'daki Preview Page
@@ -46,6 +50,12 @@ const KUCUKLERI_BUL = `(() => {
       // ediliyor; uretim derlemesinde (CI'da kosan "npm run start")
       // yok. Uygulamanin arayuzu degil, olcunun disinda.
       if (el.closest(".tsqd-parent-container")) return null;
+      // Dokunulamayan bir eleman dokunma hedefi degil. MUI'nin Select
+      // bileseni gorunmez bir native input tutuyor: 361x23, opacity 0,
+      // pointer-events none. Gercek hedef 56 piksellik sarmalayici --
+      // olculdu. Boyut filtresi bunu yakalamiyordu cunku genisligi
+      // buyuk; ayirt eden sey dokunulabilir olup olmadigi.
+      if (s.pointerEvents === "none") return null;
       return {
         ad:
           el.tagName.toLowerCase() +
@@ -104,6 +114,21 @@ for (const yol of GENEL_SAYFALAR) {
 for (const yol of GIRISLI_SAYFALAR) {
   test(`${yol} kontrolleri en az ${ESIK} piksel`, async ({ page }) => {
     await signInAsNewUser(page);
+    await sayfayiOlc(page, yol);
+  });
+}
+
+// Admin paneli ayri: kayit ucu admin acmiyor, hazir bir hesap gerekiyor
+// (bkz. signInAsAdmin ve backend'in scripts/create_admin betigi).
+const ADMIN_SAYFALARI = [
+  "/en/admin-panel",
+  "/en/admin-panel/users",
+  "/en/admin-panel/users/create",
+];
+
+for (const yol of ADMIN_SAYFALARI) {
+  test(`${yol} kontrolleri en az ${ESIK} piksel`, async ({ page }) => {
+    await signInAsAdmin(page);
     await sayfayiOlc(page, yol);
   });
 }
