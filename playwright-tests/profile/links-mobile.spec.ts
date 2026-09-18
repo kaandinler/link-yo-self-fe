@@ -16,6 +16,15 @@ import { waitForHydration } from "../helpers/ui";
 // Dosya seviyesinde: cihaz emulasyonu describe icinden ayarlanamiyor.
 test.use({ ...devices["Pixel 5"] });
 
+/** Herkese acik sayfadaki link basliklari, gorundukleri sirayla. */
+async function herkeseAcikSira(page: import("@playwright/test").Page) {
+  return (await page.evaluate(`(() => {
+    return Array.from(
+      document.querySelectorAll("main a[href^='https://ornek.test']")
+    ).map((a) => (a.textContent || "").trim().split("\\n")[0]);
+  })()`)) as string[];
+}
+
 async function ucLinkliSayfa(page: import("@playwright/test").Page) {
   const { token } = await signInAsNewUser(page);
   await apiCreateLink(token, {
@@ -72,6 +81,60 @@ test.describe("Links telefonda", () => {
         "Portfolyo sitem ve butun yazilarim burada",
         "Newsletter",
       ]);
+  });
+
+  test("yeni siralama onbellekteki sayfaya da yansiyor", async ({ page }) => {
+    /**
+     * Siralama, bayat bir sayfada en sinsi olan degisiklik: sayfa
+     * dogru gorunur, yalnizca sira eskidir. Sayfa bir dakikalik
+     * pencereyle onbellege aliniyor, temizlik use-fetch'te yapiliyor
+     * ve siralama da oradan geciyor -- olculdu, calisiyor.
+     *
+     * Sira onemli: once ziyaret (onbellek dolsun), sonra tasi.
+     */
+    // ucLinkliSayfa yalnizca token donuyor; burada kullanici adi da
+    // gerekiyor, bu yuzden kurulum yerinde yapiliyor.
+    const { user, token } = await signInAsNewUser(page);
+    await apiCreateLink(token, {
+      title: "Portfolyo sitem ve butun yazilarim burada",
+      url: "https://ornek.test/cok/uzun/bir/adres/olsun",
+    });
+    await apiCreateLink(token, { title: "Blog", url: "https://ornek.test/b" });
+    await apiCreateLink(token, {
+      title: "Newsletter",
+      url: "https://ornek.test/c",
+    });
+
+    await page.goto(`/en/${user.username}`);
+    expect(await herkeseAcikSira(page)).toEqual([
+      "Portfolyo sitem ve butun yazilarim burada",
+      "Blog",
+      "Newsletter",
+    ]);
+
+    await page.goto("/en/links");
+    await waitForHydration(page, '[aria-label="Move Blog up"]');
+    await page.getByRole("button", { name: "Move Blog up" }).click();
+
+    // Once siralamanin backend'e islendigini bekliyoruz; aksi halde
+    // asagidaki gezinme istegi henuz degismemis bir siralamayi
+    // okuyabilir ve test onbellegi degil yarisi olcerdi.
+    await expect
+      .poll(async () =>
+        (await apiListLinks(token)).map((link: { title: string }) => link.title)
+      )
+      .toEqual([
+        "Blog",
+        "Portfolyo sitem ve butun yazilarim burada",
+        "Newsletter",
+      ]);
+
+    await page.goto(`/en/${user.username}`);
+    expect(await herkeseAcikSira(page)).toEqual([
+      "Blog",
+      "Portfolyo sitem ve butun yazilarim burada",
+      "Newsletter",
+    ]);
   });
 
   test("bastaki linkin yukari oku, sondakinin asagi oku kapali", async ({
