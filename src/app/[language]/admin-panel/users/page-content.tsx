@@ -33,7 +33,10 @@ import { User } from "@/services/api/types/user";
 import Link from "@/components/link";
 import useAuth from "@/services/auth/use-auth";
 import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
-import { useDeleteUsersService } from "@/services/api/services/users";
+import {
+  useDeleteUsersService,
+  usePurgeProfileCacheService,
+} from "@/services/api/services/users";
 import removeDuplicatesFromArrayObjects from "@/services/helpers/remove-duplicates-from-array-of-objects";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import UserFilter from "./user-filter";
@@ -81,6 +84,7 @@ function Actions({ user }: { user: User }) {
   const { user: authUser } = useAuth();
   const { confirmDialog } = useConfirmDialog();
   const fetchUserDelete = useDeleteUsersService();
+  const purgeProfileCache = usePurgeProfileCacheService();
   const queryClient = useQueryClient();
   const anchorRef = useRef<HTMLDivElement>(null);
   const canDelete = user.id !== authUser?.id;
@@ -156,6 +160,14 @@ function Actions({ user }: { user: User }) {
       await fetchUserDelete({
         id: user.id,
       });
+
+      // Kapatilan hesabin herkese acik sayfasi onbellekte kalmasin.
+      // use-fetch'teki kendiliginden temizlik CAGIRANIN profilini
+      // temizliyor, yani burada admin'inkini; silinen kisininki
+      // acikta kalirdi.
+      if (user.username) {
+        await purgeProfileCache(user.username);
+      }
     }
   };
 

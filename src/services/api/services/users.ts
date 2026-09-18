@@ -173,6 +173,31 @@ export function useDeleteMyAccountService() {
   );
 }
 
+/**
+ * Bir kullanicinin herkese acik sayfasinin onbellegini temizler.
+ *
+ * NEDEN AYRI BIR SERVIS: siradan mutasyonlarda temizlik kendiliginden
+ * oluyor (use-fetch.ts) ama orada temizlenen sey her zaman CAGIRANIN
+ * kendi profili. Admin panelinden baska birinin hesabi kapatilinca
+ * temizlenmesi gereken o kisinin sayfasi; uc bunu yalnizca admin'den
+ * kabul ediyor.
+ *
+ * Bu olmadan kapatilan hesabin sayfasi bir dakika daha aciktı --
+ * olculdu.
+ */
+export function usePurgeProfileCacheService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (username: string) =>
+      fetch("/api/revalidate-profile", {
+        method: "POST",
+        body: JSON.stringify({ username }),
+      }),
+    [fetch]
+  );
+}
+
 export type UsersDeleteRequest = {
   id: User["id"];
 };

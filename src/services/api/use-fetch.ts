@@ -23,6 +23,19 @@ import { getTokensInfo, setTokensInfo } from "../auth/auth-tokens-info";
  * Hata yutuluyor: temizlik yapilamazsa kullanicinin kaydi yine de
  * basarili. En kotu ihtimalle sayfa bir dakika eski kalir.
  */
+const TEMIZLIK_YOLU = "/api/revalidate-profile";
+
+async function temizlikCagir(authorization: string) {
+  try {
+    await fetch(TEMIZLIK_YOLU, {
+      method: "POST",
+      headers: { Authorization: authorization },
+    });
+  } catch {
+    // Sessiz: asil islem basarili oldu.
+  }
+}
+
 async function profilOnbelleginiTemizle(
   method: string | undefined,
   yanit: Response,
@@ -37,14 +50,32 @@ async function profilOnbelleginiTemizle(
   // sifirlama). Uc zaten 401 donerdi.
   if (!authorization) return;
 
-  try {
-    await fetch("/api/revalidate-profile", {
-      method: "POST",
-      headers: { Authorization: authorization },
-    });
-  } catch {
-    // Sessiz: kaydetmenin kendisi basarili oldu.
-  }
+  await temizlikCagir(authorization);
+}
+
+/**
+ * Silmeden ONCE de temizler.
+ *
+ * NEDEN: temizlik ucu "kim bu" sorusunu backend'e soruyor. Kullanici
+ * kendi hesabini kapattiktan sonra token artik kimseye cozulmuyor,
+ * yani sonradan yapilan temizlik 401 aliyor ve sayfa onbellekte
+ * kaliyordu -- olculdu: hesap kapatildiktan sonra sayfa hala 200
+ * donuyor ve silinen profilin adini gosteriyordu.
+ *
+ * Silmeden once cagrilinca token hala gecerli, temizlik calisiyor.
+ * Sonrasindaki cagri da duruyor: baska turlu bir silmede (ornegin
+ * bir linki silmek) asil ise yarayan o.
+ */
+async function silmedenOnceTemizle(
+  method: string | undefined,
+  headers: HeadersInit
+) {
+  if ((method ?? "GET").toUpperCase() !== "DELETE") return;
+
+  const authorization = (headers as Record<string, string>).Authorization;
+  if (!authorization) return;
+
+  await temizlikCagir(authorization);
 }
 
 function useFetch() {
@@ -95,6 +126,13 @@ function useFetch() {
         }
       }
 
+      // Temizlik ucunun kendisi yeni bir temizlik tetiklemesin.
+      const temizlikUcu = String(input).includes(TEMIZLIK_YOLU);
+
+      if (!temizlikUcu) {
+        await silmedenOnceTemizle(init?.method, headers);
+      }
+
       const yanit = await fetch(input, {
         ...init,
         headers: {
@@ -103,7 +141,9 @@ function useFetch() {
         },
       });
 
-      await profilOnbelleginiTemizle(init?.method, yanit, headers);
+      if (!temizlikUcu) {
+        await profilOnbelleginiTemizle(init?.method, yanit, headers);
+      }
 
       return yanit;
     },
