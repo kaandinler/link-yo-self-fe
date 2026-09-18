@@ -3,13 +3,16 @@ import { apiCreateLink } from "../helpers/api";
 import { signInAsNewUser } from "../helpers/auth";
 
 /**
- * Analytics sayfasinin backend'e kac istek attigi.
+ * Girisli sayfalarin backend'e kac istek attigi.
  *
- * NEDEN OLCULUYOR: sayfa bes ayri soru soruyor (ozet, zaman serisi,
- * link kirilimi, trafik kaynaklari, en iyi saatler) ve hepsi ayri
- * uclar. Olculdugunde israf yoktu: soguk acilista alti istek (biri
- * kimlik), her uc bir kez. Panoya gidip donunce iki istek -- geri
- * kalani React Query onbelleginden geliyor.
+ * NEDEN OLCULUYOR: analytics bes ayri soru soruyor (ozet, zaman
+ * serisi, link kirilimi, trafik kaynaklari, en iyi saatler), pano uc.
+ * Olculdugunde israf yoktu:
+ *
+ *   analytics soguk acilis   6 istek (biri kimlik), her uc bir kez
+ *   pano soguk acilis        3 istek, her uc bir kez
+ *   analytics -> pano        en fazla birer istek (staleTime 0
+ *                            oldugu icin arka planda tazeleniyor)
  *
  * Bu dosyanin isi o sayilari bozulmadan tutmak. Klasik gerileme
  * gorunmez olani: iki bilesen ayni veriyi biraz farkli anahtarla
@@ -42,8 +45,65 @@ function tekrarlar(istekler: string[]): string[] {
     .map(([istek, adet]) => `${istek} x${adet}`);
 }
 
-test.describe("Analytics istekleri", () => {
-  test("soguk acilista hicbir uca iki kez gidilmiyor", async ({ page }) => {
+test.describe("Sayfa istekleri", () => {
+  test("panoda soguk acilista hicbir uca iki kez gidilmiyor", async ({
+    page,
+  }) => {
+    const { token } = await signInAsNewUser(page);
+    await apiCreateLink(token, { title: "Blog", url: "https://ornek.test/b" });
+
+    const istekler = istekKaydedici(page);
+    await page.goto("/en/dashboard");
+    await page.waitForLoadState("networkidle");
+
+    // Pano gercekten doldu mu: bos bir sayfada "istek yok" demek kolay.
+    await expect(page.getByText("Your Profile URL")).toBeVisible();
+
+    expect(
+      tekrarlar(istekler),
+      `ayni uca birden fazla gidildi: ${JSON.stringify(istekler)}`
+    ).toEqual([]);
+  });
+
+  test("analytics'ten panoya gecerken hicbir uca iki kez gidilmiyor", async ({
+    page,
+  }) => {
+    /**
+     * DIKKAT, BURADA BIR OLCUM YANILGISI YASANDI: once "gecis hic
+     * istek atmiyor" diye yazilmisti, cunku yerelde iki kez ust uste
+     * oyle olculmustu. CI'da iki istek cikti (profile/me ve
+     * analytics/summary) ve hakli olan CI'ydi.
+     *
+     * Sebep: queryClient'ta staleTime ayarlanmamis, yani varsayilan 0
+     * -- veri aninda bayat sayiliyor ve bilesen mount olurken arka
+     * planda yeniden cekiliyor. Yerelde gecis o kadar hizli oluyor ki
+     * `networkidle` istekler baslamadan donebiliyor. Yani "sifir
+     * istek" bir degismez degil, zamanlama kazasiydi.
+     *
+     * Degismez olan sey su: onbellek PAYLASILIYOR, dolayisiyla her uca
+     * en fazla bir kez gidiliyor. Paylasilmasaydi ayni veri hem
+     * analytics hem pano anahtarindan ayri ayri cekilirdi.
+     */
+    const { token } = await signInAsNewUser(page);
+    await apiCreateLink(token, { title: "Blog", url: "https://ornek.test/b" });
+
+    await page.goto("/en/analytics");
+    await page.waitForLoadState("networkidle");
+
+    const istekler = istekKaydedici(page);
+    await page.getByRole("link", { name: "Dashboard" }).first().click();
+    await expect(page.getByText("Your Profile URL")).toBeVisible();
+    await page.waitForLoadState("networkidle");
+
+    expect(
+      tekrarlar(istekler),
+      `ayni uca birden fazla gidildi: ${JSON.stringify(istekler)}`
+    ).toEqual([]);
+  });
+
+  test("analytics soguk acilista hicbir uca iki kez gidilmiyor", async ({
+    page,
+  }) => {
     const { token } = await signInAsNewUser(page);
     await apiCreateLink(token, { title: "Blog", url: "https://ornek.test/b" });
 
