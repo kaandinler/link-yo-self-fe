@@ -7,6 +7,9 @@ import { APIRequestContext, expect, request } from "@playwright/test";
  */
 // Not: baseURL yerine tam URL kuruyoruz. Playwright'in baseURL'i "/v1/..."
 // gibi mutlak yollari origin'e gore cozuyor ve "/api" onekini dusuruyor.
+/** Uygulamanin kendi adresi; onbellek temizleme ucu burada. */
+const appUrl = process.env.E2E_APP_URL ?? "http://localhost:3000";
+
 const apiUrl = (
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api"
 ).replace(/\/$/, "");
@@ -70,6 +73,27 @@ export async function apiRegisterAndLogin(user: TestUser = uniqueUser()) {
 }
 
 /** POST /v1/links/ */
+/**
+ * Herkese acik sayfanin onbellegini temizler -- uygulamanin kaydetme
+ * sonrasi yaptigi seyin aynisi (bkz. use-fetch.ts).
+ *
+ * NEDEN HELPER'DA DA VAR: bu yardimcilar arayuzun yerine geciyor.
+ * Uygulama kaydettikten sonra temizliyor ama testler backend'e
+ * dogrudan gittigi icin o adim atlanirdi; o zaman testler urunun
+ * yapmadigi bir seyi olcerdi -- sayfayi bir dakika bayat gorurdu.
+ */
+export async function apiPurgeProfileCache(token: string) {
+  const api = await request.newContext({ baseURL: appUrl });
+  const response = await api.post("/api/revalidate-profile", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(
+    response.status(),
+    `onbellek temizlenemedi: ${await response.text()}`
+  ).toBe(200);
+  await api.dispose();
+}
+
 export async function apiCreateLink(
   token: string,
   data: { title: string; url: string }
@@ -85,6 +109,7 @@ export async function apiCreateLink(
   ).toBe(201);
   const body = await response.json();
   await api.dispose();
+  await apiPurgeProfileCache(token);
   return body.data;
 }
 
@@ -120,6 +145,7 @@ export async function apiUpdateProfile(
   ).toBe(200);
   const body = await response.json();
   await api.dispose();
+  await apiPurgeProfileCache(token);
   return body.data;
 }
 

@@ -26,6 +26,39 @@ test.describe("Profil duzenleme", () => {
     expect(profil.display_name).toBe("Deniz Yilmaz");
   });
 
+  test("ziyaret edilmis sayfa arayuzden kaydedilince guncelleniyor", async ({
+    page,
+  }) => {
+    /**
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor; kaydeden
+     * istemci onbellegi temizliyor (use-fetch.ts). Bu test o
+     * temizligi ARAYUZ uzerinden tetikliyor -- API yardimcisi kendi
+     * temizligini yaptigi icin, yalnizca yardimciyla yazilmis bir
+     * test uygulamadaki baglantinin kopmasini fark etmezdi.
+     *
+     * Onemli olan sira: once ziyaret (onbellek dolsun), sonra kaydet.
+     */
+    const { user } = await signInAsNewUser(page);
+
+    await page.goto(`/en/${user.username}`);
+    await expect(
+      page.getByRole("heading", { name: user.username })
+    ).toBeVisible();
+
+    await page.goto("/en/profile/edit");
+    await fillField(page, 'input[name="firstName"]', "Deniz");
+    await fillField(page, 'input[name="lastName"]', "Yilmaz");
+    await page.getByTestId("save-profile").click();
+    await expect(
+      page.getByText("Profile has been updated successfully")
+    ).toBeVisible();
+
+    await page.goto(`/en/${user.username}`);
+    await expect(
+      page.getByRole("heading", { name: "Deniz Yilmaz" })
+    ).toBeVisible();
+  });
+
   test("sifre degistirildikten sonra yeni sifre gecerli", async ({ page }) => {
     const { user } = await signInAsNewUser(page);
 

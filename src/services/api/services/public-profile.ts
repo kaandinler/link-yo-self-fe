@@ -16,6 +16,21 @@ import { cache } from "react";
  */
 export const KART_ONBELLEK_SANIYE = 3600;
 
+/**
+ * Herkese acik profil sayfasinin tazelik penceresi.
+ *
+ * Bu bir "bayat kalabilir" suresi degil, bir tavan: profilini
+ * kaydeden istemci onbellegi hemen temizliyor, yani normalde sayfa
+ * aninda guncelleniyor. Bu sure yalnizca o temizlik cagrisi
+ * kaybolursa ne kadar bekleneceğini soyluyor.
+ */
+export const PROFIL_ONBELLEK_SANIYE = 60;
+
+/** Bir profilin onbellek etiketi; temizleyen taraf da ayni isimi uretiyor. */
+export function profilEtiketi(username: string): string {
+  return `profil:${username.toLowerCase()}`;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface PublicLink {
@@ -74,9 +89,20 @@ export const getPublicProfile = cache(async function getPublicProfile(
   try {
     const response = await fetch(
       `${API_URL}/v1/p/${encodeURIComponent(username)}`,
-      // Profil ve linkler sik degisebiliyor; duzenleme sonrasi sayfa
-      // hemen guncel gorunsun diye onbellege alinmiyor.
-      { cache: "no-store" }
+      // Duzenleme sonrasi sayfa hala ANINDA guncelleniyor: kaydeden
+      // istemci /api/revalidate-profile'i cagirip bu etiketi temizliyor
+      // (bkz. use-fetch.ts). Sure yalnizca o cagri kaybolursa devreye
+      // giren tavan.
+      //
+      // Olcum (uretim derlemesi, ayni profile art arda bes ziyaret):
+      // backend cagrisi 5 -> 1. Temizlikten sonraki ilk ziyaret yine
+      // backend'e gidiyor.
+      {
+        next: {
+          revalidate: PROFIL_ONBELLEK_SANIYE,
+          tags: [profilEtiketi(username)],
+        },
+      }
     );
 
     if (!response.ok) return null;
