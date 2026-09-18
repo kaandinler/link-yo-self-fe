@@ -10,6 +10,9 @@ import { signInAsAdmin, signInAsNewUser } from "../helpers/auth";
  * yaratmiyordu, yani yalnizca yerlesime bakan bir test hepsini "gecti"
  * sayardi.
  *
+ * Onboarding sihirbazinin dort adimi da acildi: dordunde de
+ * "Skip setup" 20 pikseldi.
+ *
  * Admin paneli de tarandi ve temiz cikti: MUI bilesenleri tema
  * uzerinden 44 pikselden buyuk. Tek "bulgu" Select'in gorunmez native
  * input'uydu, o da gercek bir hedef degil (asagiya bakin).
@@ -139,6 +142,17 @@ test(`/en/onboarding/welcome kontrolleri en az ${ESIK} piksel`, async ({
   await signInAsNewUser(page, { onboarding: false });
   await sayfayiOlc(page, "/en/onboarding/welcome");
 });
+
+// Sihirbazin dort adimi: welcome taraniyordu ama adimlarin kendisi
+// taranmiyordu. Tarandiginda dordunde de "Skip setup" 20 pikseldi.
+for (const adim of [1, 2, 3, 4]) {
+  test(`/en/onboarding/${adim} kontrolleri en az ${ESIK} piksel`, async ({
+    page,
+  }) => {
+    await signInAsNewUser(page, { onboarding: false });
+    await sayfayiOlc(page, `/en/onboarding/${adim}`);
+  });
+}
 
 test("telefon menusu dugmesi parmakla kullanilabilir", async ({ page }) => {
   await signInAsNewUser(page);

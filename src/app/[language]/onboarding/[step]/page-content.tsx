@@ -193,7 +193,7 @@ export default function OnboardingWizard({ step }: Props) {
                 type="button"
                 onClick={handleSkip}
                 disabled={busy}
-                className="ml-auto text-sm text-ink-muted underline underline-offset-4 transition-colors hover:text-ink-soft disabled:opacity-50"
+                className="ml-auto inline-flex min-h-[44px] items-center px-2 text-sm text-ink-muted underline underline-offset-4 transition-colors hover:text-ink-soft disabled:opacity-50"
               >
                 {t("actions.skip")}
               </button>
