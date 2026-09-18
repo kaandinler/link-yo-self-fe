@@ -125,7 +125,7 @@ function Settings() {
                     type="button"
                     onClick={handleResendVerification}
                     disabled={isResending}
-                    className="mt-3 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="mt-3 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white min-h-[44px] px-4 py-2 rounded-lg transition-colors"
                   >
                     {isResending ? "Sending…" : "Send confirmation link"}
                   </button>
@@ -155,20 +155,20 @@ function Settings() {
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
               href={`/${language}/profile/edit`}
-              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink min-h-[44px] px-4 py-2 rounded-lg transition-colors"
             >
               Edit profile
             </Link>
             <Link
               href={`/${language}/profile/customize`}
-              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink min-h-[44px] px-4 py-2 rounded-lg transition-colors"
             >
               Customize page
             </Link>
             {profile?.username && (
               <Link
                 href={`/${language}/${profile.username}`}
-                className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink min-h-[44px] px-4 py-2 rounded-lg transition-colors"
               >
                 <ExternalLink className="h-4 w-4" />
                 View public page
@@ -209,7 +209,7 @@ function Settings() {
                 setPassword(event.target.value);
                 setError(null);
               }}
-              className="w-full md:max-w-sm bg-overlay/60 border border-line-strong focus:border-red-400 outline-none text-ink rounded-lg px-3 py-2"
+              className="w-full min-h-[44px] md:max-w-sm bg-overlay/60 border border-line-strong focus:border-red-400 outline-none text-ink rounded-lg px-3 py-2"
             />
 
             {error && <p className="text-red-300 text-sm">{error}</p>}
@@ -217,7 +217,7 @@ function Settings() {
             <button
               type="submit"
               disabled={isDeleting}
-              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white min-h-[44px] px-4 py-2 rounded-lg transition-colors"
             >
               {isDeleting ? "Closing…" : "Close my account"}
             </button>

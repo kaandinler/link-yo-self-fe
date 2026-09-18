@@ -234,7 +234,12 @@ function ResponsiveAppBar() {
           {/* Mobile Menu Button */}
           <button
             onClick={handleMobileMenuToggle}
-            className="md:hidden p-2 text-ink hover:text-accent transition-colors"
+            // Ikondan ibaret oldugu icin erisilebilir bir adi yoktu.
+            aria-label="Menu"
+            data-testid="mobile-menu-toggle"
+            // 44 piksel: telefonun ana gezinme kontrolu ve p-2 ile 40x40
+            // kaliyordu. Ikon 24 piksel; buyuyen yalnizca dokunulabilir alan.
+            className="md:hidden flex min-h-[44px] min-w-[44px] items-center justify-center p-2 text-ink hover:text-accent transition-colors"
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />

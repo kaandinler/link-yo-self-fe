@@ -129,7 +129,7 @@ function AralikSecici({
                 sec({ kind: "days", days: gun });
               }}
               aria-pressed={seciliMi}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+              className={`min-h-[44px] px-3 py-1.5 text-sm rounded-md transition-colors ${
                 seciliMi
                   ? "bg-purple-600 text-white"
                   : "text-ink-soft hover:bg-field"
@@ -144,7 +144,7 @@ function AralikSecici({
           data-testid="range-custom"
           onClick={() => setAcik(true)}
           aria-pressed={acik}
-          className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+          className={`min-h-[44px] px-3 py-1.5 text-sm rounded-md transition-colors ${
             acik ? "bg-purple-600 text-white" : "text-ink-soft hover:bg-field"
           }`}
         >

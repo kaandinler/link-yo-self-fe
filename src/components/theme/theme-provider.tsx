@@ -14,6 +14,20 @@ function ThemeProvider(props: PropsWithChildren) {
           colorSchemeSelector: "class",
         },
         colorSchemes: { light: true, dark: true },
+        components: {
+          // 44 piksel: parmakla isabet ettirilebilen en kucuk hedef
+          // (WCAG 2.5.5). MUI'nin varsayilanlari bunun altinda kaliyor;
+          // telefonda olculdu: profil duzenlemedeki Save ve Cancel 37,
+          // sifre gorunurluk dugmesi 40 pikseldi.
+          //
+          // Tema seviyesinde: bu dugmeler dokuz ayri formda ve her
+          // birine tek tek yazmak, yeni bir form eklendiginde sessizce
+          // atlanacak bir kural demekti.
+          MuiButton: { styleOverrides: { root: { minHeight: 44 } } },
+          MuiIconButton: {
+            styleOverrides: { root: { minWidth: 44, minHeight: 44 } },
+          },
+        },
       }),
     []
   );
