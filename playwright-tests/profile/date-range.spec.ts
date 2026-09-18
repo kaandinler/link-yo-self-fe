@@ -24,6 +24,30 @@ async function serbestAraligaGec(page: Page, bas: string, son: string) {
   await page.getByTestId("range-end").fill(son);
 }
 
+/**
+ * Aralik grubundaki dugmelerin ekran okuyucuya soyledigi durum, artik
+ * morla isaretlenen dugmeyle ayni mi?
+ *
+ * `aria-pressed` ile morluk ayri iki ifadeden geliyor
+ * (`!acik && secili.kind === "days" && secili.days === gun`), yani
+ * birbirinden kayabilirler. Biri degisip digeri kalirsa ekranda dogru
+ * goruneni ekran okuyucu yanlis okur.
+ */
+async function basiliDurum(page: Page) {
+  return (await page.evaluate(`(() => {
+    const grup = document.querySelector(
+      '[role="group"][aria-label="Date range"]'
+    );
+    if (!grup) return null;
+    return Array.from(grup.querySelectorAll("button")).map((dugme) => ({
+      ad: (dugme.textContent || "").trim(),
+      basili: dugme.getAttribute("aria-pressed") === "true",
+      // Secili dugmenin zemini mor; digerlerininki saydam.
+      mor: getComputedStyle(dugme).backgroundColor === "rgb(147, 51, 234)",
+    }));
+  })()`)) as { ad: string; basili: boolean; mor: boolean }[] | null;
+}
+
 test.describe("Tarih araligi", () => {
   test("serbest aralik istegi start/end ile gidiyor", async ({ page }) => {
     const { token } = await signInAsNewUser(page);
@@ -128,5 +152,52 @@ test.describe("Tarih araligi", () => {
     // Serbest alanlar kapanmali: acik kalirsa hangi araligin gecerli
     // oldugu ekranda iki turlu okunurdu.
     await expect(page.getByTestId("range-start")).toBeHidden();
+  });
+
+  test("her an tek bir aralik dugmesi basili okunuyor", async ({ page }) => {
+    await signInAsNewUser(page);
+    await page.goto("/en/analytics");
+    await waitForHydration(page, '[data-testid="range-custom"]');
+
+    async function dogrula(asama: string, beklenen: string) {
+      // POLL: zeminler `transition-colors` ile degisiyor, yani tiklamadan
+      // hemen sonra olculen renk gecis ortasindaki ara bir deger oluyor.
+      // Olculen sey duragan durum.
+      await expect
+        .poll(
+          async () => {
+            const durum = await basiliDurum(page);
+            if (!durum) return "aralik grubu bulunamadi";
+            return {
+              basili: durum.filter((d) => d.basili).map((d) => d.ad),
+              mor: durum.filter((d) => d.mor).map((d) => d.ad),
+            };
+          },
+          { message: `${asama}: basili ve mor dugmeler` }
+        )
+        // Ekran okuyucunun duydugu ile gozun gordugu ayni dugme olmali.
+        .toEqual({ basili: [beklenen], mor: [beklenen] });
+    }
+
+    await dogrula("acilista", "Last 7 days");
+
+    await page.getByRole("button", { name: "Last 30 days" }).click();
+    await dogrula("hazir aralik secilince", "Last 30 days");
+
+    // Serbest aralik acildiginda hazir araliklardan hicbiri basili
+    // kalmamali: tarihler henuz girilmemis olsa bile gecerli olan artik
+    // "son 30 gun" degil.
+    await page.getByTestId("range-custom").click();
+    await dogrula("Custom acilinca", "Custom");
+
+    await page.getByTestId("range-start").fill(gunEkle(-20));
+    await page.getByTestId("range-end").fill(gunEkle(-10));
+    await page.waitForResponse((r) =>
+      r.url().includes("/v1/analytics/timeseries?start=")
+    );
+    await dogrula("serbest aralik uygulaninca", "Custom");
+
+    await page.getByRole("button", { name: "Last 7 days" }).click();
+    await dogrula("hazir araliga donunce", "Last 7 days");
   });
 });
