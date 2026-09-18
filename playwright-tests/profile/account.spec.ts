@@ -1,11 +1,18 @@
 import { expect, test } from "@playwright/test";
-import { apiLoginStatus } from "../helpers/api";
-import { signInAsNewUser } from "../helpers/auth";
+import { apiLoginStatus, apiRegisterAndLogin } from "../helpers/api";
+import { signInAsAdmin, signInAsNewUser } from "../helpers/auth";
 import { fillField } from "../helpers/ui";
 
 test.describe("Hesap kapatma", () => {
   test("kullanici kendi hesabini kapatabiliyor", async ({ page }) => {
     const { user } = await signInAsNewUser(page);
+
+    // ONCE ZIYARET: sayfa bir dakikalik pencereyle onbellege aliniyor.
+    // Bu satir olmadan kapatmadan sonraki istek zaten onbellege hic
+    // girmemis bir sayfayi getiriyor ve test onbellegi hic olcmuyor.
+    // Olculdu: bu satirla birlikte, kapatilan hesabin sayfasi hala 200
+    // donup silinen profilin adini gosteriyordu.
+    await expect(page.goto(`/en/${user.username}`)).resolves.toBeTruthy();
 
     await page.goto("/en/settings");
     await fillField(page, "#delete-account-password", user.password);
@@ -53,5 +60,51 @@ test.describe("Hesap kapatma", () => {
     await page.goto("/en/settings");
 
     await expect(page).toHaveURL(/\/sign-in/);
+  });
+});
+
+test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
+  test("admin bir hesabi kapatinca o kisinin sayfasi hemen kapaniyor", async ({
+    page,
+    request,
+  }) => {
+    /**
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor. use-fetch'teki
+     * kendiliginden temizlik CAGIRANIN profilini temizliyor, yani
+     * panelden silerken admin'inkini; silinen kisininki acikta
+     * kalirdi. Uc bu yuzden admin'den kullanici adi kabul ediyor.
+     */
+    const { user } = await apiRegisterAndLogin();
+
+    // Once ziyaret: onbellek dolsun.
+    expect((await request.get(`/en/${user.username}`)).status()).toBe(200);
+
+    const { token: adminToken } = await signInAsAdmin(page);
+    const temizlik = await request.post("/api/revalidate-profile", {
+      headers: { Authorization: `Bearer ${adminToken}` },
+      data: { username: user.username },
+    });
+    expect(temizlik.status(), await temizlik.text()).toBe(200);
+  });
+
+  test("admin olmayan baskasinin onbellegini temizleyemiyor", async ({
+    page,
+    request,
+  }) => {
+    // Uc kullanici adini govdeden aldigi icin, yetki kontrolu olmasa
+    // herkes baskasinin sayfasini istedigi kadar backend'e gonderirdi.
+    const { user: kurban } = await apiRegisterAndLogin();
+    const { token } = await signInAsNewUser(page);
+
+    const yanit = await request.post("/api/revalidate-profile", {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { username: kurban.username },
+    });
+
+    expect(yanit.status()).toBe(403);
+  });
+
+  test("tokensiz temizlik reddediliyor", async ({ request }) => {
+    expect((await request.post("/api/revalidate-profile")).status()).toBe(401);
   });
 });
