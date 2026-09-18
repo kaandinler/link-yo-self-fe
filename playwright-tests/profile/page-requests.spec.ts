@@ -11,7 +11,8 @@ import { signInAsNewUser } from "../helpers/auth";
  *
  *   analytics soguk acilis   6 istek (biri kimlik), her uc bir kez
  *   pano soguk acilis        3 istek, her uc bir kez
- *   analytics -> pano        0 istek (React Query onbellegi)
+ *   analytics -> pano        en fazla birer istek (staleTime 0
+ *                            oldugu icin arka planda tazeleniyor)
  *
  * Bu dosyanin isi o sayilari bozulmadan tutmak. Klasik gerileme
  * gorunmez olani: iki bilesen ayni veriyi biraz farkli anahtarla
@@ -64,12 +65,24 @@ test.describe("Sayfa istekleri", () => {
     ).toEqual([]);
   });
 
-  test("analytics'ten panoya gecerken yeniden veri cekilmiyor", async ({
+  test("analytics'ten panoya gecerken hicbir uca iki kez gidilmiyor", async ({
     page,
   }) => {
     /**
-     * Ikisi de ozeti kullaniyor. Onbellek paylasilmasaydi her gecis
-     * ayni veriyi yeniden cekerdi; olculdu, cekmiyor.
+     * DIKKAT, BURADA BIR OLCUM YANILGISI YASANDI: once "gecis hic
+     * istek atmiyor" diye yazilmisti, cunku yerelde iki kez ust uste
+     * oyle olculmustu. CI'da iki istek cikti (profile/me ve
+     * analytics/summary) ve hakli olan CI'ydi.
+     *
+     * Sebep: queryClient'ta staleTime ayarlanmamis, yani varsayilan 0
+     * -- veri aninda bayat sayiliyor ve bilesen mount olurken arka
+     * planda yeniden cekiliyor. Yerelde gecis o kadar hizli oluyor ki
+     * `networkidle` istekler baslamadan donebiliyor. Yani "sifir
+     * istek" bir degismez degil, zamanlama kazasiydi.
+     *
+     * Degismez olan sey su: onbellek PAYLASILIYOR, dolayisiyla her uca
+     * en fazla bir kez gidiliyor. Paylasilmasaydi ayni veri hem
+     * analytics hem pano anahtarindan ayri ayri cekilirdi.
      */
     const { token } = await signInAsNewUser(page);
     await apiCreateLink(token, { title: "Blog", url: "https://ornek.test/b" });
@@ -83,8 +96,8 @@ test.describe("Sayfa istekleri", () => {
     await page.waitForLoadState("networkidle");
 
     expect(
-      istekler,
-      `panoya gecerken istek atildi: ${JSON.stringify(istekler)}`
+      tekrarlar(istekler),
+      `ayni uca birden fazla gidildi: ${JSON.stringify(istekler)}`
     ).toEqual([]);
   });
 
