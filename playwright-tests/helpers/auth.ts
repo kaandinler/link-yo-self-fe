@@ -3,6 +3,8 @@ import { checkBox, fillField } from "./ui";
 import {
   TestUser,
   apiCompleteOnboarding,
+  apiLogin,
+  apiLoginStatus,
   apiRegisterAndLogin,
   uniqueUser,
 } from "./api";
@@ -55,6 +57,37 @@ export async function signInAsNewUser(
   if (options.onboarding !== false) {
     await apiCompleteOnboarding(token);
   }
+  await setAuthCookie(page, token);
+  return { user, token };
+}
+
+/**
+ * Tarayiciyi admin olarak giris yapmis hale getirir.
+ *
+ * NEDEN HAZIR BIR HESAP: kayit ucu admin acmiyor ve bu bilincli --
+ * `is_admin` orada olsaydi herkes kendini admin yapardi. Admin acmanin
+ * yolu backend'in `scripts/create_admin` betigi; CI'da "Seed admin
+ * user" adimi onu kosuyor, yerelde ayni komut elle calistiriliyor
+ * (bkz. backend README, "Ilk admin").
+ *
+ * Hesap yoksa test atlanmiyor, anlasilir bir hatayla duruyor: sessizce
+ * atlanan bir test, panelin hic taranmadigini gizlerdi.
+ */
+export async function signInAsAdmin(page: Page) {
+  const user: TestUser = {
+    username: process.env.E2E_ADMIN_USERNAME ?? "e2eadmin",
+    email: process.env.E2E_ADMIN_EMAIL ?? "e2eadmin@example.com",
+    password: process.env.E2E_ADMIN_PASSWORD ?? "E2eAdmin.Parola1",
+  };
+
+  const durum = await apiLoginStatus(user);
+  expect(
+    durum,
+    `Admin hesabi yok ya da parolasi tutmuyor (${user.email}). ` +
+      "Backend deposunda: python -m scripts.create_admin"
+  ).toBe(200);
+
+  const token = await apiLogin(user);
   await setAuthCookie(page, token);
   return { user, token };
 }
