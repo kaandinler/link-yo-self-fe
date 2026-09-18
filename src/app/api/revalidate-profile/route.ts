@@ -13,7 +13,10 @@
 
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
-import { profilEtiketi } from "@/services/api/services/public-profile";
+import {
+  kartEtiketi,
+  profilEtiketi,
+} from "@/services/api/services/public-profile";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -44,6 +47,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Kullanici adi yok" }, { status: 400 });
   }
 
+  // Sayfa ve kart ayri onbellek kayitlari: kart ayni ucu
+  // `?count_view=false` ile cagiriyor, yani Next icin baska bir adres.
+  // Yalnizca sayfa temizlenirken kart duzenlemeden sonra bayt bayt
+  // ayni donuyordu -- olculdu.
   revalidateTag(profilEtiketi(username));
+  revalidateTag(kartEtiketi(username));
   return NextResponse.json({ revalidated: username });
 }
