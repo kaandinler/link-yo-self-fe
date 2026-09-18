@@ -554,7 +554,7 @@ function Analytics() {
                   </p>
                   <Link
                     href={`/${language}/links?new=1`}
-                    className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                     Add your first link

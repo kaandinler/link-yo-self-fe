@@ -81,7 +81,10 @@ function ResponsiveAppBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo - Dashboard'a veya Home'a link */}
-          <Link href={user ? "/dashboard" : "/"}>
+          <Link
+            href={user ? "/dashboard" : "/"}
+            className="flex items-center min-h-[44px]"
+          >
             <div className="flex items-center gap-3 cursor-pointer">
               <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Link2 className="h-6 w-6 text-ink" />

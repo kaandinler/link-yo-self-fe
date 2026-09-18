@@ -150,7 +150,7 @@ function Customize() {
           {profile?.username && (
             <NextLink
               href={`/${language}/${profile.username}`}
-              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 min-h-[44px] rounded-lg transition-colors"
             >
               <ExternalLink className="h-4 w-4" />
               View public page
