@@ -111,4 +111,42 @@ test.describe("Link yonetimi", () => {
 
     await expect(page).toHaveURL(/\/sign-in/);
   });
+
+  test("silinen link onbellekteki sayfadan da kalkiyor", async ({ page }) => {
+    /**
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor; temizlik
+     * use-fetch'te, link silme de oradan geciyor. Olculdu ve
+     * calisiyor, bu test onu tutuyor.
+     *
+     * Sira onemli: once ziyaret (onbellek dolsun), sonra sil. Tersi
+     * olursa ilk ziyaret zaten silinmis halini gorur ve test hicbir
+     * sey olcmez.
+     *
+     * NOT: paylasim karti link gostermiyor, dolayisiyla link
+     * degisiklikleri karti etkilemiyor -- bakildi.
+     */
+    const { user, token } = await signInAsNewUser(page);
+    await apiCreateLink(token, {
+      title: "Kalan Link",
+      url: "https://ornek.test/kalan",
+    });
+    await apiCreateLink(token, {
+      title: "Silinecek Link",
+      url: "https://ornek.test/silinecek",
+    });
+
+    await page.goto(`/en/${user.username}`);
+    await expect(page.getByText("Silinecek Link")).toBeVisible();
+
+    await page.goto("/en/links");
+    await expect(page.getByText("Silinecek Link").first()).toBeVisible();
+    await page.locator('button[title="Delete link"]').nth(1).click();
+    await page.getByRole("button", { name: "Delete", exact: true }).click();
+    await expect(page.getByText("Silinecek Link")).toHaveCount(0);
+
+    await page.goto(`/en/${user.username}`);
+    await expect(page.getByText("Silinecek Link")).toHaveCount(0);
+    // Kalan link hala duruyor: temizlik sayfayi bosaltmiyor, tazeliyor.
+    await expect(page.getByText("Kalan Link")).toBeVisible();
+  });
 });
