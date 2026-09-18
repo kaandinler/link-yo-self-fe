@@ -220,6 +220,14 @@ test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
     const pencere = Number(yanit.headers()["x-profil-onbellek-saniye"]);
     expect(Number.isInteger(pencere), `pencere: ${pencere}`).toBe(true);
     expect(pencere).toBeGreaterThan(0);
+
+    // Belgelenen varsayilan. PROFILE_CACHE_SECONDS verilmediginde bu
+    // deger geciyor; degisirse docs/architecture.md ve
+    // example.env.local de degismeli -- test o ikisini koda bagliyor.
+    expect(
+      pencere,
+      "varsayilan degisti mi? docs/architecture.md ve example.env.local da guncellenmeli"
+    ).toBe(60);
   });
 
   test("onbellekten gelen kimlikle de temizlik gercekten yapiliyor", async ({
