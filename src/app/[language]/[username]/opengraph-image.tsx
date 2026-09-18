@@ -15,7 +15,10 @@
 // olsaydi sayfa iki gorsel bildirirdi.
 
 import { ImageResponse } from "next/og";
-import { getPublicProfile } from "@/services/api/services/public-profile";
+import {
+  getPublicProfileForCard,
+  KART_ONBELLEK_SANIYE,
+} from "@/services/api/services/public-profile";
 import {
   isLightColor,
   safeColor,
@@ -40,7 +43,7 @@ export const alt = "Profile";
  * kalabiliyor. Sayfanin kendisi aninda guncelleniyor.
  */
 const ONBELLEK = {
-  "cache-control": "public, max-age=3600, stale-while-revalidate=86400",
+  "cache-control": `public, max-age=${KART_ONBELLEK_SANIYE}, stale-while-revalidate=86400`,
 };
 
 type Props = {
@@ -76,7 +79,14 @@ async function avatarDataUri(url: string | null | undefined) {
   try {
     const yanit = await fetch(url, {
       signal: AbortSignal.timeout(3000),
-      cache: "no-store",
+      // Kartin tazelik penceresiyle ayni: gorsel her istekte yeniden
+      // indirilmesin. Olcum (art arda dort kart istegi): indirme 4 -> 1.
+      //
+      // 2 MB'tan buyuk gorseller Next'in veri onbellegine girmiyor;
+      // olculdu, 2,32 MB'lik bir avatar dort istekte dort kez indi ve
+      // hicbir uyari cikmadi. Yani buyuk avatar icin davranis
+      // degismiyor, kucuk olanlar icin kazaniliyor.
+      next: { revalidate: KART_ONBELLEK_SANIYE },
     });
     if (!yanit.ok) return null;
 
@@ -95,7 +105,7 @@ async function avatarDataUri(url: string | null | undefined) {
 
 export default async function Image(props: Props) {
   const params = await props.params;
-  const profile = await getPublicProfile(params.username);
+  const profile = await getPublicProfileForCard(params.username);
 
   // Profil yoksa da bir gorsel donmeli: burada throw etmek kaziyiciya
   // bozuk bir gorsel adresi birakirdi.

@@ -1,5 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
-import { apiCreateLink, apiUpdateProfile } from "../helpers/api";
+import {
+  apiAnalyticsSummary,
+  apiCreateLink,
+  apiUpdateProfile,
+} from "../helpers/api";
 import { signInAsNewUser } from "../helpers/auth";
 
 /**
@@ -233,5 +237,42 @@ test.describe("Public profil SEO", () => {
     const basligi = yanit.headers()["cache-control"] ?? "";
     expect(basligi).toContain("public");
     expect(basligi).not.toContain("no-store");
+  });
+
+  test("kart tekrar tekrar istenince backend'e bir kez gidiliyor", async ({
+    page,
+    request,
+  }) => {
+    const { user, token } = await signInAsNewUser(page);
+    await page.goto(`/en/${user.username}`);
+    const gorsel = (await meta(page, 'meta[property="og:image"]'))!;
+
+    // NEDEN GORUNTULENME SAYACI: kartin backend'e kac kez gittigini
+    // disaridan olcmenin yolu bu. Kart profili cekerken ayni uca
+    // gidiyor ve o uc her cagrida sayaci artiriyor, yani sayac
+    // dogrudan "kac cagri gitti"yi sayiyor.
+    //
+    // Sayfa ziyaretinin kendi artisi oturmadan olcmeye baslamayalim.
+    await expect
+      .poll(async () => (await apiAnalyticsSummary(token)).profile_view_count)
+      .toBeGreaterThan(0);
+    const oncesi = (await apiAnalyticsSummary(token)).profile_view_count;
+
+    for (let i = 0; i < 3; i++) {
+      const y = await request.get(gorsel);
+      expect(y.status()).toBe(200);
+    }
+
+    // Sayac artis gorecekse gorsun diye biraz bekleniyor: "artmadi"
+    // sonucunu erken okumak istemiyoruz.
+    await page.waitForTimeout(1500);
+    const sonrasi = (await apiAnalyticsSummary(token)).profile_view_count;
+
+    // Onbellek olmadan uc istek uc cagri demekti. Ilk istek onbellegi
+    // doldurabilecegi icin bir artisa izin var; ucu birden gecmemeli.
+    expect(
+      sonrasi - oncesi,
+      `uc kart istegi ${sonrasi - oncesi} backend cagrisi uretti`
+    ).toBeLessThanOrEqual(1);
   });
 });

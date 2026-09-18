@@ -10,6 +10,12 @@
 
 import { cache } from "react";
 
+/**
+ * Paylasim kartinin tazelik penceresi. Kartin `cache-control` basligi
+ * da bu degeri kullaniyor; ikisi ayrismasin diye tek yerde duruyor.
+ */
+export const KART_ONBELLEK_SANIYE = 3600;
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface PublicLink {
@@ -82,6 +88,40 @@ export const getPublicProfile = cache(async function getPublicProfile(
     return null;
   }
 });
+
+/**
+ * Ayni profili paylasim karti icin getirir -- ama bir saatlik onbellekle.
+ *
+ * NEDEN AYRI BIR FONKSIYON: sayfanin kendisi bilerek "no-store"
+ * (profil duzenlenince hemen guncel gorunmeli). Kart oyle degil: zaten
+ * bir saatlik `cache-control` ile servis ediliyor, yani tazeligi bir
+ * saatle sinirli olduguna coktan karar verilmis. Ayni fonksiyonu
+ * paylassaydilar kartin her istegi backend'e bir cagri daha demekti.
+ *
+ * Olcum (ayni profile art arda dort kart istegi, uretim derlemesi):
+ * backend cagrisi 4 -> 1.
+ *
+ * `cache()` burada ise yaramaz: o yalnizca tek bir render icindeki
+ * ayni cagrilari birlestiriyor, istekler arasinda bir sey tutmuyor.
+ */
+export async function getPublicProfileForCard(
+  username: string
+): Promise<PublicProfile | null> {
+  if (!API_URL) return null;
+
+  try {
+    const response = await fetch(
+      `${API_URL}/v1/p/${encodeURIComponent(username)}`,
+      { next: { revalidate: KART_ONBELLEK_SANIYE } }
+    );
+    if (!response.ok) return null;
+
+    const result: ApiResponse<PublicProfile> = await response.json();
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /** Sitemap satiri: yalnizca adres ve son degisiklik. */
 export interface PublicProfileRef {
