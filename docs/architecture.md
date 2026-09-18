@@ -169,7 +169,19 @@ load balancer it is not: the staleness ceiling becomes `PROFILE_CACHE_SECONDS`
 (default 60) rather than zero, and the purge helps only the instance it lands
 on. `PROFILE_CACHE_SECONDS` exists so that ceiling can be lowered without a code
 change — the effective value comes back on every purge as
-`x-profil-onbellek-saniye`. The real fix is a cache handler shared between
+`x-profil-onbellek-saniye`. It is read at **runtime**, not baked into the build
+like `NEXT_PUBLIC_SITE_URL` next to it, so changing it needs a restart and not a
+rebuild. Measured, starting the existing build with `PROFILE_CACHE_SECONDS=5`
+and editing a profile without purging:
+
+| after the edit | page shows |
+| -------------- | ---------- |
+| 2s             | old name   |
+| 8s             | new name   |
+
+At the default 60 the page would still show the old name at 8s. A value that is
+not a positive integer falls back to the default rather than to zero: silently
+serving an uncached page is the one outcome nobody would notice. The real fix is a cache handler shared between
 instances (`cacheHandler` in `next.config.js`), which needs storage this
 repository does not have.
 
