@@ -19,6 +19,7 @@ import { NextResponse } from "next/server";
 import {
   kartEtiketi,
   profilEtiketi,
+  PROFIL_ONBELLEK_SANIYE,
 } from "@/services/api/services/public-profile";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -159,6 +160,14 @@ export async function POST(request: Request) {
   // tekrarlanmiyor.
   return NextResponse.json(
     { revalidated: username },
-    { headers: { "x-kimlik-kaynagi": kaynak } }
+    {
+      headers: {
+        "x-kimlik-kaynagi": kaynak,
+        // Yururlukteki tazelik penceresi. Temizlik ETKI ETMEDIGINDE
+        // -- ornegin cagri baska bir Next ornegine dustugunde --
+        // sayfanin en fazla ne kadar eski kalabilecegi bu.
+        "x-profil-onbellek-saniye": String(PROFIL_ONBELLEK_SANIYE),
+      },
+    }
   );
 }

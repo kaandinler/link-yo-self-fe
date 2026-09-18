@@ -7,6 +7,7 @@
   - [Folder structure](#folder-structure)
   - [Pages](#pages)
   - [Public profile: sharing and search](#public-profile-sharing-and-search)
+  - [Public profile: caching and invalidation](#public-profile-caching-and-invalidation)
 
 ## Introduction
 
@@ -115,6 +116,48 @@ a scraper sees there is part of the feature, not an afterthought.
   requested again on every share — so it is served with a one-hour
   `cache-control`. The trade is that a changed avatar can take up to an hour to
   appear in previews, while the page updates at once.
+
+## Public profile: caching and invalidation
+
+The public page is cached for a short window and purged the moment its owner
+saves. The page itself is fast either way; what this buys is one backend query
+per window instead of one per visit — measured at **five visits: 5 backend calls
+→ 1**.
+
+- **The page fetch** (`getPublicProfile`) carries `revalidate` plus a
+  `profil:<username>` tag. The share card fetches the same endpoint with
+  `?count_view=false`, which is a _different_ cache entry, so it carries its own
+  `kart:<username>` tag and its own one-hour window. Purging only the page tag
+  left the card byte-for-byte identical after an edit — measured.
+
+- **`POST /api/revalidate-profile`** purges both tags. `use-fetch.ts` calls it
+  after every successful mutation, which is why no individual save site has to
+  remember to. For `DELETE` it also purges _before_ the request: the endpoint
+  resolves "who is this" through the backend, and after you close your own
+  account your token no longer resolves, so the after-purge would 401 and your
+  page would stay up. It takes a username in the body only from an admin, so the
+  panel can close someone else's page immediately.
+
+  The endpoint caches token → identity for ten seconds. Without it, one client
+  produced **61 backend identity lookups for 60 purge requests**. The purge
+  itself still runs on every call: dropping one, or answering 429, would leave
+  the user looking at their own stale page.
+
+### One instance is assumed
+
+`revalidateTag` only invalidates the Next.js instance that handled the call.
+Two instances of the same build, on the same disk, were measured: purging
+through `:3000` refreshed `:3000` and left `:3001` serving the old name until
+its window expired.
+
+Nothing is wrong on a single instance, which is how this deploys today. Behind a
+load balancer it is not: the staleness ceiling becomes `PROFILE_CACHE_SECONDS`
+(default 60) rather than zero, and the purge helps only the instance it lands
+on. `PROFILE_CACHE_SECONDS` exists so that ceiling can be lowered without a code
+change — the effective value comes back on every purge as
+`x-profil-onbellek-saniye`. The real fix is a cache handler shared between
+instances (`cacheHandler` in `next.config.js`), which needs storage this
+repository does not have.
 
 ---
 
