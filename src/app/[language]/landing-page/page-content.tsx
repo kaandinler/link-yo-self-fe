@@ -224,25 +224,25 @@ export default function LandingPage() {
             <div className="flex items-center gap-8">
               <a
                 href="/about"
-                className="text-ink-muted hover:text-ink transition-colors"
+                className="inline-flex items-center min-h-[44px] text-ink-muted hover:text-ink transition-colors"
               >
                 About
               </a>
               <a
                 href="/privacy-policy"
-                className="text-ink-muted hover:text-ink transition-colors"
+                className="inline-flex items-center min-h-[44px] text-ink-muted hover:text-ink transition-colors"
               >
                 Privacy
               </a>
               <a
                 href="/terms"
-                className="text-ink-muted hover:text-ink transition-colors"
+                className="inline-flex items-center min-h-[44px] text-ink-muted hover:text-ink transition-colors"
               >
                 Terms
               </a>
               <a
                 href="/contact"
-                className="text-ink-muted hover:text-ink transition-colors"
+                className="inline-flex items-center min-h-[44px] text-ink-muted hover:text-ink transition-colors"
               >
                 Contact
               </a>

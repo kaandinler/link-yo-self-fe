@@ -2,7 +2,7 @@ import { devices, expect, test } from "@playwright/test";
 import { signInAsNewUser } from "../helpers/auth";
 
 /**
- * Form kontrollerinin telefonda parmakla kullanilabilir olmasi.
+ * Kontrollerin telefonda parmakla kullanilabilir olmasi.
  *
  * Bu sayfalar masaustu genisliginde yazilmisti. Olculdugunde arka plan
  * tipi dugmeleri 36, profil duzenlemedeki Save ve Cancel 37, renk ve
@@ -10,61 +10,110 @@ import { signInAsNewUser } from "../helpers/auth";
  * yaratmiyordu, yani yalnizca yerlesime bakan bir test hepsini "gecti"
  * sayardi.
  *
+ * Tarama once yalnizca dort form sayfasinda kosuyordu. Geri kalan
+ * sayfalar acilinca marka baglantisi (40), dashboard'daki Preview Page
+ * ve Add Link (42), Copy ve Share (40), View All (24), alt bilgi
+ * baglantilari (24) ve sign-in'deki "Forgot your password?" (20)
+ * cikti; yani taranmayan yerde kusur vardi.
+ *
  * Esik 44 piksel (WCAG 2.5.5).
  */
 test.use({ ...devices["Pixel 5"] });
 
 const ESIK = 44;
 
-const SAYFALAR = [
+/**
+ * WCAG 2.5.5 "inline" istisnasi: bir cumlenin icinde gecen, boyutu
+ * cevresindeki metnin satir yuksekligiyle sinirli olan baglantilar
+ * kural disi. Onlari 44 piksele zorlamak tipografiyi bozar. Olcunun
+ * karsiligi `display: inline`; dugme gibi duran baglantilar zaten
+ * inline-flex, flex ya da block oluyor.
+ */
+const KUCUKLERI_BUL = `(() => {
+  return Array.from(
+    document.querySelectorAll("input, textarea, select, button, a[href]")
+  )
+    .map((el) => {
+      const r = el.getBoundingClientRect();
+      const s = getComputedStyle(el);
+      if (!r.width || !r.height) return null;
+      if (s.visibility === "hidden" || s.display === "none") return null;
+      // Gorsel bir katmanla ortulen sr-only kutular: gercek dokunma
+      // hedefi sarmalayici, kutunun kendisi degil.
+      if (r.width <= 20 && r.height <= 20) return null;
+      if (el.tagName === "A" && s.display === "inline") return null;
+      // React Query devtools yalnizca "npm run dev" altinda render
+      // ediliyor; uretim derlemesinde (CI'da kosan "npm run start")
+      // yok. Uygulamanin arayuzu degil, olcunun disinda.
+      if (el.closest(".tsqd-parent-container")) return null;
+      return {
+        ad:
+          el.tagName.toLowerCase() +
+          ":" +
+          (el.getAttribute("name") ||
+            el.getAttribute("aria-label") ||
+            (el.textContent || "").trim().slice(0, 24) ||
+            "?"),
+        yukseklik: Math.round(r.height),
+      };
+    })
+    .filter((x) => x !== null && x.yukseklik < ${ESIK});
+})()`;
+
+type Kucuk = { ad: string; yukseklik: number };
+
+async function kucukleriTopla(page: import("@playwright/test").Page) {
+  return (await page.evaluate(KUCUKLERI_BUL)) as Kucuk[];
+}
+
+async function sayfayiOlc(page: import("@playwright/test").Page, yol: string) {
+  await page.goto(yol);
+  await page.waitForLoadState("networkidle");
+
+  const kucukler = await kucukleriTopla(page);
+  expect(
+    kucukler,
+    `${yol}: ${ESIK} pikselin altinda kontrol var: ${JSON.stringify(kucukler)}`
+  ).toEqual([]);
+}
+
+// Giris gerektirmeyen sayfalar.
+const GENEL_SAYFALAR = [
+  "/en",
+  "/en/sign-in",
+  "/en/sign-up",
+  "/en/forgot-password",
+];
+
+// Giris gerektiren sayfalar.
+const GIRISLI_SAYFALAR = [
+  "/en/dashboard",
+  "/en/links",
   "/en/profile/edit",
   "/en/profile/customize",
   "/en/settings",
   "/en/analytics",
 ];
 
-for (const yol of SAYFALAR) {
+for (const yol of GENEL_SAYFALAR) {
   test(`${yol} kontrolleri en az ${ESIK} piksel`, async ({ page }) => {
-    await signInAsNewUser(page);
-    await page.goto(yol);
-    await page.waitForLoadState("networkidle");
-
-    const kucukler = await page.evaluate((esik) => {
-      return Array.from(
-        document.querySelectorAll("input, textarea, select, button")
-      )
-        .map((el) => {
-          const r = el.getBoundingClientRect();
-          const stil = getComputedStyle(el);
-          if (!r.width || !r.height) return null;
-          if (stil.visibility === "hidden" || stil.display === "none")
-            return null;
-          // Gorsel bir katmanla ortulen sr-only kutular: gercek dokunma
-          // hedefi sarmalayici, kutunun kendisi degil.
-          if (r.width <= 20 && r.height <= 20) return null;
-          return {
-            ad:
-              el.tagName.toLowerCase() +
-              ":" +
-              (el.getAttribute("name") ||
-                el.getAttribute("aria-label") ||
-                (el.textContent || "").trim().slice(0, 24) ||
-                "?"),
-            yukseklik: Math.round(r.height),
-          };
-        })
-        .filter(
-          (x): x is { ad: string; yukseklik: number } =>
-            x !== null && x.yukseklik < esik
-        );
-    }, ESIK);
-
-    expect(
-      kucukler,
-      `${ESIK} pikselin altinda kontrol var: ${JSON.stringify(kucukler)}`
-    ).toEqual([]);
+    await sayfayiOlc(page, yol);
   });
 }
+
+for (const yol of GIRISLI_SAYFALAR) {
+  test(`${yol} kontrolleri en az ${ESIK} piksel`, async ({ page }) => {
+    await signInAsNewUser(page);
+    await sayfayiOlc(page, yol);
+  });
+}
+
+test(`/en/onboarding/welcome kontrolleri en az ${ESIK} piksel`, async ({
+  page,
+}) => {
+  await signInAsNewUser(page, { onboarding: false });
+  await sayfayiOlc(page, "/en/onboarding/welcome");
+});
 
 test("telefon menusu dugmesi parmakla kullanilabilir", async ({ page }) => {
   await signInAsNewUser(page);

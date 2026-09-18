@@ -106,14 +106,14 @@ function Dashboard() {
           <div className="flex gap-3">
             <Link
               href={profilePath || `/${language}`}
-              className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 rounded-lg border border-line-strong transition-colors"
+              className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 min-h-[44px] rounded-lg border border-line-strong transition-colors"
             >
               <Eye className="h-4 w-4" />
               Preview Page
             </Link>
             <Link
               href={`/${language}/links?new=1`}
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg transition-all"
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 min-h-[44px] rounded-lg transition-all"
             >
               <Plus className="h-4 w-4" />
               Add Link
@@ -137,7 +137,7 @@ function Dashboard() {
               <button
                 onClick={handleCopyProfile}
                 disabled={!username}
-                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
               >
                 <Copy className="h-4 w-4" />
                 {copied ? "Copied!" : "Copy"}
@@ -145,7 +145,7 @@ function Dashboard() {
               <button
                 onClick={handleShare}
                 disabled={!username}
-                className="flex items-center gap-2 bg-field hover:bg-field-strong disabled:opacity-50 text-ink px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center gap-2 bg-field hover:bg-field-strong disabled:opacity-50 text-ink px-4 py-2 min-h-[44px] rounded-lg transition-colors"
               >
                 <Share2 className="h-4 w-4" />
                 Share
@@ -240,7 +240,7 @@ function Dashboard() {
             <h3 className="text-lg font-semibold text-ink">Your Links</h3>
             <Link
               href={`/${language}/links`}
-              className="text-accent hover:text-accent transition-colors"
+              className="inline-flex items-center min-h-[44px] text-accent hover:text-accent transition-colors"
             >
               View All
             </Link>
@@ -255,7 +255,7 @@ function Dashboard() {
               </p>
               <Link
                 href={`/${language}/links?new=1`}
-                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 Add your first link

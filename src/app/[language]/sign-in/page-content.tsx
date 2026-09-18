@@ -296,7 +296,7 @@ function LinkYoSelfSignInForm() {
             <div className="flex justify-end">
               <a
                 href="/forgot-password"
-                className="text-sm text-accent hover:text-accent transition-colors duration-200 font-medium"
+                className="inline-flex items-center min-h-[44px] text-sm text-accent hover:text-accent transition-colors duration-200 font-medium"
               >
                 Forgot your password?
               </a>
