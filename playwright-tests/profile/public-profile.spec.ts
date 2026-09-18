@@ -47,6 +47,39 @@ test.describe("Herkese acik profil", () => {
     ).toBeVisible();
   });
 
+  test("ziyaret edilmis sayfa duzenlemeden sonra guncelleniyor", async ({
+    page,
+  }) => {
+    /**
+     * NEDEN BU AKIS: sayfa artik bir dakikalik pencereyle onbellege
+     * aliniyor (backend cagrisi bes ziyarette 5 -> 1). Onbellek tek
+     * basina birakilsaydi, sayfasini bir kez acmis biri duzenleme
+     * yaptiktan sonra bir dakika boyunca eski halini gorurdu --
+     * olculdu, goruyordu.
+     *
+     * Onemli olan SIRA: once ziyaret, sonra duzenleme. Duzenleme
+     * once yapilirsa ilk ziyaret zaten onbellegi yeni degerle
+     * dolduruyor ve test hicbir sey olcmuyor. Suitedeki butun diger
+     * testler o sirada calistigi icin bu akisi hicbiri tutmuyordu.
+     */
+    const { user, token } = await apiRegisterAndLogin();
+    await apiCreateLink(token, {
+      title: "Blog",
+      url: "https://ornek.test/blog",
+    });
+    await apiUpdateProfile(token, { display_name: "Ilk Ad" });
+
+    await page.goto(`/en/${user.username}`);
+    await expect(page.getByRole("heading", { name: "Ilk Ad" })).toBeVisible();
+
+    await apiUpdateProfile(token, { display_name: "Ikinci Ad" });
+
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Ikinci Ad" })
+    ).toBeVisible();
+  });
+
   test("olmayan kullanici 404 veriyor", async ({ page }) => {
     const response = await page.goto("/en/boyle-bir-kullanici-yok-12345");
 
