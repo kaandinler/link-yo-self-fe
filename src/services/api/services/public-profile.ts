@@ -101,6 +101,9 @@ export const getPublicProfile = cache(async function getPublicProfile(
  * Olcum (ayni profile art arda dort kart istegi, uretim derlemesi):
  * backend cagrisi 4 -> 1.
  *
+ * Ayrica `count_view=false` ile cagriliyor: kartin okumasi bir ziyaret
+ * degil. Onbellek bu cagrilari seyrekletti, sayimdan cikaran bu bayrak.
+ *
  * `cache()` burada ise yaramaz: o yalnizca tek bir render icindeki
  * ayni cagrilari birlestiriyor, istekler arasinda bir sey tutmuyor.
  */
@@ -111,7 +114,11 @@ export async function getPublicProfileForCard(
 
   try {
     const response = await fetch(
-      `${API_URL}/v1/p/${encodeURIComponent(username)}`,
+      // count_view=false: bu okuma bir ziyaret degil. Uc varsayilan
+      // olarak her cagriyi "profil goruntulenmesi" sayiyor; kart da ayni
+      // ucu cagirdigi icin bir kaziyicinin kart istegi, kimsenin
+      // gormedigi bir sayfa icin goruntulenme uretiyordu.
+      `${API_URL}/v1/p/${encodeURIComponent(username)}?count_view=false`,
       { next: { revalidate: KART_ONBELLEK_SANIYE } }
     );
     if (!response.ok) return null;
