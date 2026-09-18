@@ -239,18 +239,15 @@ test.describe("Public profil SEO", () => {
     expect(basligi).not.toContain("no-store");
   });
 
-  test("kart tekrar tekrar istenince backend'e bir kez gidiliyor", async ({
-    page,
-    request,
-  }) => {
+  test("kart istegi goruntulenme sayilmiyor", async ({ page, request }) => {
     const { user, token } = await signInAsNewUser(page);
     await page.goto(`/en/${user.username}`);
     const gorsel = (await meta(page, 'meta[property="og:image"]'))!;
 
-    // NEDEN GORUNTULENME SAYACI: kartin backend'e kac kez gittigini
-    // disaridan olcmenin yolu bu. Kart profili cekerken ayni uca
-    // gidiyor ve o uc her cagrida sayaci artiriyor, yani sayac
-    // dogrudan "kac cagri gitti"yi sayiyor.
+    // Kart ayni ucu cagiriyor ama `count_view=false` ile: okumasi bir
+    // ziyaret degil. Bayraksiz halde her kart istegi sayaci bir
+    // artiriyordu, yani kimsenin gormedigi bir sayfa goruntulenme
+    // uretiyordu.
     //
     // Sayfa ziyaretinin kendi artisi oturmadan olcmeye baslamayalim.
     await expect
@@ -268,11 +265,11 @@ test.describe("Public profil SEO", () => {
     await page.waitForTimeout(1500);
     const sonrasi = (await apiAnalyticsSummary(token)).profile_view_count;
 
-    // Onbellek olmadan uc istek uc cagri demekti. Ilk istek onbellegi
-    // doldurabilecegi icin bir artisa izin var; ucu birden gecmemeli.
+    // Hic artmamali: ne onbellekten gelen istekler, ne de onbellegi
+    // dolduran ilk istek ziyaret sayiliyor.
     expect(
       sonrasi - oncesi,
-      `uc kart istegi ${sonrasi - oncesi} backend cagrisi uretti`
-    ).toBeLessThanOrEqual(1);
+      `uc kart istegi ${sonrasi - oncesi} goruntulenme uretti`
+    ).toBe(0);
   });
 });
