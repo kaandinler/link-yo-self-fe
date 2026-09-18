@@ -16,15 +16,47 @@ import { cache } from "react";
  */
 export const KART_ONBELLEK_SANIYE = 3600;
 
+/** Varsayilan tazelik penceresi; env verilmezse bu kullaniliyor. */
+const VARSAYILAN_PROFIL_ONBELLEK_SANIYE = 60;
+
 /**
- * Herkese acik profil sayfasinin tazelik penceresi.
+ * Herkese acik profil sayfasinin tazelik penceresi (saniye).
  *
  * Bu bir "bayat kalabilir" suresi degil, bir tavan: profilini
  * kaydeden istemci onbellegi hemen temizliyor, yani normalde sayfa
- * aninda guncelleniyor. Bu sure yalnizca o temizlik cagrisi
- * kaybolursa ne kadar bekleneceğini soyluyor.
+ * aninda guncelleniyor. Bu sure yalnizca o temizlik ETKI ETMEDIGINDE
+ * ne kadar bekleneceğini soyluyor.
+ *
+ * NEDEN AYARLANABILIR: `revalidateTag` yalnizca cagrinin dustugu
+ * Next ORNEGINI temizliyor. Iki ornek ayni derlemeden ayni diskle
+ * kosarken olculdu -- 3000'de temizlik yapilinca 3000 yeni adi,
+ * 3001 hala eskisini gosteriyordu. Tek ornekte sorun yok; birden
+ * fazla ornekle kosulacaksa bu pencere staleligin tavani oluyor ve
+ * kodu degistirmeden kisaltilabilmesi gerekiyor.
+ *
+ * Asil cozum ornekler arasinda paylasilan bir cache handler
+ * (next.config `cacheHandler`); bu depoda oyle bir altyapi yok.
+ * Bkz. docs/architecture.md.
  */
-export const PROFIL_ONBELLEK_SANIYE = 60;
+export const PROFIL_ONBELLEK_SANIYE = onbellekSaniyesiCoz(
+  process.env.PROFILE_CACHE_SECONDS
+);
+
+/**
+ * Env degerini saniyeye cevirir; anlamsizsa varsayilana duser.
+ *
+ * Sessizce 0'a dusmek en kotu sonuc olurdu: onbellek tamamen kapanir
+ * ve bunu kimse fark etmez. Bu yuzden yalnizca pozitif tamsayi kabul
+ * ediliyor.
+ */
+function onbellekSaniyesiCoz(ham: string | undefined): number {
+  if (!ham) return VARSAYILAN_PROFIL_ONBELLEK_SANIYE;
+  const sayi = Number(ham);
+  if (!Number.isInteger(sayi) || sayi <= 0) {
+    return VARSAYILAN_PROFIL_ONBELLEK_SANIYE;
+  }
+  return sayi;
+}
 
 /** Bir profilin onbellek etiketi; temizleyen taraf da ayni isimi uretiyor. */
 export function profilEtiketi(username: string): string {

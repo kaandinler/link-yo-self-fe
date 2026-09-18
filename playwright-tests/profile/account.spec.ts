@@ -143,6 +143,28 @@ test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
     expect(ikinci.headers()["x-kimlik-kaynagi"]).toBe("onbellek");
   });
 
+  test("tazelik penceresi disari bildiriliyor", async ({ page, request }) => {
+    /**
+     * Pencerenin ne kadar oldugu isletme bilgisi: `revalidateTag`
+     * yalnizca cagrinin dustugu Next ornegini temizliyor (iki ornekle
+     * olculdu -- 3000'de temizlik yapilinca 3001 eski adi gostermeye
+     * devam ediyordu), dolayisiyla birden fazla ornekle kosuluyorsa
+     * staleligin tavani bu deger oluyor.
+     *
+     * Sifir ya da anlamsiz bir env degeriyle sessizce onbelleksiz
+     * kalmak en kotu sonuc olurdu; bu yuzden deger disaridan
+     * okunabiliyor ve burada pozitif oldugu tutuluyor.
+     */
+    const { token } = await signInAsNewUser(page);
+    const yanit = await request.post("/api/revalidate-profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const pencere = Number(yanit.headers()["x-profil-onbellek-saniye"]);
+    expect(Number.isInteger(pencere), `pencere: ${pencere}`).toBe(true);
+    expect(pencere).toBeGreaterThan(0);
+  });
+
   test("onbellekten gelen kimlikle de temizlik gercekten yapiliyor", async ({
     page,
   }) => {
