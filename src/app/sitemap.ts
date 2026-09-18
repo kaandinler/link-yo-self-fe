@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { notFound } from "next/navigation";
 import { listPublicProfiles } from "@/services/api/services/public-profile";
 import { fallbackLanguage } from "@/services/i18n/config";
 import { PARCA_BOYU, parcaSayisi } from "@/services/sitemap-shards";
@@ -46,6 +47,22 @@ export default async function sitemap({
   // Carpma isleminde JS dizgeyi kendiliginden cevirdigi icin
   // dilimlerin dogru olmasi tesadufdu.
   const parca = Number(id);
+
+  // ARALIK DISI ID 404. Next bu yolu her id icin calistiriyor, yani
+  // /sitemap/99.xml gibi olmayan bir parca da 200 ve bos bir <urlset>
+  // donuyordu: yanlis bir adres sessizce gecerli gorunuyor, kaziyici
+  // bos is yapiyor ve bir yazim hatasi hicbir yerde hata vermiyordu.
+  //
+  // NEDEN dynamicParams = false DEGIL: o da olmayan id'leri 404
+  // yapardi ama parca listesi derleme aninda sabitlenirdi. Profil
+  // sayisi bir parca sinirini gectiginde indeks -- istek aninda
+  // hesaplandigi icin -- yeni parcayi ilan ederken o adres 404
+  // donerdi. Canli sayima bakmak ikisini tutarli tutuyor.
+  const sayi = await parcaSayisi();
+  if (!Number.isInteger(parca) || parca < 0 || parca >= sayi) {
+    notFound();
+  }
+
   const girisler: MetadataRoute.Sitemap = [];
 
   // Ana sayfa yalnizca ilk parcada: her parcaya konsaydi ayni adres

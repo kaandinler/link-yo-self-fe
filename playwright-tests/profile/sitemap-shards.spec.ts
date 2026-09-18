@@ -53,6 +53,28 @@ test.describe("Sitemap parcalari", () => {
     }
   });
 
+  /**
+   * Next bu yolu her id icin calistiriyor. Aralik disi bir id de 200 ve
+   * bos bir <urlset> donuyordu: yanlis bir adres sessizce gecerli
+   * gorunuyor ve bir yazim hatasi hicbir yerde hata vermiyordu.
+   */
+  test("olmayan parca 404 donuyor", async ({ request }) => {
+    const indeks = await (await request.get("/sitemap-index.xml")).text();
+    const parcaSayisi = (indeks.match(/<loc>/g) ?? []).length;
+    expect(parcaSayisi).toBeGreaterThan(0);
+
+    // Var olan son parca calismali...
+    const sonuncu = await request.get(`/sitemap/${parcaSayisi - 1}.xml`);
+    expect(sonuncu.status()).toBe(200);
+
+    // ...bir sonraki olmamali.
+    const yok = await request.get(`/sitemap/${parcaSayisi}.xml`);
+    expect(yok.status(), "aralik disi parca 404 donmuyor").toBe(404);
+
+    const cokUzak = await request.get("/sitemap/9999.xml");
+    expect(cokUzak.status()).toBe(404);
+  });
+
   test("ilk parca profilleri ve ana sayfayi iceriyor", async ({ request }) => {
     const xml = await (await request.get("/sitemap/0.xml")).text();
 
