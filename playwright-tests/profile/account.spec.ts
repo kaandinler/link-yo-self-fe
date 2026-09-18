@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { apiLoginStatus, apiRegisterAndLogin } from "../helpers/api";
+import {
+  apiLoginStatus,
+  apiRegisterAndLogin,
+  apiUpdateProfile,
+} from "../helpers/api";
 import { signInAsAdmin, signInAsNewUser } from "../helpers/auth";
 import { fillField } from "../helpers/ui";
 
@@ -106,5 +110,63 @@ test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
 
   test("tokensiz temizlik reddediliyor", async ({ request }) => {
     expect((await request.post("/api/revalidate-profile")).status()).toBe(401);
+  });
+
+  test("ust uste temizlik backend'e tekrar tekrar sormuyor", async ({
+    page,
+    request,
+  }) => {
+    /**
+     * Her temizlik cagrisi backend'e bir "kim bu" sorusu demekti.
+     * Olculdu: tek istemciden 60 paralel temizlik -> backend'e 61
+     * kimlik sorgusu. Kisa omurlu bir kimlik onbellegiyle 60 -> 1.
+     *
+     * Temizligin KENDISI atlanmiyor -- atlamak ya da 429 dondurmek
+     * guvenli olmazdi: dusen bir temizlik, kullanicinin kendi
+     * sayfasini bir dakika eski gormesi demek. Onun icin asagida hem
+     * kaynagin onbellek oldugu hem de temizligin gercekten calistigi
+     * olculuyor.
+     */
+    const { token } = await signInAsNewUser(page);
+    const baslik = { Authorization: `Bearer ${token}` };
+
+    const ilk = await request.post("/api/revalidate-profile", {
+      headers: baslik,
+    });
+    expect(ilk.status()).toBe(200);
+    expect(ilk.headers()["x-kimlik-kaynagi"]).toBe("backend");
+
+    const ikinci = await request.post("/api/revalidate-profile", {
+      headers: baslik,
+    });
+    expect(ikinci.status()).toBe(200);
+    expect(ikinci.headers()["x-kimlik-kaynagi"]).toBe("onbellek");
+  });
+
+  test("onbellekten gelen kimlikle de temizlik gercekten yapiliyor", async ({
+    page,
+  }) => {
+    /**
+     * Kimlik onbellekten geldiginde de sayfa tazeleniyor mu? Asil
+     * risk burada: "sorguyu atlayalim" diye baslayip "temizligi de
+     * atlayalim"a varan bir degisiklik, kullanicinin kendi sayfasini
+     * eskitirdi.
+     *
+     * Iki ardisik kayit: ikincisi kimlik onbellegi doluyken yapiliyor.
+     */
+    const { user, token } = await signInAsNewUser(page);
+    await apiUpdateProfile(token, { display_name: "Birinci Ad" });
+
+    await page.goto(`/en/${user.username}`);
+    await expect(
+      page.getByRole("heading", { name: "Birinci Ad" })
+    ).toBeVisible();
+
+    await apiUpdateProfile(token, { display_name: "Ikinci Ad" });
+
+    await page.goto(`/en/${user.username}`);
+    await expect(
+      page.getByRole("heading", { name: "Ikinci Ad" })
+    ).toBeVisible();
   });
 });
