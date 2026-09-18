@@ -9,6 +9,7 @@
   - [What the suite covers](#what-the-suite-covers)
   - [Requirements](#requirements)
   - [Running tests](#running-tests)
+  - [Before you commit](#before-you-commit)
   - [How the helpers work](#how-the-helpers-work)
   - [CI](#ci)
 
@@ -108,6 +109,21 @@ and no test depends on data left behind by another.
 npm run dev          # Playwright also starts this itself if it is not running
 npx playwright test  # or: npx playwright test --ui
 ```
+
+## Before you commit
+
+`.husky/pre-commit` runs `npm run check` — the exact command the lint workflow
+runs (`eslint . && prettier --check . && tsc --noEmit`). If it passes, that
+workflow will too; if it fails, the commit stops and the message names the fix
+(`npm run format` or `npm run lint:fix`). It takes about twelve seconds.
+
+It deliberately does **not** fix anything. The hook used to run `lint:fix` and
+`format`, which looked like it worked and did not: prettier rewrote the file on
+disk while the commit took the already-staged, unformatted version. The commit
+went out broken, the working tree was left dirty, and the lint workflow went red
+— measured, on this repository. Re-staging what the hook fixed is not the answer
+either: with a file staged in pieces via `git add -p`, the unstaged rest would be
+swept into the commit.
 
 ## How the helpers work
 
