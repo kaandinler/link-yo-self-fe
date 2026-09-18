@@ -143,6 +143,63 @@ test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
     expect(ikinci.headers()["x-kimlik-kaynagi"]).toBe("onbellek");
   });
 
+  test("uc, kullanici adinin var olup olmadigini soylemiyor", async ({
+    page,
+    request,
+  }) => {
+    /**
+     * Govdede kullanici adi kabul eden her uc bir varlik sorgusuna
+     * donusebilir. Olculdu: var olan ve olmayan kullanici adi icin
+     * yanit BIREBIR ayni (403 "Yetki yok"), yani admin olmayan biri
+     * bu uctan kimin kayitli oldugunu ogrenemiyor.
+     *
+     * Kolayca bozulabilir: ileride "kullanici bulunamadi" diye
+     * yardimsever bir 404 eklenirse uc bir varlik oracle'ina doner.
+     */
+    const { user: baskasi } = await apiRegisterAndLogin();
+    const { token } = await signInAsNewUser(page);
+    const baslik = { Authorization: `Bearer ${token}` };
+
+    const varOlan = await request.post("/api/revalidate-profile", {
+      headers: baslik,
+      data: { username: baskasi.username },
+    });
+    const olmayan = await request.post("/api/revalidate-profile", {
+      headers: baslik,
+      data: { username: "kesinlikle-olmayan-kullanici" },
+    });
+
+    expect(varOlan.status()).toBe(403);
+    expect(olmayan.status()).toBe(varOlan.status());
+    expect(await olmayan.text()).toBe(await varOlan.text());
+  });
+
+  test("tanilama basliklari yalnizca kendi basarili cagrinda", async ({
+    page,
+    request,
+  }) => {
+    /**
+     * x-kimlik-kaynagi ve x-profil-onbellek-saniye bilincli olarak
+     * uretimde de donuyor: CDN'lerin x-cache: HIT/MISS basligiyla ayni
+     * is -- hangi katmanin cevapladigini gormek hata ayiklamanin en
+     * dogrudan yolu. Tasidiklari sey de cagiranin kendi istegine ait.
+     *
+     * Olculdu ve burada tutulan sinir: kimligi dogrulanmamis birine
+     * hicbir tanilama gitmiyor.
+     */
+    const tokensiz = await request.post("/api/revalidate-profile");
+    expect(tokensiz.status()).toBe(401);
+    expect(tokensiz.headers()["x-kimlik-kaynagi"]).toBeUndefined();
+    expect(tokensiz.headers()["x-profil-onbellek-saniye"]).toBeUndefined();
+
+    const { token } = await signInAsNewUser(page);
+    const kendi = await request.post("/api/revalidate-profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(kendi.status()).toBe(200);
+    expect(kendi.headers()["x-kimlik-kaynagi"]).toBeDefined();
+  });
+
   test("tazelik penceresi disari bildiriliyor", async ({ page, request }) => {
     /**
      * Pencerenin ne kadar oldugu isletme bilgisi: `revalidateTag`
