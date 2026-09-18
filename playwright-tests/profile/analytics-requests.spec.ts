@@ -25,7 +25,9 @@ function istekKaydedici(page: Page) {
     if (!adres.includes("/v1/")) return;
     // Sorgu dizgisi atiliyor: burada ayni UCA kac kez gidildigi
     // onemli, hangi aralikla gidildigi degil.
-    istekler.push(`${r.method()} ${adres.replace(/^.*\/v1\//, "/v1/").replace(/\?.*$/, "")}`);
+    istekler.push(
+      `${r.method()} ${adres.replace(/^.*\/v1\//, "/v1/").replace(/\?.*$/, "")}`
+    );
   });
   return istekler;
 }
@@ -94,8 +96,7 @@ test.describe("Analytics istekleri", () => {
     // Araliga bagli olan uc ise gercekten yeniden cekilmeli; aksi
     // halde test "hicbir sey olmadi"yi da gecerdi.
     expect(
-      istekler.filter((istek) => istek.includes("/analytics/timeseries"))
-        .length
+      istekler.filter((istek) => istek.includes("/analytics/timeseries")).length
     ).toBeGreaterThan(0);
   });
 });
