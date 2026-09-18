@@ -31,6 +31,22 @@ export function profilEtiketi(username: string): string {
   return `profil:${username.toLowerCase()}`;
 }
 
+/**
+ * Paylasim kartinin onbellek etiketi.
+ *
+ * NEDEN SAYFADAN AYRI: kart ayni ucu farkli bir adresle cagiriyor
+ * (`?count_view=false`), yani Next icin bambaska bir onbellek kaydi.
+ * Sayfanin etiketini temizlemek kartinkini temizlemiyordu -- olculdu,
+ * duzenlemeden sonra kart bayt bayt aynisi donuyordu.
+ *
+ * Ayri isim olmasi ayrica ise yariyor: ikisinin suresi farkli (sayfa
+ * 60 saniye, kart bir saat) ve ileride yalnizca birini temizlemek
+ * gerekebilir.
+ */
+export function kartEtiketi(username: string): string {
+  return `kart:${username.toLowerCase()}`;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface PublicLink {
@@ -132,6 +148,10 @@ export const getPublicProfile = cache(async function getPublicProfile(
  *
  * `cache()` burada ise yaramaz: o yalnizca tek bir render icindeki
  * ayni cagrilari birlestiriyor, istekler arasinda bir sey tutmuyor.
+ *
+ * Bir saat "bayat kalma suresi" degil, tavan: profilini kaydeden
+ * istemci kart etiketini de temizliyor, yani kart da aninda
+ * guncelleniyor. Sure yalnizca o cagri kaybolursa devreye giriyor.
  */
 export async function getPublicProfileForCard(
   username: string
@@ -145,7 +165,12 @@ export async function getPublicProfileForCard(
       // ucu cagirdigi icin bir kaziyicinin kart istegi, kimsenin
       // gormedigi bir sayfa icin goruntulenme uretiyordu.
       `${API_URL}/v1/p/${encodeURIComponent(username)}?count_view=false`,
-      { next: { revalidate: KART_ONBELLEK_SANIYE } }
+      {
+        next: {
+          revalidate: KART_ONBELLEK_SANIYE,
+          tags: [kartEtiketi(username)],
+        },
+      }
     );
     if (!response.ok) return null;
 

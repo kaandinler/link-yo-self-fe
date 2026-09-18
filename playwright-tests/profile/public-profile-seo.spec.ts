@@ -239,6 +239,42 @@ test.describe("Public profil SEO", () => {
     expect(basligi).not.toContain("no-store");
   });
 
+  test("kart duzenlemeden sonra guncelleniyor", async ({ page, request }) => {
+    /**
+     * NEDEN OLCU BAYTLAR: kart bir PNG, icindeki yaziyi okuyamiyoruz.
+     * Ama gorunen ad belirgin sekilde degisirse cizim de degisir, yani
+     * "ayni baytlar" dogrudan "eski kart" demek.
+     *
+     * NEDEN BU AKIS: kart bir saatlik pencereyle onbellege aliniyor ve
+     * sayfadan AYRI bir kayit -- ayni ucu `?count_view=false` ile
+     * cagiriyor. Sayfanin etiketi temizlenirken kartinki durdugu icin
+     * avatarini ya da adini degistiren kullanicinin paylastigi
+     * baglanti bir saat eski karti gosteriyordu: olculdu, duzenlemeden
+     * sonra kart bayt bayt aynisiydi.
+     *
+     * Sira onemli: once kart istenmeli ki onbellek dolsun.
+     */
+    const { user, token } = await signInAsNewUser(page);
+    await page.goto(`/en/${user.username}`);
+    const gorsel = (await meta(page, 'meta[property="og:image"]'))!;
+
+    const ilk = await request.get(gorsel);
+    expect(ilk.status()).toBe(200);
+    expect(ilk.headers()["content-type"]).toContain("image/png");
+    const ilkBaytlar = await ilk.body();
+
+    await apiUpdateProfile(token, {
+      display_name: "Cok Daha Uzun Bir Gorunen Ad",
+    });
+
+    const ikinciBaytlar = await (await request.get(gorsel)).body();
+
+    expect(
+      ikinciBaytlar.equals(ilkBaytlar),
+      `kart degismedi: ${ilkBaytlar.length} -> ${ikinciBaytlar.length} bayt`
+    ).toBe(false);
+  });
+
   test("kart istegi goruntulenme sayilmiyor", async ({ page, request }) => {
     const { user, token } = await signInAsNewUser(page);
     await page.goto(`/en/${user.username}`);
