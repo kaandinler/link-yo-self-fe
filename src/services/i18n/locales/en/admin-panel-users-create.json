@@ -1,0 +1,59 @@
+{
+  "title": "Create user",
+  "actions": {
+    "submit": "Save",
+    "cancel": "Cancel"
+  },
+  "inputs": {
+    "username": {
+      "label": "Username",
+      "validation": {
+        "required": "Username is required",
+        "min": "Username must be at least 3 characters long",
+        "max": "Username must be at most 30 characters long",
+        "invalid": "Username can only contain letters, numbers, dot, dash and underscore"
+      }
+    },
+    "email": {
+      "label": "Email",
+      "validation": {
+        "invalid": "Email is invalid",
+        "required": "Email is required"
+      }
+    },
+    "firstName": {
+      "label": "First Name"
+    },
+    "lastName": {
+      "label": "Last Name"
+    },
+    "access": {
+      "label": "Access",
+      "options": {
+        "admin": "Admin",
+        "user": "User"
+      }
+    },
+    "password": {
+      "label": "Password",
+      "validation": {
+        "required": "Password is required",
+        "min": "Password must be at least 6 characters long"
+      }
+    },
+    "passwordConfirmation": {
+      "label": "Password confirmation",
+      "validation": {
+        "required": "Password confirmation is required",
+        "match": "Password confirmation must match password"
+      }
+    },
+    "<system>": "Do not remove this property"
+  },
+  "alerts": {
+    "user": {
+      "success": "User's profile has been created successfully",
+      "error": "User could not be created"
+    }
+  }
+}

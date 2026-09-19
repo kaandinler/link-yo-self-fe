@@ -1,0 +1,23 @@
+# NEDEN DUZELTMEK DEGIL, DENETLEMEK:
+#
+# Bu kanca once "npm run lint:fix && npm run format" kosuyordu. Olculdu:
+# kanca calisiyordu ama duzeltmeleri commit'e SOKMUYORDU -- prettier
+# dosyayi diskte duzeltiyor, commit ise zaten staged olan bozuk hali
+# aliyordu. Sonuc: commit bozuk gidiyor, calisma agaci kirli kaliyor ve
+# lint CI kirmizi doniyor.
+#
+# (Duzeltilenleri geri staged etmek de cozum degil: `git add -p` ile
+# parcali staged edilmis bir dosyada, staged edilmemis degisiklikler de
+# sessizce commit'e girerdi.)
+#
+# Bunun yerine kanca CI'in kosturdugu komutun AYNISINI kosturuyor:
+# eslint + prettier --check + tsc. Gecerse lint CI'in da gececegi
+# garanti; gecmezse commit durur. Olculdu: ~12 saniye, eski kancanin
+# ~9 saniyesiyle ayni mertebede.
+if ! npm run check; then
+  echo ""
+  echo "Commit durduruldu: 'npm run check' basarisiz."
+  echo "Bicimlendirme hatasiysa: npm run format"
+  echo "Lint hatasiysa:          npm run lint:fix"
+  exit 1
+fi
