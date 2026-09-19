@@ -116,25 +116,35 @@ test.describe("Links telefonda", () => {
     await waitForHydration(page, '[aria-label="Move Blog up"]');
     await page.getByRole("button", { name: "Move Blog up" }).click();
 
-    // Once siralamanin backend'e islendigini bekliyoruz; aksi halde
-    // asagidaki gezinme istegi henuz degismemis bir siralamayi
-    // okuyabilir ve test onbellegi degil yarisi olcerdi.
+    const yeniSira = [
+      "Blog",
+      "Portfolyo sitem ve butun yazilarim burada",
+      "Newsletter",
+    ];
+
+    // IKI AYRI BEKLEME, ikisi de gerekli.
+    //
+    // (1) Once backend: tiklamanin gercekten islendigini gorelim.
+    //     Bu olmadan, ok tiklanmamissa bile test "sayfa eski" diye
+    //     kirilir ve sebebi onbellek sanilir.
     await expect
       .poll(async () =>
         (await apiListLinks(token)).map((link: { title: string }) => link.title)
       )
-      .toEqual([
-        "Blog",
-        "Portfolyo sitem ve butun yazilarim burada",
-        "Newsletter",
-      ]);
+      .toEqual(yeniSira);
 
-    await page.goto(`/en/${user.username}`);
-    expect(await herkeseAcikSira(page)).toEqual([
-      "Blog",
-      "Portfolyo sitem ve butun yazilarim burada",
-      "Newsletter",
-    ]);
+    // (2) Sonra sayfa: temizligin etkisini olcen sey bu. Tek sefer
+    //     gezinmek yaris yaratiyordu -- backend sirayi kaydettiginde
+    //     temizlik henuz yolda olabiliyor. Yoklamak o yarisi
+    //     kaldiriyor ama olcumu zayiflatmiyor: temizlik hic
+    //     yapilmazsa sayfa altmis saniye eski kalir, yani yoklama
+    //     timeout'unda kirilir (temizlik kaldirilarak dogrulandi).
+    await expect
+      .poll(async () => {
+        await page.goto(`/en/${user.username}`);
+        return herkeseAcikSira(page);
+      })
+      .toEqual(yeniSira);
   });
 
   test("bastaki linkin yukari oku, sondakinin asagi oku kapali", async ({
