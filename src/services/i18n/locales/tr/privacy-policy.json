@@ -1,0 +1,115 @@
+{
+  "title": "Gizlilik Politikası",
+  "lastUpdated": "Son güncelleme: 20 Eylül 2026",
+  "intro": {
+    "p1": "Link Yo Self, bağlantılarınızı tek bir sayfada yayımlamanızı sağlar. Bu politika, hizmetin neyi sakladığını, neden sakladığını ve bilinçli olarak neyi saklamadığını anlatır.",
+    "p2": "Metin, Link Yo Self sitesini ve API'sini kapsar. Bağlantılarınızın işaret ettiği siteleri kapsamaz: bir ziyaretçi bağlantılarınızdan birine tıkladığı anda o sitenin kendi politikası geçerli olur."
+  },
+  "summary": {
+    "title": "Kısaca",
+    "item1": "Hesap açmak için bir e-posta adresi, bir kullanıcı adı ve bir şifre gerekiyor. Profilinizdeki her şey isteğe bağlı.",
+    "item2": "Herkese açık sayfanıza koyduğunuz her şey herkese açıktır. Sayfanın amacı zaten bu.",
+    "item3": "Profil görüntülemelerini ve bağlantı tıklamalarını sayıyoruz; ziyaretçinin hangi siteden geldiğini de kaydediyoruz — yalnızca alan adını, örneğin \"instagram.com\".",
+    "item4": "Ziyaretçilerin IP adreslerini saklamıyoruz, ziyaretçileri tanımlamıyoruz ve üründe hiçbir yerde reklam ya da analitik izleyicisi yok.",
+    "item5": "Size yalnızca kendi hesabınızla ilgili e-posta gönderiyoruz: adres doğrulama ve şifre sıfırlama."
+  },
+  "yourData": {
+    "title": "Bize verdiğiniz bilgiler",
+    "accountTitle": "Hesap",
+    "accountDescription": "Bir kullanıcı adı, bir e-posta adresi ve bir şifre. Şifre hiçbir zaman yazdığınız haliyle saklanmıyor; yalnızca bcrypt özeti tutuluyor ve bu özetten şifreniz geri üretilemiyor. E-posta adresi hem giriş yolunuz hem hesabınızı doğrulama yolunuz, hem de şifrenizi unutursanız hesabınıza dönmenin tek yolu.",
+    "profileTitle": "Profil",
+    "profileDescription": "Bunların hepsi isteğe bağlı ve istediğiniz zaman değiştirebilir ya da silebilirsiniz: görünen ad, ad ve soyad, kısa bir tanıtım yazısı, profil resminizin adresi, web siteniz, sayfa başlığı ve açıklaması, Twitter, Instagram ve LinkedIn kullanıcı adlarınız, eklediğiniz sosyal hesaplar ve renk ile arka plan seçimleriniz.",
+    "linksTitle": "Bağlantılar",
+    "linksDescription": "Eklediğiniz her bağlantı için: başlığı, adresi, isteğe bağlı açıklaması, isteğe bağlı simge adresi, renkleri ve listedeki sırası.",
+    "settingsTitle": "Sayfa ayarları",
+    "settingsDescription": "Sayfanızın +18 uyarısının arkasından açılıp açılmayacağı ve kendi hesabınızdan belirlediğiniz ek ayarlar.",
+    "publicNote": "Profiliniz ve bağlantılarınız kullanıcı adınızın altında herkese açık olarak yayımlanıyor. Oraya koyduğunuz her şeyi, adresi bilen ya da bulan herkes okuyabilir; sayfayı çeken arama motorları ve sosyal ağlar da okuyabilir."
+  },
+  "automatic": {
+    "title": "Otomatik toplanan bilgiler",
+    "description": "Biri herkese açık sayfanızı açtığında ya da bağlantılarınızdan birine tıkladığında, sayfanızın nasıl gittiğini görebilmeniz için olay kaydediliyor. Kaydedilen her olay şunları içeriyor:",
+    "item1": "olayın türü — sayfa görüntüleme ya da bağlantı tıklaması,",
+    "item2": "tıklamaysa, hangi bağlantınıza tıklandığı,",
+    "item3": "tarih ve saat,",
+    "item4": "ziyaretçinin geldiği sitenin alan adı, örneğin \"instagram.com\" — hiçbir zaman adresin tamamı değil.",
+    "referrerNote": "Yalnızca alan adı tutuluyor, çünkü geldiği adresin geri kalanı çoğu zaman kampanya kimlikleri ve oturum belirteçleri taşıyor. Bunların bize bir faydası yok, saklamanın ise bir bedeli var.",
+    "notCollectedTitle": "Toplanmayanlar",
+    "notCollected": "Hizmet IP adresi saklamıyor. Ziyaretçiye herhangi bir kimlik atamıyor, kimsenin profilini çıkarmıyor ve kimseyi başka siteler arasında izlemiyor. Üründe reklam ağı, analitik sağlayıcısı ve üçüncü taraf izleme betiği yok. Bir olay kaydı bir tıklamanın gerçekleştiğini ve nereden geldiğini söylüyor; kimin yaptığı konusunda hiçbir şey söylemiyor."
+  },
+  "cookies": {
+    "title": "Çerezler ve tarayıcı depolaması",
+    "description": "Hizmet az sayıda çerez ve tarayıcı kaydı kullanıyor; hepsi sitenin çalışması için. Hiçbiri reklam için ya da sizi başka sitelerde ölçmek için değil.",
+    "authTitle": "Oturum çerezi",
+    "authDescription": "Giriş yaptığınızda oluşturuluyor ve oturumunuzu taşıyor. Silmek çıkış yapmak anlamına geliyor; çıkış düğmesi de aynı şeyi yapıyor. Yalnızca hesabı olup giriş yapmış kişiler için oluşturuluyor.",
+    "languageTitle": "Dil çerezi",
+    "languageDescription": "Siteyi İngilizce mi Türkçe mi okuduğunuzu hatırlıyor, böylece bir sonraki ziyaretinizde yeniden seçmeniz gerekmiyor.",
+    "themeTitle": "Tema tercihi",
+    "themeDescription": "Sitenin seçtiğiniz açık ya da koyu temayla açılması için tarayıcınızda tutuluyor. Tarayıcınızdan hiç çıkmıyor.",
+    "adultTitle": "+18 uyarısı onayı",
+    "adultDescription": "Bir profil +18 uyarısının arkasında yayımlanmışsa, verdiğiniz onay o profil için kendi tarayıcınızda tutuluyor ve uyarı size bir daha gösterilmiyor. Tarayıcınızdan hiç çıkmıyor, profilin sahibine de bildirilmiyor.",
+    "controlNote": "Bunların hepsini tarayıcınızın ayarlarından silebilir ya da engelleyebilirsiniz. Oturum çerezini engellemek giriş yapmış kalamamanız anlamına gelir; geri kalanlar yalnızca rahatlıkla ilgili."
+  },
+  "use": {
+    "title": "Bilgiler ne için kullanılıyor",
+    "item1": "Hesabınızı işletmek ve herkese açık sayfanızı yayımlamak için.",
+    "item2": "Kendi sayfanızın istatistiklerini yalnızca size göstermek için.",
+    "item3": "Kendi hesabınızla ilgili e-posta göndermek için — adresinizi doğrulamak ve şifrenizi sıfırlamak.",
+    "item4": "Hesapları güvende tutmak için: şifre doğrulama, oturumların süresini doldurma, kapatılan hesabın kapalı kalmasını sağlama.",
+    "notUsed": "Bilgileriniz satılmıyor, kiralanmıyor ve reklam ya da pazarlama için kimseye verilmiyor."
+  },
+  "emails": {
+    "title": "E-postalar",
+    "description": "Hizmet yalnızca kendi hesabınızın parçası olan e-postaları gönderiyor: e-posta adresinizi onaylamanız için bir bağlantı ve istediyseniz şifrenizi sıfırlamanız için bir bağlantı. Bülten ya da tanıtım postası yok. Bu iletiler bir e-posta sağlayıcısı üzerinden gönderiliyor; sağlayıcı iletiyi ulaştırabilmek için zorunlu olarak adresinizi ve iletinin içeriğini işliyor."
+  },
+  "thirdParties": {
+    "title": "İşin içindeki diğer taraflar",
+    "description": "Hizmet az sayıda sağlayıcıya ve kendi verdiğiniz adreslere dayanıyor:",
+    "hostingTitle": "Barındırma ve veritabanı.",
+    "hostingDescription": "Uygulama ve veritabanı bir barındırma sağlayıcısının altyapısında çalışıyor; hesabınız ve sayfa verileriniz orada duruyor.",
+    "emailTitle": "E-posta gönderimi.",
+    "emailDescription": "Hesap e-postaları gönderilmek üzere bir e-posta sağlayıcısına veriliyor.",
+    "imagesTitle": "Bağlantı verdiğiniz görseller.",
+    "imagesDescription": "Profil resimleri ve bağlantı simgeleri sizin verdiğiniz adresler; bu hizmete hiçbir görsel yüklenmiyor ve burada barındırılmıyor. Sayfanız ya da sosyal önizleme kartı gösterilirken görsel, seçtiğiniz sunucudan çekiliyor ve o sunucu isteği görüyor.",
+    "linksTitle": "Bağlantı verdiğiniz siteler.",
+    "linksDescription": "Bağlantılarınız sıradan bağlantılar. Birine tıklayan ziyaretçi bu hizmetten ayrılmış olur ve sonrasında olan her şeyi o site belirler."
+  },
+  "retention": {
+    "title": "Neyin ne kadar saklandığı",
+    "accountTitle": "Hesabınız",
+    "accountDescription": "Hesabınız ve içeriği, hesap var olduğu sürece saklanıyor.",
+    "closedTitle": "Hesabınızı kapattıktan sonra",
+    "closedDescription": "Hesabınızı kapatmak için şifreniz gerekiyor. İşlem anında geçerli oluyor: açık bütün oturumlar iptal ediliyor ve herkese açık sayfanız yayından kalkıyor. Kaydın kendisi ise silinmek yerine kapalı olarak işaretleniyor; bunun iki sebebi var — kullanıcı adınız ve e-posta adresiniz başkasının eline geçmesin diye ayrılmış kalıyor, ayrıca geçmiş istatistikler bu hesaba bağlı. Kaydın kapatılmasını değil silinmesini istiyorsanız bize yazıp isteyebilirsiniz.",
+    "tokensTitle": "Oturum ve tek kullanımlık belirteçler",
+    "tokensDescription": "Bir oturum yenilenmesi gerekene kadar en fazla yedi gün yaşıyor; çıkış yaptığınızda ya da hesabınızı kapattığınızda iptal ediliyor. Şifre sıfırlama bağlantısı bir saat, adres doğrulama bağlantısı bir gün geçerli; ikisi de yalnızca bir kez çalışıyor. İkisi de e-postada göründüğü haliyle saklanmıyor, yalnızca özeti tutuluyor: veritabanını okuyan biri bununla ne şifrenizi sıfırlayabiliyor ne de bir adresi doğrulayabiliyor.",
+    "eventsTitle": "İstatistikler",
+    "eventsDescription": "Kaydedilen görüntüleme ve tıklamalar, sayfanızın geçmişi size açık kalsın diye saklanıyor. Bir bağlantıyı silmek onun geçmiş tıklamalarını silmiyor; olaylar artık bir bağlantıya bağlı olmadan duruyor, böylece geçmiş bir günün toplamı bugün yaptığınız bir silme yüzünden değişmiyor."
+  },
+  "rights": {
+    "title": "Seçimleriniz",
+    "item1": "Profilinizdeki her şeyi ayarlarınızdan istediğiniz zaman değiştirebilir ya da silebilirsiniz.",
+    "item2": "Her bağlantı, bağlantılar sayfanızdan gizlenebilir ya da silinebilir.",
+    "item3": "Hesabınız, şifrenizle birlikte ayarlarınızdan kapatılabilir.",
+    "item4": "Hakkınızda saklananların bir kopyasını istemek ya da silinmesini istemek için bize yazabilirsiniz.",
+    "note": "Yaşadığınız yere göre veri koruma mevzuatı size bilgileriniz üzerinde başka haklar da tanıyor olabilir. Bu hakları kullanmanın yolu aşağıdaki adrese yazmaktır."
+  },
+  "security": {
+    "title": "Güvenlik",
+    "description": "Şifreler bcrypt özeti olarak saklanıyor. Şifre sıfırlama ve doğrulama bağlantıları yalnızca özet olarak tutuluyor. Oturumların süresi doluyor ve hesap kapatıldığında iptal ediliyor. Hizmete giden trafik HTTPS üzerinden taşınıyor. Bunların hiçbiri hiçbir hizmeti kusursuz güvenli yapmaz ve böyle bir iddiamız yok; bir sorun bulursanız lütfen bize bildirin."
+  },
+  "children": {
+    "title": "Çocuklar",
+    "description": "Hizmet 13 yaşından küçük çocuklara yönelik değil ve onlar için bilerek hesap açılmıyor. Bir çocuğun hesap açtığını düşünüyorsanız bize yazın, hesap kaldırılsın."
+  },
+  "transfers": {
+    "title": "Bilgilerinizin işlendiği yer",
+    "description": "Hizmet, sizin ülkenizden başka bir ülkede bulunabilecek bir altyapıda çalışıyor; yani bilgileriniz yaşadığınız ülkenin dışında, farklı veri koruma kurallarının geçerli olduğu bir yerde işleniyor olabilir."
+  },
+  "changes": {
+    "title": "Bu politikadaki değişiklikler",
+    "description": "Ürün değiştikçe bu politika da değişecek. Değiştiğinde yeni sürüm bu sayfada yayımlanıyor ve en üstteki tarih güncelleniyor. Önemli bir değişiklikten sonra yeniden okumakta fayda var."
+  },
+  "contact": {
+    "title": "İletişim",
+    "description": "Bu politikayla ya da bilgilerinizle ilgili her konu için şu adrese yazabilirsiniz:"
+  }
+}

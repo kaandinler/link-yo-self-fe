@@ -19,22 +19,16 @@ import path from "node:path";
 /**
  * Bilincli olarak CEVRILMEYEN namespace'ler.
  *
- * privacy-policy: metin boilerplate'ten geliyor ve BASKA BIR SIRKETI
- * adlandiriyor -- company_description "refers to BC Boilerplates",
- * website_description "refers to Extensive React Boilerplate". Yani
- * canli sayfa kullanicilara verilerinin baska bir urun tarafindan
- * islendigini soyluyor. Bunu Turkceye cevirmek yanlis bir iddiayi
- * ikinci bir dile tasimak olurdu; once Ingilizcesi bu urun icin
- * yeniden yazilmali.
- *
- * Eksik namespace zarif dusuyor: i18next fallbackLng "en" oldugu icin
- * /tr/privacy-policy Ingilizce icerikle aciliyor, ham anahtar
- * basilmiyor (olculdu).
+ * SU AN BOS. Daha once privacy-policy buradaydi: metin boilerplate'ten
+ * geliyordu ve BASKA BIR SIRKETI adlandiriyordu, o yuzden Turkceye
+ * cevirmek yanlis bir iddiayi ikinci bir dile tasimak olurdu. Metin bu
+ * urun icin bastan yazildi, liste de bosaldi.
  *
  * Bu liste bir kapi: bir namespace'in cevrilmemis olmasi ancak burada
- * yaziliysa ve sebebi belliyse gecerli.
+ * yaziliyorsa ve sebebi belliyse gecerli. Bos kalmasi tercih edilen
+ * durum.
  */
-const CEVRILMEYENLER = new Set(["privacy-policy"]);
+const CEVRILMEYENLER = new Set<string>();
 
 const KOK = path.join(__dirname, "..", "..");
 const LOCALES = path.join(KOK, "src", "services", "i18n", "locales");
@@ -171,5 +165,51 @@ test.describe("Ceviri dosyalari", () => {
     }
 
     expect(eksik, `tanimsiz anahtarlar:\n${eksik.join("\n")}`).toEqual([]);
+  });
+  test("cevirilerde boilerplate kalintisi yok", () => {
+    /**
+     * NEDEN: bu depo bir boilerplate'ten cikti ve gizlilik politikasi
+     * canlida aylarca BASKA BIR SIRKETI anlatti -- "refers to BC
+     * Boilerplates", brocoders'in iletisim adresleri, ve hicbir zaman
+     * doldurulmamis "This is the first description text." yer tutucusu.
+     * Hicbiri derlemeyi, lint'i ya da tip kontrolunu kirmiyordu; ceviri
+     * dosyasindaki bir dize yalnizca birinin sayfayi okumasiyla ortaya
+     * cikiyor.
+     *
+     * Bu test o sinifin tamamini kapatmiyor ama bilinen kalintilarin
+     * GERI GELMESINI engelliyor: kopyala-yapistir ile baska bir
+     * namespace'e tasinsalar da burada yakalanirlar.
+     */
+    const YASAKLI = [
+      "BC Boilerplates",
+      "bcboilerplates",
+      "brocoders",
+      "Extensive React Boilerplate",
+      "extensive-react-boilerplate",
+      "nestjs-boilerplate",
+      "This is the first description text",
+      "This is the second description text",
+    ];
+
+    const bulunanlar: string[] = [];
+
+    for (const dil of diller()) {
+      for (const ns of namespaceler(dil)) {
+        const ham = fs.readFileSync(
+          path.join(LOCALES, dil, `${ns}.json`),
+          "utf8"
+        );
+        for (const yasak of YASAKLI) {
+          if (ham.toLowerCase().includes(yasak.toLowerCase())) {
+            bulunanlar.push(`${dil}/${ns}.json -> "${yasak}"`);
+          }
+        }
+      }
+    }
+
+    expect(
+      bulunanlar,
+      `boilerplate kalintisi:\n${bulunanlar.join("\n")}`
+    ).toEqual([]);
   });
 });
