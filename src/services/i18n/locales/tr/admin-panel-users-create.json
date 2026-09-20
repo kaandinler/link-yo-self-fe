@@ -1,0 +1,59 @@
+{
+  "title": "Kullanıcı oluştur",
+  "actions": {
+    "submit": "Kaydet",
+    "cancel": "Vazgeç"
+  },
+  "inputs": {
+    "username": {
+      "label": "Kullanıcı adı",
+      "validation": {
+        "required": "Kullanıcı adı zorunlu",
+        "min": "Kullanıcı adı en az 3 karakter olmalı",
+        "max": "Kullanıcı adı en fazla 30 karakter olmalı",
+        "invalid": "Kullanıcı adı yalnızca harf, rakam, nokta, tire ve alt çizgi içerebilir"
+      }
+    },
+    "email": {
+      "label": "E-posta",
+      "validation": {
+        "invalid": "E-posta geçersiz",
+        "required": "E-posta zorunlu"
+      }
+    },
+    "firstName": {
+      "label": "Ad"
+    },
+    "lastName": {
+      "label": "Soyad"
+    },
+    "access": {
+      "label": "Yetki",
+      "options": {
+        "admin": "Yönetici",
+        "user": "Kullanıcı"
+      }
+    },
+    "password": {
+      "label": "Şifre",
+      "validation": {
+        "required": "Şifre zorunlu",
+        "min": "Şifre en az 6 karakter olmalı"
+      }
+    },
+    "passwordConfirmation": {
+      "label": "Şifre tekrarı",
+      "validation": {
+        "required": "Şifre tekrarı zorunlu",
+        "match": "Şifre tekrarı şifreyle aynı olmalı"
+      }
+    },
+    "<system>": "Bu alanı kaldırmayın"
+  },
+  "alerts": {
+    "user": {
+      "success": "Kullanıcının profili başarıyla oluşturuldu",
+      "error": "Kullanıcı oluşturulamadı"
+    }
+  }
+}

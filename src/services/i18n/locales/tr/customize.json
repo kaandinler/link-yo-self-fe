@@ -1,0 +1,51 @@
+{
+  "title": "Profili Özelleştir",
+  "subtitle": "Herkese açık sayfanızın nasıl görüneceğini seçin",
+  "viewPublicPage": "Herkese açık sayfayı gör",
+  "themeColor": {
+    "label": "Tema rengi",
+    "hint": "Bağlantılarınızda ve degradenin ikinci yarısında kullanılır.",
+    "hexLabel": "Tema rengi hex kodu"
+  },
+  "background": {
+    "label": "Arka plan",
+    "types": {
+      "color": "Düz renk",
+      "gradient": "Degrade",
+      "image": "Görsel"
+    },
+    "hints": {
+      "color": "Sayfanızın arkasında tek bir düz renk.",
+      "gradient": "Arka plan renginden tema renginize doğru geçiş yapar.",
+      "image": "Sayfanız internetten bir görselin üzerinde durur."
+    },
+    "imageUrl": "Görsel adresi",
+    "imageInvalid": "http:// veya https:// ile başlamalı; tırnak ya da parantez içermemeli.",
+    "colorLabel": "Arka plan rengi",
+    "colorHexLabel": "Arka plan rengi hex kodu"
+  },
+  "save": "Görünümü kaydet",
+  "saving": "Kaydediliyor…",
+  "saved": "Sayfa görünümünüz kaydedildi.",
+  "errors": {
+    "themeColor": "Tema rengi #1383eb gibi bir hex kodu olmalı.",
+    "backgroundImage": "Arka plan görseli, tırnak ya da parantez içermeyen bir http(s) adresi olmalı.",
+    "backgroundColor": "Arka plan rengi #ffffff gibi bir hex kodu olmalı.",
+    "generic": "Değişiklikleriniz kaydedilemedi."
+  },
+  "preview": {
+    "title": "Önizleme",
+    "name": "Adınız",
+    "bio": "Hakkınızdaki yazı burada görünür",
+    "link1": "İlk bağlantınız",
+    "link2": "Başka bir bağlantı",
+    "note": "Önizleme, herkese açık sayfanızla aynı kuralları kullanır."
+  },
+  "contentWarning": {
+    "title": "İçerik uyarısı",
+    "label": "Sayfanızdan önce 18+ uyarısı gösterin. Ziyaretçiler bir kez onaylar, sonraki gelişlerinde doğrudan bağlantılarınıza gider.",
+    "save": "Ayarları kaydet",
+    "saving": "Kaydediliyor…",
+    "saved": "Sayfa ayarlarınız kaydedildi."
+  }
+}

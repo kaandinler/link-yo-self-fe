@@ -1,0 +1,32 @@
+{
+  "title": "Ayarlar",
+  "subtitle": "Hesabınızı ve profilinizi yönetin",
+  "unverified": {
+    "title": "E-postanız doğrulanmadı",
+    "body": "Şifre sıfırlama bağlantıları bu adrese gidiyor. Şifrenizi unutursanız geri dönebilmek için adresinizi doğrulayın.",
+    "sent": "Doğrulama bağlantısı {{email}} adresine gönderildi.",
+    "sending": "Gönderiliyor…",
+    "send": "Doğrulama bağlantısı gönder"
+  },
+  "account": {
+    "title": "Hesap",
+    "confirmed": "doğrulandı",
+    "empty": "—",
+    "editProfile": "Profili düzenle",
+    "customizePage": "Sayfayı özelleştir",
+    "viewPublicPage": "Herkese açık sayfayı gör"
+  },
+  "danger": {
+    "title": "Hesabınızı kapatın",
+    "body": "Profil sayfanız ve bütün bağlantılarınız çalışmayı bırakacak, her yerde oturumunuz kapanacak. Bu işlem geri alınamaz.",
+    "passwordLabel": "Şifrenizle onaylayın",
+    "passwordRequired": "Onaylamak için şifrenizi girin.",
+    "closing": "Kapatılıyor…",
+    "submit": "Hesabımı kapat",
+    "failed": "Hesabınız kapatılamadı. Tekrar deneyin.",
+    "confirmTitle": "Hesabınız kapatılsın mı?",
+    "confirmMessage": "Profil sayfanız ve bütün bağlantılarınız çalışmayı bırakacak. Bu işlem geri alınamaz.",
+    "confirmYes": "Hesabı kapat",
+    "confirmNo": "Hesabımı koru"
+  }
+}

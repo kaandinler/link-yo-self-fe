@@ -61,5 +61,12 @@
       "length": "Password must be at least {{min}} characters long",
       "max": "Password must be at most {{max}} characters long"
     }
+  },
+  "pageTitles": {
+    "settings": "Settings",
+    "links": "Links",
+    "dashboard": "Dashboard",
+    "analytics": "Analytics",
+    "customize": "Customize"
   }
 }

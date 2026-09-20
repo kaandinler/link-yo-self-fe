@@ -1,0 +1,81 @@
+{
+  "title": "Bağlantılarım",
+  "subtitle": "Sosyal medya ve diğer bağlantılarınızı yönetin",
+  "loading": "Bağlantılarınız yükleniyor...",
+  "loadFailed": "Bağlantılarınız yüklenemedi",
+  "retry": "Tekrar dene",
+  "stats": {
+    "totalLinks": "Toplam Bağlantı",
+    "activeLinks": "Aktif Bağlantı",
+    "totalClicks": "Toplam Tıklama"
+  },
+  "showInactive": "Pasif bağlantıları göster",
+  "dragToReorder": "Sıralamak için sürükleyin",
+  "useArrows": "Sıralamak için okları kullanın",
+  "createFirst": "İlk Bağlantınızı Oluşturun",
+  "reordering": "Bağlantı sırası güncelleniyor...",
+  "clicks": "tıklama",
+  "addNew": "Yeni bağlantı ekle",
+  "item": {
+    "copyUrl": "Adresi kopyala",
+    "visit": "Bağlantıya git",
+    "edit": "Bağlantıyı düzenle",
+    "delete": "Bağlantıyı sil",
+    "moveUp": "{{title}} bağlantısını yukarı taşı",
+    "moveDown": "{{title}} bağlantısını aşağı taşı",
+    "background": "Arka plan: {{color}}",
+    "text": "Metin: {{color}}",
+    "iconAlt": "Simge"
+  },
+  "dialog": {
+    "editTitle": "Bağlantıyı Düzenle",
+    "addTitle": "Yeni Bağlantı Ekle",
+    "close": "Kapat",
+    "cancel": "Vazgeç",
+    "update": "Bağlantıyı Güncelle",
+    "create": "Bağlantı Oluştur",
+    "titleLabel": "Başlık *",
+    "titlePlaceholder": "ör. Instagram Profili",
+    "urlLabel": "Adres *",
+    "urlPlaceholder": "https://ornek.com",
+    "descriptionLabel": "Açıklama",
+    "descriptionPlaceholder": "Bağlantınız için isteğe bağlı açıklama",
+    "appearance": "Görünüm Ayarları",
+    "iconUrl": "Simge adresi",
+    "iconPlaceholder": "https://ornek.com/simge.png",
+    "borderRadius": "Köşe Yuvarlaklığı",
+    "backgroundColor": "Arka Plan Rengi",
+    "backgroundPlaceholder": "#1383eb",
+    "textColor": "Metin Rengi",
+    "textPlaceholder": "#ffffff",
+    "preview": "Önizleme",
+    "makeActive": "Bu bağlantıyı aktif yap (sayfanızda görünsün)"
+  },
+  "validation": {
+    "titleRequired": "Başlık zorunlu",
+    "urlRequired": "Adres zorunlu",
+    "urlInvalid": "Lütfen http:// veya https:// ile başlayan geçerli bir adres girin"
+  },
+  "deleteConfirm": {
+    "title": "Bağlantıyı Sil",
+    "message": "Bu bağlantıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+    "confirm": "Sil"
+  },
+  "quickActions": {
+    "title": "Hızlı İşlemler",
+    "copyProfileUrl": "Profil Adresini Kopyala",
+    "deactivateAll": "Aktif Olanların Hepsini Kapat",
+    "activateAll": "Pasif Olanların Hepsini Aç"
+  },
+  "tips": {
+    "title": "İpuçları",
+    "clearTitles": "Açık başlıklar kullanın",
+    "clearTitlesBody": "Ziyaretçilerin her bağlantının ne işe yaradığını kolayca anlamasını sağlayın",
+    "order": "Önceliğe göre sıralayın",
+    "orderBody": "En önemli bağlantılarınızı en üste koyun",
+    "appearance": "Görünümü özelleştirin",
+    "appearanceBody": "Bağlantılarınızın öne çıkması için renk ve simge kullanın",
+    "monitor": "Performansı izleyin",
+    "monitorBody": "Kitlenizde neyin karşılık bulduğunu görmek için tıklama sayılarına bakın"
+  }
+}

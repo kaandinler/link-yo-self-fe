@@ -16,6 +16,26 @@ import path from "node:path";
  *  3. Hicbir ceviri bos degil.
  */
 
+/**
+ * Bilincli olarak CEVRILMEYEN namespace'ler.
+ *
+ * privacy-policy: metin boilerplate'ten geliyor ve BASKA BIR SIRKETI
+ * adlandiriyor -- company_description "refers to BC Boilerplates",
+ * website_description "refers to Extensive React Boilerplate". Yani
+ * canli sayfa kullanicilara verilerinin baska bir urun tarafindan
+ * islendigini soyluyor. Bunu Turkceye cevirmek yanlis bir iddiayi
+ * ikinci bir dile tasimak olurdu; once Ingilizcesi bu urun icin
+ * yeniden yazilmali.
+ *
+ * Eksik namespace zarif dusuyor: i18next fallbackLng "en" oldugu icin
+ * /tr/privacy-policy Ingilizce icerikle aciliyor, ham anahtar
+ * basilmiyor (olculdu).
+ *
+ * Bu liste bir kapi: bir namespace'in cevrilmemis olmasi ancak burada
+ * yaziliysa ve sebebi belliyse gecerli.
+ */
+const CEVRILMEYENLER = new Set(["privacy-policy"]);
+
 const KOK = path.join(__dirname, "..", "..");
 const LOCALES = path.join(KOK, "src", "services", "i18n", "locales");
 const KAYNAK = path.join(KOK, "src");
@@ -75,12 +95,17 @@ test.describe("Ceviri dosyalari", () => {
     const [ilkDil, ...digerleri] = diller();
 
     for (const dil of digerleri) {
+      const beklenenNs = namespaceler(ilkDil).filter(
+        (ns) => !CEVRILMEYENLER.has(ns)
+      );
+
       expect(
         namespaceler(dil),
-        `${dil} ve ${ilkDil} ayni namespace'lere sahip olmali`
-      ).toEqual(namespaceler(ilkDil));
+        `${dil} ve ${ilkDil} ayni namespace'lere sahip olmali ` +
+          `(CEVRILMEYENLER haric)`
+      ).toEqual(beklenenNs);
 
-      for (const ns of namespaceler(ilkDil)) {
+      for (const ns of beklenenNs) {
         const beklenen = Array.from(oku(ilkDil, ns).keys()).sort();
         const gelen = Array.from(oku(dil, ns).keys()).sort();
 

@@ -1,0 +1,147 @@
+{
+  "title": "Profil",
+  "title1": "Profili Düzenle",
+  "title2": "E-postayı Değiştir",
+  "title3": "Şifreyi Değiştir",
+  "title4": "Herkese açık sayfanız",
+  "title5": "Sosyal bağlantılar",
+  "actions": {
+    "edit": "Düzenle",
+    "submit": "Kaydet",
+    "cancel": "Vazgeç",
+    "customize": "Sayfayı özelleştir",
+    "viewPublic": "Herkese açık sayfayı gör",
+    "manageLinks": "Bağlantıları yönet"
+  },
+  "inputs": {
+    "firstName": {
+      "label": "Ad",
+      "validation": {
+        "required": "Ad zorunlu"
+      }
+    },
+    "lastName": {
+      "label": "Soyad",
+      "validation": {
+        "required": "Soyad zorunlu"
+      }
+    },
+    "email": {
+      "label": "Yeni E-posta",
+      "validation": {
+        "required": "E-posta zorunlu",
+        "email": "E-posta geçerli olmalı",
+        "currentEmail": "E-posta mevcut adresinizden farklı olmalı",
+        "server": {
+          "emailExists": "Bu e-posta zaten kullanılıyor"
+        }
+      }
+    },
+    "emailConfirmation": {
+      "label": "E-posta Tekrarı",
+      "validation": {
+        "required": "E-posta tekrarı zorunlu",
+        "match": "E-posta tekrarı e-postayla aynı olmalı"
+      }
+    },
+    "oldPassword": {
+      "label": "Eski Şifre",
+      "validation": {
+        "required": "Eski şifre zorunlu",
+        "min": "Eski şifre en az 6 karakter olmalı",
+        "server": {
+          "incorrectOldPassword": "Eski şifre geçerli değil"
+        }
+      }
+    },
+    "password": {
+      "label": "Yeni Şifre",
+      "validation": {
+        "required": "Yeni şifre zorunlu",
+        "min": "Yeni şifre en az 6 karakter olmalı"
+      }
+    },
+    "passwordConfirmation": {
+      "label": "Şifre Tekrarı",
+      "validation": {
+        "required": "Şifre tekrarı zorunlu",
+        "match": "Şifre tekrarı şifreyle aynı olmalı"
+      }
+    },
+    "currentPassword": {
+      "label": "Mevcut Şifre",
+      "validation": {
+        "required": "Mevcut şifre zorunlu",
+        "incorrect": "Mevcut şifre geçerli değil"
+      }
+    },
+    "displayName": {
+      "label": "Görünen ad",
+      "helper": "Herkese açık sayfanızın başlığı olarak görünür. Boş bırakırsanız adınız kullanılır."
+    },
+    "bio": {
+      "label": "Hakkımda",
+      "helper": "Adınızın altında bir iki cümle."
+    },
+    "profileImageUrl": {
+      "label": "Profil görseli adresi",
+      "validation": {
+        "url": "http:// veya https:// ile başlamalı"
+      }
+    },
+    "pageTitle": {
+      "label": "Sayfa başlığı",
+      "helper": "Tarayıcı sekmesi başlığı ve arama sonucu başlığı."
+    },
+    "pageDescription": {
+      "label": "Sayfa açıklaması",
+      "helper": "Arama sonuçlarında başlığın altında görünür."
+    },
+    "website": {
+      "label": "Web sitesi",
+      "helper": "Yazmazsanız https:// eklenir."
+    },
+    "twitterUsername": {
+      "label": "Twitter kullanıcı adı",
+      "helper": "@ işareti olmadan."
+    },
+    "instagramUsername": {
+      "label": "Instagram kullanıcı adı",
+      "helper": "@ işareti olmadan."
+    },
+    "linkedinUsername": {
+      "label": "LinkedIn kullanıcı adı",
+      "helper": "@ işareti olmadan."
+    }
+  },
+  "alerts": {
+    "email": {
+      "success": "{{email}} adresine bir doğrulama bağlantısı gönderdik. Adresiniz, bağlantıya tıkladığınızda değişecek.",
+      "error": "Doğrulama bağlantısı gönderilemedi"
+    },
+    "password": {
+      "success": "Şifreniz başarıyla güncellendi",
+      "error": "Şifreniz güncellenemedi"
+    },
+    "profile": {
+      "success": "Profiliniz başarıyla güncellendi"
+    },
+    "page": {
+      "success": "Sayfa bilgileriniz güncellendi",
+      "error": "Sayfa bilgileriniz güncellenemedi"
+    },
+    "social": {
+      "success": "Sosyal bağlantılarınız güncellendi",
+      "error": "Sosyal bağlantılarınız güncellenemedi"
+    }
+  },
+  "overview": {
+    "subtitle": "Herkese açık sayfanızda nasıl göründüğünüz",
+    "noName": "Adınız",
+    "noBio": "Henüz tanıtım yazısı yok",
+    "emailVerified": "doğrulandı",
+    "emailUnverified": "doğrulanmadı",
+    "completion": "Profil tamamlanma",
+    "completionHint": "%100'e ulaşmak için tanıtım yazısı, fotoğraf, bağlantılar ve sayfa bilgileri ekleyin."
+  }
+}

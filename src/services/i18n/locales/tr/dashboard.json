@@ -1,0 +1,34 @@
+{
+  "welcomeBack": "Tekrar hoş geldiniz!",
+  "welcomeBackNamed": "Tekrar hoş geldiniz, {{name}}! 👋",
+  "subtitle": "Bağlantılarınızı yönetin, performansınızı izleyin",
+  "previewPage": "Sayfayı Önizle",
+  "addLink": "Bağlantı Ekle",
+  "profileUrl": {
+    "title": "Profil Adresiniz",
+    "copied": "Kopyalandı!",
+    "copy": "Kopyala",
+    "share": "Paylaş"
+  },
+  "stats": {
+    "totalClicks": "Toplam Tıklama",
+    "activeLinks": "Aktif Bağlantı",
+    "profileViews": "Profil Görüntülenme"
+  },
+  "quickActions": {
+    "title": "Hızlı İşlemler",
+    "addLink": "Bağlantı Ekle",
+    "editProfile": "Profili Düzenle",
+    "customize": "Özelleştir",
+    "analytics": "Analitik"
+  },
+  "links": {
+    "title": "Bağlantılarınız",
+    "viewAll": "Tümünü Gör",
+    "loading": "Bağlantılarınız yükleniyor…",
+    "empty": "Henüz hiç bağlantı eklemediniz.",
+    "addFirst": "İlk bağlantınızı ekleyin",
+    "clicks": "tıklama",
+    "open": "{{title}} bağlantısını aç"
+  }
+}
