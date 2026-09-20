@@ -149,6 +149,33 @@ export async function apiUpdateProfile(
   return body.data;
 }
 
+/**
+ * PUT /v1/profile/page-settings
+ *
+ * Kaydettikten sonra onbellek temizleniyor: herkese acik sayfa bir
+ * dakikalik pencereyle onbellege aliniyor ve +18 bayragi o sayfada
+ * gorunuyor. Uygulama bunu use-fetch.ts'te kendiliginden yapiyor;
+ * testler backend'e dogrudan gittigi icin burada acikca yapiliyor.
+ */
+export async function apiUpdatePageSettings(
+  token: string,
+  data: Record<string, unknown>
+) {
+  const api = await ctx();
+  const response = await api.put(`${apiUrl}/v1/profile/page-settings`, {
+    data,
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(
+    response.status(),
+    `sayfa ayarlari guncellenemedi: ${await response.text()}`
+  ).toBe(200);
+  const body = await response.json();
+  await api.dispose();
+  await apiPurgeProfileCache(token);
+  return body.data;
+}
+
 /** GET /v1/analytics/summary */
 export async function apiAnalyticsSummary(token: string) {
   const api = await ctx();
