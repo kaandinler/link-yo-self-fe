@@ -34,7 +34,9 @@
     "item4": "ziyaretçinin geldiği sitenin alan adı, örneğin \"instagram.com\" — hiçbir zaman adresin tamamı değil.",
     "referrerNote": "Yalnızca alan adı tutuluyor, çünkü geldiği adresin geri kalanı çoğu zaman kampanya kimlikleri ve oturum belirteçleri taşıyor. Bunların bize bir faydası yok, saklamanın ise bir bedeli var.",
     "notCollectedTitle": "Toplanmayanlar",
-    "notCollected": "Hizmet IP adresi saklamıyor. Ziyaretçiye herhangi bir kimlik atamıyor, kimsenin profilini çıkarmıyor ve kimseyi başka siteler arasında izlemiyor. Üründe reklam ağı, analitik sağlayıcısı ve üçüncü taraf izleme betiği yok. Bir olay kaydı bir tıklamanın gerçekleştiğini ve nereden geldiğini söylüyor; kimin yaptığı konusunda hiçbir şey söylemiyor."
+    "notCollected": "Hizmet IP adresi saklamıyor. Ziyaretçiye herhangi bir kimlik atamıyor, kimsenin profilini çıkarmıyor ve kimseyi başka siteler arasında izlemiyor. Üründe reklam ağı, analitik sağlayıcısı ve üçüncü taraf izleme betiği yok. Bir olay kaydı bir tıklamanın gerçekleştiğini ve nereden geldiğini söylüyor; kimin yaptığı konusunda hiçbir şey söylemiyor. İsteğin geldiği adresin kullanıldığı tek bir yer var ve hemen aşağıda anlatılıyor.",
+    "abuseTitle": "Kötüye kullanımı engelleme",
+    "abuse": "Giriş, kayıt ve şifre sıfırlama istekleri sayılıyor; böylece kimse şifreleri toplu deneyerek bulamıyor, toplu hesap açamıyor ve bir adrese sıfırlama postası yağdıramıyor. Sayabilmek için bir isteği diğerinden ayırt etmek gerekiyor ve bunu mümkün kılan şey isteğin geldiği adres. Adresin kendisi hiçbir zaman saklanmıyor: yalnızca geri çevrilemez bir parmak izi, sayma penceresi boyunca — en fazla bir saat — bellekte tutuluyor ve sonra siliniyor. Veritabanına yazılmıyor, log'larımıza yazılmıyor, hesabınıza ya da hakkınızdaki başka hiçbir şeye bağlanmıyor. Bu, hesaplarla ilgili isteklerde geçerli; birinin herkese açık sayfasını okumak bu şekilde sayılmıyor."
   },
   "cookies": {
     "title": "Çerezler ve tarayıcı depolaması",

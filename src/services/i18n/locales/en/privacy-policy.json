@@ -34,7 +34,9 @@
     "item4": "the host name of the site the visitor arrived from, such as \"instagram.com\" — never the full address.",
     "referrerNote": "Only the host name is kept because the rest of a referring address often carries campaign identifiers and session tokens. Those are of no use to us and would be a liability to store.",
     "notCollectedTitle": "What is not collected",
-    "notCollected": "The service does not store IP addresses. It does not set any identifier on a visitor, does not build a profile of anyone, and does not follow anybody across other sites. There is no advertising network, no analytics provider and no third-party tracking script in the product. An event row says that a click happened and where it came from; it says nothing about who made it."
+    "notCollected": "The service does not store IP addresses. It does not set any identifier on a visitor, does not build a profile of anyone, and does not follow anybody across other sites. There is no advertising network, no analytics provider and no third-party tracking script in the product. An event row says that a click happened and where it came from; it says nothing about who made it. There is one place where the address a request comes from is used at all, and it is described next.",
+    "abuseTitle": "Preventing abuse",
+    "abuse": "Sign-in, sign-up and password-reset requests are counted, so that nobody can guess passwords by trying them in bulk, create accounts in bulk, or bombard an address with reset emails. Counting has to tell one caller apart from another, and the address the request arrives from is what makes that possible. The address is never kept: only a one-way fingerprint of it is held, in memory, for as long as the counting window lasts — at most an hour — and then it is gone. It is not written to the database, not written to our logs, and not attached to your account or to anything else about you. This applies to requests that concern accounts; reading someone's public page is not counted this way."
   },
   "cookies": {
     "title": "Cookies and browser storage",

@@ -84,6 +84,32 @@ test.describe("Gizlilik politikasi", () => {
     await expect(kapatma).toContainText("marked closed rather than erased");
   });
 
+  test("IP'nin kullanildigi tek yer aciklanmis", async ({ page }) => {
+    /**
+     * Hiz siniri eklendiginde (BE) istegin geldigi adres ilk kez
+     * kullanilir oldu: sayac anahtari olarak, bellekte, tek yonlu
+     * parmak izi halinde. "IP saklamiyoruz" hala dogru -- ama
+     * metnin orada durup bunu hic soylememesi, dogru kelimelerle
+     * yaniltmak olurdu.
+     *
+     * Bu test o aciklamanin sayfadan sessizce dusmesini engelliyor.
+     */
+    await page.goto("/en/privacy-policy");
+
+    const kotuye = page.getByTestId("privacy-policy-abuse");
+    await expect(kotuye).toBeVisible();
+    // Ne icin kullanildigi...
+    await expect(kotuye).toContainText("Sign-in, sign-up and password-reset");
+    // ...ve saklanmadigi.
+    await expect(kotuye).toContainText("never kept");
+
+    // "IP saklamiyoruz" bolumu okuyucuyu buraya yonlendirmeli;
+    // yoksa iki ifade sayfanin iki ucunda celisir gorunur.
+    await expect(
+      page.getByTestId("privacy-policy-not-collected")
+    ).toContainText("described next");
+  });
+
   test("/tr adresinde Turkce basiyor", async ({ page }) => {
     await page.goto("/tr/privacy-policy");
 
