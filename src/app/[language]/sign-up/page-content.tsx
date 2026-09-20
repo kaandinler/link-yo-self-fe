@@ -16,15 +16,17 @@ import {
   logSignUpAttempt,
 } from "@/services/api/examples/sign-up-utils";
 import {
+  Ceviri,
   PASSWORD_MIN_LENGTH,
-  PASSWORD_RULES,
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
   USERNAME_PATTERN,
   getPasswordError,
+  passwordRuleLabels,
 } from "@/services/api/password-rules";
 import NextLink from "next/link";
 import useLanguage from "@/services/i18n/use-language";
+import { useTranslation } from "@/services/i18n/client";
 
 // Types
 type SignUpFormData = {
@@ -35,30 +37,29 @@ type SignUpFormData = {
 };
 
 // Validation function
-const validateForm = (data: SignUpFormData) => {
+const validateForm = (data: SignUpFormData, t: Ceviri) => {
   const errors: Partial<Record<keyof SignUpFormData, string>> = {};
   // Kullanici adi deseni backend ile ayni olmali; onceki hali nokta ve
   // tireyi reddediyordu, oysa backend bunlara izin veriyor.
   if (!data.username || data.username.length < USERNAME_MIN_LENGTH) {
-    errors.username = `Username must be at least ${USERNAME_MIN_LENGTH} characters`;
+    errors.username = t("validation.usernameMin", { min: USERNAME_MIN_LENGTH });
   } else if (data.username.length > USERNAME_MAX_LENGTH) {
-    errors.username = `Username must be at most ${USERNAME_MAX_LENGTH} characters`;
+    errors.username = t("validation.usernameMax", { max: USERNAME_MAX_LENGTH });
   } else if (!USERNAME_PATTERN.test(data.username)) {
-    errors.username =
-      "Username can only contain letters, numbers, dot, dash and underscore";
+    errors.username = t("validation.usernamePattern");
   }
 
   if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-    errors.email = "Please enter a valid email address";
+    errors.email = t("validation.email");
   }
 
-  const passwordError = getPasswordError(data.password ?? "");
+  const passwordError = getPasswordError(data.password ?? "", t);
   if (passwordError) {
     errors.password = passwordError;
   }
 
   if (!data.policy) {
-    errors.policy = "You must accept the terms and conditions";
+    errors.policy = t("validation.policy");
   }
 
   return errors;
@@ -141,6 +142,7 @@ const FormInput = ({
 
 // Main Component
 function LinkYoSelfSignUpForm() {
+  const { t } = useTranslation("sign-up");
   const [formData, setFormData] = useState<SignUpFormData>({
     email: "",
     password: "",
@@ -177,7 +179,7 @@ function LinkYoSelfSignUpForm() {
     e.preventDefault();
 
     // Validate form
-    const validationErrors = validateForm(formData);
+    const validationErrors = validateForm(formData, t);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -242,16 +244,12 @@ function LinkYoSelfSignUpForm() {
             setSubmitError(signUpResult.message);
           }
         } else {
-          setSubmitError(
-            signUpResult.message || "Registration failed. Please try again."
-          );
+          setSubmitError(signUpResult.message || t("validation.failed"));
         }
       }
     } catch (error) {
       // Network veya diğer hatalar
-      setSubmitError(
-        "Network error occurred. Please check your connection and try again."
-      );
+      setSubmitError(t("validation.network"));
       console.error("❌ Registration error:", error);
     } finally {
       setIsSubmitting(false);
@@ -272,10 +270,10 @@ function LinkYoSelfSignUpForm() {
           <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
             <Link className="h-8 w-8 text-ink" />
           </div>
-          <h2 className="text-3xl font-bold text-ink mb-2">Join LinkYoSelf</h2>
-          <p className="text-ink-soft">
-            Build your personal brand, share your links
-          </p>
+          <h2 className="text-3xl font-bold text-ink mb-2">
+            {t("form.heading")}
+          </h2>
+          <p className="text-ink-soft">{t("form.subheading")}</p>
         </div>
 
         {/* Form Card */}
@@ -295,9 +293,7 @@ function LinkYoSelfSignUpForm() {
                       {/* Kayit dogrulama maili gonderiyor; sifre sifirlama
                           baglantisi bu adrese gidecegi icin soylenmeli. */}
                       <p className="text-sm text-green-300/80 mt-1">
-                        We sent a confirmation link to your email address. You
-                        can sign in right away, but please confirm it so
-                        password reset links reach you.
+                        {t("form.confirmationSent")}
                       </p>
                     </div>
                   </div>
@@ -307,7 +303,7 @@ function LinkYoSelfSignUpForm() {
                   href={`/${language}/sign-in`}
                   className="w-full flex justify-center items-center py-3 px-4 rounded-lg text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all"
                 >
-                  Sign in
+                  {t("form.goSignIn")}
                 </NextLink>
               </div>
             ) : (
@@ -337,15 +333,15 @@ function LinkYoSelfSignUpForm() {
                 <div>
                   <FormInput
                     name="username"
-                    label="Username"
+                    label={t("form.username")}
                     icon={Link}
                     value={formData.username}
                     onChange={handleInputChange}
                     error={errors.username}
-                    placeholder="username"
+                    placeholder={t("form.usernamePlaceholder")}
                   />
                   <p className="mt-1 text-sm text-ink-muted">
-                    Your profile:{" "}
+                    {t("form.profilePreview")}{" "}
                     <span className="font-medium text-accent">
                       {profileUrl}
                     </span>
@@ -355,25 +351,27 @@ function LinkYoSelfSignUpForm() {
                 {/* Email */}
                 <FormInput
                   name="email"
-                  label="Email"
+                  label={t("inputs.email.label")}
                   type="email"
                   icon={Mail}
                   value={formData.email}
                   onChange={handleInputChange}
                   error={errors.email}
-                  placeholder="example@email.com"
+                  placeholder={t("form.emailPlaceholder")}
                 />
 
                 {/* Password */}
                 <FormInput
                   name="password"
-                  label="Password"
+                  label={t("inputs.password.label")}
                   type="password"
                   icon={Lock}
                   value={formData.password}
                   onChange={handleInputChange}
                   error={errors.password}
-                  placeholder={`At least ${PASSWORD_MIN_LENGTH} characters`}
+                  placeholder={t("form.passwordPlaceholder", {
+                    min: PASSWORD_MIN_LENGTH,
+                  })}
                   showPasswordToggle={true}
                   onTogglePassword={() => setShowPassword(!showPassword)}
                   showPassword={showPassword}
@@ -381,9 +379,9 @@ function LinkYoSelfSignUpForm() {
 
                 {/* Password Requirements */}
                 <div className="text-xs text-ink-muted space-y-1">
-                  <p>Your password must include:</p>
+                  <p>{t("form.passwordRequirements")}</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {PASSWORD_RULES.map((rule) => (
+                    {passwordRuleLabels(t).map((rule) => (
                       <div
                         key={rule.key}
                         className={`flex items-center gap-1 ${
@@ -428,21 +426,21 @@ function LinkYoSelfSignUpForm() {
                       </div>
                     </div>
                     <span className="text-sm text-ink-soft leading-5">
-                      I agree to the{" "}
+                      {t("form.policyAgree")}{" "}
                       <a
                         href="/terms"
                         target="_blank"
                         className="text-accent hover:text-accent font-medium underline"
                       >
-                        Terms of Service
+                        {t("form.termsOfService")}
                       </a>{" "}
-                      and{" "}
+                      {t("form.and")}{" "}
                       <a
                         href="/privacy"
                         target="_blank"
                         className="text-accent hover:text-accent font-medium underline"
                       >
-                        Privacy Policy
+                        {t("form.privacyPolicy")}
                       </a>
                     </span>
                   </label>
@@ -474,10 +472,10 @@ function LinkYoSelfSignUpForm() {
                   {isSubmitting ? (
                     <div className="flex items-center justify-center gap-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                      Creating account...
+                      {t("form.creating")}
                     </div>
                   ) : (
-                    "Create Account"
+                    t("actions.submit")
                   )}
                 </button>
 
@@ -487,8 +485,8 @@ function LinkYoSelfSignUpForm() {
                     href="/sign-in"
                     className="text-sm text-ink-muted hover:text-accent transition-colors duration-200"
                   >
-                    Already have an account?{" "}
-                    <span className="font-medium">Sign in</span>
+                    {t("form.haveAccount")}{" "}
+                    <span className="font-medium">{t("form.signIn")}</span>
                   </a>
                 </div>
 
@@ -508,9 +506,7 @@ function LinkYoSelfSignUpForm() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-sm text-ink-muted">
-            Create your digital identity with LinkYoSelf ✨
-          </p>
+          <p className="text-sm text-ink-muted">{t("form.footer")}</p>
         </div>
       </div>
     </div>
