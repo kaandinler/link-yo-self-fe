@@ -79,7 +79,8 @@ const useValidationChangePasswordSchema = () => {
 
   return yup.object().shape({
     password: passwordSchema(
-      t("admin-panel-users-edit:inputs.password.validation.required")
+      t("admin-panel-users-edit:inputs.password.validation.required"),
+      t
     ),
     passwordConfirmation: yup
       .string()

@@ -61,7 +61,8 @@ const useValidationSchema = () => {
     firstName: yup.string().default(""),
     lastName: yup.string().default(""),
     password: passwordSchema(
-      t("admin-panel-users-create:inputs.password.validation.required")
+      t("admin-panel-users-create:inputs.password.validation.required"),
+      t
     ),
     passwordConfirmation: yup
       .string()

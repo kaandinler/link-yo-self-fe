@@ -28,7 +28,8 @@ const useValidationSchema = () => {
 
   return yup.object().shape({
     password: passwordSchema(
-      t("password-change:inputs.password.validation.required")
+      t("password-change:inputs.password.validation.required"),
+      t
     ),
     passwordConfirmation: yup
       .string()

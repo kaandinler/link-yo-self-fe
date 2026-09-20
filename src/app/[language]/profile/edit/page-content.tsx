@@ -143,7 +143,10 @@ const useValidationChangePasswordSchema = () => {
     oldPassword: yup
       .string()
       .required(t("profile:inputs.oldPassword.validation.required")),
-    password: passwordSchema(t("profile:inputs.password.validation.required")),
+    password: passwordSchema(
+      t("profile:inputs.password.validation.required"),
+      t
+    ),
     passwordConfirmation: yup
       .string()
       .oneOf(

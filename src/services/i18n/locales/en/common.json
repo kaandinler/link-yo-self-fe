@@ -46,5 +46,20 @@
     "facebook": {
       "action": "Login with Facebook"
     }
+  },
+  "password": {
+    "labels": {
+      "lowercase": "Lowercase",
+      "uppercase": "Uppercase",
+      "number": "Number",
+      "length": "{{min}}+ chars"
+    },
+    "errors": {
+      "lowercase": "Password must contain at least one lowercase letter",
+      "uppercase": "Password must contain at least one uppercase letter",
+      "number": "Password must contain at least one number",
+      "length": "Password must be at least {{min}} characters long",
+      "max": "Password must be at most {{max}} characters long"
+    }
   }
 }
