@@ -14,6 +14,7 @@
 import React from "react";
 import type { ReferrerSource } from "@/services/api/services/analytics";
 import { CHART } from "./palette";
+import { useTranslation } from "@/services/i18n/client";
 
 /** Ana grafikteki "Link clicks" serisiyle ayni renk. */
 const KAYNAK_RENGI = CHART.clicks;
@@ -45,12 +46,10 @@ export default function ReferrerBars({
   sources: ReferrerSource[];
   totalClicks: number;
 }) {
+  const { t } = useTranslation("analytics");
+
   if (sources.length === 0) {
-    return (
-      <p className="text-ink-muted">
-        No clicks in this range, so there are no traffic sources to show yet.
-      </p>
-    );
+    return <p className="text-ink-muted">{t("referrers.empty")}</p>;
   }
 
   return (

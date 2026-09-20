@@ -4,6 +4,7 @@ import i18next from "i18next";
 import { useEffect, useState } from "react";
 import {
   initReactI18next,
+  Trans,
   useTranslation as useTranslationOriginal,
 } from "react-i18next";
 import resourcesToBackend from "i18next-resources-to-backend";
@@ -31,6 +32,16 @@ i18next
     },
     preload: runsOnServerSide ? languages : [],
   });
+
+/**
+ * Icinde isaretleme gecen cumleler icin.
+ *
+ * NEDEN GEREKLI: "<b>{{n}}</b> clicks · <b>{{m}}</b> profile views" gibi
+ * bir cumleyi parcalara bolup ayri anahtarlar yapmak, kelime sirasi
+ * farkli olan dillerde bozuk cumle uretir -- parcalarin sirasi koda
+ * gomulu kalir. Trans, isaretlemeyi koruyup sirayi cevirmene birakiyor.
+ */
+export { Trans };
 
 export function useTranslation(namespace: string, options?: object) {
   const language = useLanguage();

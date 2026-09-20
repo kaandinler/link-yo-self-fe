@@ -36,6 +36,7 @@ import { useAnalyticsSummary } from "@/services/api/services/analytics";
 import useAuth from "@/services/auth/use-auth";
 import useLanguage from "@/services/i18n/use-language";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "@/services/i18n/client";
 
 // Types
 interface LinkFormData {
@@ -65,6 +66,8 @@ const ConfirmModal = ({
   onCancel: () => void;
   isLoading?: boolean;
 }) => {
+  const { t } = useTranslation("links");
+
   if (!isOpen) return null;
 
   return (
@@ -78,7 +81,7 @@ const ConfirmModal = ({
             disabled={isLoading}
             className="px-4 py-2 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors disabled:opacity-50"
           >
-            Cancel
+            {t("dialog.cancel")}
           </button>
           <button
             onClick={onConfirm}
@@ -86,7 +89,7 @@ const ConfirmModal = ({
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Delete
+            {t("deleteConfirm.confirm")}
           </button>
         </div>
       </div>
@@ -108,6 +111,7 @@ const LinkModal = ({
   onSave: (data: LinkFormData) => void;
   isLoading: boolean;
 }) => {
+  const { t } = useTranslation("links");
   const [formData, setFormData] = useState<LinkFormData>({
     title: link?.title || "",
     url: link?.url || "",
@@ -152,14 +156,13 @@ const LinkModal = ({
     const newErrors: Partial<LinkFormData> = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = "Title is required";
+      newErrors.title = t("validation.titleRequired");
     }
 
     if (!formData.url.trim()) {
-      newErrors.url = "URL is required";
+      newErrors.url = t("validation.urlRequired");
     } else if (!/^https?:\/\/.+/.test(formData.url)) {
-      newErrors.url =
-        "Please enter a valid URL starting with http:// or https://";
+      newErrors.url = t("validation.urlInvalid");
     }
 
     setErrors(newErrors);
@@ -185,11 +188,11 @@ const LinkModal = ({
       <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-line bg-surface-raised">
         <div className="flex shrink-0 items-center justify-between px-6 pb-4 pt-6">
           <h3 className="text-xl font-semibold text-ink">
-            {link ? "Edit Link" : "Add New Link"}
+            {link ? t("dialog.editTitle") : t("dialog.addTitle")}
           </h3>
           <button
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t("dialog.close")}
             className="text-ink-muted hover:text-ink transition-colors"
           >
             <X className="h-6 w-6" />
@@ -200,7 +203,7 @@ const LinkModal = ({
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 pb-2">
             <div>
               <label className="block text-sm font-medium text-ink-soft mb-2">
-                Title *
+                {t("dialog.titleLabel")}
               </label>
               <input
                 type="text"
@@ -208,7 +211,7 @@ const LinkModal = ({
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, title: e.target.value }))
                 }
-                placeholder="e.g., Instagram Profile"
+                placeholder={t("dialog.titlePlaceholder")}
                 className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
                   errors.title ? "border-red-500" : "border-line-strong"
                 }`}
@@ -223,7 +226,7 @@ const LinkModal = ({
 
             <div>
               <label className="block text-sm font-medium text-ink-soft mb-2">
-                URL *
+                {t("dialog.urlLabel")}
               </label>
               <input
                 type="url"
@@ -231,7 +234,7 @@ const LinkModal = ({
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, url: e.target.value }))
                 }
-                placeholder="https://example.com"
+                placeholder={t("dialog.urlPlaceholder")}
                 className={`w-full px-4 py-3 bg-field border rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors ${
                   errors.url ? "border-red-500" : "border-line-strong"
                 }`}
@@ -246,7 +249,7 @@ const LinkModal = ({
 
             <div>
               <label className="block text-sm font-medium text-ink-soft mb-2">
-                Description
+                {t("dialog.descriptionLabel")}
               </label>
               <textarea
                 value={formData.description}
@@ -256,7 +259,7 @@ const LinkModal = ({
                     description: e.target.value,
                   }))
                 }
-                placeholder="Optional description for your link"
+                placeholder={t("dialog.descriptionPlaceholder")}
                 rows={3}
                 className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
               />
@@ -265,13 +268,13 @@ const LinkModal = ({
             {/* Appearance Settings */}
             <div className="border-t border-line-strong pt-4">
               <h4 className="text-sm font-medium text-ink-soft mb-4">
-                Appearance Settings
+                {t("dialog.appearance")}
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-ink-soft mb-2">
-                    Icon URL
+                    {t("dialog.iconUrl")}
                   </label>
                   <input
                     type="url"
@@ -282,14 +285,14 @@ const LinkModal = ({
                         icon_url: e.target.value,
                       }))
                     }
-                    placeholder="https://example.com/icon.png"
+                    placeholder={t("dialog.iconPlaceholder")}
                     className="w-full px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-ink-soft mb-2">
-                    Border Radius
+                    {t("dialog.borderRadius")}
                   </label>
                   <input
                     type="number"
@@ -310,7 +313,7 @@ const LinkModal = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
                   <label className="block text-sm font-medium text-ink-soft mb-2">
-                    Background Color
+                    {t("dialog.backgroundColor")}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -333,7 +336,7 @@ const LinkModal = ({
                           background_color: e.target.value,
                         }))
                       }
-                      placeholder="#1383eb"
+                      placeholder={t("dialog.backgroundPlaceholder")}
                       className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                     />
                   </div>
@@ -341,7 +344,7 @@ const LinkModal = ({
 
                 <div>
                   <label className="block text-sm font-medium text-ink-soft mb-2">
-                    Text Color
+                    {t("dialog.textColor")}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -364,7 +367,7 @@ const LinkModal = ({
                           text_color: e.target.value,
                         }))
                       }
-                      placeholder="#ffffff"
+                      placeholder={t("dialog.textPlaceholder")}
                       className="flex-1 px-4 py-3 bg-field border border-line-strong rounded-lg text-ink placeholder-ink-muted focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                     />
                   </div>
@@ -374,7 +377,7 @@ const LinkModal = ({
               {/* Preview */}
               <div className="mt-4">
                 <label className="block text-sm font-medium text-ink-soft mb-2">
-                  Preview
+                  {t("dialog.preview")}
                 </label>
                 <div
                   className="p-4 rounded-lg text-center transition-all"
@@ -388,7 +391,7 @@ const LinkModal = ({
                     {formData.icon_url && (
                       <img
                         src={formData.icon_url}
-                        alt="Icon"
+                        alt={t("item.iconAlt")}
                         className="w-5 h-5"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
@@ -417,7 +420,7 @@ const LinkModal = ({
                 className="w-4 h-4 text-purple-600 bg-field border-line-strong rounded focus:ring-purple-500"
               />
               <label htmlFor="is_active" className="text-sm text-ink-soft">
-                Make this link active (visible on your page)
+                {t("dialog.makeActive")}
               </label>
             </div>
           </div>
@@ -430,7 +433,7 @@ const LinkModal = ({
               onClick={onClose}
               className="flex-1 px-4 py-3 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors"
             >
-              Cancel
+              {t("dialog.cancel")}
             </button>
             <button
               type="submit"
@@ -442,7 +445,7 @@ const LinkModal = ({
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  {link ? "Update Link" : "Create Link"}
+                  {link ? t("dialog.update") : t("dialog.create")}
                 </>
               )}
             </button>
@@ -478,6 +481,7 @@ const LinkItem = ({
   isDragging?: boolean;
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
 }) => {
+  const { t } = useTranslation("links");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -541,14 +545,16 @@ const LinkItem = ({
                   <div
                     className="w-3 h-3 rounded border border-line-stronger"
                     style={{ backgroundColor: link.background_color }}
-                    title={`Background: ${link.background_color}`}
+                    title={t("item.background", {
+                      color: link.background_color,
+                    })}
                   />
                 )}
                 {link.text_color && (
                   <div
                     className="w-3 h-3 rounded border border-line-stronger"
                     style={{ backgroundColor: link.text_color }}
-                    title={`Text: ${link.text_color}`}
+                    title={t("item.text", { color: link.text_color })}
                   />
                 )}
                 {link.border_radius !== undefined &&
@@ -578,7 +584,7 @@ const LinkItem = ({
               type="button"
               onClick={() => onMove(-1)}
               disabled={!canMoveUp || isDragDisabled}
-              aria-label={`Move ${link.title} up`}
+              aria-label={t("item.moveUp", { title: link.title })}
               className="p-3 text-ink-muted transition-colors hover:text-ink disabled:opacity-30"
             >
               <ArrowUp className="h-4 w-4" />
@@ -587,7 +593,7 @@ const LinkItem = ({
               type="button"
               onClick={() => onMove(1)}
               disabled={!canMoveDown || isDragDisabled}
-              aria-label={`Move ${link.title} down`}
+              aria-label={t("item.moveDown", { title: link.title })}
               className="p-3 text-ink-muted transition-colors hover:text-ink disabled:opacity-30"
             >
               <ArrowDown className="h-4 w-4" />
@@ -599,7 +605,7 @@ const LinkItem = ({
           {/* Stats */}
           <div className="flex-shrink-0 text-center">
             <div className="text-ink font-medium">{link.click_count}</div>
-            <div className="text-ink-muted text-xs">clicks</div>
+            <div className="text-ink-muted text-xs">{t("clicks")}</div>
           </div>
 
           {/* Actions. p-3 telefonda 40 piksellik dokunma hedefi veriyor;
@@ -608,7 +614,7 @@ const LinkItem = ({
             <button
               onClick={handleCopy}
               className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
-              title="Copy URL"
+              title={t("item.copyUrl")}
             >
               {copied ? (
                 <CheckCircle className="h-4 w-4 text-green-400" />
@@ -632,7 +638,7 @@ const LinkItem = ({
             <button
               onClick={() => window.open(link.url, "_blank")}
               className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
-              title="Visit link"
+              title={t("item.visit")}
             >
               <ExternalLink className="h-4 w-4" />
             </button>
@@ -640,7 +646,7 @@ const LinkItem = ({
             <button
               onClick={() => onEdit(link)}
               className="p-3 sm:p-2 text-ink-muted hover:text-ink transition-colors"
-              title="Edit link"
+              title={t("item.edit")}
             >
               <Edit3 className="h-4 w-4" />
             </button>
@@ -648,7 +654,7 @@ const LinkItem = ({
             <button
               onClick={() => onDelete(link.id)}
               className="p-3 sm:p-2 text-ink-muted hover:text-red-400 transition-colors"
-              title="Delete link"
+              title={t("item.delete")}
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -761,6 +767,7 @@ const DraggableList = ({
 
 // Main Component
 const Links: React.FC = () => {
+  const { t } = useTranslation("links");
   const { user } = useAuth();
   const language = useLanguage();
   const router = useRouter();
@@ -882,7 +889,7 @@ const Links: React.FC = () => {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <Loader2 className="h-12 w-12 text-accent animate-spin mx-auto mb-4" />
-              <p className="text-ink-muted">Loading your links...</p>
+              <p className="text-ink-muted">{t("loading")}</p>
             </div>
           </div>
         </div>
@@ -898,12 +905,12 @@ const Links: React.FC = () => {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-              <p className="text-red-400 mb-4">Failed to load your links</p>
+              <p className="text-red-400 mb-4">{t("loadFailed")}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg"
               >
-                Retry
+                {t("retry")}
               </button>
             </div>
           </div>
@@ -924,18 +931,16 @@ const Links: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold text-ink flex items-center gap-3">
               <Link2 className="h-8 w-8" />
-              My Links
+              {t("title")}
             </h1>
-            <p className="text-ink-muted mt-1">
-              Manage your social media and other links
-            </p>
+            <p className="text-ink-muted mt-1">{t("subtitle")}</p>
           </div>
 
           <button
             onClick={handleAddLink}
             disabled={createLinkMutation.isPending}
             // Butonun icinde yalnizca ikon var; erisilebilir bir adi olmali.
-            aria-label="Add new link"
+            aria-label={t("addNew")}
             className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:opacity-50"
           >
             {createLinkMutation.isPending ? (
@@ -957,7 +962,9 @@ const Links: React.FC = () => {
                 <div className="text-2xl font-bold text-ink">
                   {analyticsLoading ? "..." : totalLinks}
                 </div>
-                <div className="text-ink-muted text-sm">Total Links</div>
+                <div className="text-ink-muted text-sm">
+                  {t("stats.totalLinks")}
+                </div>
               </div>
             </div>
           </div>
@@ -971,7 +978,9 @@ const Links: React.FC = () => {
                 <div className="text-2xl font-bold text-ink">
                   {analyticsLoading ? "..." : activeLinksCount}
                 </div>
-                <div className="text-ink-muted text-sm">Active Links</div>
+                <div className="text-ink-muted text-sm">
+                  {t("stats.activeLinks")}
+                </div>
               </div>
             </div>
           </div>
@@ -985,7 +994,9 @@ const Links: React.FC = () => {
                 <div className="text-2xl font-bold text-ink">
                   {analyticsLoading ? "..." : totalClicks}
                 </div>
-                <div className="text-ink-muted text-sm">Total Clicks</div>
+                <div className="text-ink-muted text-sm">
+                  {t("stats.totalClicks")}
+                </div>
               </div>
             </div>
           </div>
@@ -1000,7 +1011,7 @@ const Links: React.FC = () => {
               onChange={(e) => setShowInactive(e.target.checked)}
               className="w-4 h-4 text-purple-600 bg-field border-line-strong rounded focus:ring-purple-500"
             />
-            Show inactive links
+            {t("showInactive")}
           </label>
 
           {filteredLinks.length > 1 && (
@@ -1009,8 +1020,8 @@ const Links: React.FC = () => {
             // gostermek kullaniciyi calismayan bir seye yonlendiriyordu.
             <div className="flex items-center gap-2 text-ink-muted text-sm">
               <GripVertical className="hidden h-4 w-4 sm:block" />
-              <span className="hidden sm:inline">Drag to reorder</span>
-              <span className="sm:hidden">Use the arrows to reorder</span>
+              <span className="hidden sm:inline">{t("dragToReorder")}</span>
+              <span className="sm:hidden">{t("useArrows")}</span>
             </div>
           )}
         </div>
@@ -1032,7 +1043,7 @@ const Links: React.FC = () => {
                 onClick={handleAddLink}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
               >
-                Create Your First Link
+                {t("createFirst")}
               </button>
             </div>
           ) : (
@@ -1053,7 +1064,7 @@ const Links: React.FC = () => {
             <div className="flex items-center gap-3">
               <Loader2 className="h-5 w-5 text-blue-400 animate-spin" />
               <span className="text-blue-400 font-medium">
-                Updating link order...
+                {t("reordering")}
               </span>
             </div>
           </div>
@@ -1063,7 +1074,7 @@ const Links: React.FC = () => {
         {filteredLinks.length > 0 && (
           <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-xl p-6">
             <h3 className="text-lg font-semibold text-ink mb-4">
-              Quick Actions
+              {t("quickActions.title")}
             </h3>
             <div className="flex flex-wrap gap-3">
               <button
@@ -1071,7 +1082,7 @@ const Links: React.FC = () => {
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm flex items-center gap-2"
               >
                 <Copy className="h-4 w-4" />
-                Copy Profile URL
+                {t("quickActions.copyProfileUrl")}
               </button>
               <button
                 onClick={() => {
@@ -1084,7 +1095,7 @@ const Links: React.FC = () => {
                 className="px-4 py-2 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors text-sm"
                 disabled={toggleLinkMutation.isPending}
               >
-                Deactivate All Active
+                {t("quickActions.deactivateAll")}
               </button>
               <button
                 onClick={() => {
@@ -1097,7 +1108,7 @@ const Links: React.FC = () => {
                 className="px-4 py-2 bg-field hover:bg-field-strong text-ink rounded-lg transition-colors text-sm"
                 disabled={toggleLinkMutation.isPending}
               >
-                Activate All Inactive
+                {t("quickActions.activateAll")}
               </button>
             </div>
           </div>
@@ -1107,43 +1118,41 @@ const Links: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm border border-blue-700/50 rounded-xl p-6">
           <h3 className="text-lg font-semibold text-ink mb-3 flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-blue-400" />
-            Pro Tips
+            {t("tips.title")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-ink font-medium">Use clear titles</div>
+                <div className="text-ink font-medium">
+                  {t("tips.clearTitles")}
+                </div>
                 <div className="text-ink-muted">
-                  Make it easy for visitors to understand what each link is for
+                  {t("tips.clearTitlesBody")}
                 </div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-ink font-medium">Order by priority</div>
-                <div className="text-ink-muted">
-                  Put your most important links at the top
-                </div>
+                <div className="text-ink font-medium">{t("tips.order")}</div>
+                <div className="text-ink-muted">{t("tips.orderBody")}</div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-ink font-medium">Customize appearance</div>
-                <div className="text-ink-muted">
-                  Use colors and icons to make your links stand out
+                <div className="text-ink font-medium">
+                  {t("tips.appearance")}
                 </div>
+                <div className="text-ink-muted">{t("tips.appearanceBody")}</div>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <div className="text-ink font-medium">Monitor performance</div>
-                <div className="text-ink-muted">
-                  Check click counts to see what resonates with your audience
-                </div>
+                <div className="text-ink font-medium">{t("tips.monitor")}</div>
+                <div className="text-ink-muted">{t("tips.monitorBody")}</div>
               </div>
             </div>
           </div>
@@ -1164,8 +1173,8 @@ const Links: React.FC = () => {
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}
-        title="Delete Link"
-        message="Are you sure you want to delete this link? This action cannot be undone."
+        title={t("deleteConfirm.title")}
+        message={t("deleteConfirm.message")}
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmModal({ isOpen: false })}
         isLoading={deleteLinkMutation.isPending}

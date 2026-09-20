@@ -13,6 +13,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import type { LinkTimeseries } from "@/services/api/services/analytics";
 import { CHART } from "./palette";
+import { useTranslation } from "@/services/i18n/client";
 
 /** Ana grafikteki tiklama serisiyle ayni renk. */
 const CLICK_COLOR = CHART.clicks;
@@ -45,6 +46,7 @@ type Props = {
 };
 
 export default function LinkSparkline({ link, tavan }: Props) {
+  const { t } = useTranslation("analytics");
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [seciliIndeks, setSeciliIndeks] = useState<number | null>(null);
 
@@ -102,7 +104,10 @@ export default function LinkSparkline({ link, tavan }: Props) {
         height={HEIGHT}
         role="img"
         tabIndex={0}
-        aria-label={`${link.title}: ${link.total_clicks} clicks in this range. Use arrow keys to read each day.`}
+        aria-label={t("chart.sparklineAria", {
+          title: link.title,
+          clicks: link.total_clicks,
+        })}
         className="outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
         onPointerMove={(olay) =>
           isaretle(olay.clientX, olay.currentTarget.getBoundingClientRect())
@@ -174,13 +179,14 @@ export default function LinkSparkline({ link, tavan }: Props) {
  * arttikca tablo genisliyor; kapsayici yatay kayiyor, sayfa degil.
  */
 export function ButunLinklerTablosu({ links }: { links: LinkTimeseries[] }) {
+  const { t } = useTranslation("analytics");
   const gunler = links[0]?.points ?? [];
 
   return (
     <table data-testid="link-table" className="min-w-full text-sm">
       <thead>
         <tr className="text-left text-ink-muted">
-          <th className="py-2 pr-4 font-medium">Day</th>
+          <th className="py-2 pr-4 font-medium">{t("chart.day")}</th>
           {links.map((link) => (
             <th key={link.id} className="py-2 pr-4 font-medium text-right">
               {link.title}

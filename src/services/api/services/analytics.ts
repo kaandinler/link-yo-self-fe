@@ -134,12 +134,23 @@ export function rangeDayCount(range: SelectedRange): number {
  * aralik icin bosuna istek atilmiyor. Ayni kurallar backend'de de var
  * (aralik_kur) -- burasi kolaylik, orasi otorite.
  */
-export function rangeError(start: string, end: string): string | null {
-  if (!start || !end) return "Pick both dates.";
+/**
+ * Gecersiz araligin sebebi, CEVIRI ANAHTARI olarak.
+ *
+ * Metin degil anahtar donuyor: bu fonksiyon bir servis modulu, `t`'ye
+ * erisimi yok ve olmamali. Cagiran taraf kendi `t`'siyle cozuyor.
+ */
+export type RangeErrorKey = {
+  key: string;
+  params?: Record<string, unknown>;
+};
+
+export function rangeError(start: string, end: string): RangeErrorKey | null {
+  if (!start || !end) return { key: "range.errors.bothDates" };
   const gun = rangeDayCount({ kind: "custom", start, end });
-  if (gun <= 0) return "The start date must come before the end date.";
+  if (gun <= 0) return { key: "range.errors.order" };
   if (gun > MAX_RANGE_DAYS) {
-    return `Pick at most ${MAX_RANGE_DAYS} days.`;
+    return { key: "range.errors.max", params: { days: MAX_RANGE_DAYS } };
   }
   return null;
 }

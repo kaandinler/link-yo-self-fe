@@ -1,0 +1,81 @@
+{
+  "title": "My Links",
+  "subtitle": "Manage your social media and other links",
+  "loading": "Loading your links...",
+  "loadFailed": "Failed to load your links",
+  "retry": "Retry",
+  "stats": {
+    "totalLinks": "Total Links",
+    "activeLinks": "Active Links",
+    "totalClicks": "Total Clicks"
+  },
+  "showInactive": "Show inactive links",
+  "dragToReorder": "Drag to reorder",
+  "useArrows": "Use the arrows to reorder",
+  "createFirst": "Create Your First Link",
+  "reordering": "Updating link order...",
+  "clicks": "clicks",
+  "addNew": "Add new link",
+  "item": {
+    "copyUrl": "Copy URL",
+    "visit": "Visit link",
+    "edit": "Edit link",
+    "delete": "Delete link",
+    "moveUp": "Move {{title}} up",
+    "moveDown": "Move {{title}} down",
+    "background": "Background: {{color}}",
+    "text": "Text: {{color}}",
+    "iconAlt": "Icon"
+  },
+  "dialog": {
+    "editTitle": "Edit Link",
+    "addTitle": "Add New Link",
+    "close": "Close",
+    "cancel": "Cancel",
+    "update": "Update Link",
+    "create": "Create Link",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "e.g., Instagram Profile",
+    "urlLabel": "URL *",
+    "urlPlaceholder": "https://example.com",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional description for your link",
+    "appearance": "Appearance Settings",
+    "iconUrl": "Icon URL",
+    "iconPlaceholder": "https://example.com/icon.png",
+    "borderRadius": "Border Radius",
+    "backgroundColor": "Background Color",
+    "backgroundPlaceholder": "#1383eb",
+    "textColor": "Text Color",
+    "textPlaceholder": "#ffffff",
+    "preview": "Preview",
+    "makeActive": "Make this link active (visible on your page)"
+  },
+  "validation": {
+    "titleRequired": "Title is required",
+    "urlRequired": "URL is required",
+    "urlInvalid": "Please enter a valid URL starting with http:// or https://"
+  },
+  "deleteConfirm": {
+    "title": "Delete Link",
+    "message": "Are you sure you want to delete this link? This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "copyProfileUrl": "Copy Profile URL",
+    "deactivateAll": "Deactivate All Active",
+    "activateAll": "Activate All Inactive"
+  },
+  "tips": {
+    "title": "Pro Tips",
+    "clearTitles": "Use clear titles",
+    "clearTitlesBody": "Make it easy for visitors to understand what each link is for",
+    "order": "Order by priority",
+    "orderBody": "Put your most important links at the top",
+    "appearance": "Customize appearance",
+    "appearanceBody": "Use colors and icons to make your links stand out",
+    "monitor": "Monitor performance",
+    "monitorBody": "Check click counts to see what resonates with your audience"
+  }
+}
