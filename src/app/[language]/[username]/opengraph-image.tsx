@@ -13,6 +13,15 @@
 // og:image:alt etiketlerini Next bu dosyadan uretiyor. Bu yuzden
 // page.tsx'teki openGraph.images alani kaldirildi -- ikisi birden
 // olsaydi sayfa iki gorsel bildirirdi.
+//
+// +18 UYARISI OLAN PROFIL: kart, sayfanin ara ekranini gormeyen tek
+// yer. Onizleme sohbet penceresinde ya da akista kendiliginden aciliyor
+// ve ziyaretci hicbir sey onaylamis olmuyor. Bu yuzden uyari acikken
+// kart iki seyi disarida birakiyor: avatar (sahibinin verdigi rastgele
+// bir dis gorsel) ve bio (yine sahibinin yazdigi serbest metin). Ad ve
+// kullanici adi kaliyor -- ikisi de zaten paylasilan adresin icinde.
+// Yerine acik bir "18+" rozeti giriyor: onizleme sessizce siradan bir
+// kart gostermek yerine uyariyi kendisi tasiyor.
 
 import { ImageResponse } from "next/og";
 import {
@@ -151,8 +160,14 @@ export default async function Image(props: Props) {
   const metin = acikZemin ? "#111827" : "#ffffff";
   const sonuk = acikZemin ? "#4b5563" : "#e5e7eb";
 
-  const avatar = await avatarDataUri(profile.profile_image_url);
-  const bio = profile.page_description ?? profile.bio ?? "";
+  const uyariVar = profile.adult_warning_enabled;
+
+  // Uyari acikken avatar CIZILMIYOR degil, HIC INDIRILMIYOR: indirip
+  // atmak, uc saniyeye kadar bekleyip sonucu cope atmak olurdu.
+  const avatar = uyariVar
+    ? null
+    : await avatarDataUri(profile.profile_image_url);
+  const bio = uyariVar ? "" : (profile.page_description ?? profile.bio ?? "");
 
   return new ImageResponse(
     (
@@ -225,6 +240,28 @@ export default async function Image(props: Props) {
         >
           {`@${profile.username}`}
         </div>
+
+        {uyariVar ? (
+          // Renkler temadan DEGIL sabit: uyari rozeti, sahibinin sectigi
+          // zeminde okunaksiz kalabilecegi bir yerde duramaz.
+          <div
+            style={{
+              display: "flex",
+              marginTop: 24,
+              paddingLeft: 24,
+              paddingRight: 24,
+              paddingTop: 10,
+              paddingBottom: 10,
+              borderRadius: 999,
+              backgroundColor: "#111827",
+              color: "#ffffff",
+              fontSize: 28,
+              fontWeight: 700,
+            }}
+          >
+            18+ content warning
+          </div>
+        ) : null}
 
         {bio ? (
           <div
