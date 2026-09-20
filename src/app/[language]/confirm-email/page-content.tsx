@@ -7,7 +7,7 @@ import { useAuthVerifyEmailService } from "@/services/api/services/auth";
 import { getErrorMessage } from "@/services/api/api-errors";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import useAuthActions from "@/services/auth/use-auth-actions";
-import { getTokensInfo } from "@/services/auth/auth-tokens-info";
+import { oturumIsaretiVar } from "@/services/auth/session-hint";
 import { useTranslation } from "@/services/i18n/client";
 import useLanguage from "@/services/i18n/use-language";
 
@@ -45,7 +45,7 @@ function ConfirmEmail() {
         // Kullanici bu tarayicida giris yapmissa adres/dogrulama durumu
         // degisti; context'i guncelliyoruz. Giris yapmamis olabilir de --
         // baglantiya baska bir cihazdan tiklanmis olabilir.
-        if (getTokensInfo()?.token) {
+        if (oturumIsaretiVar()) {
           setUser(data.data);
         }
         setDurum("success");

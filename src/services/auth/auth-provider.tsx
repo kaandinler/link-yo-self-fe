@@ -8,125 +8,69 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  AuthActionsContext,
-  AuthContext,
-  AuthTokensContext,
-  TokensInfo,
-} from "./auth-context";
+import { AuthActionsContext, AuthContext } from "./auth-context";
 import useFetch from "@/services/api/use-fetch";
-import { AUTH_LOGOUT_URL, AUTH_ME_URL } from "@/services/api/config";
+import { AUTH_ME_URL, AUTH_SESSION_URL } from "@/services/api/config";
 import HTTP_CODES_ENUM from "../api/types/http-codes";
-import {
-  getTokensInfo,
-  setTokensInfo as setTokensInfoToStorage,
-} from "./auth-tokens-info";
-import { useAuthLogoutWithFastAPIService } from "@/services/api/services/auth";
-import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
+import { oturumIsaretiVar } from "./session-hint";
 
 /**
- * Enhanced AuthProvider that supports both legacy and FastAPI backends
+ * Oturumu olan kullaniciyi yukler ve cikisi yonetir.
  *
- * Features:
- * - Automatic user data loading on app start
- * - Support for both legacy and FastAPI logout
- * - Support for both legacy and FastAPI user info fetching
- * - Graceful fallback between different API formats
+ * TOKEN'A HIC DOKUNMUYOR. Token HttpOnly bir cerezde ve yalnizca Next
+ * sunucusu goruyor; bu bilesen "oturum var mi" sorusunu token'dan
+ * degil, ipuc cerezinden (session-hint.ts) ve backend'in yanitindan
+ * ogreniyor.
  */
-
 function AuthProvider(props: PropsWithChildren) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const fetchBase = useFetch();
-  const fetchAuthLogoutFastAPI = useAuthLogoutWithFastAPIService();
-  const fetchAuthMeFastAPI = useAuthMeWithFastAPIService();
-
-  const setTokensInfo = useCallback((tokensInfo: TokensInfo) => {
-    setTokensInfoToStorage(tokensInfo);
-
-    if (!tokensInfo) {
-      setUser(null);
-    }
-  }, []);
 
   const logOut = useCallback(async () => {
-    const tokens = getTokensInfo();
-
-    if (tokens?.token) {
-      try {
-        // Try FastAPI logout first
-        const fastAPIResponse = await fetchAuthLogoutFastAPI(tokens.token);
-
-        if (fastAPIResponse.status !== "success") {
-          // Fallback to legacy logout if FastAPI fails
-          await fetchBase(AUTH_LOGOUT_URL, {
-            method: "POST",
-          });
-        }
-      } catch (error) {
-        // Fallback to legacy logout if FastAPI fails
-        try {
-          await fetchBase(AUTH_LOGOUT_URL, {
-            method: "POST",
-          });
-        } catch (legacyError) {
-          console.warn("Both FastAPI and legacy logout failed:", {
-            error,
-            legacyError,
-          });
-        }
-      }
+    try {
+      // Cerezi silen ve backend'e cikisi bildiren tek uc.
+      await fetch(AUTH_SESSION_URL, { method: "DELETE" });
+    } catch (error) {
+      // Cerez silinememis olabilir ama kullaniciyi arayuzde giris
+      // yapmis birakmak daha kotu olurdu.
+      console.warn("Cikis istegi basarisiz:", error);
     }
-    setTokensInfo(null);
-  }, [setTokensInfo, fetchBase, fetchAuthLogoutFastAPI]);
+    setUser(null);
+  }, []);
 
   const loadData = useCallback(async () => {
-    const tokens = getTokensInfo();
+    /**
+     * Anonim ziyaretcide HIC istek yapilmiyor.
+     *
+     * NEDEN ONEMLI: bu saglayici kok layout'ta, yani herkese acik
+     * profil sayfalarini da sariyor -- urunun en cok trafik alan
+     * sayfasi. Isaret olmasaydi her ziyarette 401 ile donen bir
+     * /users/me cagrisi olurdu.
+     */
+    if (!oturumIsaretiVar()) {
+      setIsLoaded(true);
+      return;
+    }
 
     try {
-      if (tokens?.token) {
-        let userData = null;
+      const response = await fetchBase(AUTH_ME_URL, { method: "GET" });
 
-        try {
-          // Try FastAPI user info endpoint first
-          const fastAPIResponse = await fetchAuthMeFastAPI(tokens.token);
-
-          if (fastAPIResponse.status === "success" && fastAPIResponse.data) {
-            userData = fastAPIResponse.data;
-          }
-        } catch (fastAPIError) {
-          console.warn(
-            "FastAPI user info failed, trying legacy:",
-            fastAPIError
-          );
-        }
-
-        // Fallback to legacy user info endpoint if FastAPI failed
-        if (!userData) {
-          try {
-            const response = await fetchBase(AUTH_ME_URL, {
-              method: "GET",
-            });
-
-            if (response.status === HTTP_CODES_ENUM.UNAUTHORIZED) {
-              logOut();
-              return;
-            }
-
-            userData = await response.json();
-          } catch (legacyError) {
-            console.warn("Legacy user info also failed:", legacyError);
-            logOut();
-            return;
-          }
-        }
-
-        setUser(userData);
+      if (response.status === HTTP_CODES_ENUM.UNAUTHORIZED) {
+        // Vekil 401'de cerezi zaten siliyor; burada arayuzu esitliyoruz.
+        setUser(null);
+        return;
       }
+
+      const govde = await response.json();
+      setUser(govde?.data ?? null);
+    } catch (error) {
+      console.warn("Kullanici bilgisi okunamadi:", error);
+      setUser(null);
     } finally {
       setIsLoaded(true);
     }
-  }, [fetchBase, logOut, fetchAuthMeFastAPI]);
+  }, [fetchBase]);
 
   useEffect(() => {
     loadData();
@@ -148,19 +92,10 @@ function AuthProvider(props: PropsWithChildren) {
     [logOut]
   );
 
-  const contextTokensValue = useMemo(
-    () => ({
-      setTokensInfo,
-    }),
-    [setTokensInfo]
-  );
-
   return (
     <AuthContext.Provider value={contextValue}>
       <AuthActionsContext.Provider value={contextActionsValue}>
-        <AuthTokensContext.Provider value={contextTokensValue}>
-          {props.children}
-        </AuthTokensContext.Provider>
+        {props.children}
       </AuthActionsContext.Provider>
     </AuthContext.Provider>
   );

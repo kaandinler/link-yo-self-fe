@@ -22,7 +22,6 @@ import {
   useAuthChangeEmailService,
   useAuthChangePasswordService,
 } from "@/services/api/services/auth";
-import useAuthTokens from "@/services/auth/use-auth-tokens";
 import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
 import { passwordSchema } from "@/services/api/password-schema";
 
@@ -695,7 +694,6 @@ function FormChangePassword() {
   const { t } = useTranslation("profile");
   const validationSchema = useValidationChangePasswordSchema();
   const { enqueueSnackbar } = useSnackbar();
-  const { setTokensInfo } = useAuthTokens();
   const changePassword = useAuthChangePasswordService();
 
   const methods = useForm<EditProfileChangePasswordFormData>({
@@ -716,13 +714,10 @@ function FormChangePassword() {
     });
 
     if (status === HTTP_CODES_ENUM.OK) {
-      setTokensInfo({
-        token: data.data.access_token,
-        refreshToken: data.data.refresh_token,
-        // Backend ACCESS_TOKEN_EXPIRE_MINUTES varsayilani 30 dakika;
-        // giris akisi da ayni varsayimi kullaniyor.
-        tokenExpires: Date.now() + 30 * 60 * 1000,
-      });
+      // Token'lari saklamak GEREKMIYOR ve MUMKUN DE DEGIL: backend
+      // diger oturumlari kapatip yeni bir cift donuyor, vekil de onlari
+      // yanittan alip HttpOnly cereze yaziyor. Burada bir sey yapmazsak
+      // oturum kendiliginden devam ediyor.
       reset();
       enqueueSnackbar(t("profile:alerts.password.success"), {
         variant: "success",

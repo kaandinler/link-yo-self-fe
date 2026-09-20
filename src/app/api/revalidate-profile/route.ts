@@ -15,7 +15,8 @@
 
 import { createHash } from "node:crypto";
 import { revalidateTag } from "next/cache";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { csrfGecerli, oturumOku } from "@/services/auth/session-cookie";
 import {
   kartEtiketi,
   profilEtiketi,
@@ -120,15 +121,47 @@ async function istenenKullanici(request: Request): Promise<string | undefined> {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   if (!API_URL) {
     return NextResponse.json({ error: "API_URL yok" }, { status: 500 });
   }
 
-  const authorization = request.headers.get("authorization");
-  if (!authorization) {
+  /**
+   * Kimlik iki yoldan gelebiliyor ve CSRF kontrolu YALNIZCA BIRINE
+   * uygulaniyor.
+   *
+   * Cerez ORTAM KIMLIGI: tarayici onu isteklere kendiliginden ekliyor,
+   * yani kullaniciya baska bir siteden istek yaptirmak mumkun -- CSRF
+   * tam olarak bu. O yuzden cerezle gelen istekte Origin bu siteyle
+   * ayni olmali.
+   *
+   * Authorization basligi ACIK KIMLIK: tarayici onu kendiliginden
+   * eklemiyor, basligi koyan taraf token'a zaten sahip. Boyle bir
+   * istekte CSRF diye bir sey yok ve Origin aramak, token'i olan
+   * sunucu-sunucu istemcileri (ornegin E2E yardimcilari) sebepsiz
+   * disarida birakmak olurdu.
+   *
+   * Uc, sahip oldugu token'in verdiginden fazla yetki vermiyor: ne
+   * yapilacagini yine backend'e sorulan kimlik belirliyor.
+   */
+  const baslikKimligi = request.headers.get("authorization");
+  const oturum = oturumOku(request);
+
+  // ONCE KIMLIK, SONRA ORIGIN. Hicbir kimlik sunmayan cagiriya
+  // "Origin'in yanlis" demek yaniltici olurdu; dogru cevap "kimlik
+  // yok".
+  if (!baslikKimligi && !oturum) {
     return NextResponse.json({ error: "Token gerekli" }, { status: 401 });
   }
+
+  if (!baslikKimligi && !csrfGecerli(request)) {
+    return NextResponse.json(
+      { error: "Origin dogrulanamadi" },
+      { status: 403 }
+    );
+  }
+
+  const authorization = baslikKimligi ?? `Bearer ${oturum!.token}`;
 
   const cozum = await kimlikCoz(authorization);
   if (!cozum) {
