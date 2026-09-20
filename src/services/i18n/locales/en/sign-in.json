@@ -28,5 +28,23 @@
       }
     }
   },
-  "or": "OR"
+  "or": "OR",
+  "form": {
+    "heading": "Welcome Back",
+    "subheading": "Sign in to your LinkYoSelf account",
+    "emailPlaceholder": "example@email.com",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot your password?",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "createOne": "Create one",
+    "footer": "Access your digital world with LinkYoSelf ✨",
+    "welcomeBack": "Welcome back!"
+  },
+  "validation": {
+    "email": "Please enter a valid email address",
+    "password": "Password must be at least 6 characters",
+    "loginFailed": "Login failed. Please try again.",
+    "network": "Network error occurred. Please check your connection and try again."
+  }
 }
