@@ -3,9 +3,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import withPageRequiredGuest from "@/services/auth/with-page-required-guest";
 import { useAuthLoginWithFastAPIService } from "@/services/api/services/auth";
-import { useAuthMeWithFastAPIService } from "@/services/api/services/user-info";
 import useAuthActions from "@/services/auth/use-auth-actions";
-import useAuthTokens from "@/services/auth/use-auth-tokens";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import { useTranslation } from "@/services/i18n/client";
@@ -13,12 +11,6 @@ import {
   isErrorResponse,
   getResponseErrorMessage,
 } from "@/services/api/fastapi-utils";
-import {
-  parseLoginResponse,
-  parseUserInfoResponse,
-  handleLoginSuccess,
-  logLoginAttempt,
-} from "@/services/api/examples/login-utils";
 
 // Types
 type SignInFormData = {
@@ -110,9 +102,7 @@ const FormInput = ({
 function LinkYoSelfSignInForm() {
   const { t } = useTranslation("sign-in");
   const { setUser } = useAuthActions();
-  const { setTokensInfo } = useAuthTokens();
   const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService();
-  const fetchAuthMeFastAPI = useAuthMeWithFastAPIService();
   const { showApiResponse } = useSnackbar();
 
   const [formData, setFormData] = useState<SignInFormData>({
@@ -171,66 +161,50 @@ function LinkYoSelfSignInForm() {
     setSubmitError("");
 
     try {
-      console.log("✅ Login attempt for:", formData.email);
-
-      // Use the FastAPI service
+      /**
+       * Giris /api/auth/session'a gidiyor, FastAPI'ye degil.
+       *
+       * TOKEN BURAYA HIC GELMIYOR: o uc token'i alip HttpOnly cereze
+       * yaziyor ve govdeden cikariyor. Eskiden yanittaki token burada
+       * okunup bir cereze yaziliyordu -- yani sayfadaki herhangi bir
+       * JavaScript onu gorebiliyordu. Ayrica kullanici bilgisi icin
+       * ikinci bir /users/me cagrisi gerekiyordu; onu da artik uc
+       * kendisi doldurup donuyor.
+       */
       const response = await fetchAuthLoginFastAPI({
-        username: formData.email, // FastAPI expects 'username' field
+        username: formData.email, // FastAPI 'username' alanini bekliyor
         password: formData.password,
       });
 
-      // Log login attempt for debugging
-      logLoginAttempt(formData.email, response);
+      const basarili = response.status === "success";
 
-      // Parse login response using utility functions
-      const loginResult = parseLoginResponse(response);
-
-      // Get error message from backend
       const errorMessage = isErrorResponse(response)
         ? getResponseErrorMessage(response)
         : undefined;
 
-      // Show API response
       showApiResponse(response, {
         onlyShowOnError: false,
         autoHideDuration: 5000,
-        customMessage: loginResult.success
-          ? t("form.welcomeBack")
-          : errorMessage,
-      }); // Handle successful login
-      if (loginResult.success && loginResult.tokenData) {
-        // Handle token saving
-        handleLoginSuccess(loginResult.tokenData, {
-          saveTokens: (tokens) => setTokensInfo(tokens),
-          setUser: (user) => user && setUser(user), // Only call setUser if user is not null
-        });
+        customMessage: basarili ? t("form.welcomeBack") : errorMessage,
+      });
 
-        // Kullaniciyi backend'den cek.
-        //
-        // ONCEKI HALI BOZUKTU: burada {id: "temp-id", email} seklinde sahte
-        // bir kullanici yaziliyordu. Token yaniti kullanici icermedigi icin
-        // is_admin/username gibi alanlar undefined kaliyor, admin sayfalari
-        // giris sonrasi -- sayfa yenilenene kadar -- admin'i bile disari
-        // atiyordu.
-        const me = await fetchAuthMeFastAPI(loginResult.tokenData.access_token);
-        const userInfo = parseUserInfoResponse(me);
-        if (userInfo.userData) {
-          setUser(userInfo.userData);
+      if (basarili) {
+        if (response.data) {
+          setUser(response.data);
         } else {
-          // Token kaydedildi; kullanici bilgisi sayfa yenilendiginde
-          // AuthProvider tarafindan yeniden cekilecek.
-          console.warn(userInfo.message);
+          // Oturum kuruldu; kullanici bilgisi sayfa yenilendiginde
+          // AuthProvider tarafindan cekilecek.
+          console.warn("Giris basarili ama kullanici bilgisi gelmedi.");
         }
-
-        console.log("✅ Login successful");
-      } else if (loginResult.fieldErrors) {
+      } else if (response.errors) {
         // Set field-specific errors
         const formFieldErrors: Partial<Record<keyof SignInFormData, string>> =
           {};
 
-        Object.entries(loginResult.fieldErrors).forEach(([key, errorInfo]) => {
+        // errors: alan adi -> mesaj (bkz. types/fastapi-errors.ts).
+        Object.entries(response.errors).forEach(([key, mesaj]) => {
           if (key in formData) {
-            formFieldErrors[key as keyof SignInFormData] = errorInfo.message;
+            formFieldErrors[key as keyof SignInFormData] = mesaj;
           }
         });
 

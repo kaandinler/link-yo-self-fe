@@ -1,12 +1,10 @@
 import { useCallback } from "react";
 import useFetch from "../use-fetch";
-import { API_URL } from "../config";
-import { isBaseResponseModel } from "../fastapi-utils";
+import { API_URL, AUTH_SESSION_URL } from "../config";
 import { User } from "../types/user";
-import { Tokens } from "../types/tokens";
 import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
 import { RequestConfigType } from "./types/request-config";
-import { BaseResponseModel, TokenResponse } from "../types/base-response";
+import { BaseResponseModel } from "../types/base-response";
 import {
   parseAPIError,
   safeParseApiResponse,
@@ -18,50 +16,35 @@ export type AuthLoginRequest = {
   password: string;
 };
 
-export type AuthLoginResponse = Tokens & {
-  user: User;
-};
-
+/**
+ * Giris.
+ *
+ * ARTIK BACKEND'E DOGRUDAN GITMIYOR. Eskiden burada FastAPI'nin
+ * /v1/auth/token ucu cagriliyor ve yanittaki token istemcide bir
+ * cereze yaziliyordu -- yani token tarayicidaki JavaScript'in elinden
+ * geciyordu. Cagri artik kendi sunucumuzdaki /api/auth/session ucuna
+ * gidiyor; token'i o uc aliyor, HttpOnly cereze yaziyor ve govdeden
+ * cikariyor. Buraya donen tek sey kullanici bilgisi.
+ */
 export function useAuthLoginWithFastAPIService() {
   return useCallback(
-    async (
-      data: AuthLoginRequest
-    ): Promise<BaseResponseModel<TokenResponse>> => {
+    async (data: AuthLoginRequest): Promise<BaseResponseModel<User>> => {
       try {
-        const formData = new FormData();
-        formData.append("username", data.username); // OAuth2 'username' field'ını bekliyor
-        formData.append("password", data.password);
-
-        const response = await fetch(`${API_URL}/v1/auth/token`, {
+        const response = await fetch(AUTH_SESSION_URL, {
           method: "POST",
-          body: formData,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
         });
+
         const result = (await safeParseApiResponse(response)) as Record<
           string,
           unknown
         >;
 
-        // Başarılı yanıt kontrolü
         if (response.ok && result && !("detail" in result)) {
-          // Normal BaseResponseModel formatı
-          if ("status" in result && "data" in result) {
-            // Tip güvenliği için iki adımda dönüştürme
-            const typedResult =
-              result as unknown as BaseResponseModel<TokenResponse>;
-            return typedResult;
-          }
-
-          // Eğer doğrudan token data'sı geliyorsa BaseResponseModel'e çevir
-          if ("access_token" in result) {
-            return {
-              status: "success",
-              message: "Welcome back!",
-              data: result as unknown as TokenResponse,
-            };
-          }
+          return result as unknown as BaseResponseModel<User>;
         }
 
-        // Hata durumunu parse et
         const parsedError = parseAPIError(result, response);
 
         return {
@@ -71,7 +54,6 @@ export function useAuthLoginWithFastAPIService() {
           errors: parsedError.fieldErrors,
         };
       } catch (error) {
-        // Network hatası
         const parsedError = parseAPIError(error);
         return {
           status: "error",
@@ -83,22 +65,6 @@ export function useAuthLoginWithFastAPIService() {
     []
   );
 }
-
-export type AuthGoogleLoginRequest = {
-  idToken: string;
-};
-
-export type AuthGoogleLoginResponse = Tokens & {
-  user: User;
-};
-
-export type AuthFacebookLoginRequest = {
-  accessToken: string;
-};
-
-export type AuthFacebookLoginResponse = Tokens & {
-  user: User;
-};
 
 export type AuthSignUpRequest = {
   email: string;
@@ -243,10 +209,13 @@ export function useAuthResetPasswordService() {
 /**
  * Giris yapmis kullanicinin kendi sifresini degistirmesi.
  *
- * Backend mevcut sifreyi dogruluyor, diger cihazlardaki oturumlari kapatiyor
- * ve bu oturumun devam edebilmesi icin yeni bir token cifti donuyor -- yani
- * yanit token'lari saklanmali, yoksa kullanici bir sonraki yenilemede
- * oturumdan duser.
+ * Backend mevcut sifreyi dogruluyor, diger cihazlardaki oturumlari
+ * kapatiyor ve bu oturumun devam edebilmesi icin yeni bir token cifti
+ * donuyor. TOKEN'LARI ISTEMCI GORMUYOR: vekil onlari yanittan alip
+ * HttpOnly cereze yaziyor ve govdeden cikariyor (bkz.
+ * app/api/proxy/[...yol]/route.ts, tokenTasiyanYanit). Yani burada
+ * yapilacak bir sey yok -- eskiden vardi ve unutulsaydi kullanici bir
+ * sonraki yenilemede oturumdan duserdi.
  */
 export type AuthChangePasswordRequest = {
   current_password: string;
@@ -256,11 +225,8 @@ export type AuthChangePasswordRequest = {
 export type AuthChangePasswordResponse = {
   status: string;
   message?: string | null;
-  data: {
-    access_token: string;
-    refresh_token: string;
-    token_type: string;
-  };
+  /** Token alanlari vekil tarafindan cikarildi; geriye token_type kaliyor. */
+  data: { token_type?: string };
 };
 
 export function useAuthChangePasswordService() {
@@ -351,66 +317,6 @@ export function useAuthResendVerificationService() {
       }).then(wrapperFetchJsonResponse<AuthPendingEmailResponse>);
     },
     [fetchBase]
-  );
-}
-
-export function useAuthLogoutWithFastAPIService() {
-  return useCallback(
-    async (accessToken: string): Promise<BaseResponseModel<void>> => {
-      try {
-        const response = await fetch(`${API_URL}/v1/auth/logout`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        const result = (await safeParseApiResponse(response)) as Record<
-          string,
-          unknown
-        >;
-
-        // Başarılı yanıt kontrolü
-        if (
-          response.ok &&
-          result &&
-          typeof result === "object" &&
-          !("detail" in result)
-        ) {
-          // Normal BaseResponseModel formatı
-          if (isBaseResponseModel<void>(result)) {
-            return result;
-          }
-
-          // Eğer sadece başarılı status kodu varsa BaseResponseModel'e çevir
-          return {
-            status: "success",
-            message: "Başarıyla çıkış yapıldı.",
-            data: undefined,
-          };
-        }
-
-        // Hata durumunu parse et
-        const parsedError = parseAPIError(result, response);
-
-        return {
-          status: "error",
-          message: parsedError.message,
-          data: undefined,
-          errors: parsedError.fieldErrors,
-        };
-      } catch (error) {
-        // Network hatası
-        const parsedError = parseAPIError(error);
-        return {
-          status: "error",
-          message: parsedError.message,
-          data: undefined,
-        };
-      }
-    },
-    []
   );
 }
 

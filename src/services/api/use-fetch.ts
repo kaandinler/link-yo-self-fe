@@ -1,10 +1,20 @@
 "use client";
 
 import { useCallback } from "react";
-import { AUTH_REFRESH_URL } from "./config";
 import { FetchInputType, FetchInitType } from "./types/fetch-params";
 import useLanguage from "../i18n/use-language";
-import { getTokensInfo, setTokensInfo } from "../auth/auth-tokens-info";
+import { oturumIsaretiVar } from "../auth/session-hint";
+
+/**
+ * API cagrilarinin ortak sarmalayicisi.
+ *
+ * TOKEN ARTIK BURADA YOK. Eskiden bu hook cerezden token'i okuyup
+ * `Authorization` basligini kuruyor ve suresi dolmak uzereyse
+ * yenilemeyi de kendisi yapiyordu. Token HttpOnly bir cereze tasindigi
+ * icin ikisi de sunucuya gecti: cagrilar /api/proxy'ye gidiyor, cerezi
+ * tarayici kendiliginden ekliyor, basligi ve yenilemeyi vekil
+ * yapiyor (bkz. app/api/proxy/[...yol]/route.ts).
+ */
 
 /**
  * Bir sey degistiren her basarili istekten sonra, kullanicinin herkese
@@ -25,32 +35,37 @@ import { getTokensInfo, setTokensInfo } from "../auth/auth-tokens-info";
  */
 const TEMIZLIK_YOLU = "/api/revalidate-profile";
 
-async function temizlikCagir(authorization: string) {
+async function temizlikCagir() {
   try {
-    await fetch(TEMIZLIK_YOLU, {
-      method: "POST",
-      headers: { Authorization: authorization },
-    });
+    // Kimlik cerezden okunuyor; govde ve baslik gerekmiyor.
+    await fetch(TEMIZLIK_YOLU, { method: "POST" });
   } catch {
     // Sessiz: asil islem basarili oldu.
   }
 }
 
+/**
+ * Oturum yoksa temizlik cagrilmiyor.
+ *
+ * Eskiden bu karar "Authorization basligi var mi" ile veriliyordu;
+ * baslik artik istemcide kurulmadigi icin ipuc cerezine bakiyoruz
+ * (token tasimiyor, bkz. session-hint.ts). Yanlis pozitif zararsiz:
+ * temizlik ucu 401 doner.
+ */
+function temizlenecekProfilYok(): boolean {
+  return !oturumIsaretiVar();
+}
+
 async function profilOnbelleginiTemizle(
   method: string | undefined,
-  yanit: Response,
-  headers: HeadersInit
+  yanit: Response
 ) {
   const yontem = (method ?? "GET").toUpperCase();
   if (yontem === "GET" || yontem === "HEAD") return;
   if (!yanit.ok) return;
+  if (temizlenecekProfilYok()) return;
 
-  const authorization = (headers as Record<string, string>).Authorization;
-  // Token yoksa temizlenecek bir profil de yok (giris, kayit, sifre
-  // sifirlama). Uc zaten 401 donerdi.
-  if (!authorization) return;
-
-  await temizlikCagir(authorization);
+  await temizlikCagir();
 }
 
 /**
@@ -66,16 +81,11 @@ async function profilOnbelleginiTemizle(
  * Sonrasindaki cagri da duruyor: baska turlu bir silmede (ornegin
  * bir linki silmek) asil ise yarayan o.
  */
-async function silmedenOnceTemizle(
-  method: string | undefined,
-  headers: HeadersInit
-) {
+async function silmedenOnceTemizle(method: string | undefined) {
   if ((method ?? "GET").toUpperCase() !== "DELETE") return;
+  if (temizlenecekProfilYok()) return;
 
-  const authorization = (headers as Record<string, string>).Authorization;
-  if (!authorization) return;
-
-  await temizlikCagir(authorization);
+  await temizlikCagir();
 }
 
 function useFetch() {
@@ -83,8 +93,6 @@ function useFetch() {
 
   return useCallback(
     async (input: FetchInputType, init?: FetchInitType) => {
-      const tokens = getTokensInfo();
-
       let headers: HeadersInit = {
         "x-custom-lang": language,
       };
@@ -96,41 +104,11 @@ function useFetch() {
         };
       }
 
-      if (tokens?.token) {
-        headers = {
-          ...headers,
-          Authorization: `Bearer ${tokens.token}`,
-        };
-      }
-
-      if (tokens?.tokenExpires && tokens.tokenExpires - 60000 <= Date.now()) {
-        const newTokens = await fetch(AUTH_REFRESH_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokens.refreshToken}`,
-          },
-        }).then((res) => res.json());
-
-        if (newTokens.token) {
-          setTokensInfo({
-            token: newTokens.token,
-            refreshToken: newTokens.refreshToken,
-            tokenExpires: newTokens.tokenExpires,
-          });
-
-          headers = {
-            ...headers,
-            Authorization: `Bearer ${newTokens.token}`,
-          };
-        }
-      }
-
       // Temizlik ucunun kendisi yeni bir temizlik tetiklemesin.
       const temizlikUcu = String(input).includes(TEMIZLIK_YOLU);
 
       if (!temizlikUcu) {
-        await silmedenOnceTemizle(init?.method, headers);
+        await silmedenOnceTemizle(init?.method);
       }
 
       const yanit = await fetch(input, {
@@ -142,7 +120,7 @@ function useFetch() {
       });
 
       if (!temizlikUcu) {
-        await profilOnbelleginiTemizle(init?.method, yanit, headers);
+        await profilOnbelleginiTemizle(init?.method, yanit);
       }
 
       return yanit;

@@ -9,30 +9,34 @@ import {
   uniqueUser,
 } from "./api";
 
-/** js-cookie'nin auth token'i sakladigi cerez adi (src/services/auth/config.ts). */
-const AUTH_COOKIE = "auth-token-data";
-
 const appUrl = process.env.E2E_APP_URL ?? "http://localhost:3000";
 
 /**
  * Tarayiciyi giris yapmis duruma getirir.
  *
- * AuthProvider acilista cerezdeki token ile /v1/users/me cagirip kullaniciyi
- * yukluyor; dolayisiyla cerezi yazmak arayuzden giris yapmakla ayni sonucu
- * veriyor. Giris ekraninin kendisi sign-in testinde ayrica dogrulaniyor, bu
- * yuzden diger testler her seferinde o formdan gecmiyor.
+ * ESKIDEN CEREZI ELLE YAZIYORDUK. Token artik HttpOnly bir cerezde ve
+ * onu yalnizca sunucu kuruyor; disaridan yazmak mumkun degil (zaten
+ * olmamali -- testin kurdugu duzenek gercek akistan ayrisirsa test
+ * dogruladigini sandigi seyi dogrulamaz).
+ *
+ * Bunun yerine gercek oturum ucu cagriliyor: /api/auth/session.
+ * `page.request` tarayicinin cerez kabini uzerinden gittigi icin
+ * yanittaki Set-Cookie dogrudan sayfaya isliyor.
+ *
+ * Origin basligi elle veriliyor: uc, durum degistiren isteklerde
+ * Origin'i bu siteyle karsilastiriyor (CSRF). Tarayici disindan
+ * yapilan istekte bu baslik kendiliginden gelmiyor.
  */
-export async function setAuthCookie(page: Page, token: string) {
-  await page.context().addCookies([
-    {
-      name: AUTH_COOKIE,
-      // js-cookie okurken decodeURIComponent uyguluyor.
-      value: encodeURIComponent(
-        JSON.stringify({ token, refreshToken: null, tokenExpires: null })
-      ),
-      url: appUrl,
-    },
-  ]);
+export async function signInThroughSessionEndpoint(page: Page, user: TestUser) {
+  const yanit = await page.request.post(`${appUrl}/api/auth/session`, {
+    headers: { "Content-Type": "application/json", Origin: appUrl },
+    data: { username: user.email, password: user.password },
+  });
+
+  expect(
+    yanit.status(),
+    `Oturum acilamadi (${user.email}): ${await yanit.text()}`
+  ).toBe(200);
 }
 
 /** Cerezleri temizler; /sign-in giris yapmis kullaniciyi disari atiyor. */
@@ -57,7 +61,7 @@ export async function signInAsNewUser(
   if (options.onboarding !== false) {
     await apiCompleteOnboarding(token);
   }
-  await setAuthCookie(page, token);
+  await signInThroughSessionEndpoint(page, user);
   return { user, token };
 }
 
@@ -88,7 +92,7 @@ export async function signInAsAdmin(page: Page) {
   ).toBe(200);
 
   const token = await apiLogin(user);
-  await setAuthCookie(page, token);
+  await signInThroughSessionEndpoint(page, user);
   return { user, token };
 }
 
