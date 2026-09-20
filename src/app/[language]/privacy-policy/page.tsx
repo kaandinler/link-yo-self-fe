@@ -6,6 +6,31 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import MuiLink from "@mui/material/Link";
 
+/**
+ * Gizlilik politikasi.
+ *
+ * NEDEN BASTAN YAZILDI: bu sayfa boilerplate'ten gelmisti ve canlida
+ * BASKA BIR SIRKETI anlatiyordu -- "the Company ... refers to BC
+ * Boilerplates", iletisim olarak brocoders'in e-postasi, sitesi, GitHub
+ * tartismalari ve Discord kanali; ustelik ilk iki paragraf hala "This is
+ * the first description text." yer tutucusuydu. Yani kullanicilara
+ * verilerinin kim tarafindan nasil islendigine dair yanlis bir metin
+ * gosteriliyordu.
+ *
+ * METIN KODA DAYANIYOR: buradaki her iddia denetlendi -- hangi kolonlar
+ * yaziliyor (models.py), hangi cerezler kuruluyor, hangi ucuncu taraflar
+ * cagriliyor, hesap kapatilinca ne oluyor. Ozellikle iki nokta
+ * suslenmeden yazildi: analytics_events ziyaretciyi HIC tanimlamiyor
+ * (IP yok, kimlik yok, yalnizca referrer'in host'u), ve hesap kapatma
+ * bir SOFT DELETE -- kayit siliniyor degil, kapali isaretleniyor.
+ *
+ * ADRES: support@linkyoself.com; iletisim sayfasindaki adresle ayni
+ * olmali, iki sayfa farkli adres gosterirse hangisinin dogru oldugu
+ * belirsiz kalir.
+ */
+
+const CONTACT_EMAIL = "support@linkyoself.com";
+
 type Props = {
   params: Promise<{ language: string }>;
 };
@@ -42,509 +67,237 @@ async function PrivacyPolicy(props: Props) {
         gutterBottom
         paragraph
       >
-        {t("description1")}
+        {t("intro.p1")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("description2")}
+        {t("intro.p2")}
       </Typography>
-      <Typography
-        component="h2"
-        variant="h3"
-        letterSpacing="-0.02em"
-        gutterBottom
-        sx={{ mt: 7 }}
-      >
-        {t("interpretation_and_definitions")}
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("summary.title")}
       </Typography>
-      <Typography component="h3" variant="h4" gutterBottom sx={{ mt: 5 }}>
-        {t("interpretation")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("interpretation_description")}
-      </Typography>
-      <Typography component="h3" variant="h4" gutterBottom sx={{ mt: 5 }}>
-        {t("definitions")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("definitions_description")}
-      </Typography>
-      <List sx={{ listStyleType: "disc", pl: 5, mb: 6 }}>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("account_title")}</strong>
-          {t("account_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("affiliate_title")}</strong>
-          {t("affiliate_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("company_title")}</strong>
-          {t("company_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("cookies_title")}</strong>
-          {t("cookies_definition")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("device_title")}</strong>
-          {t("device_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("personal_data_title")}</strong>
-          {t("personal_data_definition")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("service_title")}</strong>
-          {t("service_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("service_provider_title")}</strong>
-          {t("service_provider_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("usage_data_title")}</strong>
-          {t("usage_data_description")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("website_title")}</strong>
-          {t("website_description")}
-          <MuiLink
-            target="_blank"
-            rel="external noopener noreferrer"
-            href="https://react-boilerplate-coral.vercel.app/"
-          >
-            https://react-boilerplate-coral.vercel.app
-          </MuiLink>
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("you_title")}</strong>
-          {t("you_description")}
-        </ListItem>
+      <List sx={{ listStyleType: "disc", pl: 5 }}>
+        <ListItem sx={{ display: "list-item" }}>{t("summary.item1")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("summary.item2")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("summary.item3")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("summary.item4")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("summary.item5")}</ListItem>
       </List>
-      <Typography
-        component="h2"
-        variant="h3"
-        gutterBottom
-        letterSpacing="-0.02em"
-      >
-        {t("collecting_and_using_personal_data")}
-      </Typography>
-      <Typography
-        component="h3"
-        variant="h4"
-        sx={{
-          my: 5,
-        }}
-      >
-        {t("types_of_data_collected")}
-      </Typography>
-      <Typography component="h4" variant="h5" gutterBottom>
-        {t("personal_data")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("personal_data_description")}
-      </Typography>
-      <List sx={{ listStyleType: "disc", pl: 5, mb: 3 }}>
-        <ListItem sx={{ display: "list-item" }}>{t("usage_data")}</ListItem>
-      </List>
-      <Typography component="h4" variant="h5" gutterBottom>
-        {t("usage_data")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("usage_data_auto_collected")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("mobile_device_info_collection")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("browser_info_collection")}
-      </Typography>
-      <Typography component="h4" variant="h5" gutterBottom sx={{ mt: 5 }}>
-        {t("tracking_technologies_and_cookies")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("tracking_technologies_and_cookies_description")}
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("yourData.title")}
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 5 }}>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("cookies_or_browser_cookies")}</strong>{" "}
-          {t("cookies_description")}
+          <strong>{t("yourData.accountTitle")}</strong>{" "}
+          {t("yourData.accountDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("web_beacons")}</strong> {t("web_beacons_description")}
+          <strong>{t("yourData.profileTitle")}</strong>{" "}
+          {t("yourData.profileDescription")}
+        </ListItem>
+        <ListItem sx={{ display: "list-item" }}>
+          <strong>{t("yourData.linksTitle")}</strong>{" "}
+          {t("yourData.linksDescription")}
+        </ListItem>
+        <ListItem sx={{ display: "list-item" }}>
+          <strong>{t("yourData.settingsTitle")}</strong>{" "}
+          {t("yourData.settingsDescription")}
         </ListItem>
       </List>
       <Typography gutterBottom paragraph>
-        {t("cookies_paragraph")}
+        {t("yourData.publicNote")}
+      </Typography>
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("automatic.title")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("purpose_of_cookies")}
+        {t("automatic.description")}
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 5 }}>
         <ListItem sx={{ display: "list-item" }}>
-          <Typography gutterBottom paragraph sx={{ fontWeight: "bold" }}>
-            {t("necessary_cookies_title")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("session_cookies")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("administered_by")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("necessary_cookies_purpose")}
-          </Typography>
+          {t("automatic.item1")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <Typography gutterBottom paragraph sx={{ fontWeight: "bold" }}>
-            {t("cookies_policy_title")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("persistent_cookies")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("administered_by")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("cookies_policy_purpose")}
-          </Typography>
+          {t("automatic.item2")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <Typography gutterBottom paragraph sx={{ fontWeight: "bold" }}>
-            {t("functionality_cookies_title")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("persistent_cookies")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("administered_by")}
-          </Typography>
-          <Typography gutterBottom paragraph>
-            {t("functionality_cookies_purpose")}
-          </Typography>
+          {t("automatic.item3")}
+        </ListItem>
+        <ListItem sx={{ display: "list-item" }}>
+          {t("automatic.item4")}
         </ListItem>
       </List>
       <Typography gutterBottom paragraph>
-        {t("cookies_policy_info")}
+        {t("automatic.referrerNote")}
+      </Typography>
+      <Typography component="h3" variant="h5" gutterBottom sx={{ mt: 4 }}>
+        {t("automatic.notCollectedTitle")}
       </Typography>
       <Typography
-        component="h3"
-        variant="h4"
+        data-testid="privacy-policy-not-collected"
         gutterBottom
-        sx={{
-          my: 5,
-        }}
+        paragraph
       >
-        {t("use_of_personal_data")}
+        {t("automatic.notCollected")}
+      </Typography>
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("cookies.title")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("personal_data_purposes")}
+        {t("cookies.description")}
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 5 }}>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("provide_and_maintain_service")}</strong>{" "}
-          {t("provide_and_maintain_service_desc")}
+          <strong>{t("cookies.authTitle")}</strong>{" "}
+          {t("cookies.authDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("manage_account")}</strong> {t("manage_account_desc")}
+          <strong>{t("cookies.languageTitle")}</strong>{" "}
+          {t("cookies.languageDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("performance_of_contract")}</strong>{" "}
-          {t("performance_of_contract_desc")}
+          <strong>{t("cookies.themeTitle")}</strong>{" "}
+          {t("cookies.themeDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("contact_you")}</strong> {t("contact_you_desc")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("provide_news_and_offers")}</strong>{" "}
-          {t("provide_news_and_offers_desc")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("manage_requests")}</strong> {t("manage_requests_desc")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("business_transfers")}</strong>{" "}
-          {t("business_transfers_desc")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("other_purposes")}</strong> {t("other_purposes_desc")}
+          <strong>{t("cookies.adultTitle")}</strong>{" "}
+          {t("cookies.adultDescription")}
         </ListItem>
       </List>
       <Typography gutterBottom paragraph>
-        {t("personal_data_sharing")}
+        {t("cookies.controlNote")}
+      </Typography>
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("use.title")}
+      </Typography>
+      <List sx={{ listStyleType: "disc", pl: 5 }}>
+        <ListItem sx={{ display: "list-item" }}>{t("use.item1")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("use.item2")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("use.item3")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("use.item4")}</ListItem>
+      </List>
+      <Typography gutterBottom paragraph>
+        {t("use.notUsed")}
+      </Typography>
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("emails.title")}
+      </Typography>
+      <Typography gutterBottom paragraph>
+        {t("emails.description")}
+      </Typography>
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("thirdParties.title")}
+      </Typography>
+      <Typography gutterBottom paragraph>
+        {t("thirdParties.description")}
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 5 }}>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("with_service_providers")}</strong>{" "}
-          {t("with_service_providers_desc")}
+          <strong>{t("thirdParties.hostingTitle")}</strong>{" "}
+          {t("thirdParties.hostingDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("for_business_transfers")}</strong>{" "}
-          {t("for_business_transfers_desc")}
+          <strong>{t("thirdParties.emailTitle")}</strong>{" "}
+          {t("thirdParties.emailDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("with_affiliates")}</strong> {t("with_affiliates_desc")}
+          <strong>{t("thirdParties.imagesTitle")}</strong>{" "}
+          {t("thirdParties.imagesDescription")}
         </ListItem>
         <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("with_business_partners")}</strong>{" "}
-          {t("with_business_partners_desc")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("with_other_users")}</strong> {t("with_other_users_desc")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          <strong>{t("with_consent")}</strong> {t("with_consent_desc")}
+          <strong>{t("thirdParties.linksTitle")}</strong>{" "}
+          {t("thirdParties.linksDescription")}
         </ListItem>
       </List>
+
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("retention.title")}
+      </Typography>
+      <Typography component="h3" variant="h5" gutterBottom sx={{ mt: 4 }}>
+        {t("retention.accountTitle")}
+      </Typography>
+      <Typography gutterBottom paragraph>
+        {t("retention.accountDescription")}
+      </Typography>
+      <Typography component="h3" variant="h5" gutterBottom sx={{ mt: 4 }}>
+        {t("retention.closedTitle")}
+      </Typography>
       <Typography
-        component="h3"
-        variant="h4"
+        data-testid="privacy-policy-account-closure"
         gutterBottom
-        sx={{
-          my: 5,
-        }}
+        paragraph
       >
-        {t("retention_of_personal_data")}
+        {t("retention.closedDescription")}
+      </Typography>
+      <Typography component="h3" variant="h5" gutterBottom sx={{ mt: 4 }}>
+        {t("retention.tokensTitle")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("retention_policy_paragraph1")}
+        {t("retention.tokensDescription")}
+      </Typography>
+      <Typography component="h3" variant="h5" gutterBottom sx={{ mt: 4 }}>
+        {t("retention.eventsTitle")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("retention_policy_paragraph2")}
+        {t("retention.eventsDescription")}
       </Typography>
 
-      <Typography
-        component="h3"
-        variant="h4"
-        gutterBottom
-        sx={{
-          my: 5,
-        }}
-      >
-        {t("transfer_of_personal_data")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("transfer_info_paragraph1")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("transfer_info_paragraph2")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("transfer_info_paragraph3")}
-      </Typography>
-
-      <Typography
-        component="h3"
-        variant="h4"
-        gutterBottom
-        sx={{
-          my: 5,
-        }}
-      >
-        {t("delete_personal_data")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("delete_info_paragraph1")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("delete_info_paragraph2")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("delete_info_paragraph3")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("delete_info_paragraph4")}
-      </Typography>
-
-      <Typography
-        component="h3"
-        variant="h4"
-        gutterBottom
-        sx={{
-          my: 5,
-        }}
-      >
-        {t("disclosure_of_personal_data")}
-      </Typography>
-      <Typography component="h4" variant="h5" gutterBottom>
-        {t("business_transactions")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("business_transactions_paragraph")}
-      </Typography>
-
-      <Typography component="h4" variant="h5" gutterBottom sx={{ mt: 5 }}>
-        {t("law_enforcement")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("law_enforcement_paragraph")}
-      </Typography>
-
-      <Typography component="h4" variant="h5" gutterBottom sx={{ mt: 5 }}>
-        {t("other_legal_requirements")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("other_legal_requirements_paragraph")}
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("rights.title")}
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 5 }}>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("legal_requirement_item1")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("legal_requirement_item2")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("legal_requirement_item3")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("legal_requirement_item4")}
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("legal_requirement_item5")}
-        </ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("rights.item1")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("rights.item2")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("rights.item3")}</ListItem>
+        <ListItem sx={{ display: "list-item" }}>{t("rights.item4")}</ListItem>
       </List>
-
-      <Typography
-        component="h3"
-        variant="h4"
-        gutterBottom
-        sx={{
-          my: 5,
-        }}
-      >
-        {t("security_of_personal_data")}
-      </Typography>
       <Typography gutterBottom paragraph>
-        {t("security_paragraph")}
+        {t("rights.note")}
       </Typography>
 
-      <Typography
-        component="h2"
-        variant="h3"
-        letterSpacing="-0.02em"
-        gutterBottom
-        sx={{
-          mt: 7,
-          mb: 5,
-        }}
-      >
-        {t("childrens_privacy")}
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("security.title")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("childrens_privacy_paragraph1")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("childrens_privacy_paragraph2")}
+        {t("security.description")}
       </Typography>
 
-      <Typography
-        component="h2"
-        variant="h3"
-        letterSpacing="-0.02em"
-        gutterBottom
-        sx={{
-          mt: 7,
-          mb: 5,
-        }}
-      >
-        {t("links_to_other_websites")}
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("children.title")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("links_to_other_websites_paragraph1")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("links_to_other_websites_paragraph2")}
+        {t("children.description")}
       </Typography>
 
-      <Typography
-        component="h2"
-        variant="h3"
-        letterSpacing="-0.02em"
-        gutterBottom
-        sx={{
-          mt: 7,
-          mb: 5,
-        }}
-      >
-        {t("changes_to_privacy_policy")}
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("transfers.title")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("changes_to_privacy_policy_paragraph1")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("changes_to_privacy_policy_paragraph2")}
-      </Typography>
-      <Typography gutterBottom paragraph>
-        {t("changes_to_privacy_policy_paragraph3")}
+        {t("transfers.description")}
       </Typography>
 
-      <Typography
-        component="h2"
-        variant="h3"
-        letterSpacing="-0.02em"
-        gutterBottom
-        sx={{
-          mt: 7,
-          mb: 5,
-        }}
-      >
-        {t("contact_us")}
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("changes.title")}
       </Typography>
       <Typography gutterBottom paragraph>
-        {t("contact_us_paragraph")}
+        {t("changes.description")}
       </Typography>
 
-      <List sx={{ listStyleType: "disc", pl: 5 }}>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("contact_us_by_email")}{" "}
-          <MuiLink
-            target="_blank"
-            rel="external noopener noreferrer"
-            href="mailto:boilerplates@brocoders.com"
-          >
-            boilerplates@brocoders.com
-          </MuiLink>
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("contact_us_on_website")}{" "}
-          <MuiLink
-            target="_blank"
-            rel="external noopener noreferrer"
-            href="https://bcboilerplates.com/"
-          >
-            bc boilerplates
-          </MuiLink>
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("contact_us_on_github_discussions")}{" "}
-          <MuiLink
-            target="_blank"
-            rel="external noopener noreferrer"
-            href="https://github.com/brocoders/nestjs-boilerplate/discussions"
-          >
-            nestjs-boilerplate
-          </MuiLink>{" "}
-          {t("contact_us_on_github_discussions_or")}{" "}
-          <MuiLink
-            target="_blank"
-            rel="external noopener noreferrer"
-            href="https://github.com/brocoders/extensive-react-boilerplate/discussions"
-          >
-            extensive-react-boilerplate
-          </MuiLink>
-        </ListItem>
-        <ListItem sx={{ display: "list-item" }}>
-          {t("contact_us_on_discord")}{" "}
-          <MuiLink
-            target="_blank"
-            rel="external noopener noreferrer"
-            href="https://discord.com/channels/520622812742811698/1197293125434093701"
-          >
-            channel
-          </MuiLink>
-        </ListItem>
-      </List>
+      <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
+        {t("contact.title")}
+      </Typography>
+      <Typography gutterBottom paragraph>
+        {t("contact.description")}{" "}
+        <MuiLink href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</MuiLink>
+      </Typography>
     </Container>
   );
 }
+
 export default PrivacyPolicy;

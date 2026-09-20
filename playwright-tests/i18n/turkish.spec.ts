@@ -108,26 +108,4 @@ test.describe("Turkce", () => {
     // ...ama kullanicinin verisi oldugu gibi.
     await expect(page.getByText("My English Link Title")).toBeVisible();
   });
-
-  test("gizlilik politikasi Ingilizce kaliyor ve ham anahtar basmiyor", async ({
-    page,
-  }) => {
-    /**
-     * privacy-policy bilincli olarak cevrilmedi: metin boilerplate'ten
-     * geliyor ve baska bir sirketi adlandiriyor (bkz.
-     * locale-keys.spec.ts). Burada olculen sey bunun ZARIF dustugu --
-     * i18next eksik namespace'te fallbackLng'e gidiyor, ham anahtar
-     * basmiyor.
-     */
-    await page.goto("/tr/privacy-policy");
-
-    await expect(
-      page.getByRole("heading", { name: "Privacy Policy" }).first()
-    ).toBeVisible();
-    // Ham anahtar basilsaydi sayfada "interpretation_and_definitions"
-    // gibi bir dize gorunurdu.
-    await expect(page.getByText("interpretation_and_definitions")).toHaveCount(
-      0
-    );
-  });
 });
