@@ -1,0 +1,34 @@
+{
+  "welcomeBack": "Welcome back!",
+  "welcomeBackNamed": "Welcome back, {{name}}! 👋",
+  "subtitle": "Manage your links and track your performance",
+  "previewPage": "Preview Page",
+  "addLink": "Add Link",
+  "profileUrl": {
+    "title": "Your Profile URL",
+    "copied": "Copied!",
+    "copy": "Copy",
+    "share": "Share"
+  },
+  "stats": {
+    "totalClicks": "Total Clicks",
+    "activeLinks": "Active Links",
+    "profileViews": "Profile Views"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "addLink": "Add Link",
+    "editProfile": "Edit Profile",
+    "customize": "Customize",
+    "analytics": "Analytics"
+  },
+  "links": {
+    "title": "Your Links",
+    "viewAll": "View All",
+    "loading": "Loading your links…",
+    "empty": "You haven't added any links yet.",
+    "addFirst": "Add your first link",
+    "clicks": "clicks",
+    "open": "Open {{title}}"
+  }
+}

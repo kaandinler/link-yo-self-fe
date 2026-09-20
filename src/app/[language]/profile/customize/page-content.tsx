@@ -21,6 +21,7 @@ import useAuthActions from "@/services/auth/use-auth-actions";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useSnackbar } from "@/hooks/use-snackbar";
 import useLanguage from "@/services/i18n/use-language";
+import { useTranslation } from "@/services/i18n/client";
 import {
   BACKGROUND_TYPES,
   BackgroundType,
@@ -31,23 +32,12 @@ import {
   safeImageUrl,
 } from "@/services/profile-theme";
 
-const TYPE_LABELS: Record<BackgroundType, string> = {
-  color: "Solid color",
-  gradient: "Gradient",
-  image: "Image",
-};
-
-const TYPE_HINTS: Record<BackgroundType, string> = {
-  color: "One flat color behind your page.",
-  gradient: "Fades from the background color into your theme color.",
-  image: "Your page sits on top of an image from the web.",
-};
-
 function isBackgroundType(value: unknown): value is BackgroundType {
   return BACKGROUND_TYPES.includes(value as BackgroundType);
 }
 
 function Customize() {
+  const { t } = useTranslation("customize");
   const language = useLanguage();
   const { setUser } = useAuthActions();
   const { enqueueSnackbar } = useSnackbar();
@@ -116,14 +106,12 @@ function Customize() {
       await updatePageSettings.mutateAsync({
         adult_warning_enabled: adultWarning,
       });
-      enqueueSnackbar("Your page settings have been saved.", {
+      enqueueSnackbar(t("contentWarning.saved"), {
         variant: "success",
       });
     } catch (caught) {
       setSettingsError(
-        caught instanceof Error
-          ? caught.message
-          : "Your changes could not be saved."
+        caught instanceof Error ? caught.message : t("errors.generic")
       );
     }
   };
@@ -133,19 +121,17 @@ function Customize() {
     setError(null);
 
     if (!HEX_COLOR.test(themeColor)) {
-      setError("Theme color must be a hex code like #1383eb.");
+      setError(t("errors.themeColor"));
       return;
     }
 
     if (backgroundType === "image") {
       if (!safeImageUrl(backgroundImage)) {
-        setError(
-          "Background image must be an http(s) address without quotes or parentheses."
-        );
+        setError(t("errors.backgroundImage"));
         return;
       }
     } else if (!HEX_COLOR.test(backgroundColor)) {
-      setError("Background color must be a hex code like #ffffff.");
+      setError(t("errors.backgroundColor"));
       return;
     }
 
@@ -158,15 +144,11 @@ function Customize() {
     try {
       const updated = await updateProfile.mutateAsync(payload);
       setUser(updated);
-      enqueueSnackbar("Your page appearance has been saved.", {
+      enqueueSnackbar(t("saved"), {
         variant: "success",
       });
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Your changes could not be saved."
-      );
+      setError(caught instanceof Error ? caught.message : t("errors.generic"));
     }
   };
 
@@ -184,10 +166,8 @@ function Customize() {
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-ink">Customize Profile</h1>
-            <p className="text-ink-muted mt-1">
-              Choose how your public page looks
-            </p>
+            <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
+            <p className="text-ink-muted mt-1">{t("subtitle")}</p>
           </div>
 
           {profile?.username && (
@@ -196,7 +176,7 @@ function Customize() {
               className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink px-4 py-2 min-h-[44px] rounded-lg transition-colors"
             >
               <ExternalLink className="h-4 w-4" />
-              View public page
+              {t("viewPublicPage")}
             </NextLink>
           )}
         </div>
@@ -213,11 +193,9 @@ function Customize() {
                 className="flex items-center gap-2 text-sm font-medium text-ink-soft"
               >
                 <Palette className="h-4 w-4" />
-                Theme color
+                {t("themeColor.label")}
               </label>
-              <p className="text-xs text-ink-muted">
-                Used for your links and the second half of a gradient.
-              </p>
+              <p className="text-xs text-ink-muted">{t("themeColor.hint")}</p>
               <div className="flex items-center gap-3">
                 <input
                   id="theme-color"
@@ -232,7 +210,7 @@ function Customize() {
                   className="h-11 w-16 cursor-pointer rounded-lg border border-line-strong bg-overlay"
                 />
                 <input
-                  aria-label="Theme color hex"
+                  aria-label={t("themeColor.hexLabel")}
                   name="themeColorHex"
                   type="text"
                   value={themeColor}
@@ -244,7 +222,7 @@ function Customize() {
 
             <div className="space-y-2">
               <span className="block text-sm font-medium text-ink-soft">
-                Background
+                {t("background.label")}
               </span>
               <div className="grid grid-cols-3 gap-2">
                 {BACKGROUND_TYPES.map((type) => (
@@ -258,12 +236,12 @@ function Customize() {
                         : "bg-field text-ink-soft hover:bg-field-strong"
                     }`}
                   >
-                    {TYPE_LABELS[type]}
+                    {t(`background.types.${type}`)}
                   </button>
                 ))}
               </div>
               <p className="text-xs text-ink-muted">
-                {TYPE_HINTS[backgroundType]}
+                {t(`background.hints.${backgroundType}`)}
               </p>
             </div>
 
@@ -274,7 +252,7 @@ function Customize() {
                   className="flex items-center gap-2 text-sm font-medium text-ink-soft"
                 >
                   <ImageIcon className="h-4 w-4" />
-                  Image URL
+                  {t("background.imageUrl")}
                 </label>
                 <input
                   id="background-image"
@@ -288,8 +266,7 @@ function Customize() {
                 />
                 {!imageLooksValid && (
                   <p className="text-amber-300 text-xs">
-                    Must start with http:// or https:// and contain no quotes or
-                    parentheses.
+                    {t("background.imageInvalid")}
                   </p>
                 )}
               </div>
@@ -299,7 +276,7 @@ function Customize() {
                   htmlFor="background-color"
                   className="block text-sm font-medium text-ink-soft"
                 >
-                  Background color
+                  {t("background.colorLabel")}
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -315,7 +292,7 @@ function Customize() {
                     className="h-11 w-16 cursor-pointer rounded-lg border border-line-strong bg-overlay"
                   />
                   <input
-                    aria-label="Background color hex"
+                    aria-label={t("background.colorHexLabel")}
                     name="backgroundColorHex"
                     type="text"
                     value={backgroundColor}
@@ -334,13 +311,13 @@ function Customize() {
               data-testid="save-appearance"
               className="inline-flex min-h-[44px] items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              {updateProfile.isPending ? "Saving…" : "Save appearance"}
+              {updateProfile.isPending ? t("saving") : t("save")}
             </button>
           </form>
 
           {/* Onizleme */}
           <div className="space-y-2">
-            <p className="text-sm text-ink-muted">Preview</p>
+            <p className="text-sm text-ink-muted">{t("preview.title")}</p>
             <div
               data-testid="theme-preview"
               className="rounded-2xl border border-line overflow-hidden min-h-[320px] p-6 flex flex-col items-center justify-center gap-4"
@@ -356,14 +333,16 @@ function Customize() {
               </div>
 
               <p className="font-semibold" style={preview.textStyle}>
-                {profile?.display_name ?? profile?.username ?? "Your name"}
+                {profile?.display_name ??
+                  profile?.username ??
+                  t("preview.name")}
               </p>
               <p className="text-sm" style={preview.mutedTextStyle}>
-                {profile?.bio ?? "Your bio shows up here"}
+                {profile?.bio ?? t("preview.bio")}
               </p>
 
               <div className="w-full max-w-xs space-y-2 pt-2">
-                {["Your first link", "Another link"].map((title) => (
+                {[t("preview.link1"), t("preview.link2")].map((title) => (
                   <div
                     key={title}
                     className="w-full text-center py-2 rounded-lg text-ink text-sm"
@@ -374,9 +353,7 @@ function Customize() {
                 ))}
               </div>
             </div>
-            <p className="text-xs text-ink-faint">
-              The preview uses the same rules as your public page.
-            </p>
+            <p className="text-xs text-ink-faint">{t("preview.note")}</p>
           </div>
         </div>
 
@@ -384,7 +361,7 @@ function Customize() {
         <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 text-sm font-medium text-ink-soft">
             <EyeOff className="h-4 w-4" />
-            Content warning
+            {t("contentWarning.title")}
           </div>
 
           <label
@@ -410,8 +387,7 @@ function Customize() {
               className="mt-1 h-5 w-5 cursor-pointer accent-purple-600 disabled:cursor-not-allowed disabled:opacity-50"
             />
             <span className="text-sm text-ink-muted">
-              Show an 18+ warning before your page. Visitors confirm once, then
-              go straight to your links next time.
+              {t("contentWarning.label")}
             </span>
           </label>
 
@@ -426,7 +402,9 @@ function Customize() {
             data-testid="save-page-settings"
             className="inline-flex min-h-[44px] items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
           >
-            {updatePageSettings.isPending ? "Saving…" : "Save settings"}
+            {updatePageSettings.isPending
+              ? t("contentWarning.saving")
+              : t("contentWarning.save")}
           </button>
         </div>
       </div>

@@ -18,6 +18,7 @@ import { useAnalyticsSummary } from "@/services/api/services/analytics";
 import { useProfile } from "@/services/api/services/onboarding";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
+import { useTranslation } from "@/services/i18n/client";
 
 /** Pano ilk acildiginda sayilar yerine bu gosteriliyor. */
 const YUKLENIYOR = "—";
@@ -28,6 +29,7 @@ function formatSayi(deger: number | undefined, yukleniyor: boolean): string {
 }
 
 function Dashboard() {
+  const { t } = useTranslation("dashboard");
   const [copied, setCopied] = useState(false);
   const language = useLanguage();
 
@@ -95,12 +97,10 @@ function Dashboard() {
           <div>
             <h1 className="text-3xl font-bold text-ink">
               {profileLoading
-                ? "Welcome back!"
-                : `Welcome back, ${displayName}! 👋`}
+                ? t("welcomeBack")
+                : t("welcomeBackNamed", { name: displayName })}
             </h1>
-            <p className="text-ink-muted mt-1">
-              Manage your links and track your performance
-            </p>
+            <p className="text-ink-muted mt-1">{t("subtitle")}</p>
           </div>
 
           <div className="flex gap-3">
@@ -109,14 +109,14 @@ function Dashboard() {
               className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 min-h-[44px] rounded-lg border border-line-strong transition-colors"
             >
               <Eye className="h-4 w-4" />
-              Preview Page
+              {t("previewPage")}
             </Link>
             <Link
               href={`/${language}/links?new=1`}
               className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 min-h-[44px] rounded-lg transition-all"
             >
               <Plus className="h-4 w-4" />
-              Add Link
+              {t("addLink")}
             </Link>
           </div>
         </div>
@@ -126,7 +126,7 @@ function Dashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h3 className="text-lg font-semibold text-ink mb-2">
-                Your Profile URL
+                {t("profileUrl.title")}
               </h3>
               <div className="flex items-center gap-2 text-accent font-mono break-all">
                 <Link2 className="h-4 w-4 shrink-0" />
@@ -140,7 +140,7 @@ function Dashboard() {
                 className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
               >
                 <Copy className="h-4 w-4" />
-                {copied ? "Copied!" : "Copy"}
+                {copied ? t("profileUrl.copied") : t("profileUrl.copy")}
               </button>
               <button
                 onClick={handleShare}
@@ -148,7 +148,7 @@ function Dashboard() {
                 className="flex items-center gap-2 bg-field hover:bg-field-strong disabled:opacity-50 text-ink px-4 py-2 min-h-[44px] rounded-lg transition-colors"
               >
                 <Share2 className="h-4 w-4" />
-                Share
+                {t("profileUrl.share")}
               </button>
             </div>
           </div>
@@ -162,7 +162,9 @@ function Dashboard() {
                 <BarChart3 className="h-6 w-6 text-ink" />
               </div>
               <div>
-                <p className="text-ink-muted text-sm">Total Clicks</p>
+                <p className="text-ink-muted text-sm">
+                  {t("stats.totalClicks")}
+                </p>
                 <p className="text-2xl font-bold text-ink">
                   {formatSayi(analytics?.total_clicks, analyticsLoading)}
                 </p>
@@ -176,7 +178,9 @@ function Dashboard() {
                 <Link2 className="h-6 w-6 text-ink" />
               </div>
               <div>
-                <p className="text-ink-muted text-sm">Active Links</p>
+                <p className="text-ink-muted text-sm">
+                  {t("stats.activeLinks")}
+                </p>
                 <p className="text-2xl font-bold text-ink">
                   {formatSayi(analytics?.active_links, analyticsLoading)}
                 </p>
@@ -190,7 +194,9 @@ function Dashboard() {
                 <Users className="h-6 w-6 text-ink" />
               </div>
               <div>
-                <p className="text-ink-muted text-sm">Profile Views</p>
+                <p className="text-ink-muted text-sm">
+                  {t("stats.profileViews")}
+                </p>
                 <p className="text-2xl font-bold text-ink">
                   {formatSayi(analytics?.profile_view_count, analyticsLoading)}
                 </p>
@@ -201,35 +207,45 @@ function Dashboard() {
 
         {/* Quick Actions */}
         <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-ink mb-4">Quick Actions</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">
+            {t("quickActions.title")}
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
               href={`/${language}/links?new=1`}
               className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <Plus className="h-6 w-6 text-accent group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-ink-soft">Add Link</span>
+              <span className="text-sm text-ink-soft">
+                {t("quickActions.addLink")}
+              </span>
             </Link>
             <Link
               href={`/${language}/profile/edit`}
               className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <Edit3 className="h-6 w-6 text-blue-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-ink-soft">Edit Profile</span>
+              <span className="text-sm text-ink-soft">
+                {t("quickActions.editProfile")}
+              </span>
             </Link>
             <Link
               href={`/${language}/profile/customize`}
               className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <Settings className="h-6 w-6 text-green-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-ink-soft">Customize</span>
+              <span className="text-sm text-ink-soft">
+                {t("quickActions.customize")}
+              </span>
             </Link>
             <Link
               href={`/${language}/analytics`}
               className="flex flex-col items-center gap-2 p-4 bg-field/50 hover:bg-field-strong/50 rounded-xl transition-colors group"
             >
               <BarChart3 className="h-6 w-6 text-orange-400 group-hover:scale-110 transition-transform" />
-              <span className="text-sm text-ink-soft">Analytics</span>
+              <span className="text-sm text-ink-soft">
+                {t("quickActions.analytics")}
+              </span>
             </Link>
           </div>
         </div>
@@ -237,28 +253,28 @@ function Dashboard() {
         {/* Recent Links */}
         <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-ink">Your Links</h3>
+            <h3 className="text-lg font-semibold text-ink">
+              {t("links.title")}
+            </h3>
             <Link
               href={`/${language}/links`}
               className="inline-flex items-center min-h-[44px] text-accent hover:text-accent transition-colors"
             >
-              View All
+              {t("links.viewAll")}
             </Link>
           </div>
 
           {analyticsLoading ? (
-            <p className="text-ink-muted">Loading your links…</p>
+            <p className="text-ink-muted">{t("links.loading")}</p>
           ) : recentLinks.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-ink-muted mb-4">
-                You haven&apos;t added any links yet.
-              </p>
+              <p className="text-ink-muted mb-4">{t("links.empty")}</p>
               <Link
                 href={`/${language}/links?new=1`}
                 className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                Add your first link
+                {t("links.addFirst")}
               </Link>
             </div>
           ) : (
@@ -286,13 +302,15 @@ function Dashboard() {
                       <p className="text-ink font-medium">
                         {link.click_count.toLocaleString()}
                       </p>
-                      <p className="text-ink-muted text-xs">clicks</p>
+                      <p className="text-ink-muted text-xs">
+                        {t("links.clicks")}
+                      </p>
                     </div>
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`Open ${link.title}`}
+                      aria-label={t("links.open", { title: link.title })}
                       className="text-ink-muted hover:text-ink transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />

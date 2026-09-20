@@ -1,0 +1,51 @@
+{
+  "title": "Customize Profile",
+  "subtitle": "Choose how your public page looks",
+  "viewPublicPage": "View public page",
+  "themeColor": {
+    "label": "Theme color",
+    "hint": "Used for your links and the second half of a gradient.",
+    "hexLabel": "Theme color hex"
+  },
+  "background": {
+    "label": "Background",
+    "types": {
+      "color": "Solid color",
+      "gradient": "Gradient",
+      "image": "Image"
+    },
+    "hints": {
+      "color": "One flat color behind your page.",
+      "gradient": "Fades from the background color into your theme color.",
+      "image": "Your page sits on top of an image from the web."
+    },
+    "imageUrl": "Image URL",
+    "imageInvalid": "Must start with http:// or https:// and contain no quotes or parentheses.",
+    "colorLabel": "Background color",
+    "colorHexLabel": "Background color hex"
+  },
+  "save": "Save appearance",
+  "saving": "Saving…",
+  "saved": "Your page appearance has been saved.",
+  "errors": {
+    "themeColor": "Theme color must be a hex code like #1383eb.",
+    "backgroundImage": "Background image must be an http(s) address without quotes or parentheses.",
+    "backgroundColor": "Background color must be a hex code like #ffffff.",
+    "generic": "Your changes could not be saved."
+  },
+  "preview": {
+    "title": "Preview",
+    "name": "Your name",
+    "bio": "Your bio shows up here",
+    "link1": "Your first link",
+    "link2": "Another link",
+    "note": "The preview uses the same rules as your public page."
+  },
+  "contentWarning": {
+    "title": "Content warning",
+    "label": "Show an 18+ warning before your page. Visitors confirm once, then go straight to your links next time.",
+    "save": "Save settings",
+    "saving": "Saving…",
+    "saved": "Your page settings have been saved."
+  }
+}

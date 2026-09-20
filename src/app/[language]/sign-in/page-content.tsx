@@ -8,6 +8,7 @@ import useAuthActions from "@/services/auth/use-auth-actions";
 import useAuthTokens from "@/services/auth/use-auth-tokens";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { useSnackbar } from "@/hooks/use-snackbar";
+import { useTranslation } from "@/services/i18n/client";
 import {
   isErrorResponse,
   getResponseErrorMessage,
@@ -107,6 +108,7 @@ const FormInput = ({
 
 // Main Component
 function LinkYoSelfSignInForm() {
+  const { t } = useTranslation("sign-in");
   const { setUser } = useAuthActions();
   const { setTokensInfo } = useAuthTokens();
   const fetchAuthLoginFastAPI = useAuthLoginWithFastAPIService();
@@ -145,11 +147,11 @@ function LinkYoSelfSignInForm() {
     const errors: Partial<Record<keyof SignInFormData, string>> = {};
 
     if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-      errors.email = "Please enter a valid email address";
+      errors.email = t("validation.email");
     }
 
     if (!data.password || data.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
+      errors.password = t("validation.password");
     }
 
     return errors;
@@ -192,7 +194,9 @@ function LinkYoSelfSignInForm() {
       showApiResponse(response, {
         onlyShowOnError: false,
         autoHideDuration: 5000,
-        customMessage: loginResult.success ? "Welcome back!" : errorMessage,
+        customMessage: loginResult.success
+          ? t("form.welcomeBack")
+          : errorMessage,
       }); // Handle successful login
       if (loginResult.success && loginResult.tokenData) {
         // Handle token saving
@@ -234,16 +238,14 @@ function LinkYoSelfSignInForm() {
           setErrors(formFieldErrors);
         } else {
           // No field-specific errors, display general error message
-          setSubmitError(errorMessage || "Login failed. Please try again.");
+          setSubmitError(errorMessage || t("validation.loginFailed"));
         }
       } else {
-        setSubmitError(errorMessage || "Login failed. Please try again.");
+        setSubmitError(errorMessage || t("validation.loginFailed"));
       }
     } catch (error) {
       // Network error or unexpected error
-      setSubmitError(
-        "Network error occurred. Please check your connection and try again."
-      );
+      setSubmitError(t("validation.network"));
       console.error("❌ Login error:", error);
     } finally {
       setIsSubmitting(false);
@@ -258,8 +260,10 @@ function LinkYoSelfSignInForm() {
           <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
             <LogIn className="h-8 w-8 text-ink" />
           </div>
-          <h2 className="text-3xl font-bold text-ink mb-2">Welcome Back</h2>
-          <p className="text-ink-soft">Sign in to your LinkYoSelf account</p>
+          <h2 className="text-3xl font-bold text-ink mb-2">
+            {t("form.heading")}
+          </h2>
+          <p className="text-ink-soft">{t("form.subheading")}</p>
         </div>
 
         {/* Form Card */}
@@ -268,25 +272,25 @@ function LinkYoSelfSignInForm() {
             {/* Email */}
             <FormInput
               name="email"
-              label="Email"
+              label={t("inputs.email.label")}
               type="email"
               icon={Mail}
               value={formData.email}
               onChange={handleInputChange}
               error={errors.email}
-              placeholder="example@email.com"
+              placeholder={t("form.emailPlaceholder")}
             />
 
             {/* Password */}
             <FormInput
               name="password"
-              label="Password"
+              label={t("inputs.password.label")}
               type="password"
               icon={Lock}
               value={formData.password}
               onChange={handleInputChange}
               error={errors.password}
-              placeholder="Enter your password"
+              placeholder={t("form.passwordPlaceholder")}
               showPasswordToggle={true}
               onTogglePassword={() => setShowPassword(!showPassword)}
               showPassword={showPassword}
@@ -298,7 +302,7 @@ function LinkYoSelfSignInForm() {
                 href="/forgot-password"
                 className="inline-flex items-center min-h-[44px] text-sm text-accent hover:text-accent transition-colors duration-200 font-medium"
               >
-                Forgot your password?
+                {t("form.forgotPassword")}
               </a>
             </div>
 
@@ -322,10 +326,10 @@ function LinkYoSelfSignInForm() {
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  Signing in...
+                  {t("form.signingIn")}
                 </div>
               ) : (
-                "Sign In"
+                t("actions.submit")
               )}
             </button>
 
@@ -336,8 +340,8 @@ function LinkYoSelfSignInForm() {
                   href="/sign-up"
                   className="text-sm text-ink-muted hover:text-accent transition-colors duration-200"
                 >
-                  Don't have an account?{" "}
-                  <span className="font-medium">Create one</span>
+                  {t("form.noAccount")}{" "}
+                  <span className="font-medium">{t("form.createOne")}</span>
                 </a>
               </div>
             )}
@@ -356,9 +360,7 @@ function LinkYoSelfSignInForm() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-sm text-ink-muted">
-            Access your digital world with LinkYoSelf ✨
-          </p>
+          <p className="text-sm text-ink-muted">{t("form.footer")}</p>
         </div>
       </div>
     </div>

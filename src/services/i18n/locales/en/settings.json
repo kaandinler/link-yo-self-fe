@@ -1,0 +1,32 @@
+{
+  "title": "Settings",
+  "subtitle": "Manage your account and profile",
+  "unverified": {
+    "title": "Your email is not confirmed",
+    "body": "Password reset links go to this address. Confirm it so you can get back in if you forget your password.",
+    "sent": "Confirmation link sent to {{email}}.",
+    "sending": "Sending…",
+    "send": "Send confirmation link"
+  },
+  "account": {
+    "title": "Account",
+    "confirmed": "confirmed",
+    "empty": "—",
+    "editProfile": "Edit profile",
+    "customizePage": "Customize page",
+    "viewPublicPage": "View public page"
+  },
+  "danger": {
+    "title": "Close your account",
+    "body": "Your profile page and all of your links will stop working, and you will be signed out everywhere. This cannot be undone.",
+    "passwordLabel": "Confirm with your password",
+    "passwordRequired": "Enter your password to confirm.",
+    "closing": "Closing…",
+    "submit": "Close my account",
+    "failed": "Your account could not be closed. Try again.",
+    "confirmTitle": "Close your account?",
+    "confirmMessage": "Your profile page and all of your links will stop working. This cannot be undone.",
+    "confirmYes": "Close account",
+    "confirmNo": "Keep my account"
+  }
+}

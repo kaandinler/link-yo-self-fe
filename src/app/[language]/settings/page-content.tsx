@@ -18,8 +18,10 @@ import useAuthActions from "@/services/auth/use-auth-actions";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
 import useLanguage from "@/services/i18n/use-language";
+import { useTranslation } from "@/services/i18n/client";
 
 function Settings() {
+  const { t } = useTranslation("settings");
   const language = useLanguage();
   const { logOut } = useAuthActions();
   const { confirmDialog } = useConfirmDialog();
@@ -53,16 +55,15 @@ function Settings() {
     setError(null);
 
     if (!password) {
-      setError("Enter your password to confirm.");
+      setError(t("danger.passwordRequired"));
       return;
     }
 
     const confirmed = await confirmDialog({
-      title: "Close your account?",
-      message:
-        "Your profile page and all of your links will stop working. This cannot be undone.",
-      successButtonText: "Close account",
-      cancelButtonText: "Keep my account",
+      title: t("danger.confirmTitle"),
+      message: t("danger.confirmMessage"),
+      successButtonText: t("danger.confirmYes"),
+      cancelButtonText: t("danger.confirmNo"),
     });
 
     if (!confirmed) return;
@@ -84,9 +85,7 @@ function Settings() {
         return;
       }
 
-      setError(
-        getErrorMessage(data, "Your account could not be closed. Try again.")
-      );
+      setError(getErrorMessage(data, t("danger.failed")));
     } finally {
       setIsDeleting(false);
     }
@@ -96,8 +95,8 @@ function Settings() {
     <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-ink">Settings</h1>
-          <p className="text-ink-muted mt-1">Manage your account and profile</p>
+          <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
+          <p className="text-ink-muted mt-1">{t("subtitle")}</p>
         </div>
 
         {/* Dogrulanmamis adres uyarisi: sifre sifirlama baglantisi bu adrese
@@ -109,16 +108,15 @@ function Settings() {
               <MailWarning className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-ink">
-                  Your email is not confirmed
+                  {t("unverified.title")}
                 </h2>
                 <p className="text-ink-soft text-sm mt-1">
-                  Password reset links go to this address. Confirm it so you can
-                  get back in if you forget your password.
+                  {t("unverified.body")}
                 </p>
 
                 {verificationSentTo ? (
                   <p className="text-amber-200 text-sm mt-3">
-                    Confirmation link sent to {verificationSentTo}.
+                    {t("unverified.sent", { email: verificationSentTo })}
                   </p>
                 ) : (
                   <button
@@ -127,7 +125,9 @@ function Settings() {
                     disabled={isResending}
                     className="mt-3 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white min-h-[44px] px-4 py-2 rounded-lg transition-colors"
                   >
-                    {isResending ? "Sending…" : "Send confirmation link"}
+                    {isResending
+                      ? t("unverified.sending")
+                      : t("unverified.send")}
                   </button>
                 )}
               </div>
@@ -136,19 +136,27 @@ function Settings() {
         )}
 
         <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-ink">Account</h2>
+          <h2 className="text-lg font-semibold text-ink">
+            {t("account.title")}
+          </h2>
 
           <div className="flex items-center gap-3 text-ink-soft">
             <UserIcon className="h-4 w-4 shrink-0 text-ink-muted" />
-            <span className="break-all">{profile?.email ?? "—"}</span>
+            <span className="break-all">
+              {profile?.email ?? t("account.empty")}
+            </span>
             {profile?.email_verified && (
-              <span className="text-green-400 text-xs shrink-0">confirmed</span>
+              <span className="text-green-400 text-xs shrink-0">
+                {t("account.confirmed")}
+              </span>
             )}
           </div>
           <div className="flex items-center gap-3 text-ink-soft">
             <Link2 className="h-4 w-4 shrink-0 text-ink-muted" />
             <span className="break-all font-mono">
-              {profile?.username ? `/${language}/${profile.username}` : "—"}
+              {profile?.username
+                ? `/${language}/${profile.username}`
+                : t("account.empty")}
             </span>
           </div>
 
@@ -157,13 +165,13 @@ function Settings() {
               href={`/${language}/profile/edit`}
               className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink min-h-[44px] px-4 py-2 rounded-lg transition-colors"
             >
-              Edit profile
+              {t("account.editProfile")}
             </Link>
             <Link
               href={`/${language}/profile/customize`}
               className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink min-h-[44px] px-4 py-2 rounded-lg transition-colors"
             >
-              Customize page
+              {t("account.customizePage")}
             </Link>
             {profile?.username && (
               <Link
@@ -171,7 +179,7 @@ function Settings() {
                 className="inline-flex items-center gap-2 bg-field hover:bg-field-strong text-ink min-h-[44px] px-4 py-2 rounded-lg transition-colors"
               >
                 <ExternalLink className="h-4 w-4" />
-                View public page
+                {t("account.viewPublicPage")}
               </Link>
             )}
           </div>
@@ -183,12 +191,9 @@ function Settings() {
             <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
             <div>
               <h2 className="text-lg font-semibold text-ink">
-                Close your account
+                {t("danger.title")}
               </h2>
-              <p className="text-ink-soft text-sm mt-1">
-                Your profile page and all of your links will stop working, and
-                you will be signed out everywhere. This cannot be undone.
-              </p>
+              <p className="text-ink-soft text-sm mt-1">{t("danger.body")}</p>
             </div>
           </div>
 
@@ -197,7 +202,7 @@ function Settings() {
               htmlFor="delete-account-password"
               className="block text-sm text-ink-soft"
             >
-              Confirm with your password
+              {t("danger.passwordLabel")}
             </label>
             <input
               id="delete-account-password"
@@ -219,7 +224,7 @@ function Settings() {
               disabled={isDeleting}
               className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white min-h-[44px] px-4 py-2 rounded-lg transition-colors"
             >
-              {isDeleting ? "Closing…" : "Close my account"}
+              {isDeleting ? t("danger.closing") : t("danger.submit")}
             </button>
           </form>
         </div>
