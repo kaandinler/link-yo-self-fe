@@ -24,13 +24,13 @@ import LinkSparkline, {
 } from "@/components/charts/link-sparkline";
 import ReferrerBars from "@/components/charts/referrer-bars";
 import {
-  GUN_ADLARI,
   HourBars,
   saatEtiketi,
   WeekdayBars,
 } from "@/components/charts/time-bars";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
+import { Trans, useTranslation } from "@/services/i18n/client";
 
 const YUKLENIYOR = "—";
 
@@ -88,6 +88,7 @@ function AralikSecici({
   secili: SelectedRange;
   sec: (aralik: SelectedRange) => void;
 }) {
+  const { t } = useTranslation("analytics");
   const serbest = secili.kind === "custom";
   const [acik, setAcik] = useState(serbest);
   // IKISI DE BOS BASLIYOR. "son" bugunle baslatilinca yalnizca baslangici
@@ -97,7 +98,8 @@ function AralikSecici({
   const [bas, setBas] = useState(serbest ? secili.start : "");
   const [son, setSon] = useState(serbest ? secili.end : "");
 
-  const hata = acik ? rangeError(bas, son) : null;
+  const hataAnahtari = acik ? rangeError(bas, son) : null;
+  const hata = hataAnahtari ? t(hataAnahtari.key, hataAnahtari.params) : null;
 
   // Gecerli bir aralik girildiginde kendiliginden uygulaniyor: ayri bir
   // "Apply" dugmesi, tarihleri secip sonucu bekleyen kullaniciyi bos
@@ -114,7 +116,7 @@ function AralikSecici({
     <div className="space-y-2">
       <div
         role="group"
-        aria-label="Date range"
+        aria-label={t("range.label")}
         className="inline-flex flex-wrap rounded-lg border border-line p-1"
       >
         {TIMESERIES_RANGES.map((gun) => {
@@ -135,7 +137,7 @@ function AralikSecici({
                   : "text-ink-soft hover:bg-field"
               }`}
             >
-              Last {gun} days
+              {t("range.lastDays", { days: gun })}
             </button>
           );
         })}
@@ -148,7 +150,7 @@ function AralikSecici({
             acik ? "bg-purple-600 text-white" : "text-ink-soft hover:bg-field"
           }`}
         >
-          Custom
+          {t("range.custom")}
         </button>
       </div>
 
@@ -163,7 +165,7 @@ function AralikSecici({
           <label className="flex items-center gap-2 text-sm text-ink-soft">
             {/* Sabit etiket sutunu: iki satirin girdileri ayni yerden
                 basliyor. */}
-            <span className="w-10 shrink-0 sm:w-auto">From</span>
+            <span className="w-10 shrink-0 sm:w-auto">{t("range.from")}</span>
             <input
               type="date"
               data-testid="range-start"
@@ -176,7 +178,7 @@ function AralikSecici({
             />
           </label>
           <label className="flex items-center gap-2 text-sm text-ink-soft">
-            <span className="w-10 shrink-0 sm:w-auto">to</span>
+            <span className="w-10 shrink-0 sm:w-auto">{t("range.to")}</span>
             <input
               type="date"
               data-testid="range-end"
@@ -207,6 +209,7 @@ function AralikSecici({
 }
 
 function Analytics() {
+  const { t } = useTranslation("analytics");
   const language = useLanguage();
   const { data, isLoading, isError } = useAnalyticsSummary();
   const [aralik, setAralik] = useState<SelectedRange>(DEFAULT_RANGE);
@@ -244,51 +247,47 @@ function Analytics() {
     <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-ink">Analytics</h1>
-          <p className="text-ink-muted mt-1">
-            How your profile and links are performing
-          </p>
+          <h1 className="text-3xl font-bold text-ink">{t("title")}</h1>
+          <p className="text-ink-muted mt-1">{t("subtitle")}</p>
         </div>
 
         {isError ? (
           <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6">
-            <p className="text-red-300">
-              Analytics could not be loaded. Please try again later.
-            </p>
+            <p className="text-red-300">{t("loadFailed")}</p>
           </div>
         ) : (
           <>
             {/* Ozetteki sayilar hesabin tum gecmisini kapsiyor; asagidaki
                 grafik yalnizca secili araligi. Ikisi birbirini tutmak zorunda
                 degil, bu yuzden basliklari ayri. */}
-            <h2 className="text-lg font-semibold text-ink">All time</h2>
+            <h2 className="text-lg font-semibold text-ink">{t("allTime")}</h2>
 
             {/* Telefonda 2 sutun: tek sutunda dort kart ekranin tamamini
                 yiyor ve altindaki grafik hic gorunmuyordu. */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <IstatistikKarti
-                baslik="Profile Views"
+                baslik={t("stats.profileViews")}
                 deger={data?.profile_view_count}
                 yukleniyor={isLoading}
                 icon={Eye}
                 renk="bg-green-500"
               />
               <IstatistikKarti
-                baslik="Total Clicks"
+                baslik={t("stats.totalClicks")}
                 deger={data?.total_clicks}
                 yukleniyor={isLoading}
                 icon={MousePointerClick}
                 renk="bg-blue-500"
               />
               <IstatistikKarti
-                baslik="Total Links"
+                baslik={t("stats.totalLinks")}
                 deger={data?.total_links}
                 yukleniyor={isLoading}
                 icon={Link2}
                 renk="bg-purple-500"
               />
               <IstatistikKarti
-                baslik="Active Links"
+                baslik={t("stats.activeLinks")}
                 deger={data?.active_links}
                 yukleniyor={isLoading}
                 icon={BarChart3}
@@ -297,30 +296,39 @@ function Analytics() {
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-2">
-              <h2 className="text-lg font-semibold text-ink">Over time</h2>
+              <h2 className="text-lg font-semibold text-ink">
+                {t("overTime")}
+              </h2>
               <AralikSecici secili={aralik} sec={setAralik} />
             </div>
 
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
               {seriHatasi ? (
-                <p className="text-red-300">
-                  The activity chart could not be loaded.
-                </p>
+                <p className="text-red-300">{t("activity.error")}</p>
               ) : seriYukleniyor ? (
-                <p className="text-ink-muted">Loading…</p>
+                <p className="text-ink-muted">{t("loading")}</p>
               ) : (
                 <>
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
                     <ActivityLegend />
                     <p className="text-sm text-ink-muted">
-                      <span className="text-ink font-semibold tabular-nums">
-                        {seri?.total_clicks.toLocaleString()}
-                      </span>{" "}
-                      clicks ·{" "}
-                      <span className="text-ink font-semibold tabular-nums">
-                        {seri?.total_profile_views.toLocaleString()}
-                      </span>{" "}
-                      profile views in this range
+                      <Trans
+                        i18nKey="analytics:activity.summary"
+                        values={{
+                          clicks: seri?.total_clicks.toLocaleString(),
+                          views: seri?.total_profile_views.toLocaleString(),
+                        }}
+                        components={[
+                          <span
+                            key="clicks"
+                            className="text-ink font-semibold tabular-nums"
+                          />,
+                          <span
+                            key="views"
+                            className="text-ink font-semibold tabular-nums"
+                          />,
+                        ]}
+                      />
                     </p>
                   </div>
 
@@ -330,9 +338,7 @@ function Analytics() {
                     /* Bos grafik "hic olmadi" demiyor: gunluk kayit yeni
                        basladi, ondan oncesi yalnizca toplamlarda duruyor. */
                     <p className="text-sm text-ink-muted">
-                      No activity recorded in this range. Daily history starts
-                      from the day activity tracking was added, so older visits
-                      only appear in the all-time totals above.
+                      {t("activity.empty")}
                     </p>
                   )}
 
@@ -341,7 +347,7 @@ function Analytics() {
                       data-testid="activity-table-toggle"
                       className="cursor-pointer text-sm text-ink-muted hover:text-ink-soft"
                     >
-                      Show data table
+                      {t("showDataTable")}
                     </summary>
                     <div className="mt-3 overflow-x-auto">
                       <ActivityTable points={noktalar} />
@@ -356,19 +362,15 @@ function Analytics() {
                 anlatsin. */}
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
               <h2 className="text-lg font-semibold text-ink">
-                Clicks by link in this range
+                {t("linkBreakdown.title")}
               </h2>
 
               {linkSerisiHatasi ? (
-                <p className="text-red-300">
-                  The link breakdown could not be loaded.
-                </p>
+                <p className="text-red-300">{t("linkBreakdown.error")}</p>
               ) : linkSerisiYukleniyor ? (
-                <p className="text-ink-muted">Loading…</p>
+                <p className="text-ink-muted">{t("loading")}</p>
               ) : linkSerileri.length === 0 ? (
-                <p className="text-ink-muted">
-                  No links yet — there is nothing to measure.
-                </p>
+                <p className="text-ink-muted">{t("linkBreakdown.empty")}</p>
               ) : (
                 <>
                   <ul className="space-y-3">
@@ -386,7 +388,7 @@ function Analytics() {
                             {link.title}
                             {!link.is_active && (
                               <span className="ml-2 text-xs text-ink-muted font-normal">
-                                (inactive)
+                                {t("inactive")}
                               </span>
                             )}
                           </p>
@@ -410,7 +412,7 @@ function Analytics() {
                       data-testid="link-table-toggle"
                       className="cursor-pointer text-sm text-ink-muted hover:text-ink-soft"
                     >
-                      Show data table
+                      {t("showDataTable")}
                     </summary>
                     <div className="mt-3 overflow-x-auto">
                       <ButunLinklerTablosu links={linkSerileri} />
@@ -425,20 +427,17 @@ function Analytics() {
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
               <div>
                 <h2 className="text-lg font-semibold text-ink">
-                  Traffic sources
+                  {t("referrers.title")}
                 </h2>
                 <p className="text-ink-muted text-sm mt-1">
-                  Where visitors were before they landed on your page and
-                  clicked a link.
+                  {t("referrers.subtitle")}
                 </p>
               </div>
 
               {kaynaklarHatasi ? (
-                <p className="text-red-300">
-                  Traffic sources could not be loaded.
-                </p>
+                <p className="text-red-300">{t("referrers.error")}</p>
               ) : kaynaklarYukleniyor ? (
-                <p className="text-ink-muted">Loading…</p>
+                <p className="text-ink-muted">{t("loading")}</p>
               ) : (
                 <>
                   <ReferrerBars
@@ -450,10 +449,7 @@ function Analytics() {
                       Bunu yazmazsak yuksek bir Direct payi "dogrudan cok
                       ziyaretcim var" diye okunuyor. */}
                   <p className="text-sm text-ink-muted">
-                    “Direct or unknown” covers visits typed straight into the
-                    address bar, apps that hide the referrer, and navigation
-                    from within this site. Source tracking starts from the day
-                    it was added, so older clicks are counted there too.
+                    {t("referrers.note")}
                   </p>
                 </>
               )}
@@ -464,24 +460,21 @@ function Analytics() {
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-ink">
-                  When your links get clicked
+                  {t("times.title")}
                 </h2>
                 <p className="text-ink-muted text-sm mt-1">
-                  Grouped in your own time zone
-                  {zamanlar?.timezone ? ` (${zamanlar.timezone})` : ""}.
+                  {zamanlar?.timezone
+                    ? t("times.subtitleWithZone", { zone: zamanlar.timezone })
+                    : t("times.subtitlePlain")}
                 </p>
               </div>
 
               {zamanlarHatasi ? (
-                <p className="text-red-300">
-                  Click timing could not be loaded.
-                </p>
+                <p className="text-red-300">{t("times.error")}</p>
               ) : zamanlarYukleniyor ? (
-                <p className="text-ink-muted">Loading…</p>
+                <p className="text-ink-muted">{t("loading")}</p>
               ) : !zamanlar || zamanlar.total_clicks === 0 ? (
-                <p className="text-ink-muted">
-                  No clicks in this range yet, so there is no pattern to show.
-                </p>
+                <p className="text-ink-muted">{t("times.empty")}</p>
               ) : (
                 <>
                   {/* Cumlenin kendisi zirveyi soyluyor: cubuklarda rengi
@@ -489,26 +482,28 @@ function Analytics() {
                       bu bir cikarim degil, yalnizca "su ana kadar". */}
                   <p className="text-sm text-ink-soft">
                     {zamanlar.enough_data ? (
-                      <>
-                        Most clicks come in on{" "}
-                        <span className="font-semibold text-ink">
-                          {zamanlar.peak_weekday !== null
-                            ? GUN_ADLARI[zamanlar.peak_weekday]
-                            : "—"}
-                        </span>{" "}
-                        around{" "}
-                        <span className="font-semibold text-ink">
-                          {zamanlar.peak_hour !== null
-                            ? saatEtiketi(zamanlar.peak_hour)
-                            : "—"}
-                        </span>
-                        .
-                      </>
+                      <Trans
+                        i18nKey="analytics:times.peak"
+                        values={{
+                          day:
+                            zamanlar.peak_weekday !== null
+                              ? t(`weekdays.${zamanlar.peak_weekday}`)
+                              : "—",
+                          hour:
+                            zamanlar.peak_hour !== null
+                              ? saatEtiketi(zamanlar.peak_hour)
+                              : "—",
+                        }}
+                        components={[
+                          <span key="day" className="font-semibold text-ink" />,
+                          <span
+                            key="hour"
+                            className="font-semibold text-ink"
+                          />,
+                        ]}
+                      />
                     ) : (
-                      <>
-                        Not enough clicks yet to call this a pattern — the bars
-                        below are what happened, not what to expect.
-                      </>
+                      <>{t("times.notEnough")}</>
                     )}
                   </p>
 
@@ -518,21 +513,20 @@ function Analytics() {
                        Gun sayisi yanittan okunuyor: serbest aralikta
                        secimin kac gun ettigini sunucu soyluyor. */
                     <p className="text-sm text-ink-muted">
-                      Each weekday happens only once in a {zamanlar.days}-day
-                      range. Pick a longer range to compare days.
+                      {t("times.shortRange", { days: zamanlar.days })}
                     </p>
                   )}
 
                   <div>
                     <h3 className="text-sm font-medium text-ink-soft mb-3">
-                      By day of week
+                      {t("times.byWeekday")}
                     </h3>
                     <WeekdayBars buckets={zamanlar.by_weekday} />
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-ink-soft mb-3">
-                      By hour
+                      {t("times.byHour")}
                     </h3>
                     <HourBars buckets={zamanlar.by_hour} />
                   </div>
@@ -542,22 +536,22 @@ function Analytics() {
 
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6">
               <h2 className="text-lg font-semibold text-ink mb-4">
-                Clicks by link, all time
+                {t("allTimeLinks.title")}
               </h2>
 
               {isLoading ? (
-                <p className="text-ink-muted">Loading…</p>
+                <p className="text-ink-muted">{t("loading")}</p>
               ) : links.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-ink-muted mb-4">
-                    No links yet — there is nothing to measure.
+                    {t("linkBreakdown.empty")}
                   </p>
                   <Link
                     href={`/${language}/links?new=1`}
                     className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
                   >
                     <Plus className="h-4 w-4" />
-                    Add your first link
+                    {t("allTimeLinks.addFirst")}
                   </Link>
                 </div>
               ) : (
@@ -570,7 +564,7 @@ function Analytics() {
                             {link.title}
                             {!link.is_active && (
                               <span className="ml-2 text-xs text-ink-muted font-normal">
-                                (inactive)
+                                {t("inactive")}
                               </span>
                             )}
                           </p>

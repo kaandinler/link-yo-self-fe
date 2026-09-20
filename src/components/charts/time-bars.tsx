@@ -18,17 +18,17 @@
 
 import React from "react";
 import { CHART } from "./palette";
+import { useTranslation } from "@/services/i18n/client";
 
 /** 0 = Pazartesi; sunucu datetime.weekday() ile ayni siralamayi kullaniyor. */
-export const GUN_ADLARI = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-] as const;
+/**
+ * Gun adlari ceviriden geliyor (analytics:weekdays.N).
+ *
+ * Burada sabit dizge tutulsaydi grafigin eksenleri ve tablosu hicbir
+ * zaman cevrilemezdi. Indeks backend'in weekday degeriyle ayni: 0 =
+ * Pazartesi.
+ */
+export const GUN_SAYISI = 7;
 
 /** "14" -> "2 PM". Eksende 24 etiketin hepsi sigmadigi icin kisa tutuluyor. */
 export function saatEtiketi(saat: number): string {
@@ -107,12 +107,15 @@ function Cubuklar({
 }
 
 function Tablo({ kutular, testId }: { kutular: Kutu[]; testId: string }) {
+  const { t } = useTranslation("analytics");
   return (
     <table data-testid={testId} className="min-w-full text-sm">
       <thead>
         <tr className="text-left text-ink-muted">
-          <th className="py-2 pr-4 font-medium">When</th>
-          <th className="py-2 pr-4 text-right font-medium">Clicks</th>
+          <th className="py-2 pr-4 font-medium">{t("chart.when")}</th>
+          <th className="py-2 pr-4 text-right font-medium">
+            {t("chart.clicks")}
+          </th>
         </tr>
       </thead>
       <tbody className="text-ink-soft">
@@ -132,9 +135,19 @@ export function WeekdayBars({
 }: {
   buckets: { weekday: number; clicks: number }[];
 }) {
+  const { t } = useTranslation("analytics");
+
+  // Eksende kisa ad, tabloda tam ad. Kisaltma ilk uc harf: Ingilizcede
+  // "Mon", Turkcede "Paz" gibi. Bazi dillerde bu yeterli olmayabilir;
+  // o zaman ayri bir kisa-ad anahtari gerekir.
+  const gunAdi = (weekday: number) =>
+    weekday >= 0 && weekday < GUN_SAYISI
+      ? t(`weekdays.${weekday}`)
+      : String(weekday);
+
   const kutular: Kutu[] = buckets.map((kutu) => ({
-    etiket: GUN_ADLARI[kutu.weekday]?.slice(0, 3) ?? String(kutu.weekday),
-    tamAd: GUN_ADLARI[kutu.weekday] ?? String(kutu.weekday),
+    etiket: gunAdi(kutu.weekday).slice(0, 3),
+    tamAd: gunAdi(kutu.weekday),
     clicks: kutu.clicks,
   }));
 
@@ -148,7 +161,7 @@ export function WeekdayBars({
           data-testid="weekday-table-toggle"
           className="cursor-pointer text-sm text-ink-muted hover:text-ink-soft"
         >
-          Show data table
+          {t("showDataTable")}
         </summary>
         <div className="mt-3 overflow-x-auto">
           <Tablo kutular={kutular} testId="weekday-table" />
@@ -163,6 +176,8 @@ export function HourBars({
 }: {
   buckets: { hour: number; clicks: number }[];
 }) {
+  const { t } = useTranslation("analytics");
+
   const kutular: Kutu[] = buckets.map((kutu) => ({
     etiket: saatEtiketi(kutu.hour),
     tamAd: saatEtiketi(kutu.hour),
@@ -180,7 +195,7 @@ export function HourBars({
           data-testid="hour-table-toggle"
           className="cursor-pointer text-sm text-ink-muted hover:text-ink-soft"
         >
-          Show data table
+          {t("showDataTable")}
         </summary>
         <div className="mt-3 overflow-x-auto">
           <Tablo kutular={kutular} testId="hour-table" />

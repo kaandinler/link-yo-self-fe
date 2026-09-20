@@ -17,10 +17,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { AnalyticsDayPoint } from "@/services/api/services/analytics";
 import { CHART } from "./palette";
+import { useTranslation } from "@/services/i18n/client";
 
+// Etiketler ANAHTAR: bu bilesen bes ayri yerde cizilmiyor ama metin
+// burada sabit kalsaydi grafik hicbir zaman cevrilemezdi.
 const SERIES = [
-  { key: "clicks", label: "Link clicks", color: CHART.clicks },
-  { key: "profile_views", label: "Profile views", color: CHART.views },
+  { key: "clicks", labelKey: "chart.linkClicks", color: CHART.clicks },
+  { key: "profile_views", labelKey: "chart.profileViews", color: CHART.views },
 ] as const;
 
 type SeriesKey = (typeof SERIES)[number]["key"];
@@ -102,6 +105,7 @@ type Props = {
 };
 
 export default function ActivityChart({ points, soluk = false }: Props) {
+  const { t } = useTranslation("analytics");
   const [kapsayici, genislik] = useGenislik();
   const [seciliIndeks, setSeciliIndeks] = useState<number | null>(null);
 
@@ -205,7 +209,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
         height={HEIGHT}
         role="img"
         tabIndex={0}
-        aria-label="Daily link clicks and profile views. Use arrow keys to read each day."
+        aria-label={t("chart.ariaLabel")}
         className="outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded-xl"
         onPointerMove={(olay) =>
           isaretciyiGuncelle(
@@ -340,7 +344,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
               fontSize={11}
               fill={CHART.axis}
             >
-              {seri.label}
+              {t(seri.labelKey)}
             </text>
           ))}
       </svg>
@@ -373,7 +377,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
                   className="inline-block h-0.5 w-3 rounded-full"
                   style={{ backgroundColor: seri.color }}
                 />
-                {seri.label}
+                {t(seri.labelKey)}
               </span>
               <span className="text-sm font-semibold text-ink">
                 {secili[seri.key].toLocaleString()}
@@ -388,6 +392,7 @@ export default function ActivityChart({ points, soluk = false }: Props) {
 
 /** Iki seri var; gosterge her zaman duruyor. */
 export function ActivityLegend() {
+  const { t } = useTranslation("analytics");
   return (
     <div className="flex flex-wrap items-center gap-4">
       {SERIES.map((seri) => (
@@ -397,7 +402,7 @@ export function ActivityLegend() {
             className="inline-block h-0.5 w-4 rounded-full"
             style={{ backgroundColor: seri.color }}
           />
-          <span className="text-ink-soft">{seri.label}</span>
+          <span className="text-ink-soft">{t(seri.labelKey)}</span>
         </span>
       ))}
     </div>
@@ -406,13 +411,18 @@ export function ActivityLegend() {
 
 /** Grafigin verisi tabloyla da okunabiliyor; hover'a mahkum degil. */
 export function ActivityTable({ points }: { points: AnalyticsDayPoint[] }) {
+  const { t } = useTranslation("analytics");
   return (
     <table data-testid="activity-table" className="w-full text-sm">
       <thead>
         <tr className="text-left text-ink-muted">
-          <th className="py-2 font-medium">Day</th>
-          <th className="py-2 font-medium text-right">Link clicks</th>
-          <th className="py-2 font-medium text-right">Profile views</th>
+          <th className="py-2 font-medium">{t("chart.day")}</th>
+          <th className="py-2 font-medium text-right">
+            {t("chart.linkClicks")}
+          </th>
+          <th className="py-2 font-medium text-right">
+            {t("chart.profileViews")}
+          </th>
         </tr>
       </thead>
       <tbody className="text-ink-soft">
