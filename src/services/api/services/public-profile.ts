@@ -111,6 +111,14 @@ export interface PublicProfile {
   background_type?: string | null;
   background_value?: string | null;
 
+  /**
+   * Sayfa acilmadan once +18 uyarisi gosterilsin mi?
+   *
+   * Backend'de users'ta degil, user_page_settings tablosunda; ayara hic
+   * dokunmamis kullanici icin false doner (bkz. PageSettingsService).
+   */
+  adult_warning_enabled: boolean;
+
   links: PublicLink[];
 }
 

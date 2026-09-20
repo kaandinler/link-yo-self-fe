@@ -2,12 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
-import { ExternalLink, Image as ImageIcon, Palette } from "lucide-react";
+import {
+  EyeOff,
+  ExternalLink,
+  Image as ImageIcon,
+  Palette,
+} from "lucide-react";
 import {
   ProfileUpdateData,
   useProfile,
   useUpdateProfile,
 } from "@/services/api/services/onboarding";
+import {
+  usePageSettings,
+  useUpdatePageSettings,
+} from "@/services/api/services/page-settings";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useSnackbar } from "@/hooks/use-snackbar";
@@ -51,6 +60,16 @@ function Customize() {
   const [backgroundImage, setBackgroundImage] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  // AYRI UC, AYRI KAYDETME: +18 uyarisi users tablosunda degil,
+  // user_page_settings'te ve PUT /profile/page-settings ile
+  // yonetiliyor. Ustteki forma karistirilsaydi tek tiklama iki ayri
+  // ucu cagirirdi ve biri basarisiz olunca yarim kaydedilmis bir
+  // durum kalirdi.
+  const { data: pageSettings, isLoading: settingsLoading } = usePageSettings();
+  const updatePageSettings = useUpdatePageSettings();
+  const [adultWarning, setAdultWarning] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+
   // Renk ve gorsel ayri state'te tutuluyor: kullanici tip degistirip geri
   // donunce yazdigi degeri kaybetmesin.
   useEffect(() => {
@@ -84,6 +103,30 @@ function Customize() {
     backgroundType !== "image" ||
     backgroundImage === "" ||
     safeImageUrl(backgroundImage) !== null;
+
+  useEffect(() => {
+    if (!pageSettings) return;
+    setAdultWarning(pageSettings.adult_warning_enabled);
+  }, [pageSettings]);
+
+  const handleSaveSettings = async () => {
+    setSettingsError(null);
+
+    try {
+      await updatePageSettings.mutateAsync({
+        adult_warning_enabled: adultWarning,
+      });
+      enqueueSnackbar("Your page settings have been saved.", {
+        variant: "success",
+      });
+    } catch (caught) {
+      setSettingsError(
+        caught instanceof Error
+          ? caught.message
+          : "Your changes could not be saved."
+      );
+    }
+  };
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -335,6 +378,56 @@ function Customize() {
               The preview uses the same rules as your public page.
             </p>
           </div>
+        </div>
+
+        {/* Gorunumden ayri: bu ayar users tablosunda degil. */}
+        <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">
+          <div className="flex items-center gap-2 text-sm font-medium text-ink-soft">
+            <EyeOff className="h-4 w-4" />
+            Content warning
+          </div>
+
+          <label
+            htmlFor="adult-warning"
+            className="flex min-h-[44px] cursor-pointer items-start gap-3"
+          >
+            {/*
+              YUKLENENE KADAR KAPALI: asagidaki useEffect, ayarlar
+              geldiginde kutuyu sunucudaki degere esitliyor. Kutu o ana
+              kadar acik kalsaydi, erken isaretleyen kullanicinin secimi
+              veri gelince sessizce geri alinirdi -- ve kaydete basarsa
+              eski degeri kaydetmis olurdu. E2E'de tam olarak bu oldu:
+              test izole gecip dolu kosuda dustu, cunku yuk altinda
+              sorgu gec donuyordu.
+            */}
+            <input
+              id="adult-warning"
+              name="adultWarning"
+              type="checkbox"
+              checked={adultWarning}
+              disabled={settingsLoading}
+              onChange={(event) => setAdultWarning(event.target.checked)}
+              className="mt-1 h-5 w-5 cursor-pointer accent-purple-600 disabled:cursor-not-allowed disabled:opacity-50"
+            />
+            <span className="text-sm text-ink-muted">
+              Show an 18+ warning before your page. Visitors confirm once, then
+              go straight to your links next time.
+            </span>
+          </label>
+
+          {settingsError && (
+            <p className="text-red-300 text-sm">{settingsError}</p>
+          )}
+
+          <button
+            type="button"
+            onClick={handleSaveSettings}
+            disabled={settingsLoading || updatePageSettings.isPending}
+            data-testid="save-page-settings"
+            className="inline-flex min-h-[44px] items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            {updatePageSettings.isPending ? "Saving…" : "Save settings"}
+          </button>
         </div>
       </div>
     </div>

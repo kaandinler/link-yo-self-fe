@@ -6,6 +6,7 @@ import type { PublicProfile } from "@/services/api/services/public-profile";
 import { profileUrl } from "@/services/site-url";
 import { sameAs } from "@/services/social-links";
 import PublicProfilePage from "./page-content";
+import AdultWarning from "./adult-warning";
 import ClickTrackerScript from "./click-tracker-script";
 
 type Props = {
@@ -106,7 +107,12 @@ export default async function Page(props: Props) {
           ).replace(/</g, "\\u003c"),
         }}
       />
-      <PublicProfilePage profile={profile} />
+      <AdultWarning
+        username={profile.username}
+        enabled={profile.adult_warning_enabled}
+      >
+        <PublicProfilePage profile={profile} />
+      </AdultWarning>
     </>
   );
 }
