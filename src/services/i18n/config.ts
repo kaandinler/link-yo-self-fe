@@ -1,5 +1,7 @@
 export const fallbackLanguage = "en" as const;
-export const languages = [fallbackLanguage] as const;
+// Siralama onemli: middleware accept-language pazarligini bu liste
+// uzerinden yapiyor ve ilk eslesen kazaniyor.
+export const languages = [fallbackLanguage, "tr"] as const;
 export const defaultNamespace = "common";
 export const cookieName = "i18next";
 

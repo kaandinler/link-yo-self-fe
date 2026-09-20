@@ -1,0 +1,72 @@
+{
+  "app-name": "Link Yo Self",
+  "title": "Link Yo Self - paylaştığınız her şey için tek bağlantı",
+  "loading": "Yükleniyor ...",
+  "description": "Link Yo Self, profil bağlantılarınızı paylaşarak başkalarıyla bağ kurmanızı sağlayan bir sosyal medya platformudur.",
+  "error": {
+    "notFound": "Sayfa bulunamadı",
+    "unauthorized": "Bu sayfayı görüntüleme yetkiniz yok",
+    "serverError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+    "networkError": "Ağ hatası. Lütfen internet bağlantınızı kontrol edin."
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "profile": "Profil",
+    "users": "Kullanıcılar",
+    "logout": "Çıkış Yap",
+    "settings": "Ayarlar",
+    "about": "Hakkında"
+  },
+  "formInputs": {
+    "avatarInput": {
+      "dropzoneText": "Görseli buraya bırakın ...",
+      "dragAndDrop": "Ya da bir görseli buraya sürükleyip bırakın",
+      "selectFile": "Görsel seçin"
+    },
+    "multipleImageInput": {
+      "dropzoneText": "Görseli buraya bırakın ...",
+      "dragAndDrop": "Ya da görselleri buraya sürükleyip bırakın",
+      "selectFile": "Görsel seçin"
+    },
+    "singleImageInput": {
+      "dropzoneText": "Görseli buraya bırakın ...",
+      "dragAndDrop": "Ya da görselleri buraya sürükleyip bırakın",
+      "selectFile": "Görsel seçin"
+    }
+  },
+  "leavePage": {
+    "title": "Bu sayfadan ayrılınsın mı?",
+    "message": "Yaptığınız değişiklikler kaydedilmemiş olabilir",
+    "stay": "Sayfada Kal",
+    "leave": "Sayfadan Ayrıl"
+  },
+  "auth": {
+    "facebook": {
+      "action": "Facebook ile giriş yap"
+    }
+  },
+  "password": {
+    "labels": {
+      "lowercase": "Küçük harf",
+      "uppercase": "Büyük harf",
+      "number": "Rakam",
+      "length": "{{min}}+ karakter"
+    },
+    "errors": {
+      "lowercase": "Şifre en az bir küçük harf içermeli",
+      "uppercase": "Şifre en az bir büyük harf içermeli",
+      "number": "Şifre en az bir rakam içermeli",
+      "length": "Şifre en az {{min}} karakter olmalı",
+      "max": "Şifre en fazla {{max}} karakter olmalı"
+    }
+  },
+  "pageTitles": {
+    "settings": "Ayarlar",
+    "links": "Bağlantılar",
+    "dashboard": "Pano",
+    "analytics": "Analitik",
+    "customize": "Özelleştir"
+  }
+}

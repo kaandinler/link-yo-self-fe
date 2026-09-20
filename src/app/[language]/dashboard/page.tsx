@@ -12,7 +12,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const { t } = await getServerTranslation(params.language, "common");
 
   return {
-    title: `Dashboard - ${t("app-name")}`,
+    title: `${t("pageTitles.dashboard")} - ${t("app-name")}`,
   };
 }
 

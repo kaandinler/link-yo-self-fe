@@ -6,6 +6,7 @@ import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
 import Link from "@/components/link";
 import ThemeSwitchButton from "@/components/switch-theme-button";
+import LanguageSwitchButton from "@/components/language-switch-button";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import {
   Menu,
@@ -135,8 +136,11 @@ function ResponsiveAppBar() {
 
           {/* Desktop Auth/User Area */}
           <div className="hidden md:flex items-center gap-4">
-            {/* Tema dugmesi kosullu bloklarin disinda: giris yapilmis olsun
-                ya da olmasin her zaman erisilebilir olmali. */}
+            {/* Tema ve dil dugmeleri kosullu bloklarin disinda: giris
+                yapilmis olsun ya da olmasin her zaman erisilebilir
+                olmali. Dil dugmesi ozellikle giris ONCESI gerekli --
+                kayit formunu okuyamayan biri hesap da acamaz. */}
+            <LanguageSwitchButton />
             <ThemeSwitchButton />
 
             {!isLoaded ? (
@@ -299,6 +303,7 @@ function ResponsiveAppBar() {
             {/* Mobil tema dugmesi: masaustundekiyle ayni yerde degil ama
                 ayni erisilebilirlikte. */}
             <div className="px-2 pt-2">
+              <LanguageSwitchButton genis />
               <ThemeSwitchButton genis />
             </div>
 
