@@ -142,6 +142,12 @@ async function PrivacyPolicy(props: Props) {
       >
         {t("automatic.notCollected")}
       </Typography>
+      <Typography component="h3" variant="h5" gutterBottom sx={{ mt: 4 }}>
+        {t("automatic.abuseTitle")}
+      </Typography>
+      <Typography data-testid="privacy-policy-abuse" gutterBottom paragraph>
+        {t("automatic.abuse")}
+      </Typography>
 
       <Typography component="h2" variant="h4" gutterBottom sx={{ mt: 6 }}>
         {t("cookies.title")}

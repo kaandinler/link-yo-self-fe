@@ -44,6 +44,22 @@ jobs:
       NEXT_PUBLIC_API_URL: http://localhost:8000/api
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       NEXT_PUBLIC_IS_SIGN_UP_ENABLED: "true"
+      # Backend'in hiz siniri BU SUITTE KAPALI.
+      #
+      # NEDEN: suitteki testlerin cogu kendine yeni bir kullanici
+      # kaydediyor ve hepsi runner'in tek IP'sinden geliyor. Backend
+      # kayit icin saatte 5 sinirliyor, yani altinci testten itibaren
+      # her sey 429 aliyor. Olculdu: bu satir olmadan turkish.spec'in
+      # 6 testi "kayit basarisiz: Too many requests" ile dusuyor.
+      #
+      # Siniri GEVSETMEK yanlis cozum olurdu: gercek korumayi bir test
+      # kolayligi icin zayiflatmak demekti. Anahtar zaten tam bu is
+      # icin var (bkz. backend settings.rate_limit_enabled).
+      #
+      # SINIRIN KENDISI BACKEND SUITINDE, ANAHTAR ACIKKEN test ediliyor
+      # (tests/test_rate_limit.py, 19 test) -- yani burada kapatmak
+      # kapsamda bir bosluk birakmiyor.
+      RATE_LIMIT_ENABLED: "false"
       # SMTP yapilandirilmadigi icin backend e-postalari log'a yaziyor;
       # dogrulama ve sifre sifirlama testleri token'i buradan okuyor.
       E2E_BACKEND_LOG: /tmp/linkyoself-backend.log
