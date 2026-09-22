@@ -1,0 +1,20 @@
+{
+  "title": "Contact",
+  "intro": {
+    "heading": "Get in touch",
+    "body": "One address, read by a person."
+  },
+  "email": {
+    "heading": "Email",
+    "body": "For questions about your account, bug reports, or anything to do with your data."
+  },
+  "privacy": {
+    "heading": "Your data",
+    "body": "To ask for a copy of what is stored about you, or for it to be erased, write to the same address. What is stored, and for how long, is set out in the privacy policy.",
+    "link": "Read the privacy policy"
+  },
+  "security": {
+    "heading": "Found a security problem?",
+    "body": "Write to the same address and say what you found. Please give us a chance to fix it before you publish it."
+  }
+}

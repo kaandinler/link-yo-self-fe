@@ -1,0 +1,20 @@
+{
+  "title": "İletişim",
+  "intro": {
+    "heading": "Bize ulaşın",
+    "body": "Tek adres, bir insan tarafından okunuyor."
+  },
+  "email": {
+    "heading": "E-posta",
+    "body": "Hesabınızla ilgili sorular, hata bildirimleri ya da verilerinizle ilgili her konu için."
+  },
+  "privacy": {
+    "heading": "Verileriniz",
+    "body": "Hakkınızda saklananların bir kopyasını istemek ya da silinmesini istemek için aynı adrese yazın. Neyin ne kadar saklandığı gizlilik politikasında yazıyor.",
+    "link": "Gizlilik politikasını oku"
+  },
+  "security": {
+    "heading": "Güvenlik açığı mı buldunuz?",
+    "body": "Aynı adrese yazın ve ne bulduğunuzu anlatın. Yayımlamadan önce düzeltmemize fırsat verin lütfen."
+  }
+}

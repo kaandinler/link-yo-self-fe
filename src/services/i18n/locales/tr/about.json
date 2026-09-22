@@ -1,0 +1,31 @@
+{
+  "title": "Hakkında",
+  "intro": {
+    "heading": "Özenle yapılmış bir bağlantı sayfası",
+    "body": "Link Yo Self size kendi kullanıcı adınızda, paylaşmak istediğiniz her şeyi tutan tek bir sayfa veriyor — ve insanların onunla ne yaptığını söylüyor."
+  },
+  "what": {
+    "heading": "Ne yapıyor",
+    "body": "Bağlantılarınızı ve sosyal hesaplarınızı ekliyor, sayfanın görünümünü seçiyor ve tek bir adres paylaşıyorsunuz. Ziyaretçiler bağlantılarınızı görüyor; siz tıklamaları.",
+    "item1": "Kullanıcı adınızda herkese açık tek sayfa; hızlı açılsın diye önbelleğe alınıyor ve siz kaydettiğiniz anda tazeleniyor.",
+    "item2": "Bağlantı başına tıklama, profil görüntülenmesi, gün gün grafik ve ziyaretçilerinizin geldiği siteler.",
+    "item3": "Sayfanız için üretilen bir önizleme kartı; paylaşılan bağlantı bir şeye benziyor.",
+    "item4": "İsteğe bağlı +18 uyarısı: ziyaretçi onaylayana kadar içerik sayfanın dışında kalıyor.",
+    "item5": "İngilizce ve Türkçe."
+  },
+  "measurement": {
+    "heading": "Sayılar hakkında",
+    "body": "İstatistikler bilinçli olarak mütevazı ve mesele tam da bu: gurur okşamak yerine doğru olmaları amaçlanıyor.",
+    "item1": "Aynı ziyaretçinin yarım dakika içindeki tekrar tıklamaları tek sayılıyor; çift dokunuş toplamınızı şişirmiyor.",
+    "item2": "Ziyaretçinin geldiği sitenin yalnızca alan adı kaydediliyor — \"instagram.com\", adresin tamamı değil.",
+    "item3": "Hiçbir ziyaretçi tanımlanmıyor, profili çıkarılmıyor ve siteler arasında izlenmiyor. Üründe reklam ya da analitik izleyicisi yok."
+  },
+  "notYet": {
+    "heading": "Ne değil",
+    "body": "Odaklı bir araç, bir platform değil. Mağaza yok, planlama yok, kitleye mesaj gönderme yok. Bağlantılardan oluşan bir sayfa ve onun hakkında dürüst sayılar istiyorsanız işinizi görür. Pazarlama takımı arıyorsanız görmez."
+  },
+  "contact": {
+    "heading": "Sorular",
+    "body": "Bize yazın, bir insan okuyacak."
+  }
+}
