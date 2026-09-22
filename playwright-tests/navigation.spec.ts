@@ -24,9 +24,19 @@ test.describe("Yonlendirme", () => {
      * Bu uc kosul pazarlama metninden bagimsiz: sayfanin kendi
      * basligi, kayit cagrisi ve ozellik listesi. Metin yeniden
      * yazildiginda test yine gecer; sayfa yonlendirmeye baslarsa
-     * ya da bos donerse dusier.
+     * ya da bos donerse duser.
+     *
+     * BASLIK NEDEN ROL DEGIL TESTID ILE: ilk halinde
+     * getByRole("heading", { level: 1 }) yaziliyordu ve CI'da
+     * "strict mode violation ... resolved to 2 elements" ile dustu.
+     * Sayfada gercekten iki <h1> var: buradaki tanitim basligi ve
+     * app-bar'daki "LinkYoSelf" logosu. App-bar istemcide
+     * ciziliyor, yani ikinci h1 sonradan geliyor -- sorgu ondan
+     * once kosarsa tek oge buluyor ve geciyor, sonra kosarsa iki
+     * oge bulup duser. Yani zamanlamaya bagli bir testti; sabit
+     * bir kanca bu belirsizligi kaldiriyor.
      */
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByTestId("landing-hero")).toBeVisible();
     await expect(page.locator('a[href="/sign-up"]').first()).toBeVisible();
     await expect(page.getByTestId("landing-features")).toBeVisible();
   });
