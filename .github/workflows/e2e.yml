@@ -60,6 +60,21 @@ jobs:
       # (tests/test_rate_limit.py, 19 test) -- yani burada kapatmak
       # kapsamda bir bosluk birakmiyor.
       RATE_LIMIT_ENABLED: "false"
+      # Tiklama tekillestirmesi de BU SUITTE KAPALI.
+      #
+      # NEDEN: backend ayni ziyaretcinin ayni linke tiklamasini 30
+      # saniye icinde tek sayiyor ve anahtar IP. Runner'in tek IP'si
+      # var, yani "iki farkli kisi ayni linke tikladi" demek isteyen
+      # bir test aslinda "ayni kisi iki kez tikladi" diyor ve ikinci
+      # tiklama sayilmiyor. Olculdu: bu satir olmadan
+      # link-breakdown.spec.ts "2" bekledigi yerde "1" goruyor.
+      #
+      # Tekillestirmenin KENDISI backend suitinde, ACIKKEN test
+      # ediliyor (tests/test_click_dedup.py, 6 test) -- farkli
+      # ziyaretcilerin ayri sayildigi dahil. Burada kapatmak kapsamda
+      # bosluk birakmiyor; mantik tamamen backend'de ve tarayicinin
+      # rolu yalnizca istegi atmak.
+      CLICK_DEDUP_SECONDS: "0"
       # SMTP yapilandirilmadigi icin backend e-postalari log'a yaziyor;
       # dogrulama ve sifre sifirlama testleri token'i buradan okuyor.
       E2E_BACKEND_LOG: /tmp/linkyoself-backend.log
