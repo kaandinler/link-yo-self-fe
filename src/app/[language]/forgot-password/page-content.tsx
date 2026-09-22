@@ -97,7 +97,11 @@ function Form() {
         <form onSubmit={onSubmit}>
           <Grid container spacing={2} mb={2}>
             <Grid size={{ xs: 12 }} mt={3}>
-              <Typography variant="h6">{t("forgot-password:title")}</Typography>
+              {/* component="h1": gorsel boyut ayni kaliyor, sayfa
+                  basligi artik gercekten baslik. */}
+              <Typography variant="h6" component="h1">
+                {t("forgot-password:title")}
+              </Typography>
             </Grid>
             <Grid size={{ xs: 12 }}>
               <FormTextInput<ForgotPasswordFormData>
