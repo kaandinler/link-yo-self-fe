@@ -270,9 +270,13 @@ function LinkYoSelfSignUpForm() {
           <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
             <Link className="h-8 w-8 text-ink" />
           </div>
-          <h2 className="text-3xl font-bold text-ink mb-2">
+          {/*
+            h2 degil h1: bu zaten sayfanin basligi. App-bar'daki logo
+            h1 olmaktan cikinca bu sayfa bassiz kalirdi.
+          */}
+          <h1 className="text-3xl font-bold text-ink mb-2">
             {t("form.heading")}
-          </h2>
+          </h1>
           <p className="text-ink-soft">{t("form.subheading")}</p>
         </div>
 

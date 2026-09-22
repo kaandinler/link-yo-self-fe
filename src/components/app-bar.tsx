@@ -90,7 +90,17 @@ function ResponsiveAppBar() {
               <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Link2 className="h-6 w-6 text-ink" />
               </div>
-              <h1 className="text-2xl font-bold text-ink">LinkYoSelf</h1>
+              {/*
+                <h1> DEGIL. Burasi her sayfada gorunen ust serit; site
+                adi, o sayfanin basligi degil. h1 olarak durdugu surece
+                HER sayfada iki h1 vardi ve belge sirasinda ONCE bu
+                geliyordu -- yani bir kaziyicinin ya da ekran okuyucunun
+                gordugu ilk baslik, sayfanin konusu yerine urunun adi
+                oluyordu. Olculdu, herkese acik profil sayfasinda:
+                ["LinkYoSelf", "Ada Lovelace"]. Oysa o sayfanin konusu
+                Ada Lovelace.
+              */}
+              <span className="text-2xl font-bold text-ink">LinkYoSelf</span>
             </div>
           </Link>
 

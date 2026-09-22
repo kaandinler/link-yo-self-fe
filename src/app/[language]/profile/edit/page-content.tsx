@@ -237,7 +237,12 @@ function FormBasicInfo() {
         <form onSubmit={onSubmit}>
           <Grid container spacing={2} mb={3} mt={3}>
             <Grid size={{ xs: 12 }}>
-              <Typography variant="h6">{t("profile:title1")}</Typography>
+              {/* component="h1": sayfanin ilk bolumu ayni zamanda
+                  sayfanin konusu ("Edit Profile"). Gorsel boyut
+                  degismiyor. */}
+              <Typography variant="h6" component="h1">
+                {t("profile:title1")}
+              </Typography>
             </Grid>
 
             <Grid size={{ xs: 12 }}>
