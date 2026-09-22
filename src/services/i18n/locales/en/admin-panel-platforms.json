@@ -1,0 +1,46 @@
+{
+  "title": "Platforms",
+  "description": "The list people choose from when they add a social account. Adding one here makes it available immediately — no deployment needed.",
+  "table": {
+    "name": "Name",
+    "displayName": "Display name",
+    "accounts": "In use by",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "retired": "Retired"
+  },
+  "add": {
+    "title": "Add a platform",
+    "name": "Name",
+    "nameHelp": "Lowercase letters, digits, dots and hyphens. This is the stable identifier and cannot be changed later.",
+    "displayName": "Display name",
+    "displayNameHelp": "What people see. Optional.",
+    "submit": "Add platform",
+    "success": "Platform added.",
+    "duplicate": "A platform with that name already exists."
+  },
+  "edit": {
+    "submit": "Save",
+    "cancel": "Cancel",
+    "success": "Display name updated."
+  },
+  "retire": {
+    "action": "Retire",
+    "title": "Retire this platform?",
+    "message": "It disappears from the list people choose from. Existing accounts are kept and keep showing on public profiles — nothing is deleted. You can bring it back by adding it again with the same name.",
+    "inUse": "Still used by {{count}} account(s).",
+    "confirm": "Retire",
+    "cancel": "Cancel",
+    "success": "Platform retired."
+  },
+  "restore": {
+    "action": "Restore",
+    "success": "Platform restored."
+  },
+  "empty": "No platforms yet.",
+  "error": "Could not load platforms.",
+  "accountCount": "Used by {{count}}"
+}

@@ -42,26 +42,40 @@ export function useGetUsersService() {
 
   return useCallback(
     (data: UsersRequest, requestConfig?: RequestConfigType) => {
-      const requestUrl = new URL(`${API_URL}/v1/users/`);
-      requestUrl.searchParams.append("page", data.page.toString());
-      requestUrl.searchParams.append("limit", data.limit.toString());
+      // URLSearchParams, `new URL` DEGIL.
+      //
+      // NEDEN: API_URL artik mutlak bir adres degil, kendi
+      // origin'imizdeki vekilin yolu ("/api/proxy"). `new URL` goreli
+      // bir dizgeyle "Invalid URL" firlatiyor -- olculdu, node'da da
+      // tarayicida da. Yani bu cagri, token HttpOnly cereze tasindiktan
+      // sonra sessizce patlamaya basladi: admin kullanici listesi hic
+      // yuklenmiyordu.
+      //
+      // Sessiz kalmasinin sebebi testte: E2E suiti /admin-panel/users
+      // sayfasini aciyor ama yalnizca dokunma hedeflerinin boyutuna
+      // bakiyordu. Bu PR listenin GERCEKTEN dolduğunu olcen bir test
+      // ekliyor.
+      const parametreler = new URLSearchParams({
+        page: data.page.toString(),
+        limit: data.limit.toString(),
+      });
 
       // Backend duz sorgu parametreleri bekliyor. Onceki hali filters/sort'u
       // JSON string olarak gonderiyordu; boyle bir uc hicbir zaman olmadi.
       if (data.search) {
-        requestUrl.searchParams.append("search", data.search);
+        parametreler.append("search", data.search);
       }
       if (data.isAdmin !== undefined) {
-        requestUrl.searchParams.append("is_admin", String(data.isAdmin));
+        parametreler.append("is_admin", String(data.isAdmin));
       }
       if (data.orderBy) {
-        requestUrl.searchParams.append("order_by", data.orderBy);
+        parametreler.append("order_by", data.orderBy);
       }
       if (data.order) {
-        requestUrl.searchParams.append("order", data.order);
+        parametreler.append("order", data.order);
       }
 
-      return fetch(requestUrl, {
+      return fetch(`${API_URL}/v1/users/?${parametreler.toString()}`, {
         method: "GET",
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<UsersResponse>);
