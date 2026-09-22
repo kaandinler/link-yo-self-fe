@@ -50,7 +50,16 @@ export default function LandingPage() {
             <span className="text-sm text-ink-soft">{t("hero.eyebrow")}</span>
           </div>
 
-          <h1 className="mb-6 text-4xl font-black leading-tight text-ink md:text-6xl lg:text-7xl">
+          <h1
+            /*
+              data-testid: sayfada IKI tane <h1> var -- biri burada,
+              biri app-bar'daki "LinkYoSelf" logosu. Testin "sayfanin
+              kendi basligi" demesi icin ayirt edici bir kanca gerekli;
+              rol + seviye ikisini birden buluyor.
+            */
+            data-testid="landing-hero"
+            className="mb-6 text-4xl font-black leading-tight text-ink md:text-6xl lg:text-7xl"
+          >
             {t("hero.heading")}
           </h1>
 

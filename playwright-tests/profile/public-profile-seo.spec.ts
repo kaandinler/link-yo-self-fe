@@ -13,19 +13,105 @@ import { signInAsNewUser } from "../helpers/auth";
  * tarayici degil, Google ve Slack gibi kaziyicilar. Onlarin gordugu tek
  * sey sunucudan donen HTML; bir React bileseninin dogru prop aldigini
  * dogrulamak bu etiketlerin gercekten basildigini soylemez.
+ *
+ * NEDEN KAZIYICI KIMLIGIYLE ISTEK: dosya yukaridaki cumleyi yaziyordu
+ * ama olctugu sey TARAYICININ DOM'uydu (page.locator("head meta...")).
+ * Ikisi ayni sey degil ve aradaki fark bu dosyayi kirilgan yapiyordu.
+ *
+ * Next 15 metadata'yi AKITIYOR: `generateMetadata` backend'i beklerken
+ * sayfa kabugu once gonderiliyor, etiketler sonra geliyor ve ham
+ * HTML'de <body> icinde kaliyor. Tarayicida React onlari calisma
+ * aninda <head>'e tasiyor -- bu yuzden DOM'a bakan test cogu zaman
+ * geciyordu; kabuk ile etiketlerin arasindaki araliga denk geldiginde
+ * dusuyordu.
+ *
+ * Olculdu -- her biri o profile yapilan ILK istek, 9 tekrar:
+ *
+ *   Nasil okundugu                       og:image ham HTML'de nerede?
+ *   -----------------------------------  ----------------------------
+ *   page.goto, tarayici kimligi          3/9 BODY   <- yarisin kaynagi
+ *   dogrudan istek, tarayici kimligi     3/9 BODY
+ *   dogrudan istek, KAZIYICI kimligi     0/9 BODY  (18/18 HEAD)
+ *
+ * Bu bir urun kusuru DEGIL, Next'in bilincli davranisi: JS
+ * calistirmayan kaziyicilar icin (`htmlLimitedBots`) kabuk, metadata
+ * hazir olana kadar BEKLETILIYOR; digerleri icin akitiliyor, cunku
+ * onlar JS calistirip tasinmis etiketleri zaten goruyor.
+ *
+ * Testin olcmesi gereken sey ucuncu satir: JS calistirmayan bir
+ * kaziyicinin aldigi HTML'de etiketler <head>'de mi? Istek artik o
+ * kimlikle yapiliyor ve yanit govdesi okunuyor. Test boylece hem
+ * iddia ettigi seyi olcuyor hem de tarayici DOM'unun zamanlamasina
+ * hic bagli degil.
+ *
+ * NOT: eski hali CI'da hep yesildi, yerelde duzenli dusuyordu. Sebebi
+ * de olculdu: CI `npm run start` (uretim derlemesi), yerel `npm run
+ * dev` kosuyor. Uretim derlemesinde ayni dosya 54/54 yesildi. Yani
+ * yesil CI, testin saglam oldugunu degil, yarisi daha seyrek
+ * kaybettigini gosteriyordu.
  */
 
-/** <head>'teki bir meta etiketinin degeri. */
-async function meta(page: Page, secici: string): Promise<string | null> {
-  return page.locator(`head ${secici}`).first().getAttribute("content");
+/**
+ * JS calistirmayan bir paylasim kaziyicisi.
+ *
+ * Next'in `htmlLimitedBots` listesinde; bu kimlikle gelen istekte
+ * metadata akitilmiyor, kabuk hazir olana kadar bekletiliyor.
+ */
+const KAZIYICI = "facebookexternalhit/1.1";
+
+/** Kaziyicinin gordugu ham HTML. */
+async function kaynak(page: Page, yol: string): Promise<string> {
+  const yanit = await page.request.get(yol, {
+    headers: { "User-Agent": KAZIYICI },
+  });
+  expect(yanit.status(), `${yol} yuklenemedi`).toBe(200);
+  return yanit.text();
 }
 
-async function jsonLd(page: Page) {
-  const ham = await page
-    .locator('script[type="application/ld+json"]')
-    .first()
-    .textContent();
-  return JSON.parse(ham ?? "{}");
+/**
+ * Ham HTML'deki bir etiketin ozniteligi.
+ *
+ * Duzenli ifadeyle degil, gercek bir HTML ayristiricisiyla: oznitelik
+ * sirasi ve tirnak bicimi Next'in uretimine bagli, duzenli ifade
+ * sessizce kayardi. DOMParser betik calistirmiyor, yalnizca
+ * ayristiriyor -- ve <head>/<body> ayrimini KORUYOR, ki olculmek
+ * istenen sey tam olarak bu.
+ */
+async function oznitelik(
+  page: Page,
+  html: string,
+  secici: string,
+  ad = "content"
+): Promise<string | null> {
+  return page.evaluate(
+    ([h, s, a]) =>
+      new DOMParser()
+        .parseFromString(h, "text/html")
+        .querySelector(s)
+        ?.getAttribute(a) ?? null,
+    [html, secici, ad]
+  );
+}
+
+/** <head>'teki bir meta etiketinin degeri. */
+async function meta(
+  page: Page,
+  html: string,
+  secici: string
+): Promise<string | null> {
+  return oznitelik(page, html, `head ${secici}`);
+}
+
+async function jsonLd(page: Page, html: string) {
+  const ham = await page.evaluate(
+    (h) =>
+      new DOMParser()
+        .parseFromString(h, "text/html")
+        .querySelector('script[type="application/ld+json"]')?.textContent ??
+      "{}",
+    html
+  );
+  return JSON.parse(ham);
 }
 
 test.describe("Public profil SEO", () => {
@@ -38,26 +124,27 @@ test.describe("Public profil SEO", () => {
       bio: "Analitik makine uzerine notlar.",
     });
 
-    await page.goto(`/en/${user.username}`);
+    const html = await kaynak(page, `/en/${user.username}`);
 
     const adres = new RegExp(`/en/${user.username}$`);
 
     // canonical ve og:url: ayni profile baska bir yoldan gelindiginde
     // arama motoru iki ayri sayfa saymasin.
-    await expect(page.locator('head link[rel="canonical"]')).toHaveAttribute(
-      "href",
-      adres
-    );
-    expect(await meta(page, 'meta[property="og:url"]')).toMatch(adres);
+    expect(
+      await oznitelik(page, html, 'head link[rel="canonical"]', "href")
+    ).toMatch(adres);
+    expect(await meta(page, html, 'meta[property="og:url"]')).toMatch(adres);
 
-    expect(await meta(page, 'meta[property="og:title"]')).toContain(
+    expect(await meta(page, html, 'meta[property="og:title"]')).toContain(
       "Ada Lovelace"
     );
-    expect(await meta(page, 'meta[property="og:description"]')).toBe(
+    expect(await meta(page, html, 'meta[property="og:description"]')).toBe(
       "Analitik makine uzerine notlar."
     );
-    expect(await meta(page, 'meta[property="og:site_name"]')).toBeTruthy();
-    expect(await meta(page, 'meta[property="og:type"]')).toBe("profile");
+    expect(
+      await meta(page, html, 'meta[property="og:site_name"]')
+    ).toBeTruthy();
+    expect(await meta(page, html, 'meta[property="og:type"]')).toBe("profile");
   });
 
   /**
@@ -73,15 +160,19 @@ test.describe("Public profil SEO", () => {
     const { user, token } = await signInAsNewUser(page);
     await apiUpdateProfile(token, { display_name: "Grace Hopper" });
 
-    await page.goto(`/en/${user.username}`);
+    const html = await kaynak(page, `/en/${user.username}`);
 
-    expect(await meta(page, 'meta[name="twitter:card"]')).toBe(
+    expect(await meta(page, html, 'meta[name="twitter:card"]')).toBe(
       "summary_large_image"
     );
-    expect(await meta(page, 'meta[property="og:image:width"]')).toBe("1200");
-    expect(await meta(page, 'meta[property="og:image:height"]')).toBe("630");
+    expect(await meta(page, html, 'meta[property="og:image:width"]')).toBe(
+      "1200"
+    );
+    expect(await meta(page, html, 'meta[property="og:image:height"]')).toBe(
+      "630"
+    );
 
-    const gorsel = await meta(page, 'meta[property="og:image"]');
+    const gorsel = await meta(page, html, 'meta[property="og:image"]');
     expect(gorsel, "og:image yok").toBeTruthy();
 
     // Etiketin varligi yetmez: adres gercekten bir gorsel dondurmeli.
@@ -106,8 +197,8 @@ test.describe("Public profil SEO", () => {
       profile_image_url: "https://ulasilamaz.test/yok.png",
     });
 
-    await page.goto(`/en/${user.username}`);
-    const gorsel = await meta(page, 'meta[property="og:image"]');
+    const html = await kaynak(page, `/en/${user.username}`);
+    const gorsel = await meta(page, html, 'meta[property="og:image"]');
 
     const yanit = await request.get(gorsel!);
     expect(yanit.status(), "avatar indirilemeyince kart da dusuyor").toBe(200);
@@ -127,8 +218,13 @@ test.describe("Public profil SEO", () => {
     });
     await apiCreateLink(token, { title: "Blog", url: "https://ada.test/blog" });
 
+    const html = await kaynak(page, `/en/${user.username}`);
+    const veri = await jsonLd(page, html);
+
+    // Ikonlar cizilmis sayfadan okunuyor (asagida); sayfa ayrica
+    // aciliyor. Etiketler icin kaziyici kimligi, ikonlar icin tarayici:
+    // ikisi ayri soru.
     await page.goto(`/en/${user.username}`);
-    const veri = await jsonLd(page);
 
     expect(veri["@type"]).toBe("ProfilePage");
     expect(veri.mainEntity["@type"]).toBe("Person");
@@ -229,9 +325,9 @@ test.describe("Public profil SEO", () => {
    */
   test("kart gorseli onbelleklenebilir donuyor", async ({ page, request }) => {
     const { user } = await signInAsNewUser(page);
-    await page.goto(`/en/${user.username}`);
+    const html = await kaynak(page, `/en/${user.username}`);
 
-    const gorsel = await meta(page, 'meta[property="og:image"]');
+    const gorsel = await meta(page, html, 'meta[property="og:image"]');
     const yanit = await request.get(gorsel!);
 
     const basligi = yanit.headers()["cache-control"] ?? "";
@@ -255,8 +351,8 @@ test.describe("Public profil SEO", () => {
      * Sira onemli: once kart istenmeli ki onbellek dolsun.
      */
     const { user, token } = await signInAsNewUser(page);
-    await page.goto(`/en/${user.username}`);
-    const gorsel = (await meta(page, 'meta[property="og:image"]'))!;
+    const html = await kaynak(page, `/en/${user.username}`);
+    const gorsel = (await meta(page, html, 'meta[property="og:image"]'))!;
 
     const ilk = await request.get(gorsel);
     expect(ilk.status()).toBe(200);
@@ -277,8 +373,8 @@ test.describe("Public profil SEO", () => {
 
   test("kart istegi goruntulenme sayilmiyor", async ({ page, request }) => {
     const { user, token } = await signInAsNewUser(page);
-    await page.goto(`/en/${user.username}`);
-    const gorsel = (await meta(page, 'meta[property="og:image"]'))!;
+    const html = await kaynak(page, `/en/${user.username}`);
+    const gorsel = (await meta(page, html, 'meta[property="og:image"]'))!;
 
     // Kart ayni ucu cagiriyor ama `count_view=false` ile: okumasi bir
     // ziyaret degil. Bayraksiz halde her kart istegi sayaci bir
