@@ -1,0 +1,31 @@
+{
+  "title": "About",
+  "intro": {
+    "heading": "A link-in-bio page, done carefully",
+    "body": "Link Yo Self gives you one page at your own username that holds everything you want to share — and tells you what people did with it."
+  },
+  "what": {
+    "heading": "What it does",
+    "body": "You add links and social accounts, choose how the page looks, and share one address. Visitors see your links; you see the clicks.",
+    "item1": "One public page at your username, cached so it loads fast and refreshed the moment you save a change.",
+    "item2": "Clicks per link, profile views, a day-by-day chart and the sites your visitors came from.",
+    "item3": "A preview card generated for your page, so shared links look like something.",
+    "item4": "An optional age warning that keeps the content out of the page until the visitor confirms.",
+    "item5": "English and Turkish."
+  },
+  "measurement": {
+    "heading": "About the numbers",
+    "body": "The statistics are deliberately modest, and that is the point: they are meant to be true rather than flattering.",
+    "item1": "Repeat clicks from the same visitor within half a minute count once, so a double-tap does not inflate your total.",
+    "item2": "Only the host name of the site a visitor came from is recorded — \"instagram.com\", never the full address.",
+    "item3": "No visitor is identified, profiled or followed across sites. There is no advertising or analytics tracker in the product."
+  },
+  "notYet": {
+    "heading": "What it is not",
+    "body": "It is a focused tool, not a platform. There is no store, no scheduling, no audience messaging. If you need a page of links and honest numbers about it, it fits. If you need a marketing suite, it does not."
+  },
+  "contact": {
+    "heading": "Questions",
+    "body": "Write to us and a person will read it."
+  }
+}

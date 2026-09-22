@@ -1,0 +1,48 @@
+{
+  "title": "Link Yo Self",
+  "hero": {
+    "eyebrow": "One page, all your links",
+    "heading": "Everything you share, at one address",
+    "body": "Put your links on a single page people can visit at your username — and see what they actually click.",
+    "primary": "Create your page",
+    "secondary": "What it does"
+  },
+  "features": {
+    "heading": "What you get",
+    "body": "Everything listed here is in the product today.",
+    "links": {
+      "title": "Your links, your order",
+      "body": "Each link has a title, an optional description and icon, and its own colours. Drag them into the order you want. Hide one without deleting it — its past clicks stay."
+    },
+    "social": {
+      "title": "Social accounts",
+      "body": "Add the accounts you want shown as icons on your page. New platforms can be added without a new release."
+    },
+    "design": {
+      "title": "Your own look",
+      "body": "Pick an accent colour and a background — a flat colour, a gradient, or an image. Your page, not a template with your name on it."
+    },
+    "analytics": {
+      "title": "Numbers that mean something",
+      "body": "Clicks per link, profile views, a day-by-day chart, and which sites your visitors arrived from. Repeat clicks from the same visitor are not counted twice."
+    },
+    "preview": {
+      "title": "Looks right when shared",
+      "body": "Your page generates its own preview card, so a link to it shows your name and picture instead of a blank box."
+    },
+    "adult": {
+      "title": "Age warning, if you need it",
+      "body": "Turn on a confirmation screen before your page opens. The content stays hidden until the visitor confirms — not just visually, but out of the page entirely."
+    }
+  },
+  "cta": {
+    "heading": "Start with one link",
+    "body": "Creating a page takes a minute. You can change everything about it afterwards.",
+    "primary": "Create your page",
+    "secondary": "Sign in"
+  },
+  "footer": {
+    "about": "About",
+    "privacy": "Privacy"
+  }
+}

@@ -189,6 +189,27 @@ test.describe("Ceviri dosyalari", () => {
       "nestjs-boilerplate",
       "This is the first description text",
       "This is the second description text",
+      // Pazarlama sayfalarindaki UYDURMA IS BILGILERI. Canli sayfada
+      // uc fiziksel ofis (sokak adresleriyle), telefon destek saatleri,
+      // canli sohbet ve yanit suresi sozu duruyordu; hicbiri yoktu.
+      // Bir ziyaretci ofise gitmeye kalkabilir ya da telefon
+      // bekleyebilirdi.
+      "Innovation Drive",
+      "Business Avenue",
+      "Tech Street",
+      // DIKKAT: buradaki dizgeler HAM JSON icinde, kucuk harfe
+      // cevrilip substring olarak araniyor. Ilk denemede listede yalniz
+      // "EST" vardi ve test kirmizi dondu: "interest", "best", "latest"
+      // gibi siradan Ingilizce kelimeler ve Turkce metinler eslesiyor.
+      // Yasakli dizge, normal bir cumlenin icinde GECEMEYECEK kadar
+      // ozgul olmali.
+      "9AM - 6PM",
+      "AM EST",
+      "PM EST",
+      // Olculmeyen kullanici sayilari.
+      "10,000+",
+      "1M+",
+      "thousands of creators",
     ];
 
     const bulunanlar: string[] = [];

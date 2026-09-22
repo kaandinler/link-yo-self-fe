@@ -14,12 +14,21 @@ test.describe("Yonlendirme", () => {
   }) => {
     await page.goto("/en");
 
-    await expect(
-      page.getByRole("heading", { name: /Connect with your/ })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Get Started for Free/ })
-    ).toBeVisible();
+    /*
+     * METNE DEGIL, YAPIYA BAKILIYOR. Onceki hali "Connect with your"
+     * ve "Get Started for Free" dizgelerini ariyordu; tanitim
+     * metni i18n'e tasinip yeniden yazilinca test kirildi -- oysa
+     * olcmek istedigi sey degismemisti: giris yapmamis ziyaretci
+     * yonlendirilmiyor, tanitim sayfasini goruyor.
+     *
+     * Bu uc kosul pazarlama metninden bagimsiz: sayfanin kendi
+     * basligi, kayit cagrisi ve ozellik listesi. Metin yeniden
+     * yazildiginda test yine gecer; sayfa yonlendirmeye baslarsa
+     * ya da bos donerse dusier.
+     */
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.locator('a[href="/sign-up"]').first()).toBeVisible();
+    await expect(page.getByTestId("landing-features")).toBeVisible();
   });
 
   test("onboarding'i bitirmemis kullanici sihirbaza yonlendiriliyor", async ({
