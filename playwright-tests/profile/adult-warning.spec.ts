@@ -6,7 +6,7 @@ import {
   uniqueUser,
 } from "../helpers/api";
 import { signInAsNewUser } from "../helpers/auth";
-import { waitForHydration } from "../helpers/ui";
+import { clickWhenReady, waitForHydration } from "../helpers/ui";
 
 /**
  * Herkese acik sayfadaki +18 ara ekrani.
@@ -18,7 +18,32 @@ import { waitForHydration } from "../helpers/ui";
  */
 
 const PERDE = '[role="dialog"][aria-labelledby="adult-warning-title"]';
+const ONAY_DUGMESI = '[data-testid="adult-warning-confirm"]';
 const LINK_BASLIGI = "Gizli link";
+
+/**
+ * Onaya, React dugmeyi devraldiktan SONRA tiklar.
+ *
+ * NEDEN: perdenin "gorunur" olmasi tiklanabilir olmasi demek degil.
+ * Sayfa sunucuda uretiliyor; gelen HTML'de dugme tam olarak son halinde
+ * duruyor ama onClick'i bagli degil. O aralikta atilan tiklama hicbir
+ * sey yapmiyor ve Playwright de basarili sayiyor -- perde yerinde
+ * kaliyor, sonraki beklenti 20 saniye bosuna yokluyor.
+ *
+ * Olculdu (5 kosu): perde gorunur oldugu anda dugme HER SEFERINDE ham
+ * HTML; hydrate 115-163 ms sonra geliyor. Yani tiklama her kosuda ~150
+ * ms'lik bir bosluga giriyor ve yalnizca Playwright'in kendi
+ * hazirlik kontrolleri bu sureyi doldurdugu icin genelde isabet
+ * ediyor. Makine mesgulken isabet etmiyor: bu dosyanin uc testi
+ * (tiklayan uc test) yerelde tam olarak boyle dusuyordu, CI'da
+ * geciyordu.
+ *
+ * Depoda bunun icin zaten bir yardimci var; eksik olan, burada
+ * kullanilmamasiydi.
+ */
+async function onayla(page: Parameters<typeof clickWhenReady>[0]) {
+  await clickWhenReady(page, ONAY_DUGMESI);
+}
 
 async function uyarisiAcikProfil() {
   const { user, token } = await apiRegisterAndLogin(uniqueUser());
@@ -84,7 +109,7 @@ test.describe("+18 uyarisi", () => {
     await page.goto(`/en/${user.username}`);
     await expect(page.locator(PERDE)).toBeVisible();
 
-    await page.getByRole("button", { name: "I am 18 or older" }).click();
+    await onayla(page);
 
     await expect(page.locator(PERDE)).toHaveCount(0);
     await expect(page.getByRole("link", { name: LINK_BASLIGI })).toBeVisible();
@@ -93,7 +118,7 @@ test.describe("+18 uyarisi", () => {
   test("onay hatirlaniyor, ikinci ziyarette perde yok", async ({ page }) => {
     const { user } = await uyarisiAcikProfil();
     await page.goto(`/en/${user.username}`);
-    await page.getByRole("button", { name: "I am 18 or older" }).click();
+    await onayla(page);
     await expect(page.locator(PERDE)).toHaveCount(0);
 
     await page.goto(`/en/${user.username}`);
@@ -111,7 +136,7 @@ test.describe("+18 uyarisi", () => {
     const ikinci = await uyarisiAcikProfil();
 
     await page.goto(`/en/${ilk.user.username}`);
-    await page.getByRole("button", { name: "I am 18 or older" }).click();
+    await onayla(page);
     await expect(page.locator(PERDE)).toHaveCount(0);
 
     await page.goto(`/en/${ikinci.user.username}`);

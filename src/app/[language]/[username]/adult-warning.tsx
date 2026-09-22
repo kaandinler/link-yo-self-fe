@@ -124,6 +124,17 @@ const AdultWarning: React.FC<Props> = ({ username, enabled, children }) => {
             <button
               type="button"
               onClick={onayla}
+              /*
+                data-testid: E2E testi bu dugmeye tiklamadan once React'in
+                hydrate oldugunu beklemek zorunda. Sunucudan gelen HTML'de
+                dugme GORUNUYOR ama onClick bagli degil; o aralikta atilan
+                tiklama sessizce kayboluyor. Olculdu: perde gorunur
+                oldugu anda dugme 5/5 kosuda ham HTML, hydrate 115-163 ms
+                sonra geliyor. Rol/metin seciciyle hydrate beklenemiyor,
+                bu yuzden sabit bir kanca var (bkz. helpers/ui.ts,
+                clickWhenReady).
+              */
+              data-testid="adult-warning-confirm"
               className="min-h-[44px] w-full rounded-lg bg-white px-4 font-semibold text-neutral-900 transition-opacity hover:opacity-90"
             >
               {t("adultWarning.confirm")}
