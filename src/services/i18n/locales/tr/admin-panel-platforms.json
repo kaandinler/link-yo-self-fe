@@ -1,0 +1,46 @@
+{
+  "title": "Platformlar",
+  "description": "İnsanların sosyal hesap eklerken seçtiği liste. Buraya eklenen platform anında kullanılabilir hale gelir — dağıtım gerekmez.",
+  "table": {
+    "name": "Ad",
+    "displayName": "Görünen ad",
+    "accounts": "Kullanım",
+    "status": "Durum",
+    "actions": "İşlemler"
+  },
+  "status": {
+    "active": "Etkin",
+    "retired": "Emekli"
+  },
+  "accountCount": "{{count}} hesap kullanıyor",
+  "add": {
+    "title": "Platform ekle",
+    "name": "Ad",
+    "nameHelp": "Küçük harf, rakam, nokta ve tire. Bu, kalıcı kimlik; sonradan değiştirilemez.",
+    "displayName": "Görünen ad",
+    "displayNameHelp": "İnsanların gördüğü ad. İsteğe bağlı.",
+    "submit": "Platform ekle",
+    "success": "Platform eklendi.",
+    "duplicate": "Bu adda bir platform zaten var."
+  },
+  "edit": {
+    "submit": "Kaydet",
+    "cancel": "Vazgeç",
+    "success": "Görünen ad güncellendi."
+  },
+  "retire": {
+    "action": "Emekliye ayır",
+    "title": "Bu platform emekliye ayrılsın mı?",
+    "message": "İnsanların seçtiği listeden çıkar. Mevcut hesaplar korunur ve herkese açık profillerde görünmeye devam eder — hiçbir şey silinmez. Aynı adla yeniden ekleyerek geri getirebilirsiniz.",
+    "inUse": "Hâlâ {{count}} hesap kullanıyor.",
+    "confirm": "Emekliye ayır",
+    "cancel": "Vazgeç",
+    "success": "Platform emekliye ayrıldı."
+  },
+  "restore": {
+    "action": "Geri getir",
+    "success": "Platform geri getirildi."
+  },
+  "empty": "Henüz platform yok.",
+  "error": "Platformlar yüklenemedi."
+}
