@@ -64,6 +64,7 @@ const ACIK_SAYFALAR = [
   "/en/about",
   "/en/contact",
   "/en/privacy-policy",
+  "/en/terms",
   "/en/sign-in",
   "/en/sign-up",
   "/en/forgot-password",

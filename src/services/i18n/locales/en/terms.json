@@ -1,0 +1,51 @@
+{
+  "title": "Terms of Use",
+  "lastUpdated": "Last updated: September 23, 2026",
+  "intro": {
+    "p1": "These terms describe how Link Yo Self may be used. By creating an account you agree to them.",
+    "p2": "How your information is handled is described separately, in the privacy policy."
+  },
+  "account": {
+    "title": "Your account",
+    "item1": "You must be at least 13 years old to create an account.",
+    "item2": "Use an email address you can read: it is how you verify your account and reset your password.",
+    "item3": "Keep your password to yourself. You are responsible for what is done from your account.",
+    "item4": "Your user name is the address of your page. It must be 3 to 30 characters — letters, numbers, dots, hyphens and underscores — and some names are reserved. Once taken, a user name stays with its account, including after the account is closed."
+  },
+  "content": {
+    "title": "Your page and what you link to",
+    "p1": "Your page, your links and everything you write on them are public. You are responsible for them, and for the sites your links lead to.",
+    "p2": "What you publish remains yours. You allow the service to store it and to show it on your public page and in its preview card, for as long as it is published — that is what is needed to run the page, and nothing more."
+  },
+  "rules": {
+    "title": "What is not allowed",
+    "item1": "Content or links that are illegal where you are or where the service is run.",
+    "item2": "Pretending to be someone else, or presenting a page as belonging to a person or organisation it does not belong to.",
+    "item3": "Links to malware, phishing, or pages built to trick visitors.",
+    "item4": "Harassing, threatening or exposing other people.",
+    "item5": "Adult content without the age warning. If your page contains adult material, turn on the age warning in your page settings.",
+    "item6": "Trying to break, overload or get around the limits of the service — including automated sign-up and sign-in attempts."
+  },
+  "enforcement": {
+    "title": "When these terms are broken",
+    "p1": "Content that breaks these terms can be hidden or removed, and an account that breaks them can be closed. Where it is possible and safe, you will be told why.",
+    "p2": "If you think a decision was wrong, write to us."
+  },
+  "closing": {
+    "title": "Closing your account",
+    "p1": "You can close your account from your settings at any time, with your password. Your public page stops being served immediately. What happens to the stored record is described in the privacy policy."
+  },
+  "service": {
+    "title": "The service",
+    "p1": "Link Yo Self is free. It is provided as it is: there is no promise that it will always be available or free of errors, and features may change or be removed as the product develops."
+  },
+  "changes": {
+    "title": "Changes to these terms",
+    "p1": "These terms will change as the product does. When they change, the new version is posted on this page and the date at the top is updated."
+  },
+  "contact": {
+    "title": "Contact",
+    "p1": "Questions about these terms, or reports of a page that breaks them:"
+  },
+  "privacyLink": "Read the privacy policy"
+}

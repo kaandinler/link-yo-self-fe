@@ -430,18 +430,30 @@ function LinkYoSelfSignUpForm() {
                       </div>
                     </div>
                     <span className="text-sm text-ink-soft leading-5">
+                      {/*
+                        Kayit bu kutunun isaretlenmesini ZORUNLU tutuyor,
+                        ama iki baglanti da 404'tu: /terms hic yoktu,
+                        /privacy ise yanlis adresti (sayfa
+                        /privacy-policy). Yani her yeni kullanicidan
+                        acilmayan iki belgeyi kabul etmesi isteniyordu.
+                        Olculdu: ikisi de 404, /en/privacy-policy 200.
+                      */}
                       {t("form.policyAgree")}{" "}
                       <a
-                        href="/terms"
+                        href={`/${language}/terms`}
                         target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid="sign-up-terms-link"
                         className="text-accent hover:text-accent font-medium underline"
                       >
                         {t("form.termsOfService")}
                       </a>{" "}
                       {t("form.and")}{" "}
                       <a
-                        href="/privacy"
+                        href={`/${language}/privacy-policy`}
                         target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid="sign-up-privacy-link"
                         className="text-accent hover:text-accent font-medium underline"
                       >
                         {t("form.privacyPolicy")}

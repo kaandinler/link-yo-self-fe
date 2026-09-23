@@ -37,7 +37,9 @@ test.describe("Yonlendirme", () => {
      * bir kanca bu belirsizligi kaldiriyor.
      */
     await expect(page.getByTestId("landing-hero")).toBeVisible();
-    await expect(page.locator('a[href="/sign-up"]').first()).toBeVisible();
+    // Dil onekli: tanitim sayfasi artik uygulamanin kendi Link'ini
+    // kullaniyor (onceden next/link, oneksiz adres + fazladan yonlendirme).
+    await expect(page.locator('a[href="/en/sign-up"]').first()).toBeVisible();
     await expect(page.getByTestId("landing-features")).toBeVisible();
   });
 
