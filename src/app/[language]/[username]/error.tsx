@@ -15,6 +15,7 @@
  */
 
 import { useTranslation } from "@/services/i18n/client";
+import Link from "@/components/link";
 
 export default function ProfilAcilamadi({ reset }: { reset: () => void }) {
   const { t } = useTranslation("public-profile");
@@ -31,6 +32,13 @@ export default function ProfilAcilamadi({ reset }: { reset: () => void }) {
       >
         {t("unavailable.retry")}
       </button>
+      {/* Profil rotasinda ust serit yok; bu sayfa cikmaz sokak olmasin. */}
+      <Link
+        href="/"
+        className="mt-4 inline-flex min-h-[44px] items-center text-sm underline underline-offset-4"
+      >
+        {t("unavailable.home")}
+      </Link>
     </main>
   );
 }

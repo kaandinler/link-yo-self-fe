@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { apiUpdateProfile } from "./helpers/api";
+import { apiCreateLink, apiUpdateProfile } from "./helpers/api";
 import { signInAsNewUser } from "./helpers/auth";
 
 /**
@@ -90,5 +90,57 @@ test.describe("Ust serit", () => {
     const serit = page.getByRole("banner");
     await expect(serit.getByText("Ada Lovelace")).toBeVisible();
     await expect(serit).not.toContainText(user.email);
+  });
+
+  test.describe("herkese acik profilde", () => {
+    /**
+     * Bir kisinin bio sayfasina gelen ziyaretci ustte LinkYoSelf'in
+     * menusunu goruyordu (Home / About / Contact, Sign in, Sign up) --
+     * sayfanin sahibinin degil urunun sayfasi gibi. Olculdu: ziyaretci
+     * profilinde banner sayisi 1.
+     */
+    test("ziyaretci de sahibi de seridi gormuyor", async ({ browser }) => {
+      const sahip = await browser.newPage();
+      const { user, token } = await signInAsNewUser(sahip);
+      await apiUpdateProfile(token, { display_name: "Ada Lovelace" });
+      await apiCreateLink(token, { title: "Blog", url: "https://ada.test/b" });
+
+      const ziyaretci = await (await browser.newContext()).newPage();
+      for (const sayfa of [ziyaretci, sahip]) {
+        await sayfa.goto(`/en/${user.username}`);
+        // Once sayfanin GERCEKTEN yuklendigini dogrula; bos bir sayfa da
+        // "serit yok" iddiasini gecerdi.
+        await expect(
+          sayfa.getByRole("heading", { level: 1, name: "Ada Lovelace" })
+        ).toBeVisible();
+        await expect(sayfa.getByRole("banner")).toHaveCount(0);
+      }
+    });
+
+    test("urune donus yolu altbilgide", async ({ browser }) => {
+      const sahip = await browser.newPage();
+      const { user, token } = await signInAsNewUser(sahip);
+      await apiCreateLink(token, { title: "Blog", url: "https://ada.test/b" });
+
+      const ziyaretci = await (await browser.newContext()).newPage();
+      await ziyaretci.goto(`/tr/${user.username}`);
+
+      const baglanti = ziyaretci.getByTestId("profile-powered-by");
+      await expect(baglanti).toHaveAttribute("href", "/tr");
+      expect((await ziyaretci.request.get("/tr")).status()).toBe(200);
+    });
+
+    test("uygulama sayfalarinda serit yerinde", async ({ page }) => {
+      /** Gizleme kosulu fazla genis olursa serit HER yerden kaybolur;
+       * bu test onu yakaliyor. */
+      await page.goto("/en/about");
+      await expect(page.getByRole("banner")).toBeVisible();
+
+      await signInAsNewUser(page);
+      for (const yol of ["/en/dashboard", "/en/links", "/en/settings"]) {
+        await page.goto(yol);
+        await expect(page.getByRole("banner"), yol).toBeVisible();
+      }
+    });
   });
 });

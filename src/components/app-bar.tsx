@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
@@ -40,6 +40,7 @@ function ResponsiveAppBar() {
   const { logOut } = useAuthActions();
   const pathname = usePathname();
   const language = useLanguage();
+  const params = useParams<{ username?: string }>();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -110,6 +111,24 @@ function ResponsiveAppBar() {
    * oncesine dusuyordu; o, baska birinin kullanici adi olabilir.
    */
   const profilAdresi = user?.username ? `/${language}/${user.username}` : null;
+
+  /*
+   * Herkese acik profil: ziyaretcinin gordugu sayfa, uygulamanin degil.
+   *
+   * Seride orada yer yoktu: bir kisinin bio sayfasina gelen ziyaretci
+   * ustte LinkYoSelf'in menusunu (Home / About / Contact, Sign in,
+   * Sign up) goruyordu -- sayfanin sahibinin degil urunun sayfasi
+   * gibi. Link-in-bio sayfalari bunu gostermez; urune donus yolu
+   * profilin altindaki "Powered by Link Yo Self" baglantisi.
+   *
+   * NEDEN useParams: profil rotasi [username]. Router eslesmeyi zaten
+   * yapiyor; eslesen rotada `username` parametresi var, digerlerinde
+   * yok. Uygulama rotalarinin bir listesini tutmak gerekmiyor -- yeni
+   * bir sayfa eklendiginde unutulacak bir yer kalmiyor. Kullanicinin
+   * kendi profili de dahil: sahibi de sayfasini ziyaretcinin gordugu
+   * gibi goruyor (Onizle dugmesinin amaci bu).
+   */
+  if (params?.username) return null;
 
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-page via-page-accent to-page border-b border-line backdrop-blur-lg">

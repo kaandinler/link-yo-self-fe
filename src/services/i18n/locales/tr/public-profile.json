@@ -13,6 +13,7 @@
   "unavailable": {
     "title": "Bu sayfa şu anda açılamıyor",
     "body": "Şu an yükleyemedik. Hiçbir şey silinmedi — lütfen biraz sonra tekrar deneyin.",
-    "retry": "Tekrar dene"
+    "retry": "Tekrar dene",
+    "home": "Link Yo Self'e git"
   }
 }

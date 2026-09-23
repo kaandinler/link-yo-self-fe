@@ -3,6 +3,7 @@
 import React from "react";
 import { Globe, Instagram, Linkedin, Twitter } from "lucide-react";
 import { useTranslation } from "@/services/i18n/client";
+import Link from "@/components/link";
 import {
   PublicLink,
   PublicProfile,
@@ -155,7 +156,14 @@ const PublicProfilePage: React.FC<Props> = ({ profile }) => {
         </section>
 
         <footer className="mt-12 text-center text-xs" style={mutedTextStyle}>
-          {t("poweredBy")}
+          {/* Ust serit bu sayfada yok; urune donus yolu burasi. */}
+          <Link
+            href="/"
+            data-testid="profile-powered-by"
+            className="inline-flex min-h-[44px] items-center underline-offset-4 hover:underline"
+          >
+            {t("poweredBy")}
+          </Link>
         </footer>
       </div>
     </main>
