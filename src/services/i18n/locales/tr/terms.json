@@ -1,0 +1,51 @@
+{
+  "title": "Kullanım Koşulları",
+  "lastUpdated": "Son güncelleme: 23 Eylül 2026",
+  "intro": {
+    "p1": "Bu koşullar Link Yo Self'in nasıl kullanılabileceğini anlatır. Hesap oluşturarak bu koşulları kabul etmiş olursunuz.",
+    "p2": "Bilgilerinizin nasıl işlendiği ayrıca, gizlilik politikasında anlatılıyor."
+  },
+  "account": {
+    "title": "Hesabınız",
+    "item1": "Hesap oluşturmak için en az 13 yaşında olmalısınız.",
+    "item2": "Okuyabildiğiniz bir e-posta adresi kullanın: hesabınızı doğrulamak ve şifrenizi sıfırlamak bu adres üzerinden yapılıyor.",
+    "item3": "Şifrenizi kimseyle paylaşmayın. Hesabınızdan yapılanlardan siz sorumlusunuz.",
+    "item4": "Kullanıcı adınız sayfanızın adresidir. 3 ile 30 karakter arasında olmalı — harf, rakam, nokta, tire ve alt çizgi — ve bazı adlar ayrılmıştır. Alınan bir kullanıcı adı, hesap kapatıldıktan sonra da o hesapta kalır."
+  },
+  "content": {
+    "title": "Sayfanız ve bağlantılarınız",
+    "p1": "Sayfanız, bağlantılarınız ve üzerlerine yazdığınız her şey herkese açıktır. Bunlardan ve bağlantılarınızın götürdüğü sitelerden siz sorumlusunuz.",
+    "p2": "Yayımladıklarınız sizindir. Hizmetin bunları saklamasına ve yayında kaldıkları sürece herkese açık sayfanızda ve önizleme kartında göstermesine izin vermiş olursunuz — sayfayı çalıştırmak için gereken budur, fazlası değil."
+  },
+  "rules": {
+    "title": "İzin verilmeyenler",
+    "item1": "Bulunduğunuz yerde ya da hizmetin işletildiği yerde yasa dışı olan içerik veya bağlantılar.",
+    "item2": "Başka biri gibi davranmak ya da bir sayfayı ait olmadığı bir kişiye veya kuruluşa aitmiş gibi göstermek.",
+    "item3": "Kötü amaçlı yazılım, oltalama ya da ziyaretçiyi kandırmak için yapılmış sayfalara bağlantılar.",
+    "item4": "Başkalarını taciz etmek, tehdit etmek veya ifşa etmek.",
+    "item5": "+18 uyarısı olmadan yetişkin içerik. Sayfanızda yetişkinlere yönelik içerik varsa sayfa ayarlarınızdan +18 uyarısını açın.",
+    "item6": "Hizmeti bozmaya, aşırı yüklemeye ya da sınırlarını aşmaya çalışmak — otomatik kayıt ve giriş denemeleri dahil."
+  },
+  "enforcement": {
+    "title": "Bu koşullar çiğnendiğinde",
+    "p1": "Bu koşulları çiğneyen içerik gizlenebilir veya kaldırılabilir, çiğneyen bir hesap kapatılabilir. Mümkün ve güvenli olduğunda nedeni size bildirilir.",
+    "p2": "Bir kararın yanlış olduğunu düşünüyorsanız bize yazın."
+  },
+  "closing": {
+    "title": "Hesabınızı kapatmak",
+    "p1": "Hesabınızı istediğiniz zaman ayarlarınızdan, şifrenizle kapatabilirsiniz. Herkese açık sayfanız hemen yayından kalkar. Saklanan kayda ne olduğu gizlilik politikasında anlatılıyor."
+  },
+  "service": {
+    "title": "Hizmet",
+    "p1": "Link Yo Self ücretsizdir. Olduğu gibi sunulur: her zaman erişilebilir ya da hatasız olacağına dair bir söz yoktur ve ürün geliştikçe özellikler değişebilir veya kaldırılabilir."
+  },
+  "changes": {
+    "title": "Bu koşullardaki değişiklikler",
+    "p1": "Bu koşullar ürünle birlikte değişecek. Değiştiğinde yeni sürüm bu sayfada yayımlanır ve üstteki tarih güncellenir."
+  },
+  "contact": {
+    "title": "İletişim",
+    "p1": "Bu koşullarla ilgili sorular ya da koşulları çiğneyen bir sayfayı bildirmek için:"
+  },
+  "privacyLink": "Gizlilik politikasını oku"
+}

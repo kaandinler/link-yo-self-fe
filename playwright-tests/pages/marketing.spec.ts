@@ -66,14 +66,26 @@ test.describe("Pazarlama sayfalari", () => {
     ).toHaveCount(1);
   });
 
-  test("footer'da olmayan sayfaya baglanti yok", async ({ page }) => {
+  test("footer'daki her baglanti aciliyor", async ({ page }) => {
     /**
-     * Footer /terms'e baglaniyordu ve o sayfa yok -- baglanti 404'e
-     * gidiyordu.
+     * Footer bir donem /terms'e baglaniyordu ve o sayfa yoktu --
+     * baglanti 404'e gidiyordu. Onceki test yalnizca "/terms baglantisi
+     * yok" diyordu; sayfa yazilinca baglanti geri geldi ve asil kural
+     * su: footer'daki HER baglanti bir sayfa acmali. Yenisi eklendiginde
+     * de gecerli.
      */
     await page.goto("/en/landing-page");
 
-    await expect(page.locator('a[href="/terms"]')).toHaveCount(0);
+    const adresler = await page
+      .locator("footer a[href^='/']")
+      .evaluateAll((l) => l.map((a) => (a as HTMLAnchorElement).pathname));
+    expect(adresler.length).toBeGreaterThan(0);
+    expect(adresler).toContain("/en/terms");
+
+    for (const adres of adresler) {
+      const yanit = await page.request.get(adres);
+      expect(yanit.status(), adres).toBe(200);
+    }
   });
 
   test("sayfalar Turkce de basiyor", async ({ page }) => {

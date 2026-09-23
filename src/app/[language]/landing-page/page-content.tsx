@@ -9,15 +9,19 @@
  *   - Metnin tamami sabit Ingilizce'ydi, i18n'in disindaydi. Dil
  *     dugmesi urunun geri kalanini cevirirken burasi Ingilizce
  *     kaliyordu.
- *   - Footer'da /terms'e bir baglanti vardi; O SAYFA YOK, yani
- *     baglanti 404'e gidiyordu.
+ *   - Footer'da /terms'e bir baglanti vardi ve o sayfa YOKTU;
+ *     baglanti 404'e gidiyordu. (Sayfa sonradan yazildi, baglanti geri
+ *     geldi.)
  *
  * OZELLIK LISTESI KODDAN CIKARILDI. Her madde uruncte bugun mevcut
  * olan bir sey anlatiyor; "unlimited" gibi olculemeyen bir soz
  * verilmedi.
  */
 
-import Link from "next/link";
+// Uygulamanin kendi Link'i: dil onekini ekliyor. next/link ile butun
+// baglantilar oneksizdi (/terms, /about, /sign-up...); her tiklama bir
+// yonlendirme daha demekti ve dil, adresten degil cerezden secilir oldu.
+import Link from "@/components/link";
 import {
   ArrowRight,
   BarChart3,
@@ -155,8 +159,8 @@ export default function LandingPage() {
             </div>
 
             {/*
-              /terms KALDIRILDI: o sayfa yok, yani baglanti 404'e
-              gidiyordu. Sayfa yazilinca geri eklenebilir.
+              /terms bir donem kaldirilmisti (sayfa yoktu, baglanti 404'e
+              gidiyordu). Sayfa artik var; baglanti geri geldi.
             */}
             <div className="flex items-center gap-8">
               <Link
@@ -170,6 +174,12 @@ export default function LandingPage() {
                 className="inline-flex min-h-[44px] items-center text-ink-muted transition-colors hover:text-ink"
               >
                 {t("footer.privacy")}
+              </Link>
+              <Link
+                href="/terms"
+                className="inline-flex min-h-[44px] items-center text-ink-muted transition-colors hover:text-ink"
+              >
+                {t("footer.terms")}
               </Link>
             </div>
           </div>
