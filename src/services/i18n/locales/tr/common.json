@@ -17,7 +17,14 @@
     "users": "Kullanıcılar",
     "logout": "Çıkış Yap",
     "settings": "Ayarlar",
-    "about": "Hakkında"
+    "about": "Hakkında",
+    "dashboard": "Panel",
+    "links": "Bağlantılar",
+    "analytics": "Analitik",
+    "contact": "İletişim",
+    "addLink": "Bağlantı Ekle",
+    "preview": "Önizle",
+    "menu": "Menü"
   },
   "formInputs": {
     "avatarInput": {

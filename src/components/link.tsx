@@ -6,11 +6,17 @@ import {
 // Need for leave page logic
 
 import NextLink, { LinkProps } from "next/link";
-import { forwardRef, useContext, ReactNode } from "react";
+import React, { forwardRef, useContext, ReactNode } from "react";
 
 export interface InternalLinkProps extends LinkProps {
   children?: ReactNode;
   className?: string;
+  /**
+   * Menude "bu sayfadasiniz" bilgisi. Yalnizca renkle verilirse ekran
+   * okuyucu kullanicisina ulasmiyor; aria-current onu <a>'nin kendisine
+   * yaziyor.
+   */
+  "aria-current"?: React.AriaAttributes["aria-current"];
 }
 
 const Link = forwardRef<HTMLAnchorElement, InternalLinkProps>(

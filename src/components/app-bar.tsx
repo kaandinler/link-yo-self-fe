@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
+import useLanguage from "@/services/i18n/use-language";
 import Link from "@/components/link";
 import ThemeSwitchButton from "@/components/switch-theme-button";
 import LanguageSwitchButton from "@/components/language-switch-button";
@@ -38,24 +39,48 @@ function ResponsiveAppBar() {
   const { user, isLoaded } = useAuth();
   const { logOut } = useAuthActions();
   const pathname = usePathname();
+  const language = useLanguage();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // Giriş yapmış kullanıcı için dashboard navigation
+  // Etiketler t() ile: onceden duz Ingilizce yaziliydi ve /tr'de de
+  // "Dashboard, Links, Analytics..." gorunuyordu. i18n koruma testleri
+  // bunu yakalamiyordu, cunku onlar yalnizca ceviri cagrilarini
+  // denetliyor -- hic cagrilmayan metin onlara gorunmez.
   const dashboardNavItems: DashboardNavItem[] = [
-    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-    { href: "/links", label: "Links", icon: Link2 },
-    { href: "/analytics", label: "Analytics", icon: TrendingUp },
-    { href: "/profile/edit", label: "Profile", icon: User },
+    { href: "/dashboard", label: t("navigation.dashboard"), icon: BarChart3 },
+    { href: "/links", label: t("navigation.links"), icon: Link2 },
+    { href: "/analytics", label: t("navigation.analytics"), icon: TrendingUp },
+    { href: "/profile/edit", label: t("navigation.profile"), icon: User },
   ];
 
-  // Giriş yapmamış kullanıcı için genel navigation
   const publicNavItems: PublicNavItem[] = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/", label: t("navigation.home") },
+    { href: "/about", label: t("navigation.about") },
+    { href: "/contact", label: t("navigation.contact") },
   ];
+
+  /**
+   * Menu ogesi su anki sayfa mi?
+   *
+   * usePathname() dil onekini de donduruyor ("/en/dashboard"), menu
+   * adresleri ise oneksiz ("/dashboard"). Onceki hali ikisini
+   * dogrudan karsilastiriyordu ve HICBIR sayfada hicbir oge
+   * vurgulanmiyordu -- olculdu: /en/dashboard, /en/links ve
+   * /en/analytics'te vurgulanan oge sayisi 0.
+   */
+  const aktifMi = (href: string) => pathname === `/${language}${href}`;
+
+  /**
+   * Ust seritte gosterilen ad: urunun kendi "gorunen ad" alani.
+   *
+   * Onceden first_name || email: first_name bu urunde hic
+   * doldurulmuyor (boilerplate'ten kalma), yani herkes menude kendi
+   * E-POSTASINI goruyordu -- ekran paylasiminda da. Olculdu: gorunen
+   * adi "Ada Lovelace" olan kullanicida menu e-postayi gosteriyordu.
+   */
+  const gorunenAd = user?.display_name || user?.username || "";
 
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -70,12 +95,21 @@ function ResponsiveAppBar() {
     setUserMenuOpen(false);
   };
 
-  // User profile URL için güvenli link oluşturma
-  const getUserProfileUrl = () => {
-    if (!user) return "#";
-    const username = user.username || user.email?.split("@")[0] || "user";
-    return `/@${username}`;
-  };
+  /**
+   * Kullanicinin herkese acik sayfasi.
+   *
+   * Onceki hali `/@${username}` uretiyordu; boyle bir rota YOK. Olculdu:
+   * dugme /en/@kullanici'ya gidip 404 veriyordu, dogru adres
+   * /en/kullanici 200 donuyordu. Yani giris yapmis her sayfada duran,
+   * kullanicinin kendi sayfasini gormesini saglayan dugme bozuktu.
+   *
+   * Bu bir <a target="_blank"> -- dil onekini ekleyen ic Link degil --
+   * o yuzden onek burada elle konuyor.
+   *
+   * Kullanici adi yoksa adres uydurulmuyor. Eski hali e-postanin "@"
+   * oncesine dusuyordu; o, baska birinin kullanici adi olabilir.
+   */
+  const profilAdresi = user?.username ? `/${language}/${user.username}` : null;
 
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-page via-page-accent to-page border-b border-line backdrop-blur-lg">
@@ -109,12 +143,16 @@ function ResponsiveAppBar() {
             {user
               ? // Dashboard navigation for logged-in users
                 dashboardNavItems.map((item) => (
-                  <Link key={item.href} href={item.href}>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={aktifMi(item.href) ? "page" : undefined}
+                  >
                     <span
                       className={`
                     flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer
                     ${
-                      pathname === item.href
+                      aktifMi(item.href)
                         ? "bg-purple-600 text-white"
                         : "text-ink-soft hover:text-ink hover:bg-field/50"
                     }
@@ -162,20 +200,26 @@ function ResponsiveAppBar() {
                   <Link href="/links?new=1">
                     <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg transition-all">
                       <Plus className="h-4 w-4" />
-                      <span className="hidden sm:inline">Add Link</span>
+                      <span className="hidden sm:inline">
+                        {t("navigation.addLink")}
+                      </span>
                     </button>
                   </Link>
 
-                  {/* Preview Button - External link */}
-                  <a
-                    href={getUserProfileUrl()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 rounded-lg border border-line-strong transition-colors"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span className="hidden sm:inline">Preview</span>
-                  </a>
+                  {profilAdresi && (
+                    <a
+                      href={profilAdresi}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-testid="preview-profile"
+                      className="flex items-center gap-2 bg-surface-raised hover:bg-field text-ink px-4 py-2 rounded-lg border border-line-strong transition-colors"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span className="hidden sm:inline">
+                        {t("navigation.preview")}
+                      </span>
+                    </a>
+                  )}
                 </div>
 
                 {/* User Menu */}
@@ -187,7 +231,7 @@ function ResponsiveAppBar() {
                     {user.profile_image_url ? (
                       <img
                         src={user.profile_image_url}
-                        alt={`${user.first_name} ${user.last_name}`}
+                        alt={gorunenAd}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
@@ -195,9 +239,7 @@ function ResponsiveAppBar() {
                         <User className="h-4 w-4 text-ink" />
                       </div>
                     )}
-                    <span className="text-ink font-medium">
-                      {user.first_name || user.email}
-                    </span>
+                    <span className="text-ink font-medium">{gorunenAd}</span>
                     <ChevronDown className="h-4 w-4 text-ink-muted" />
                   </button>
 
@@ -252,7 +294,7 @@ function ResponsiveAppBar() {
           <button
             onClick={handleMobileMenuToggle}
             // Ikondan ibaret oldugu icin erisilebilir bir adi yoktu.
-            aria-label="Menu"
+            aria-label={t("navigation.menu")}
             data-testid="mobile-menu-toggle"
             // 44 piksel: telefonun ana gezinme kontrolu ve p-2 ile 40x40
             // kaliyordu. Ikon 24 piksel; buyuyen yalnizca dokunulabilir alan.
@@ -272,10 +314,14 @@ function ResponsiveAppBar() {
             {user
               ? // Dashboard navigation for mobile
                 dashboardNavItems.map((item) => (
-                  <Link key={item.href} href={item.href}>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={aktifMi(item.href) ? "page" : undefined}
+                  >
                     <div
                       className={`flex items-center gap-2 px-4 py-2 transition-colors rounded-lg mx-2 ${
-                        pathname === item.href
+                        aktifMi(item.href)
                           ? "bg-purple-600 text-white"
                           : "text-ink-soft hover:text-ink hover:bg-field/50"
                       }`}
@@ -329,7 +375,7 @@ function ResponsiveAppBar() {
                     {user.profile_image_url ? (
                       <img
                         src={user.profile_image_url}
-                        alt={`${user.first_name} ${user.last_name}`}
+                        alt={gorunenAd}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
@@ -337,9 +383,7 @@ function ResponsiveAppBar() {
                         <User className="h-4 w-4 text-ink" />
                       </div>
                     )}
-                    <span className="text-ink font-medium">
-                      {user.first_name || user.email}
-                    </span>
+                    <span className="text-ink font-medium">{gorunenAd}</span>
                   </div>
                   <Link href="/profile">
                     <div

@@ -17,7 +17,14 @@
     "users": "Users",
     "logout": "Logout",
     "settings": "Settings",
-    "about": "About"
+    "about": "About",
+    "dashboard": "Dashboard",
+    "links": "Links",
+    "analytics": "Analytics",
+    "contact": "Contact",
+    "addLink": "Add Link",
+    "preview": "Preview",
+    "menu": "Menu"
   },
   "formInputs": {
     "avatarInput": {
