@@ -169,7 +169,27 @@ test.describe("+18 uyarisi", () => {
     const kutu = page.getByLabel(/18\+ warning/i);
     await expect(kutu).toBeEnabled();
     await kutu.check();
+
+    /*
+     * Kaydetmenin BITMESI bekleniyor: onbellek temizligi dahil.
+     *
+     * Onceki hali kaydet'e basip HEMEN baska sayfaya gidiyordu. Tam
+     * sayfa gecisi, bekleyen istekleri iptal ediyor. Olculdu (12
+     * deneme): temizlik istegi 12'sinde de net::ERR_ABORTED ile
+     * kesildi; ayar backend'e her seferinde yazildi ama sayfa onbellekte
+     * eski kaldi. Onbellek bir dakikalik, bu yoklama 20 saniye -- sayfa
+     * daha once isinmissa test dusuyordu (yukte 12'de 1).
+     *
+     * Burada beklenen sey, testin zaten dogrulamak istedigi sey:
+     * arayuzden kaydetmek temizligi tetikliyor ve temizlik basarili.
+     */
+    const temizlik = page.waitForResponse(
+      (r) =>
+        r.url().includes("/api/revalidate-profile") &&
+        r.request().method() === "POST"
+    );
     await page.getByTestId("save-page-settings").click();
+    expect((await temizlik).ok(), "onbellek temizligi basarisiz").toBe(true);
 
     await expect
       .poll(async () => {
