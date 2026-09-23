@@ -87,7 +87,10 @@ export default async function Page(props: Props) {
   const params = await props.params;
   const profile = await getPublicProfile(params.username);
 
-  // Olmayan kullanici, silinmis hesap veya backend'e ulasilamamasi: 404.
+  // Olmayan kullanici ya da silinmis hesap: 404. Backend'e
+  // ULASILAMAMASI burada null degil, ProfilGeciciHatasi -- yukari
+  // cikip error.tsx'e ve 5xx'e donusuyor. Kesinti "bu sayfa yok"
+  // demek degil.
   if (!profile) notFound();
 
   const url = profileUrl(params.language, profile.username);

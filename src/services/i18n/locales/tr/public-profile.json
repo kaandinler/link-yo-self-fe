@@ -9,5 +9,10 @@
     "body": "Bu profil yetişkinlere yönelik içerik barındırabilir. Devam etmek için 18 yaşından büyük olduğunuzu onaylayın.",
     "confirm": "18 yaşından büyüğüm",
     "leave": "Geri dön"
+  },
+  "unavailable": {
+    "title": "Bu sayfa şu anda açılamıyor",
+    "body": "Şu an yükleyemedik. Hiçbir şey silinmedi — lütfen biraz sonra tekrar deneyin.",
+    "retry": "Tekrar dene"
   }
 }
