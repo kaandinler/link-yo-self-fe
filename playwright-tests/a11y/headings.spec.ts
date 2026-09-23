@@ -40,9 +40,15 @@ import { signInAsNewUser } from "../helpers/auth";
  * sayima girsin. Ikincisi kacarsa test asil yakalamasi gereken
  * durumu kacirir.
  */
-async function basliklar(page: Page, yol: string): Promise<string[]> {
+async function basliklar(
+  page: Page,
+  yol: string,
+  { seritVar = true }: { seritVar?: boolean } = {}
+): Promise<string[]> {
   await page.goto(yol);
-  await expect(page.getByRole("banner")).toBeVisible();
+  // Herkese acik profilde ust serit yok (bkz. app-bar.tsx); orada
+  // beklenecek bir serit de yok.
+  if (seritVar) await expect(page.getByRole("banner")).toBeVisible();
   await expect
     .poll(() => page.locator("h1").count(), { timeout: 20_000 })
     .toBeGreaterThan(0);
@@ -68,7 +74,6 @@ const ACIK_SAYFALAR = [
   "/en/sign-in",
   "/en/sign-up",
   "/en/forgot-password",
-  "/en/boyle-bir-sayfa-yok",
 ];
 
 const GIRISLI_SAYFALAR = [
@@ -88,6 +93,23 @@ test.describe("Baslik duzeni", () => {
     });
   }
 
+  test("bilinmeyen tek parcali adresin 404'u tek h1 tasiyor", async ({
+    page,
+  }) => {
+    /**
+     * /en/<bir-sey> profil rotasiyla ([username]) eslesiyor ve profil
+     * yoksa 404 veriyor. Profil rotasinda ust serit gizli (bkz.
+     * app-bar.tsx), yani bu 404'te de serit yok; sayfanin kendi "Ana
+     * sayfa" baglantisi var.
+     */
+    const bulunan = await basliklar(page, "/en/boyle-bir-sayfa-yok", {
+      seritVar: false,
+    });
+    expect(bulunan).toHaveLength(1);
+    await expect(page.getByRole("banner")).toHaveCount(0);
+    await expect(page.locator('main a[href="/en"]')).toHaveCount(1);
+  });
+
   test("giris gerektiren sayfalar tek h1 tasiyor", async ({ page }) => {
     test.setTimeout(180_000);
     await signInAsNewUser(page);
@@ -105,7 +127,9 @@ test.describe("Baslik duzeni", () => {
     await apiUpdateProfile(token, { display_name: "Ada Lovelace" });
     await apiCreateLink(token, { title: "Blog", url: "https://ada.test/b" });
 
-    const bulunan = await basliklar(page, `/en/${user.username}`);
+    const bulunan = await basliklar(page, `/en/${user.username}`, {
+      seritVar: false,
+    });
 
     expect(bulunan).toEqual(["Ada Lovelace"]);
   });

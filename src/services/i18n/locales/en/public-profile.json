@@ -13,6 +13,7 @@
   "unavailable": {
     "title": "This page is temporarily unavailable",
     "body": "We couldn't load it just now. Nothing has been removed — please try again in a moment.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "home": "Go to Link Yo Self"
   }
 }
