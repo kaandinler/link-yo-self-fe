@@ -129,10 +129,77 @@ interface ApiResponse<T> {
 }
 
 /**
+ * Profil BILINMIYOR -- yok degil.
+ *
+ * Backend'e ulasilamadiginda ya da 5xx dondugunde firlatiliyor.
+ * Onceden bu durum da `null` donuyordu ve sayfa notFound() ile 404
+ * veriyordu. Olculdu -- var olan bir profil, backend durdurulunca:
+ *
+ *   sayfa -> 404
+ *   kart  -> 200, genel "Link Yo Self" gorseli,
+ *            cache-control: public, max-age=3600,
+ *                           stale-while-revalidate=86400
+ *
+ * 404, arama motoruna "bu sayfa kaldirildi" demek; kisa bir kesinti
+ * profilleri dizinden dusurmeye baslayabilirdi. Kart tarafinda ise
+ * yanlis gorsel bir saat (ve bir gun daha bayat) onbellege giriyor,
+ * Slack/Facebook gibi kaziyicilarda cok daha uzun.
+ *
+ * Artik iki durum ayriliyor: "yok" (4xx) -> null -> 404; "bilinmiyor"
+ * (ag hatasi, 5xx, yapilandirma eksik) -> bu hata -> 5xx, ki kaziyici
+ * bunu gecici sayar ve sonra tekrar gelir.
+ */
+export class ProfilGeciciHatasi extends Error {
+  constructor(neden: string) {
+    super(`Profil gecici olarak alinamadi: ${neden}`);
+    this.name = "ProfilGeciciHatasi";
+  }
+}
+
+/**
+ * Profil ucunu cagirir ve sonucu uc duruma ayirir.
+ *
+ *   profil bulundu          -> PublicProfile
+ *   profil yok (4xx)        -> null
+ *   bilinmiyor (ag, 5xx)    -> ProfilGeciciHatasi
+ *
+ * 4xx'in tamami "yok" sayiliyor, yalnizca 404 degil: gecersiz
+ * karakterli bir kullanici adi 422 donebilir ve o da kalici olarak
+ * yok demek. Gecici olan tek sey sunucu tarafi.
+ */
+async function profilIste(
+  adres: string,
+  secenekler: RequestInit
+): Promise<PublicProfile | null> {
+  // API adresi hic verilmemisse bu bir dagitim hatasi; sessizce her
+  // profili 404'e cevirmek onu gizlerdi.
+  if (!API_URL) throw new ProfilGeciciHatasi("NEXT_PUBLIC_API_URL tanimsiz");
+
+  let response: Response;
+  try {
+    response = await fetch(adres, secenekler);
+  } catch (hata) {
+    throw new ProfilGeciciHatasi(
+      hata instanceof Error ? hata.message : "ag hatasi"
+    );
+  }
+
+  if (response.status >= 500) {
+    throw new ProfilGeciciHatasi(`backend ${response.status}`);
+  }
+  if (!response.ok) return null;
+
+  const result: ApiResponse<PublicProfile> = await response.json();
+  return result.data ?? null;
+}
+
+/**
  * Bir kullanicinin herkese acik profilini getirir.
  *
- * Kullanici yoksa (404) veya API'ye ulasilamiyorsa null doner; cagiran taraf
- * bunu notFound() ile 404 sayfasina cevirir.
+ * Kullanici yoksa null doner; cagiran taraf bunu notFound() ile 404
+ * sayfasina cevirir. API'ye ulasilamiyorsa ProfilGeciciHatasi
+ * firlatir -- "yok" ile "bilinmiyor" ayni sey degil (bkz. sinifin
+ * aciklamasi).
  *
  * React cache() ile sarmalanmis: generateMetadata ve sayfa ayni istegi
  * yaptigi icin backend'e iki kez gidilmesini engelliyor.
@@ -140,35 +207,23 @@ interface ApiResponse<T> {
 export const getPublicProfile = cache(async function getPublicProfile(
   username: string
 ): Promise<PublicProfile | null> {
-  if (!API_URL) return null;
-
-  try {
-    const response = await fetch(
-      `${API_URL}/v1/p/${encodeURIComponent(username)}`,
-      // Duzenleme sonrasi sayfa hala ANINDA guncelleniyor: kaydeden
-      // istemci /api/revalidate-profile'i cagirip bu etiketi temizliyor
-      // (bkz. use-fetch.ts). Sure yalnizca o cagri kaybolursa devreye
-      // giren tavan.
-      //
-      // Olcum (uretim derlemesi, ayni profile art arda bes ziyaret):
-      // backend cagrisi 5 -> 1. Temizlikten sonraki ilk ziyaret yine
-      // backend'e gidiyor.
-      {
-        next: {
-          revalidate: PROFIL_ONBELLEK_SANIYE,
-          tags: [profilEtiketi(username)],
-        },
-      }
-    );
-
-    if (!response.ok) return null;
-
-    const result: ApiResponse<PublicProfile> = await response.json();
-    return result.data ?? null;
-  } catch {
-    // Backend kapaliysa sayfa patlamak yerine 404 vermeli.
-    return null;
-  }
+  return profilIste(
+    `${API_URL}/v1/p/${encodeURIComponent(username)}`,
+    // Duzenleme sonrasi sayfa hala ANINDA guncelleniyor: kaydeden
+    // istemci /api/revalidate-profile'i cagirip bu etiketi temizliyor
+    // (bkz. use-fetch.ts). Sure yalnizca o cagri kaybolursa devreye
+    // giren tavan.
+    //
+    // Olcum (uretim derlemesi, ayni profile art arda bes ziyaret):
+    // backend cagrisi 5 -> 1. Temizlikten sonraki ilk ziyaret yine
+    // backend'e gidiyor.
+    {
+      next: {
+        revalidate: PROFIL_ONBELLEK_SANIYE,
+        tags: [profilEtiketi(username)],
+      },
+    }
+  );
 });
 
 /**
@@ -196,29 +251,19 @@ export const getPublicProfile = cache(async function getPublicProfile(
 export async function getPublicProfileForCard(
   username: string
 ): Promise<PublicProfile | null> {
-  if (!API_URL) return null;
-
-  try {
-    const response = await fetch(
-      // count_view=false: bu okuma bir ziyaret degil. Uc varsayilan
-      // olarak her cagriyi "profil goruntulenmesi" sayiyor; kart da ayni
-      // ucu cagirdigi icin bir kaziyicinin kart istegi, kimsenin
-      // gormedigi bir sayfa icin goruntulenme uretiyordu.
-      `${API_URL}/v1/p/${encodeURIComponent(username)}?count_view=false`,
-      {
-        next: {
-          revalidate: KART_ONBELLEK_SANIYE,
-          tags: [kartEtiketi(username)],
-        },
-      }
-    );
-    if (!response.ok) return null;
-
-    const result: ApiResponse<PublicProfile> = await response.json();
-    return result.data ?? null;
-  } catch {
-    return null;
-  }
+  return profilIste(
+    // count_view=false: bu okuma bir ziyaret degil. Uc varsayilan
+    // olarak her cagriyi "profil goruntulenmesi" sayiyor; kart da ayni
+    // ucu cagirdigi icin bir kaziyicinin kart istegi, kimsenin
+    // gormedigi bir sayfa icin goruntulenme uretiyordu.
+    `${API_URL}/v1/p/${encodeURIComponent(username)}?count_view=false`,
+    {
+      next: {
+        revalidate: KART_ONBELLEK_SANIYE,
+        tags: [kartEtiketi(username)],
+      },
+    }
+  );
 }
 
 /** Sitemap satiri: yalnizca adres ve son degisiklik. */

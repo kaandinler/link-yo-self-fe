@@ -27,6 +27,8 @@ import { ImageResponse } from "next/og";
 import {
   getPublicProfileForCard,
   KART_ONBELLEK_SANIYE,
+  ProfilGeciciHatasi,
+  type PublicProfile,
 } from "@/services/api/services/public-profile";
 import {
   isLightColor,
@@ -54,6 +56,21 @@ export const alt = "Profile";
 const ONBELLEK = {
   "cache-control": `public, max-age=${KART_ONBELLEK_SANIYE}, stale-while-revalidate=86400`,
 };
+
+/**
+ * Profil gecici olarak alinamadiginda verilen genel kartin basligi.
+ *
+ * ONBELLEGE GIRMEMELI. Onceden bu durumda da ONBELLEK basligi
+ * kullaniliyordu; olculdu -- backend kapaliyken var olan bir profilin
+ * karti genel gorselle ve "public, max-age=3600,
+ * stale-while-revalidate=86400" ile donuyordu. Kaziyici (Slack,
+ * Facebook) o yanlis karti saklayip gunlerce gosterebilir; kesinti bir
+ * dakika surse bile.
+ *
+ * Genel gorsel yine donuyor: bozuk bir gorsel adresi birakmaktan iyi.
+ * Ama "bunu sakla" demiyor.
+ */
+const SAKLAMA = { "cache-control": "no-store" };
 
 type Props = {
   params: Promise<{ language: string; username: string }>;
@@ -114,7 +131,17 @@ async function avatarDataUri(url: string | null | undefined) {
 
 export default async function Image(props: Props) {
   const params = await props.params;
-  const profile = await getPublicProfileForCard(params.username);
+  // "Yok" ile "bilinmiyor" ayri: yoksa genel kart onbelleklenebilir,
+  // bilinmiyorsa genel kart ama saklanmaz (bkz. SAKLAMA).
+  let profile: PublicProfile | null;
+  let basliklar = ONBELLEK;
+  try {
+    profile = await getPublicProfileForCard(params.username);
+  } catch (hata) {
+    if (!(hata instanceof ProfilGeciciHatasi)) throw hata;
+    profile = null;
+    basliklar = SAKLAMA;
+  }
 
   // Profil yoksa da bir gorsel donmeli: burada throw etmek kaziyiciya
   // bozuk bir gorsel adresi birakirdi.
@@ -136,7 +163,7 @@ export default async function Image(props: Props) {
           Link Yo Self
         </div>
       ),
-      { ...size, headers: ONBELLEK }
+      { ...size, headers: basliklar }
     );
   }
 
