@@ -53,6 +53,34 @@ test.describe("Kullanim kosullari", () => {
     );
   });
 
+  test("sorumluluk ve uygulanacak hukuk bolumleri iki dilde de var", async ({
+    page,
+  }) => {
+    // Iki dilin anahtarlari locale-keys testiyle esitleniyor; burada
+    // sayfanin bolumleri gercekten CIZDIGI olculuyor.
+    for (const [yol, basliklar, hukuk] of [
+      [
+        "/en/terms",
+        ["Liability", "Governing law and disputes"],
+        "laws of the Republic of Türkiye",
+      ],
+      [
+        "/tr/terms",
+        ["Sorumluluk", "Uygulanacak hukuk ve uyuşmazlıklar"],
+        "Türkiye Cumhuriyeti hukuku",
+      ],
+    ] as const) {
+      await page.goto(yol);
+      for (const baslik of basliklar) {
+        await expect(
+          page.getByRole("heading", { level: 2, name: baslik, exact: true }),
+          `${yol}: ${baslik}`
+        ).toBeVisible();
+      }
+      await expect(page.getByText(hukuk)).toBeVisible();
+    }
+  });
+
   test("gizlilik politikasina dil onekiyle baglaniyor", async ({ page }) => {
     await page.goto("/tr/terms");
 

@@ -1,6 +1,6 @@
 {
   "title": "Terms of Use",
-  "lastUpdated": "Last updated: September 23, 2026",
+  "lastUpdated": "Last updated: September 24, 2026",
   "intro": {
     "p1": "These terms describe how Link Yo Self may be used. By creating an account you agree to them.",
     "p2": "How your information is handled is described separately, in the privacy policy."
@@ -38,6 +38,16 @@
   "service": {
     "title": "The service",
     "p1": "Link Yo Self is free. It is provided as it is: there is no promise that it will always be available or free of errors, and features may change or be removed as the product develops."
+  },
+  "liability": {
+    "title": "Liability",
+    "p1": "To the extent the law allows, Link Yo Self is not liable for indirect losses — such as lost profits, lost data or lost business — arising from the use of the service or from it being unavailable.",
+    "p2": "This does not limit liability for damage caused intentionally or through gross negligence, or any other liability that the law does not allow to be limited."
+  },
+  "law": {
+    "title": "Governing law and disputes",
+    "p1": "These terms are governed by the laws of the Republic of Türkiye. The courts and enforcement offices of Istanbul have jurisdiction over disputes arising from them.",
+    "p2": "If you use the service as a consumer, this does not take away the rights consumer law gives you — including the right to apply to the consumer arbitration committee or consumer court where you live."
   },
   "changes": {
     "title": "Changes to these terms",

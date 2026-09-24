@@ -23,11 +23,17 @@ import MuiLink from "@mui/material/Link";
  *   - +18 uyarisi: sayfa ayarlarindaki adult_warning_enabled.
  *   - Otomatik deneme yasagi: hiz siniri zaten uyguluyor.
  *
- * BILEREK YAZILMAYANLAR: isletmecinin tuzel kisiligi, uygulanacak hukuk,
- * yetkili mahkeme, sorumluluk sinirlamasi. Bunlar isletmecinin (ve bir
- * hukukcunun) vermesi gereken kararlar; uydurmak, gizlilik
- * politikasinda canlida BASKA BIR SIRKETI anlatan boilerplate'in
- * yaptiginin aynisi olurdu.
+ * HUKUKI BOLUMLER (sorumluluk, uygulanacak hukuk) ilk surumde bilerek
+ * yoktu: isletmecinin karari olmadan yazmak, gizlilik politikasinda
+ * canlida BASKA BIR SIRKETI anlatan boilerplate'in yaptiginin aynisi
+ * olurdu. Kararlar sonradan isletmeciden alindi:
+ *   - Turk hukuku, Istanbul mahkemeleri ve icra daireleri. Tuketicinin
+ *     kanuni basvuru yollari (hakem heyeti / tuketici mahkemesi) sakli;
+ *     tuketici mevzuati bunlarin sozlesmeyle kaldirilmasina izin vermiyor.
+ *   - Sorumluluk "kanunun izin verdigi olcude" sinirli; kasit ve agir
+ *     ihmal disarida (TBK m.115 bunlarin sinirlanmasini gecersiz sayiyor).
+ *   - Isletmecinin adi BILEREK yazilmiyor; iletisim adresi yeterli.
+ * Bu metin bir hukukcu tarafindan gozden gecirilmedi.
  *
  * ADRES: gizlilik politikasi ve iletisim sayfasiyla ayni olmali.
  */
@@ -145,6 +151,24 @@ async function Terms(props: Props) {
       <Bolum baslik={t("service.title")}>
         <Typography gutterBottom paragraph>
           {t("service.p1")}
+        </Typography>
+      </Bolum>
+
+      <Bolum baslik={t("liability.title")}>
+        <Typography gutterBottom paragraph>
+          {t("liability.p1")}
+        </Typography>
+        <Typography gutterBottom paragraph>
+          {t("liability.p2")}
+        </Typography>
+      </Bolum>
+
+      <Bolum baslik={t("law.title")}>
+        <Typography gutterBottom paragraph>
+          {t("law.p1")}
+        </Typography>
+        <Typography gutterBottom paragraph>
+          {t("law.p2")}
         </Typography>
       </Bolum>
 
