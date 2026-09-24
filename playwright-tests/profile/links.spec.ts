@@ -115,7 +115,7 @@ test.describe("Link yonetimi", () => {
   test("silinen link onbellekteki sayfadan da kalkiyor", async ({ page }) => {
     /**
      * Sayfa bir dakikalik pencereyle onbellege aliniyor; temizlik
-     * use-fetch'te, link silme de oradan geciyor. Olculdu ve
+     * vekilde (/api/proxy), link silme de oradan geciyor. Olculdu ve
      * calisiyor, bu test onu tutuyor.
      *
      * Sira onemli: once ziyaret (onbellek dolsun), sonra sil. Tersi

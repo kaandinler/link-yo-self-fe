@@ -13,6 +13,9 @@
 // TOKEN YENILEME DE BURADA: eskiden istemci use-fetch icinde suresi
 // dolmak uzere olan token'i kendisi yeniliyordu. Yenileme artik
 // sunucuda ve seffaf: istemci token'in varligindan bile haberdar degil.
+//
+// PROFIL ONBELLEGI DE BURADA TEMIZLENIYOR: basarili her mutasyondan
+// sonra, AYNI istegin icinde ve yanit donmeden once (bkz. vekilEt).
 
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -22,6 +25,10 @@ import {
   oturumSil,
   oturumYaz,
 } from "@/services/auth/session-cookie";
+import {
+  kimlikCoz,
+  profilOnbelleginiTemizle,
+} from "@/services/api/profile-cache-purge";
 
 const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
 
@@ -99,6 +106,18 @@ function tokenTasiyanYanit(
   };
 }
 
+/**
+ * Oturum sahibinin kullanici adi; cozulemezse null. Asla firlatmaz:
+ * temizlik yapilamamasi kaydi bozmamali.
+ */
+async function kullaniciAdi(token: string): Promise<string | null> {
+  try {
+    return (await kimlikCoz(`Bearer ${token}`))?.kimlik.username ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function vekilEt(
   request: NextRequest,
   params: Promise<{ yol: string[] }>
@@ -174,6 +193,34 @@ async function vekilEt(
     basliklar.set("content-type", contentType);
   }
 
+  /**
+   * Profil onbelleginin temizligi icin: kimin sayfasi?
+   *
+   * NEDEN VEKILDE: temizlik eskiden yalnizca istemcideydi -- kaydetme
+   * yaniti tarayiciya ulastiktan SONRA atilan ikinci bir istek
+   * (/api/revalidate-profile). Kullanici o yanit gelmeden sayfayi
+   * yenilerse ya da sekmeyi kapatirsa o istek hic atilmiyor ve sayfa
+   * onbellek tavanina (60 sn) kadar eski kaliyordu. Olculdu (uretim
+   * derlemesi, 12 kosu): 9 bayat / 3 taze; `keepalive: true` ile 8 / 4.
+   * Burada, mutasyonla ayni istegin icinde yapilinca kaybolacak ikinci
+   * bir istek kalmiyor: 12 / 12 taze (bkz.
+   * playwright-tests/profile/save-then-leave.spec.ts).
+   *
+   * Kimlik cozumu mutasyonla PARALEL basliyor; kayit, backend'e bir
+   * kimlik sorusu kadar gecikmesin (ayni token icin zaten 10 sn
+   * onbellekte).
+   *
+   * DELETE ISTISNA -- once kimlik, sonra silme. Kullanici kendi
+   * hesabini kapatinca token artik kimseye cozulmuyor; sonradan
+   * sorulan kimlik 401 aliyor ve kapatilan hesabin sayfasi onbellekte
+   * kaliyordu (olculdu: hesap kapatildiktan sonra sayfa hala 200
+   * donuyor ve silinen profilin adini gosteriyordu).
+   *
+   * Oturumsuz istekte temizlenecek bir profil yok.
+   */
+  const kimlikSozu = !govdesiz && oturum ? kullaniciAdi(oturum.token) : null;
+  if (kimlikSozu && request.method === "DELETE") await kimlikSozu;
+
   const hedef = `${API_URL}/${hedefYol}${request.nextUrl.search}`;
   const backendYaniti = await fetch(hedef, {
     method: request.method,
@@ -206,6 +253,14 @@ async function vekilEt(
     const temiz = cozulmus as { data?: Record<string, unknown> };
     const { access_token: _a, refresh_token: _r, ...kalan } = temiz.data ?? {};
     ciktiGovdesi = JSON.stringify({ ...temiz, data: kalan });
+  }
+
+  // Yanit DONMEDEN once: istemci yaniti gordugunde sayfa coktan taze.
+  // Basarisiz bir mutasyon bir sey degistirmedi, temizlenecek bir sey
+  // de yok.
+  if (kimlikSozu && backendYaniti.ok) {
+    const kullanici = await kimlikSozu;
+    if (kullanici) profilOnbelleginiTemizle(kullanici);
   }
 
   const yanit = new NextResponse(ciktiGovdesi || null, {

@@ -30,8 +30,8 @@ test.describe("Profil duzenleme", () => {
     page,
   }) => {
     /**
-     * Sayfa bir dakikalik pencereyle onbellege aliniyor; kaydeden
-     * istemci onbellegi temizliyor (use-fetch.ts). Bu test o
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor; kaydetme
+     * istegi onbellegi temizliyor (vekilde, /api/proxy). Bu test o
      * temizligi ARAYUZ uzerinden tetikliyor -- API yardimcisi kendi
      * temizligini yaptigi icin, yalnizca yardimciyla yazilmis bir
      * test uygulamadaki baglantinin kopmasini fark etmezdi.

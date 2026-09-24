@@ -191,8 +191,8 @@ export function useDeleteMyAccountService() {
  * Bir kullanicinin herkese acik sayfasinin onbellegini temizler.
  *
  * NEDEN AYRI BIR SERVIS: siradan mutasyonlarda temizlik kendiliginden
- * oluyor (use-fetch.ts) ama orada temizlenen sey her zaman CAGIRANIN
- * kendi profili. Admin panelinden baska birinin hesabi kapatilinca
+ * oluyor (vekilde, /api/proxy) ama orada temizlenen sey her zaman
+ * CAGIRANIN kendi profili. Admin panelinden baska birinin hesabi kapatilinca
  * temizlenmesi gereken o kisinin sayfasi; uc bunu yalnizca admin'den
  * kabul ediyor.
  *

@@ -23,7 +23,7 @@ const VARSAYILAN_PROFIL_ONBELLEK_SANIYE = 60;
  * Herkese acik profil sayfasinin tazelik penceresi (saniye).
  *
  * Bu bir "bayat kalabilir" suresi degil, bir tavan: profilini
- * kaydeden istemci onbellegi hemen temizliyor, yani normalde sayfa
+ * kaydeden istek onbellegi hemen temizliyor, yani normalde sayfa
  * aninda guncelleniyor. Bu sure yalnizca o temizlik ETKI ETMEDIGINDE
  * ne kadar bekleneceğini soyluyor.
  *
@@ -209,9 +209,10 @@ export const getPublicProfile = cache(async function getPublicProfile(
 ): Promise<PublicProfile | null> {
   return profilIste(
     `${API_URL}/v1/p/${encodeURIComponent(username)}`,
-    // Duzenleme sonrasi sayfa hala ANINDA guncelleniyor: kaydeden
-    // istemci /api/revalidate-profile'i cagirip bu etiketi temizliyor
-    // (bkz. use-fetch.ts). Sure yalnizca o cagri kaybolursa devreye
+    // Duzenleme sonrasi sayfa hala ANINDA guncelleniyor: vekil,
+    // kaydetme istegini iletirken bu etiketi de temizliyor (bkz.
+    // app/api/proxy/[...yol]/route.ts). Sure yalnizca o temizlik etki
+    // etmezse (ornegin baska bir Next ornegine dusmusse) devreye
     // giren tavan.
     //
     // Olcum (uretim derlemesi, ayni profile art arda bes ziyaret):
@@ -245,8 +246,9 @@ export const getPublicProfile = cache(async function getPublicProfile(
  * ayni cagrilari birlestiriyor, istekler arasinda bir sey tutmuyor.
  *
  * Bir saat "bayat kalma suresi" degil, tavan: profilini kaydeden
- * istemci kart etiketini de temizliyor, yani kart da aninda
- * guncelleniyor. Sure yalnizca o cagri kaybolursa devreye giriyor.
+ * istek kart etiketini de temizliyor, yani kart da aninda
+ * guncelleniyor. Sure yalnizca o temizlik etki etmezse devreye
+ * giriyor.
  */
 export async function getPublicProfileForCard(
   username: string

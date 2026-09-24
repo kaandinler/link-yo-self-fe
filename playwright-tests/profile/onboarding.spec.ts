@@ -28,7 +28,7 @@ test.describe("Onboarding sihirbazi", () => {
   }) => {
     /**
      * Sayfa bir dakikalik pencereyle onbellege aliniyor ve temizlik
-     * use-fetch'te yapiliyor; sihirbaz da oradan gectigi icin
+     * vekilde (/api/proxy) yapiliyor; sihirbaz da oradan gectigi icin
      * calismasi gerekiyordu. "Gerekiyordu" yeterli degil: olculdu ve
      * calisiyor, bu test onu tutuyor.
      *

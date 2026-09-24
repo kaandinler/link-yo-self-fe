@@ -130,18 +130,42 @@ per window instead of one per visit — measured at **five visits: 5 backend cal
   `kart:<username>` tag and its own one-hour window. Purging only the page tag
   left the card byte-for-byte identical after an edit — measured.
 
-- **`POST /api/revalidate-profile`** purges both tags. `use-fetch.ts` calls it
-  after every successful mutation, which is why no individual save site has to
-  remember to. For `DELETE` it also purges _before_ the request: the endpoint
-  resolves "who is this" through the backend, and after you close your own
-  account your token no longer resolves, so the after-purge would 401 and your
-  page would stay up. It takes a username in the body only from an admin, so the
-  panel can close someone else's page immediately.
+- **The BFF proxy (`/api/proxy`) purges both tags** after every successful
+  (2xx) non-GET request that carries a session, _inside the same request_ and
+  before the response is returned. No individual save site has to remember to,
+  and there is no second request that can be lost: when the browser sees the
+  save response, the page is already fresh.
 
-  The endpoint caches token → identity for ten seconds. Without it, one client
-  produced **61 backend identity lookups for 60 purge requests**. The purge
-  itself still runs on every call: dropping one, or answering 429, would leave
-  the user looking at their own stale page.
+  This used to be a separate client call to `/api/revalidate-profile`, issued by
+  `use-fetch.ts` once the save response arrived. If the user refreshed, closed
+  the tab or typed a URL before that, it was never sent. Measured on a
+  production build (12 runs: warm the page, save the +18 setting, hard-navigate
+  away immediately, fetch the page 1.5 s later): **9 stale / 3 fresh**, and
+  `keepalive: true` did not help (**8 / 4**) because in most runs the save
+  response had not arrived yet, so the purge request was never created. With the
+  purge in the proxy: **12 / 12 fresh**, including with the client call blocked
+  — Next keeps running the route handler after the browser disconnects. The
+  regression test is `playwright-tests/profile/save-then-leave.spec.ts`; it
+  fails on every run without the server-side purge.
+
+  The proxy asks the backend "who is this" (`GET /v1/users/me`) in parallel with
+  the mutation, so saves are not delayed by it. For `DELETE` it asks _before_
+  forwarding: after you close your own account your token no longer resolves,
+  so an after-the-fact lookup would 401 and your page would stay up. It does not
+  read the username out of the JWT: the session cookie is unsigned JSON, so an
+  unverified `sub` would let anyone purge anyone's page.
+
+- **`POST /api/revalidate-profile`** purges both tags on demand. It takes a
+  username in the body only from an admin, so the panel can close someone
+  else's page immediately (the proxy only knows the caller's own page). The API
+  test helpers, which go to the backend directly, call it for the caller's own
+  page.
+
+  Identity lookups (shared by both paths, `profile-cache-purge.ts`) are cached
+  token → identity for ten seconds. Without it, one client produced **61
+  backend identity lookups for 60 purge requests**. The purge itself still runs
+  on every call: dropping one, or answering 429, would leave the user looking at
+  their own stale page.
 
 ### Diagnostics on the purge endpoint
 

@@ -6,6 +6,14 @@
 // gosterirdi -- olculdu, gosteriyordu. Bu uc o pencereyi kaydetme
 // aninda kapatiyor.
 //
+// ASIL TEMIZLIK ARTIK VEKILDE: /api/proxy her basarili mutasyonun
+// icinde, yaniti dondurmeden once temizliyor. Bu uc ikinci bir istek;
+// kullanici kaydetme yaniti gelmeden sayfadan ayrilirsa hic
+// atilmiyordu (bkz. proxy route). Artik asil isi admin'in BASKA
+// birinin sayfasini temizlemesi -- vekil yalnizca cagiranin kendi
+// sayfasini biliyor. Kendi sayfasi icin cagrilmasi da hala gecerli
+// (ornegin backend'e dogrudan giden test yardimcilari).
+//
 // NEDEN VARSAYILAN OLARAK GOVDESIZ: istemci hangi profilin
 // temizlenecegini soylemiyor, token'indan cikariliyor. Aksi halde
 // herkes baskasinin sayfasinin onbellegini istedigi kadar
@@ -13,101 +21,15 @@
 // ediliyor: panelden hesap kapatinca o kisinin sayfasi da hemen
 // kapanmali.
 
-import { createHash } from "node:crypto";
-import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { csrfGecerli, oturumOku } from "@/services/auth/session-cookie";
+import { PROFIL_ONBELLEK_SANIYE } from "@/services/api/services/public-profile";
 import {
-  kartEtiketi,
-  profilEtiketi,
-  PROFIL_ONBELLEK_SANIYE,
-} from "@/services/api/services/public-profile";
+  kimlikCoz,
+  profilOnbelleginiTemizle,
+} from "@/services/api/profile-cache-purge";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-/**
- * Token -> kimlik, kisa omurlu.
- *
- * NEDEN: her temizlik cagrisi backend'e bir /v1/users/me sorusu
- * demekti. Olculdu: tek istemciden saniyede ~60 temizlik, backend'e
- * 61 kimlik sorgusu. Kaydetme seyrek oldugu icin bu sayilara ancak
- * bilerek yuklenerek ulasilir, ama ulasilabiliyordu.
- *
- * Temizligin KENDISI her cagrida yapiliyor -- yalnizca kimlik sorusu
- * tekrarlanmiyor. Cagriyi atlamak ya da 429 dondurmek guvenli
- * olmazdi: dusen bir temizlik, kullanicinin kendi sayfasini bir
- * dakika eski gormesi demek.
- *
- * Token ham haliyle tutulmuyor, ozeti tutuluyor.
- *
- * Bellek sunucu surecinde ve ornek basina; tek amaci ust uste gelen
- * cagrilari birlestirmek, kalici bir kayit degil.
- */
-const KIMLIK_OMRU_MS = 10_000;
-const KIMLIK_TAVANI = 1000;
-
-type Kimlik = { username: string; isAdmin: boolean };
-
-const kimlikler = new Map<string, { kimlik: Kimlik; bitis: number }>();
-
-function tokenOzeti(authorization: string): string {
-  return createHash("sha256").update(authorization).digest("hex");
-}
-
-function kimlikOku(anahtar: string): Kimlik | undefined {
-  const kayit = kimlikler.get(anahtar);
-  if (!kayit) return undefined;
-  if (kayit.bitis <= Date.now()) {
-    kimlikler.delete(anahtar);
-    return undefined;
-  }
-  return kayit.kimlik;
-}
-
-function kimlikYaz(anahtar: string, kimlik: Kimlik) {
-  // Suresi gecenleri at; sonra hala tavandaysak en eskiyi at. Boylece
-  // farkli token'larla yuklenen biri bellegi buyutemiyor.
-  const simdi = Date.now();
-  // Array.from: tsconfig hedefi Map uzerinde dogrudan donmeye izin
-  // vermiyor ve silerken kopya uzerinde gezmek zaten daha guvenli.
-  for (const [k, v] of Array.from(kimlikler.entries())) {
-    if (v.bitis <= simdi) kimlikler.delete(k);
-  }
-  while (kimlikler.size >= KIMLIK_TAVANI) {
-    const enEski = Array.from(kimlikler.keys())[0];
-    if (enEski === undefined) break;
-    kimlikler.delete(enEski);
-  }
-  kimlikler.set(anahtar, { kimlik, bitis: simdi + KIMLIK_OMRU_MS });
-}
-
-/** Token'in sahibi ve nereden geldigi; gecersizse null. */
-async function kimlikCoz(
-  authorization: string
-): Promise<{ kimlik: Kimlik; kaynak: "onbellek" | "backend" } | null> {
-  const anahtar = tokenOzeti(authorization);
-  const onbellekten = kimlikOku(anahtar);
-  if (onbellekten) return { kimlik: onbellekten, kaynak: "onbellek" };
-
-  // Token'i burada cozmek, imza dogrulamasini ikinci bir yerde
-  // tekrarlamak olurdu; sahibini backend soyluyor.
-  const yanit = await fetch(`${API_URL}/v1/users/me`, {
-    headers: { Authorization: authorization },
-    cache: "no-store",
-  });
-  if (!yanit.ok) return null;
-
-  const govde = await yanit.json();
-  const username: string | undefined = govde?.data?.username;
-  if (!username) return null;
-
-  const kimlik: Kimlik = {
-    username,
-    isAdmin: govde?.data?.is_admin === true,
-  };
-  kimlikYaz(anahtar, kimlik);
-  return { kimlik, kaynak: "backend" };
-}
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
 
 /** Govdedeki kullanici adi; govde yoksa ya da bozuksa undefined. */
 async function istenenKullanici(request: Request): Promise<string | undefined> {
@@ -180,12 +102,7 @@ export async function POST(request: NextRequest) {
 
   const username = istenen ?? kimlik.username;
 
-  // Sayfa ve kart ayri onbellek kayitlari: kart ayni ucu
-  // `?count_view=false` ile cagiriyor, yani Next icin baska bir adres.
-  // Yalnizca sayfa temizlenirken kart duzenlemeden sonra bayt bayt
-  // ayni donuyordu -- olculdu.
-  revalidateTag(profilEtiketi(username));
-  revalidateTag(kartEtiketi(username));
+  profilOnbelleginiTemizle(username);
 
   // Kimligin nereden geldigi disaridan olculebilsin diye basliga
   // yaziliyor. Gizli bir sey tasimiyor ve testin olctugu sey tam
