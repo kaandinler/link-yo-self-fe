@@ -150,10 +150,13 @@ test.describe("+18 uyarisi", () => {
     page,
   }) => {
     /**
-     * Uctan uca: ayar arayuzden kaydediliyor, API'den degil. Kaydetme
-     * sonrasi onbellek temizligi use-fetch.ts'te yapiliyor ve bu ayar
+     * Uctan uca: ayar arayuzden kaydediliyor, API'den degil. Onbellek
+     * temizligi kaydetmeyle ayni istekte, vekilde yapiliyor ve bu ayar
      * da oradan geciyor -- temizlik olmasaydi sayfa bir dakika bayat
      * kalir ve perde gorunmezdi.
+     *
+     * Kaydetme yaniti gelmeden sayfadan ayrilma hali ayri bir testte:
+     * save-then-leave.spec.ts.
      */
     const { user, token } = await signInAsNewUser(page);
     await apiCreateLink(token, {
@@ -171,25 +174,17 @@ test.describe("+18 uyarisi", () => {
     await kutu.check();
 
     /*
-     * Kaydetmenin BITMESI bekleniyor: onbellek temizligi dahil.
-     *
-     * Onceki hali kaydet'e basip HEMEN baska sayfaya gidiyordu. Tam
-     * sayfa gecisi, bekleyen istekleri iptal ediyor. Olculdu (12
-     * deneme): temizlik istegi 12'sinde de net::ERR_ABORTED ile
-     * kesildi; ayar backend'e her seferinde yazildi ama sayfa onbellekte
-     * eski kaldi. Onbellek bir dakikalik, bu yoklama 20 saniye -- sayfa
-     * daha once isinmissa test dusuyordu (yukte 12'de 1).
-     *
-     * Burada beklenen sey, testin zaten dogrulamak istedigi sey:
-     * arayuzden kaydetmek temizligi tetikliyor ve temizlik basarili.
+     * Kaydetmenin BITMESI bekleniyor. Temizlik ayni istegin icinde,
+     * yanit donmeden once yapildigi icin yanitin gelmesi temizligin de
+     * bittigi demek.
      */
-    const temizlik = page.waitForResponse(
+    const kaydetme = page.waitForResponse(
       (r) =>
-        r.url().includes("/api/revalidate-profile") &&
-        r.request().method() === "POST"
+        r.url().includes("/api/proxy/v1/profile/page-settings") &&
+        r.request().method() === "PUT"
     );
     await page.getByTestId("save-page-settings").click();
-    expect((await temizlik).ok(), "onbellek temizligi basarisiz").toBe(true);
+    expect((await kaydetme).ok(), "kaydetme basarisiz").toBe(true);
 
     await expect
       .poll(async () => {

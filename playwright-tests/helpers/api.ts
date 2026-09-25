@@ -75,10 +75,10 @@ export async function apiRegisterAndLogin(user: TestUser = uniqueUser()) {
 /** POST /v1/links/ */
 /**
  * Herkese acik sayfanin onbellegini temizler -- uygulamanin kaydetme
- * sonrasi yaptigi seyin aynisi (bkz. use-fetch.ts).
+ * sirasinda yaptigi seyin aynisi (bkz. app/api/proxy/[...yol]/route.ts).
  *
  * NEDEN HELPER'DA DA VAR: bu yardimcilar arayuzun yerine geciyor.
- * Uygulama kaydettikten sonra temizliyor ama testler backend'e
+ * Uygulamada temizligi vekil yapiyor ama testler backend'e
  * dogrudan gittigi icin o adim atlanirdi; o zaman testler urunun
  * yapmadigi bir seyi olcerdi -- sayfayi bir dakika bayat gorurdu.
  */
@@ -154,8 +154,9 @@ export async function apiUpdateProfile(
  *
  * Kaydettikten sonra onbellek temizleniyor: herkese acik sayfa bir
  * dakikalik pencereyle onbellege aliniyor ve +18 bayragi o sayfada
- * gorunuyor. Uygulama bunu use-fetch.ts'te kendiliginden yapiyor;
- * testler backend'e dogrudan gittigi icin burada acikca yapiliyor.
+ * gorunuyor. Uygulamada bunu vekil (/api/proxy) kendiliginden
+ * yapiyor; testler backend'e dogrudan gittigi icin burada acikca
+ * yapiliyor.
  */
 export async function apiUpdatePageSettings(
   token: string,

@@ -162,7 +162,7 @@ function Actions({ user }: { user: User }) {
       });
 
       // Kapatilan hesabin herkese acik sayfasi onbellekte kalmasin.
-      // use-fetch'teki kendiliginden temizlik CAGIRANIN profilini
+      // Vekildeki kendiliginden temizlik CAGIRANIN profilini
       // temizliyor, yani burada admin'inkini; silinen kisininki
       // acikta kalirdi.
       if (user.username) {

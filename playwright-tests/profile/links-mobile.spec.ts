@@ -87,8 +87,8 @@ test.describe("Links telefonda", () => {
     /**
      * Siralama, bayat bir sayfada en sinsi olan degisiklik: sayfa
      * dogru gorunur, yalnizca sira eskidir. Sayfa bir dakikalik
-     * pencereyle onbellege aliniyor, temizlik use-fetch'te yapiliyor
-     * ve siralama da oradan geciyor -- olculdu, calisiyor.
+     * pencereyle onbellege aliniyor, temizlik vekilde (/api/proxy)
+     * yapiliyor ve siralama da oradan geciyor -- olculdu, calisiyor.
      *
      * Sira onemli: once ziyaret (onbellek dolsun), sonra tasi.
      */

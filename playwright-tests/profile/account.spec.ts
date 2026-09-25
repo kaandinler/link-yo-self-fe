@@ -73,7 +73,7 @@ test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
     request,
   }) => {
     /**
-     * Sayfa bir dakikalik pencereyle onbellege aliniyor. use-fetch'teki
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor. Vekildeki
      * kendiliginden temizlik CAGIRANIN profilini temizliyor, yani
      * panelden silerken admin'inkini; silinen kisininki acikta
      * kalirdi. Uc bu yuzden admin'den kullanici adi kabul ediyor.

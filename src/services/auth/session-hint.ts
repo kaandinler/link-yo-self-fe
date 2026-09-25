@@ -7,8 +7,7 @@
 // isaretinin var olup olmadigi (bkz. session-cookie.ts).
 //
 // NE ICIN: AuthProvider'in anonim ziyaretcide bosuna /users/me
-// cagirmamasi ve use-fetch'in gereksiz onbellek temizligi
-// tetiklememesi. Yetki karari DEGIL; onu her zaman sunucu veriyor.
+// cagirmamasi. Yetki karari DEGIL; onu her zaman sunucu veriyor.
 
 import Cookies from "js-cookie";
 import { ISARET_CEREZI } from "./cookie-names";
