@@ -1,6 +1,6 @@
 {
   "title": "Kullanım Koşulları",
-  "lastUpdated": "Son güncelleme: 23 Eylül 2026",
+  "lastUpdated": "Son güncelleme: 24 Eylül 2026",
   "intro": {
     "p1": "Bu koşullar Link Yo Self'in nasıl kullanılabileceğini anlatır. Hesap oluşturarak bu koşulları kabul etmiş olursunuz.",
     "p2": "Bilgilerinizin nasıl işlendiği ayrıca, gizlilik politikasında anlatılıyor."
@@ -38,6 +38,16 @@
   "service": {
     "title": "Hizmet",
     "p1": "Link Yo Self ücretsizdir. Olduğu gibi sunulur: her zaman erişilebilir ya da hatasız olacağına dair bir söz yoktur ve ürün geliştikçe özellikler değişebilir veya kaldırılabilir."
+  },
+  "liability": {
+    "title": "Sorumluluk",
+    "p1": "Kanunun izin verdiği ölçüde Link Yo Self, hizmetin kullanılmasından ya da erişilemez olmasından doğan kâr kaybı, veri kaybı veya iş kaybı gibi dolaylı zararlardan sorumlu değildir.",
+    "p2": "Bu, kasıt veya ağır ihmalle verilen zararlardan doğan sorumluluğu ya da kanunun sınırlanmasına izin vermediği başka bir sorumluluğu sınırlamaz."
+  },
+  "law": {
+    "title": "Uygulanacak hukuk ve uyuşmazlıklar",
+    "p1": "Bu koşullara Türkiye Cumhuriyeti hukuku uygulanır. Bu koşullardan doğan uyuşmazlıklarda İstanbul mahkemeleri ve icra daireleri yetkilidir.",
+    "p2": "Hizmeti tüketici olarak kullanıyorsanız bu, tüketici mevzuatının size tanıdığı hakları ortadan kaldırmaz — yerleşim yerinizdeki tüketici hakem heyetine veya tüketici mahkemesine başvurma hakkı dahil."
   },
   "changes": {
     "title": "Bu koşullardaki değişiklikler",
