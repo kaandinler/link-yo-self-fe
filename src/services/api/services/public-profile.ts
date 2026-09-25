@@ -148,6 +148,25 @@ interface ApiResponse<T> {
  * Artik iki durum ayriliyor: "yok" (4xx) -> null -> 404; "bilinmiyor"
  * (ag hatasi, 5xx, yapilandirma eksik) -> bu hata -> 5xx, ki kaziyici
  * bunu gecici sayar ve sonra tekrar gelir.
+ *
+ * NEDEN 503 DEGIL 500 (bilincli karar, yeniden arastirmaya gerek yok):
+ *
+ * Sayfa durum kodunu SECEMIYOR. Next 15.3'te render'dan cikabilen kodlar
+ * sabit bir listede: 401, 403, 404 (http-access-fallback.js,
+ * ALLOWED_CODES). Firlatilan her baska hata 500.
+ *
+ * 503 ancak middleware'den verilebilir ve iki yolun da bedeli olculdu
+ * ya da hesaplandi:
+ *   - Middleware'de backend saglik kontrolu: kesintide ONBELLEKTEKI
+ *     profiller de 503 olur. Bugun olmuyorlar -- olculdu, backend
+ *     kapaliyken suresi dolmus onbellekteki profil 4/4 istekte 200
+ *     dondu (Next bayat kopyayi sunmaya devam ediyor). 500'u yalnizca
+ *     hic ziyaret edilmemis profil aliyor.
+ *   - Middleware'in sayfayi kendisine vekil olarak istemesi: her
+ *     profil yuklemesi Next'ten iki kez gecer, ustelik middleware'de
+ *     uygulama rotalarinin listesi tutulmak zorunda kalir.
+ * Kaziyicilar icin 500 ve 503 ayni sinif (gecici sunucu hatasi); bu
+ * bedellere degmedigine isletmeciyle karar verildi.
  */
 export class ProfilGeciciHatasi extends Error {
   constructor(neden: string) {
