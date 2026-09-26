@@ -1,0 +1,19 @@
+{
+  "links": "Bağlantılar",
+  "socialLinks": "Sosyal bağlantılar",
+  "website": "Web sitesi",
+  "noLinks": "Bu profilde henüz bağlantı yok.",
+  "poweredBy": "Link Yo Self ile hazırlandı",
+  "adultWarning": {
+    "title": "İçerik uyarısı",
+    "body": "Bu profil yetişkinlere yönelik içerik barındırabilir. Devam etmek için 18 yaşından büyük olduğunuzu onaylayın.",
+    "confirm": "18 yaşından büyüğüm",
+    "leave": "Geri dön"
+  },
+  "unavailable": {
+    "title": "Bu sayfa şu anda açılamıyor",
+    "body": "Şu an yükleyemedik. Hiçbir şey silinmedi — lütfen biraz sonra tekrar deneyin.",
+    "retry": "Tekrar dene",
+    "home": "Link Yo Self'e git"
+  }
+}

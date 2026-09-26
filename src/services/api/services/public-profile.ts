@@ -1,0 +1,350 @@
+// src/services/api/services/public-profile.ts
+//
+// Public profil sayfasinin veri katmani.
+//
+// DIKKAT: Bu modulde bilerek "use client" yok ve useFetch kullanilmiyor.
+// Backend'deki GET /v1/p/{username} ucu token istemiyor; sayfa sunucuda
+// render edildigi icin (SEO + metadata) fetch'in her iki tarafta da
+// calisabilmesi gerekiyor. useFetch token ekleyip 401'de yonlendirme
+// yaptigindan burada uygun degil.
+
+import { cache } from "react";
+
+/**
+ * Paylasim kartinin tazelik penceresi. Kartin `cache-control` basligi
+ * da bu degeri kullaniyor; ikisi ayrismasin diye tek yerde duruyor.
+ */
+export const KART_ONBELLEK_SANIYE = 3600;
+
+/** Varsayilan tazelik penceresi; env verilmezse bu kullaniliyor. */
+const VARSAYILAN_PROFIL_ONBELLEK_SANIYE = 60;
+
+/**
+ * Herkese acik profil sayfasinin tazelik penceresi (saniye).
+ *
+ * Bu bir "bayat kalabilir" suresi degil, bir tavan: profilini
+ * kaydeden istek onbellegi hemen temizliyor, yani normalde sayfa
+ * aninda guncelleniyor. Bu sure yalnizca o temizlik ETKI ETMEDIGINDE
+ * ne kadar bekleneceğini soyluyor.
+ *
+ * NEDEN AYARLANABILIR: `revalidateTag` yalnizca cagrinin dustugu
+ * Next ORNEGINI temizliyor. Iki ornek ayni derlemeden ayni diskle
+ * kosarken olculdu -- 3000'de temizlik yapilinca 3000 yeni adi,
+ * 3001 hala eskisini gosteriyordu. Tek ornekte sorun yok; birden
+ * fazla ornekle kosulacaksa bu pencere staleligin tavani oluyor ve
+ * kodu degistirmeden kisaltilabilmesi gerekiyor.
+ *
+ * Asil cozum ornekler arasinda paylasilan bir cache handler
+ * (next.config `cacheHandler`); bu depoda oyle bir altyapi yok.
+ * Bkz. docs/architecture.md.
+ */
+export const PROFIL_ONBELLEK_SANIYE = onbellekSaniyesiCoz(
+  process.env.PROFILE_CACHE_SECONDS
+);
+
+/**
+ * Env degerini saniyeye cevirir; anlamsizsa varsayilana duser.
+ *
+ * Sessizce 0'a dusmek en kotu sonuc olurdu: onbellek tamamen kapanir
+ * ve bunu kimse fark etmez. Bu yuzden yalnizca pozitif tamsayi kabul
+ * ediliyor.
+ */
+function onbellekSaniyesiCoz(ham: string | undefined): number {
+  if (!ham) return VARSAYILAN_PROFIL_ONBELLEK_SANIYE;
+  const sayi = Number(ham);
+  if (!Number.isInteger(sayi) || sayi <= 0) {
+    return VARSAYILAN_PROFIL_ONBELLEK_SANIYE;
+  }
+  return sayi;
+}
+
+/** Bir profilin onbellek etiketi; temizleyen taraf da ayni isimi uretiyor. */
+export function profilEtiketi(username: string): string {
+  return `profil:${username.toLowerCase()}`;
+}
+
+/**
+ * Paylasim kartinin onbellek etiketi.
+ *
+ * NEDEN SAYFADAN AYRI: kart ayni ucu farkli bir adresle cagiriyor
+ * (`?count_view=false`), yani Next icin bambaska bir onbellek kaydi.
+ * Sayfanin etiketini temizlemek kartinkini temizlemiyordu -- olculdu,
+ * duzenlemeden sonra kart bayt bayt aynisi donuyordu.
+ *
+ * Ayri isim olmasi ayrica ise yariyor: ikisinin suresi farkli (sayfa
+ * 60 saniye, kart bir saat) ve ileride yalnizca birini temizlemek
+ * gerekebilir.
+ */
+export function kartEtiketi(username: string): string {
+  return `kart:${username.toLowerCase()}`;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export interface PublicLink {
+  id: number;
+  title: string;
+  url: string;
+  description?: string | null;
+  icon_url?: string | null;
+  background_color?: string | null;
+  text_color?: string | null;
+  border_radius: number;
+  order_index: number;
+}
+
+export interface PublicProfile {
+  username: string;
+  display_name: string;
+  bio?: string | null;
+  profile_image_url?: string | null;
+
+  page_title?: string | null;
+  page_description?: string | null;
+  website?: string | null;
+
+  twitter_username?: string | null;
+  instagram_username?: string | null;
+  linkedin_username?: string | null;
+
+  theme_color?: string | null;
+  background_type?: string | null;
+  background_value?: string | null;
+
+  /**
+   * Sayfa acilmadan once +18 uyarisi gosterilsin mi?
+   *
+   * Backend'de users'ta degil, user_page_settings tablosunda; ayara hic
+   * dokunmamis kullanici icin false doner (bkz. PageSettingsService).
+   */
+  adult_warning_enabled: boolean;
+
+  links: PublicLink[];
+}
+
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  status: string;
+}
+
+/**
+ * Profil BILINMIYOR -- yok degil.
+ *
+ * Backend'e ulasilamadiginda ya da 5xx dondugunde firlatiliyor.
+ * Onceden bu durum da `null` donuyordu ve sayfa notFound() ile 404
+ * veriyordu. Olculdu -- var olan bir profil, backend durdurulunca:
+ *
+ *   sayfa -> 404
+ *   kart  -> 200, genel "Link Yo Self" gorseli,
+ *            cache-control: public, max-age=3600,
+ *                           stale-while-revalidate=86400
+ *
+ * 404, arama motoruna "bu sayfa kaldirildi" demek; kisa bir kesinti
+ * profilleri dizinden dusurmeye baslayabilirdi. Kart tarafinda ise
+ * yanlis gorsel bir saat (ve bir gun daha bayat) onbellege giriyor,
+ * Slack/Facebook gibi kaziyicilarda cok daha uzun.
+ *
+ * Artik iki durum ayriliyor: "yok" (4xx) -> null -> 404; "bilinmiyor"
+ * (ag hatasi, 5xx, yapilandirma eksik) -> bu hata -> 5xx, ki kaziyici
+ * bunu gecici sayar ve sonra tekrar gelir.
+ *
+ * NEDEN 503 DEGIL 500 (bilincli karar, yeniden arastirmaya gerek yok):
+ *
+ * Sayfa durum kodunu SECEMIYOR. Next 15.3'te render'dan cikabilen kodlar
+ * sabit bir listede: 401, 403, 404 (http-access-fallback.js,
+ * ALLOWED_CODES). Firlatilan her baska hata 500.
+ *
+ * 503 ancak middleware'den verilebilir ve iki yolun da bedeli olculdu
+ * ya da hesaplandi:
+ *   - Middleware'de backend saglik kontrolu: kesintide ONBELLEKTEKI
+ *     profiller de 503 olur. Bugun olmuyorlar -- olculdu, backend
+ *     kapaliyken suresi dolmus onbellekteki profil 4/4 istekte 200
+ *     dondu (Next bayat kopyayi sunmaya devam ediyor). 500'u yalnizca
+ *     hic ziyaret edilmemis profil aliyor.
+ *   - Middleware'in sayfayi kendisine vekil olarak istemesi: her
+ *     profil yuklemesi Next'ten iki kez gecer, ustelik middleware'de
+ *     uygulama rotalarinin listesi tutulmak zorunda kalir.
+ * Kaziyicilar icin 500 ve 503 ayni sinif (gecici sunucu hatasi); bu
+ * bedellere degmedigine isletmeciyle karar verildi.
+ */
+export class ProfilGeciciHatasi extends Error {
+  constructor(neden: string) {
+    super(`Profil gecici olarak alinamadi: ${neden}`);
+    this.name = "ProfilGeciciHatasi";
+  }
+}
+
+/**
+ * Profil ucunu cagirir ve sonucu uc duruma ayirir.
+ *
+ *   profil bulundu          -> PublicProfile
+ *   profil yok (4xx)        -> null
+ *   bilinmiyor (ag, 5xx)    -> ProfilGeciciHatasi
+ *
+ * 4xx'in tamami "yok" sayiliyor, yalnizca 404 degil: gecersiz
+ * karakterli bir kullanici adi 422 donebilir ve o da kalici olarak
+ * yok demek. Gecici olan tek sey sunucu tarafi.
+ */
+async function profilIste(
+  adres: string,
+  secenekler: RequestInit
+): Promise<PublicProfile | null> {
+  // API adresi hic verilmemisse bu bir dagitim hatasi; sessizce her
+  // profili 404'e cevirmek onu gizlerdi.
+  if (!API_URL) throw new ProfilGeciciHatasi("NEXT_PUBLIC_API_URL tanimsiz");
+
+  let response: Response;
+  try {
+    response = await fetch(adres, secenekler);
+  } catch (hata) {
+    throw new ProfilGeciciHatasi(
+      hata instanceof Error ? hata.message : "ag hatasi"
+    );
+  }
+
+  if (response.status >= 500) {
+    throw new ProfilGeciciHatasi(`backend ${response.status}`);
+  }
+  if (!response.ok) return null;
+
+  const result: ApiResponse<PublicProfile> = await response.json();
+  return result.data ?? null;
+}
+
+/**
+ * Bir kullanicinin herkese acik profilini getirir.
+ *
+ * Kullanici yoksa null doner; cagiran taraf bunu notFound() ile 404
+ * sayfasina cevirir. API'ye ulasilamiyorsa ProfilGeciciHatasi
+ * firlatir -- "yok" ile "bilinmiyor" ayni sey degil (bkz. sinifin
+ * aciklamasi).
+ *
+ * React cache() ile sarmalanmis: generateMetadata ve sayfa ayni istegi
+ * yaptigi icin backend'e iki kez gidilmesini engelliyor.
+ */
+export const getPublicProfile = cache(async function getPublicProfile(
+  username: string
+): Promise<PublicProfile | null> {
+  return profilIste(
+    `${API_URL}/v1/p/${encodeURIComponent(username)}`,
+    // Duzenleme sonrasi sayfa hala ANINDA guncelleniyor: vekil,
+    // kaydetme istegini iletirken bu etiketi de temizliyor (bkz.
+    // app/api/proxy/[...yol]/route.ts). Sure yalnizca o temizlik etki
+    // etmezse (ornegin baska bir Next ornegine dusmusse) devreye
+    // giren tavan.
+    //
+    // Olcum (uretim derlemesi, ayni profile art arda bes ziyaret):
+    // backend cagrisi 5 -> 1. Temizlikten sonraki ilk ziyaret yine
+    // backend'e gidiyor.
+    {
+      next: {
+        revalidate: PROFIL_ONBELLEK_SANIYE,
+        tags: [profilEtiketi(username)],
+      },
+    }
+  );
+});
+
+/**
+ * Ayni profili paylasim karti icin getirir -- ama bir saatlik onbellekle.
+ *
+ * NEDEN AYRI BIR FONKSIYON: sayfanin kendisi bilerek "no-store"
+ * (profil duzenlenince hemen guncel gorunmeli). Kart oyle degil: zaten
+ * bir saatlik `cache-control` ile servis ediliyor, yani tazeligi bir
+ * saatle sinirli olduguna coktan karar verilmis. Ayni fonksiyonu
+ * paylassaydilar kartin her istegi backend'e bir cagri daha demekti.
+ *
+ * Olcum (ayni profile art arda dort kart istegi, uretim derlemesi):
+ * backend cagrisi 4 -> 1.
+ *
+ * Ayrica `count_view=false` ile cagriliyor: kartin okumasi bir ziyaret
+ * degil. Onbellek bu cagrilari seyrekletti, sayimdan cikaran bu bayrak.
+ *
+ * `cache()` burada ise yaramaz: o yalnizca tek bir render icindeki
+ * ayni cagrilari birlestiriyor, istekler arasinda bir sey tutmuyor.
+ *
+ * Bir saat "bayat kalma suresi" degil, tavan: profilini kaydeden
+ * istek kart etiketini de temizliyor, yani kart da aninda
+ * guncelleniyor. Sure yalnizca o temizlik etki etmezse devreye
+ * giriyor.
+ */
+export async function getPublicProfileForCard(
+  username: string
+): Promise<PublicProfile | null> {
+  return profilIste(
+    // count_view=false: bu okuma bir ziyaret degil. Uc varsayilan
+    // olarak her cagriyi "profil goruntulenmesi" sayiyor; kart da ayni
+    // ucu cagirdigi icin bir kaziyicinin kart istegi, kimsenin
+    // gormedigi bir sayfa icin goruntulenme uretiyordu.
+    `${API_URL}/v1/p/${encodeURIComponent(username)}?count_view=false`,
+    {
+      next: {
+        revalidate: KART_ONBELLEK_SANIYE,
+        tags: [kartEtiketi(username)],
+      },
+    }
+  );
+}
+
+/** Sitemap satiri: yalnizca adres ve son degisiklik. */
+export interface PublicProfileRef {
+  username: string;
+  last_modified: string;
+}
+
+/**
+ * Sitemap'e girecek profiller.
+ *
+ * Backend yalnizca en az bir gorunur linki olan profilleri donuyor; bos
+ * bir sayfayi arama motoruna onermek istenmiyor (bkz. BE README).
+ *
+ * `limit`ten az satir donmesi listenin bittigini gosteriyor, bu yuzden
+ * ayri bir sayim cagrisi yok. Hata durumunda null: sitemap'in eksik
+ * uretilmesi, derlemenin ya da istegin patlamasindan iyi.
+ */
+export async function listPublicProfiles(
+  limit: number,
+  offset: number
+): Promise<PublicProfileRef[] | null> {
+  if (!API_URL) return null;
+
+  try {
+    const response = await fetch(
+      `${API_URL}/v1/p/sitemap/profiles?limit=${limit}&offset=${offset}`,
+      { cache: "no-store" }
+    );
+    if (!response.ok) return null;
+
+    const result: ApiResponse<PublicProfileRef[]> = await response.json();
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Sitemap'e girecek profil sayisi.
+ *
+ * Parcalama icin: kac parca gerektigi buradan ogreniliyor. Listeyi
+ * bastan sona okuyup saymak, her parca icin butun listeyi cekmek
+ * demekti.
+ *
+ * Hata durumunda null; cagiran taraf tek parcaya duserek yine de bir
+ * sitemap uretiyor.
+ */
+export async function countPublicProfiles(): Promise<number | null> {
+  if (!API_URL) return null;
+
+  try {
+    const response = await fetch(`${API_URL}/v1/p/sitemap/count`, {
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+
+    const result: ApiResponse<{ count: number }> = await response.json();
+    return result.data?.count ?? null;
+  } catch {
+    return null;
+  }
+}

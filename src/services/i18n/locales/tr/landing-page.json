@@ -1,0 +1,49 @@
+{
+  "title": "Link Yo Self",
+  "hero": {
+    "eyebrow": "Tek sayfa, bütün bağlantılarınız",
+    "heading": "Paylaştığınız her şey, tek adreste",
+    "body": "Bağlantılarınızı kullanıcı adınızdaki tek bir sayfaya koyun — ve gerçekten neye tıklandığını görün.",
+    "primary": "Sayfanızı oluşturun",
+    "secondary": "Ne yapıyor"
+  },
+  "features": {
+    "heading": "Neler var",
+    "body": "Buradaki her şey bugün üründe mevcut.",
+    "links": {
+      "title": "Bağlantılarınız, sizin sıranızla",
+      "body": "Her bağlantının başlığı, isteğe bağlı açıklaması ve simgesi, kendi renkleri var. İstediğiniz sıraya dizin. Birini silmeden gizleyin — geçmiş tıklamaları kalır."
+    },
+    "social": {
+      "title": "Sosyal hesaplar",
+      "body": "Sayfanızda simge olarak görünmesini istediğiniz hesapları ekleyin. Yeni platformlar yeni bir sürüm gerektirmeden eklenebiliyor."
+    },
+    "design": {
+      "title": "Kendi görünümünüz",
+      "body": "Bir vurgu rengi ve bir arka plan seçin — düz renk, degrade ya da görsel. Sizin sayfanız; adınız yazılmış bir şablon değil."
+    },
+    "analytics": {
+      "title": "Anlamı olan sayılar",
+      "body": "Bağlantı başına tıklama, profil görüntülenmesi, gün gün grafik ve ziyaretçilerinizin hangi siteden geldiği. Aynı ziyaretçinin tekrar tıklaması iki kez sayılmıyor."
+    },
+    "preview": {
+      "title": "Paylaşıldığında düzgün görünür",
+      "body": "Sayfanız kendi önizleme kartını üretiyor; bağlantınız boş bir kutu yerine adınızı ve resminizi gösteriyor."
+    },
+    "adult": {
+      "title": "Gerekiyorsa +18 uyarısı",
+      "body": "Sayfanız açılmadan önce bir onay ekranı çıkarın. İçerik ziyaretçi onaylayana kadar gizli kalıyor — sadece görsel olarak değil, sayfanın dışında."
+    }
+  },
+  "cta": {
+    "heading": "Tek bir bağlantıyla başlayın",
+    "body": "Sayfa oluşturmak bir dakika sürüyor. Sonrasında her şeyini değiştirebilirsiniz.",
+    "primary": "Sayfanızı oluşturun",
+    "secondary": "Giriş yap"
+  },
+  "footer": {
+    "about": "Hakkında",
+    "privacy": "Gizlilik",
+    "terms": "Koşullar"
+  }
+}

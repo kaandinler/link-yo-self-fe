@@ -1,0 +1,44 @@
+{
+  "title": "Kullanıcılar",
+  "table": {
+    "column1": "Kimlik",
+    "column2": "Kullanıcı adı",
+    "column3": "E-posta",
+    "column4": "Yetki",
+    "access": {
+      "admin": "Yönetici",
+      "user": "Kullanıcı"
+    }
+  },
+  "actions": {
+    "add": "Kullanıcı Ekle",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "create": "Kullanıcı Oluştur"
+  },
+  "confirm": {
+    "delete": {
+      "title": "Kullanıcıyı Sil",
+      "message": "Bu kullanıcıyı silmek istediğinize emin misiniz?"
+    }
+  },
+  "filter": {
+    "actions": {
+      "filter": "Filtrele",
+      "apply": "Uygula"
+    },
+    "inputs": {
+      "search": {
+        "label": "Kullanıcı adı, e-posta ya da isme göre ara"
+      },
+      "access": {
+        "label": "Yetki",
+        "options": {
+          "all": "Hepsi",
+          "admin": "Yöneticiler",
+          "user": "Kullanıcılar"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "title": "Analytics",
+  "subtitle": "How your profile and links are performing",
+  "loadFailed": "Analytics could not be loaded. Please try again later.",
+  "loading": "Loading…",
+  "allTime": "All time",
+  "overTime": "Over time",
+  "showDataTable": "Show data table",
+  "stats": {
+    "profileViews": "Profile Views",
+    "totalClicks": "Total Clicks",
+    "totalLinks": "Total Links",
+    "activeLinks": "Active Links"
+  },
+  "range": {
+    "label": "Date range",
+    "lastDays": "Last {{days}} days",
+    "custom": "Custom",
+    "from": "From",
+    "to": "to",
+    "errors": {
+      "bothDates": "Pick both dates.",
+      "order": "The start date must come before the end date.",
+      "max": "Pick at most {{days}} days."
+    }
+  },
+  "activity": {
+    "error": "The activity chart could not be loaded.",
+    "summary": "<0>{{clicks}}</0> clicks · <1>{{views}}</1> profile views in this range",
+    "empty": "No activity recorded in this range. Daily history starts from the day activity tracking was added, so older visits only appear in the all-time totals above."
+  },
+  "linkBreakdown": {
+    "title": "Clicks by link in this range",
+    "error": "The link breakdown could not be loaded.",
+    "empty": "No links yet — there is nothing to measure."
+  },
+  "allTimeLinks": {
+    "title": "Clicks by link, all time",
+    "empty": "No links yet — there is nothing to measure.",
+    "addFirst": "Add your first link"
+  },
+  "inactive": "(inactive)",
+  "referrers": {
+    "title": "Traffic sources",
+    "subtitle": "Where visitors were before they landed on your page and clicked a link.",
+    "error": "Traffic sources could not be loaded.",
+    "note": "“Direct or unknown” covers visits typed straight into the address bar, apps that hide the referrer, and navigation from within this site. Source tracking starts from the day it was added, so older clicks are counted there too.",
+    "empty": "No clicks in this range, so there are no traffic sources to show yet."
+  },
+  "times": {
+    "title": "When your links get clicked",
+    "subtitle": "Grouped in your own time zone",
+    "error": "Click timing could not be loaded.",
+    "empty": "No clicks in this range yet, so there is no pattern to show.",
+    "peak": "Most clicks come in on <0>{{day}}</0> around <1>{{hour}}</1>.",
+    "notEnough": "Not enough clicks yet to call this a pattern — the bars below are what happened, not what to expect.",
+    "shortRange": "Each weekday happens only once in a {{days}}-day range. Pick a longer range to compare days.",
+    "byWeekday": "By day of week",
+    "byHour": "By hour",
+    "subtitleWithZone": "Grouped in your own time zone ({{zone}}).",
+    "subtitlePlain": "Grouped in your own time zone."
+  },
+  "chart": {
+    "day": "Day",
+    "linkClicks": "Link clicks",
+    "profileViews": "Profile views",
+    "ariaLabel": "Daily link clicks and profile views. Use arrow keys to read each day.",
+    "when": "When",
+    "clicks": "Clicks",
+    "sparklineAria": "{{title}}: {{clicks}} clicks in this range. Use arrow keys to read each day."
+  },
+  "weekdays": {
+    "0": "Monday",
+    "1": "Tuesday",
+    "2": "Wednesday",
+    "3": "Thursday",
+    "4": "Friday",
+    "5": "Saturday",
+    "6": "Sunday"
+  }
+}

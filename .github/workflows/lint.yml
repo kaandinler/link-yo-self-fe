@@ -1,0 +1,66 @@
+name: Lint, Format and Types
+
+# push'ta yalnizca dev ve main: acik PR'i olan bir dala push yapildiginda
+# hem push hem pull_request tetikleniyor ve ayni commit icin dort is
+# birden kosuyordu. Dal calismalari artik PR uzerinden geliyor.
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+
+concurrency:
+  # Art arda push yapildiginda eski calisma iptal ediliyor; yalnizca son
+  # commit'in sonucu onemli. dev ve main'de iptal yok.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/main' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --ext ESLint 9 flat config'de kaldirildi; kullanildiginda
+      # "Unknown options: extensions" hatasiyla adim basarisiz oluyordu.
+      # Hangi uzantilarin taranacagi artik eslint.config.mjs'te tanimli.
+      - name: Run ESLint
+        run: npx eslint .
+
+      - name: Run Prettier check
+        run: npx prettier . --check
+
+  # AYRI BIR IS, lint'in icinde bir adim degil: ayni iste olsaydi ESLint ya
+  # da Prettier dustugu anda tip kontrolu hic kosmayacak ve tip hatasi bir
+  # sonraki push'a kadar gorunmeyecekti. Ayri isler paralel kosuyor, iki
+  # sonuc da tek seferde goruluyor.
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # next build'e gerek yok: next-env.d.ts ve .next/types tsconfig'de
+      # listeli ama ikisi de yoksa tsc sorunsuz kosuyor (dogrulandi).
+      # Derlemeyi burada tekrarlamak E2E is akisindaki derlemeyle ayni isi
+      # iki kez yapardi.
+      - name: Run TypeScript
+        run: npm run typecheck

@@ -1,0 +1,78 @@
+{
+  "title": "Sign Up",
+  "actions": {
+    "submit": "Sign Up",
+    "accountAlreadyExists": "Already have an account?"
+  },
+  "inputs": {
+    "firstName": {
+      "label": "First Name",
+      "validation": {
+        "required": "First Name is required"
+      }
+    },
+    "lastName": {
+      "label": "Last Name",
+      "validation": {
+        "required": "Last Name is required"
+      }
+    },
+    "email": {
+      "label": "Email",
+      "validation": {
+        "required": "Email is required",
+        "invalid": "Email is not valid",
+        "server": {
+          "emailAlreadyExists": "Email already exists"
+        }
+      }
+    },
+    "password": {
+      "label": "Password",
+      "validation": {
+        "required": "Password is required",
+        "min": "Password must be at least 6 characters long",
+        "server": {
+          "incorrectPassword": "Password is not valid"
+        }
+      }
+    },
+    "policy": {
+      "label": "Privacy Policy",
+      "agreement": "I have read and accept ",
+      "validation": {
+        "required": "Consent to the Privacy Policy is required"
+      }
+    }
+  },
+  "or": "OR",
+  "form": {
+    "heading": "Join LinkYoSelf",
+    "subheading": "Build your personal brand, share your links",
+    "username": "Username",
+    "usernamePlaceholder": "username",
+    "profilePreview": "Your profile:",
+    "emailPlaceholder": "example@email.com",
+    "passwordPlaceholder": "At least {{min}} characters",
+    "passwordRequirements": "Your password must include:",
+    "policyAgree": "I agree to the",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "creating": "Creating account...",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "footer": "Create your digital identity with LinkYoSelf ✨",
+    "confirmationSent": "We sent a confirmation link to your email address. You can sign in right away, but please confirm it so password reset links reach you.",
+    "goSignIn": "Sign in"
+  },
+  "validation": {
+    "usernameMin": "Username must be at least {{min}} characters",
+    "usernameMax": "Username must be at most {{max}} characters",
+    "usernamePattern": "Username can only contain letters, numbers, dot, dash and underscore",
+    "email": "Please enter a valid email address",
+    "policy": "You must accept the terms and conditions",
+    "failed": "Registration failed. Please try again.",
+    "network": "Network error occurred. Please check your connection and try again."
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "title": "Privacy Policy",
+  "lastUpdated": "Last updated: September 20, 2026",
+  "intro": {
+    "p1": "Link Yo Self lets you publish a single page that holds your links. This policy describes what the service stores, why it stores it, and what it deliberately does not store.",
+    "p2": "It covers the Link Yo Self website and API. It does not cover the sites your links point to: once a visitor follows one of your links, that site's own policy applies."
+  },
+  "summary": {
+    "title": "In short",
+    "item1": "Your account needs an email address, a username and a password. Everything else on your profile is optional.",
+    "item2": "Whatever you put on your public page is public. That is the point of the page.",
+    "item3": "We count profile views and link clicks, and we record which site a visitor came from — the host name only, such as \"instagram.com\".",
+    "item4": "We do not store visitors' IP addresses, we do not identify visitors, and there are no advertising or analytics trackers anywhere in the product.",
+    "item5": "We only email you about your own account: address verification and password resets."
+  },
+  "yourData": {
+    "title": "Information you give us",
+    "accountTitle": "Account",
+    "accountDescription": "A username, an email address and a password. The password is never stored as you typed it; only a bcrypt hash of it is kept, and that hash cannot be turned back into your password. The email address is how you sign in, how you verify your account, and the only way to recover it if you forget your password.",
+    "profileTitle": "Profile",
+    "profileDescription": "All of this is optional and you can change or clear it at any time: display name, first and last name, a short bio, a profile image address, your website, a page title and description, your Twitter, Instagram and LinkedIn user names, any social accounts you add, and your colour and background choices.",
+    "linksTitle": "Links",
+    "linksDescription": "For every link you add: its title, its address, an optional description, an optional icon address, its colours and its position in the list.",
+    "settingsTitle": "Page settings",
+    "settingsDescription": "Whether your page opens behind an age warning, plus any additional settings you set from your own account.",
+    "publicNote": "Your profile and your links are served publicly at your user name. Anything you put there can be read by anyone who knows or finds that address, and by search engines and social networks that fetch it."
+  },
+  "automatic": {
+    "title": "Information collected automatically",
+    "description": "When someone opens your public page or clicks one of your links, the service records the event so that you can see how your page is doing. Each recorded event contains:",
+    "item1": "the kind of event — a page view or a link click,",
+    "item2": "which of your links was clicked, if it was a click,",
+    "item3": "the date and time,",
+    "item4": "the host name of the site the visitor arrived from, such as \"instagram.com\" — never the full address.",
+    "referrerNote": "Only the host name is kept because the rest of a referring address often carries campaign identifiers and session tokens. Those are of no use to us and would be a liability to store.",
+    "notCollectedTitle": "What is not collected",
+    "notCollected": "The service does not store IP addresses. It does not set any identifier on a visitor, does not build a profile of anyone, and does not follow anybody across other sites. There is no advertising network, no analytics provider and no third-party tracking script in the product. An event row says that a click happened and where it came from; it says nothing about who made it. There is one place where the address a request comes from is used at all, and it is described next.",
+    "abuseTitle": "Preventing abuse",
+    "abuse": "Sign-in, sign-up and password-reset requests are counted, so that nobody can guess passwords by trying them in bulk, create accounts in bulk, or bombard an address with reset emails. Counting has to tell one caller apart from another, and the address the request arrives from is what makes that possible. The address is never kept: only a one-way fingerprint of it is held, in memory, for as long as the counting window lasts — at most an hour — and then it is gone. It is not written to the database, not written to our logs, and not attached to your account or to anything else about you. This applies to requests that concern accounts; reading someone's public page is not counted this way."
+  },
+  "cookies": {
+    "title": "Cookies and browser storage",
+    "description": "The service uses a small number of cookies and browser storage entries, all of them for making the site work. None of them are for advertising or for measuring you across other sites.",
+    "authTitle": "Sign-in cookie",
+    "authDescription": "Set when you sign in and holds your session. Removing it signs you out; so does using the sign-out button. It is only set for people who have an account and have signed in.",
+    "languageTitle": "Language cookie",
+    "languageDescription": "Remembers whether you are reading the site in English or Turkish, so that you do not have to choose again on your next visit.",
+    "themeTitle": "Theme preference",
+    "themeDescription": "Stored in your browser so that the site opens in the light or dark theme you chose. It never leaves your browser.",
+    "adultTitle": "Age warning confirmation",
+    "adultDescription": "If a profile is published behind an age warning, your confirmation is stored in your own browser for that profile, so the warning is not shown to you again. It never leaves your browser, and the profile's owner is not told about it.",
+    "controlNote": "You can clear or block all of these from your browser's settings. Blocking the sign-in cookie means you will not be able to stay signed in; the rest only affect convenience."
+  },
+  "use": {
+    "title": "How the information is used",
+    "item1": "To run your account and to serve your public page.",
+    "item2": "To show you, and only you, the statistics for your own page.",
+    "item3": "To email you about your own account — verifying your address and resetting your password.",
+    "item4": "To keep accounts secure: verifying passwords, expiring sessions, and making sure a closed account stays closed.",
+    "notUsed": "Your information is not sold, is not rented, and is not handed to anyone for advertising or marketing."
+  },
+  "emails": {
+    "title": "Emails",
+    "description": "The service only sends emails that are part of your own account: a link to confirm your email address, and a link to reset your password if you asked for one. There is no newsletter and no promotional mail. These messages are delivered through an email provider, which necessarily handles your address and the contents of the message in order to deliver it."
+  },
+  "thirdParties": {
+    "title": "Who else is involved",
+    "description": "The service relies on a small number of providers and on addresses you supply yourself:",
+    "hostingTitle": "Hosting and database.",
+    "hostingDescription": "The application and its database run on infrastructure operated by a hosting provider, which is where your account and page data are stored.",
+    "emailTitle": "Email delivery.",
+    "emailDescription": "Account emails are handed to an email provider for delivery.",
+    "imagesTitle": "Images you link to.",
+    "imagesDescription": "Profile pictures and link icons are addresses you provide; no image is uploaded to or hosted by this service. When your page or its social preview card is shown, the image is fetched from whichever host you chose, and that host sees the request.",
+    "linksTitle": "The sites you link to.",
+    "linksDescription": "Your links are ordinary links. A visitor who follows one leaves this service, and what happens afterwards is governed by that site."
+  },
+  "retention": {
+    "title": "How long things are kept",
+    "accountTitle": "Your account",
+    "accountDescription": "Your account and its contents are kept for as long as the account exists.",
+    "closedTitle": "After you close your account",
+    "closedDescription": "Closing your account requires your password. It takes effect immediately: every open session is revoked and your public page stops being served. The record itself is marked closed rather than erased, for two reasons — your user name and email address stay reserved so that nobody can take them over, and past statistics refer to the account. If you want the record erased rather than closed, write to us and ask.",
+    "tokensTitle": "Sign-in and one-time tokens",
+    "tokensDescription": "A sign-in session lasts up to seven days before it has to be renewed, and is revoked when you sign out or close your account. A password reset link is valid for one hour and an address verification link for one day; both work only once. Neither is stored as it appears in the email — only a hash of it is kept, so that reading the database does not let anyone reset your password or verify an address.",
+    "eventsTitle": "Statistics",
+    "eventsDescription": "Recorded views and clicks are kept so that your page's history remains available to you. Deleting a link does not erase its past clicks; the events stay, no longer attached to a link, so that an old day's totals do not change because of something you did today."
+  },
+  "rights": {
+    "title": "Your choices",
+    "item1": "Everything on your profile can be edited or cleared from your settings at any time.",
+    "item2": "Any link can be hidden or deleted from your links page.",
+    "item3": "Your account can be closed from your settings, with your password.",
+    "item4": "You can write to us to ask for a copy of what is stored about you, or to ask for it to be erased.",
+    "note": "Depending on where you live, data protection law may give you further rights over your information. Writing to the address below is the way to exercise them."
+  },
+  "security": {
+    "title": "Security",
+    "description": "Passwords are stored as bcrypt hashes. Password reset and verification links are stored only as hashes. Sessions expire, and are revoked when an account is closed. Traffic to the service is carried over HTTPS. None of this makes any service perfectly secure, and we do not claim otherwise; if you find a problem, please tell us."
+  },
+  "children": {
+    "title": "Children",
+    "description": "The service is not directed at children under 13, and accounts are not knowingly created for them. If you believe a child has created an account, write to us and it will be removed."
+  },
+  "transfers": {
+    "title": "Where your information is processed",
+    "description": "The service runs on infrastructure that may be located in a different country from yours, so your information may be processed outside the country where you live, under different data protection rules."
+  },
+  "changes": {
+    "title": "Changes to this policy",
+    "description": "This policy will change as the product does. When it changes, the new version is posted on this page and the date at the top is updated. It is worth re-reading after a significant change."
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "For anything to do with this policy or with your information, write to:"
+  }
+}

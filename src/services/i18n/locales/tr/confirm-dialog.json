@@ -1,0 +1,8 @@
+{
+  "title": "Onay",
+  "message": "Bu işlemi yapmak istediğinize emin misiniz?",
+  "actions": {
+    "yes": "Evet",
+    "no": "Hayır"
+  }
+}

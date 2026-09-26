@@ -1,0 +1,20 @@
+{
+  "title": "E-postanızı doğrulayın",
+  "loading": {
+    "title": "E-posta adresiniz doğrulanıyor…"
+  },
+  "success": {
+    "title": "E-posta doğrulandı",
+    "message": "E-posta adresiniz doğrulandı. Şifre sıfırlama bağlantıları artık size ulaşacak.",
+    "action": "Panoya git"
+  },
+  "error": {
+    "title": "E-postanız doğrulanamadı",
+    "hint": "Bağlantının süresi dolmuş ya da daha önce kullanılmış olabilir. Ayarlardan kendinize yeni bir tane gönderebilirsiniz.",
+    "action": "Ayarlara git"
+  },
+  "errors": {
+    "missingToken": "Bu bağlantıda doğrulama anahtarı yok.",
+    "invalidToken": "Bu doğrulama bağlantısı artık geçerli değil."
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "title": "Kayıt Ol",
+  "actions": {
+    "submit": "Hesap Oluştur",
+    "accountAlreadyExists": "Zaten hesabınız var mı?"
+  },
+  "inputs": {
+    "firstName": {
+      "label": "Ad",
+      "validation": {
+        "required": "Ad zorunlu"
+      }
+    },
+    "lastName": {
+      "label": "Soyad",
+      "validation": {
+        "required": "Soyad zorunlu"
+      }
+    },
+    "email": {
+      "label": "E-posta",
+      "validation": {
+        "required": "E-posta zorunlu",
+        "invalid": "E-posta geçerli değil",
+        "server": {
+          "emailAlreadyExists": "Bu e-posta zaten kayıtlı"
+        }
+      }
+    },
+    "password": {
+      "label": "Şifre",
+      "validation": {
+        "required": "Şifre zorunlu",
+        "min": "Şifre en az 6 karakter olmalı",
+        "server": {
+          "incorrectPassword": "Şifre geçerli değil"
+        }
+      }
+    },
+    "policy": {
+      "label": "Gizlilik Politikası",
+      "agreement": "Okudum ve kabul ediyorum: ",
+      "validation": {
+        "required": "Gizlilik Politikası onayı zorunlu"
+      }
+    }
+  },
+  "or": "VEYA",
+  "form": {
+    "heading": "LinkYoSelf'e katılın",
+    "subheading": "Kişisel markanızı kurun, bağlantılarınızı paylaşın",
+    "username": "Kullanıcı adı",
+    "usernamePlaceholder": "kullaniciadi",
+    "profilePreview": "Profiliniz:",
+    "emailPlaceholder": "ornek@eposta.com",
+    "passwordPlaceholder": "En az {{min}} karakter",
+    "passwordRequirements": "Şifreniz şunları içermeli:",
+    "policyAgree": "Şunları kabul ediyorum:",
+    "termsOfService": "Kullanım Koşulları",
+    "and": "ve",
+    "privacyPolicy": "Gizlilik Politikası",
+    "creating": "Hesap oluşturuluyor...",
+    "haveAccount": "Zaten hesabınız var mı?",
+    "signIn": "Giriş yapın",
+    "footer": "Dijital kimliğinizi LinkYoSelf ile oluşturun ✨",
+    "confirmationSent": "E-posta adresinize bir doğrulama bağlantısı gönderdik. Hemen giriş yapabilirsiniz, ancak şifre sıfırlama bağlantılarının size ulaşması için adresinizi doğrulayın.",
+    "goSignIn": "Giriş yap"
+  },
+  "validation": {
+    "usernameMin": "Kullanıcı adı en az {{min}} karakter olmalı",
+    "usernameMax": "Kullanıcı adı en fazla {{max}} karakter olmalı",
+    "usernamePattern": "Kullanıcı adı yalnızca harf, rakam, nokta, tire ve alt çizgi içerebilir",
+    "email": "Lütfen geçerli bir e-posta adresi girin",
+    "policy": "Koşulları kabul etmeniz gerekiyor",
+    "failed": "Kayıt başarısız. Lütfen tekrar deneyin.",
+    "network": "Ağ hatası oluştu. Lütfen bağlantınızı kontrol edip tekrar deneyin."
+  }
+}

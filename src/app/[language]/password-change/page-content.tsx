@@ -1,0 +1,204 @@
+"use client";
+import Button from "@mui/material/Button";
+import withPageRequiredGuest from "@/services/auth/with-page-required-guest";
+import { useForm, FormProvider, useFormState } from "react-hook-form";
+import { useAuthResetPasswordService } from "@/services/api/services/auth";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid2";
+import Typography from "@mui/material/Typography";
+import FormTextInput from "@/components/form/text-input/form-text-input";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSnackbar } from "@/hooks/use-snackbar";
+import { useRouter } from "next/navigation";
+import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
+import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
+import { passwordSchema } from "@/services/api/password-schema";
+import { useTranslation } from "@/services/i18n/client";
+import { useEffect, useMemo, useState } from "react";
+import Alert from "@mui/material/Alert";
+
+type PasswordChangeFormData = {
+  password: string;
+  passwordConfirmation: string;
+};
+
+const useValidationSchema = () => {
+  const { t } = useTranslation("password-change");
+
+  return yup.object().shape({
+    password: passwordSchema(
+      t("password-change:inputs.password.validation.required"),
+      t
+    ),
+    passwordConfirmation: yup
+      .string()
+      .oneOf(
+        [yup.ref("password")],
+        t("password-change:inputs.passwordConfirmation.validation.match")
+      )
+      .required(
+        t("password-change:inputs.passwordConfirmation.validation.required")
+      ),
+  });
+};
+
+function FormActions() {
+  const { t } = useTranslation("password-change");
+  const { isSubmitting } = useFormState();
+
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      type="submit"
+      disabled={isSubmitting}
+      data-testid="set-password"
+    >
+      {t("password-change:actions.submit")}
+    </Button>
+  );
+}
+
+function ExpiresAlert() {
+  const { t } = useTranslation("password-change");
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+  // Baglantida expires parametresi olmayabilir (backend yalnizca token
+  // gonderiyor; gecerlilik suresi zaten sunucuda kontrol ediliyor).
+  // Onceki hali Number(null) = 0 uretip uyariyi her zaman gosteriyordu.
+  const expires = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    const raw = Number(params.get("expires"));
+
+    return Number.isFinite(raw) && raw > 0 ? raw : null;
+  }, []);
+
+  useEffect(() => {
+    if (expires === null) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setCurrentTime(now);
+
+      if (expires < now) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [expires]);
+
+  const isExpired = expires !== null && expires < currentTime;
+
+  return (
+    isExpired && (
+      <Grid size={{ xs: 12 }}>
+        <Alert severity="error" data-testid="reset-link-expired-alert">
+          {t("password-change:alerts.expired")}
+        </Alert>
+      </Grid>
+    )
+  );
+}
+
+function Form() {
+  const { enqueueSnackbar } = useSnackbar();
+  const fetchAuthResetPassword = useAuthResetPasswordService();
+  const { t } = useTranslation("password-change");
+  const validationSchema = useValidationSchema();
+  const router = useRouter();
+
+  const methods = useForm<PasswordChangeFormData>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      password: "",
+      passwordConfirmation: "",
+    },
+  });
+
+  const { handleSubmit, setError } = methods;
+
+  const onSubmit = handleSubmit(async (formData) => {
+    const params = new URLSearchParams(window.location.search);
+    // Backend'in gonderdigi baglanti: /password-change?token=...
+    const token = params.get("token");
+    if (!token) return;
+
+    const { data, status } = await fetchAuthResetPassword({
+      password: formData.password,
+      token,
+    });
+
+    if (status !== HTTP_CODES_ENUM.NO_CONTENT) {
+      // FastAPI dogrulama hatalari {detail:[{loc,msg}]} yapisinda geliyor;
+      // onceki hal boilerplate'in {errors:{alan:kod}} yapisini okuyordu.
+      const fieldErrors = getFieldErrors(data);
+      const keys = Object.keys(fieldErrors) as Array<
+        keyof PasswordChangeFormData
+      >;
+
+      if (keys.length > 0) {
+        keys.forEach((key) => {
+          setError(key, { type: "manual", message: fieldErrors[key] });
+        });
+        return;
+      }
+
+      enqueueSnackbar(
+        getErrorMessage(data, t("password-change:alerts.error")),
+        { variant: "error" }
+      );
+      return;
+    }
+
+    if (status === HTTP_CODES_ENUM.NO_CONTENT) {
+      enqueueSnackbar(t("password-change:alerts.success"), {
+        variant: "success",
+      });
+
+      router.replace("/sign-in");
+    }
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <Container maxWidth="xs">
+        <form onSubmit={onSubmit}>
+          <Grid container spacing={2} mb={2}>
+            <Grid size={{ xs: 12 }} mt={3}>
+              <Typography variant="h6">{t("password-change:title")}</Typography>
+            </Grid>
+            <ExpiresAlert />
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<PasswordChangeFormData>
+                name="password"
+                label={t("password-change:inputs.password.label")}
+                type="password"
+                testId="password"
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FormTextInput<PasswordChangeFormData>
+                name="passwordConfirmation"
+                label={t("password-change:inputs.passwordConfirmation.label")}
+                type="password"
+                testId="password-confirmation"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormActions />
+            </Grid>
+          </Grid>
+        </form>
+      </Container>
+    </FormProvider>
+  );
+}
+
+function PasswordChange() {
+  return <Form />;
+}
+
+export default withPageRequiredGuest(PasswordChange);

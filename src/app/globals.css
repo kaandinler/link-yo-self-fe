@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap");
+
+/*
+ * Tema degerleri.
+ *
+ * Koyu tema :root'ta, yani varsayilan. Bunun nedeni sirali: uygulamanin
+ * kimligi koyu, MUI de defaultMode="dark" ile aciliyor ve JavaScript hic
+ * calismazsa <html> uzerinde hicbir sema sinifi olmuyor -- o durumda da
+ * bugunku goruntu cikmali.
+ *
+ * Acik tema .light altinda. Sinifi MUI yaziyor (colorSchemeSelector:
+ * "class"); Tailwind ayni sinifi okuyor (darkMode: "class"), dolayisiyla
+ * tek bir dugme iki tarafi birden ceviriyor.
+ *
+ * Degerler "R G B" uclusu: Tailwind'in <alpha-value> mekanizmasi boyle
+ * calisiyor ve sayfalardaki /50, /30, /95 ekleri korunuyor.
+ */
+:root {
+  /* Metin */
+  --ink: 255 255 255; /* beyaz */
+  --ink-soft: 209 213 219; /* gray-300 */
+  --ink-muted: 156 163 175; /* gray-400 */
+  --ink-faint: 107 114 128; /* gray-500 */
+  --accent: 192 132 252; /* purple-400 */
+
+  /* Yuzeyler */
+  --surface: 31 41 55; /* gray-800 */
+  --surface-raised: 31 41 55; /* gray-800 */
+  --field: 55 65 81; /* gray-700 */
+  --field-strong: 75 85 99; /* gray-600 */
+  --overlay: 17 24 39; /* gray-900 */
+
+  /* Cizgiler */
+  --line: 55 65 81; /* gray-700 */
+  --line-strong: 75 85 99; /* gray-600 */
+  --line-stronger: 107 114 128; /* gray-500 */
+
+  /* Sayfa zemini */
+  --page: 17 24 39; /* gray-900 */
+  --page-accent: 88 28 135; /* purple-900 */
+
+  /*
+   * Grafikler icin. Satir ici SVG'ler bu degiskenleri okuyor: onceki
+   * hallerinde renkler dosyaya sabit yazilmisti ve koyu zemine gore
+   * dogrulanmisti, acik temada okunmuyorlardi.
+   */
+  --chart-clicks: #3987e5;
+  --chart-views: #d95926;
+  --chart-muted: #737a88;
+  --chart-surface: #1a1a24;
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-crosshair: rgba(255, 255, 255, 0.35);
+  --chart-axis: #9ca3af;
+}
+
+.light {
+  /* Metin */
+  --ink: 17 24 39; /* gray-900 */
+  --ink-soft: 55 65 81; /* gray-700 */
+  --ink-muted: 107 114 128; /* gray-500 */
+  --ink-faint: 107 114 128; /* gray-500 */
+  /* purple-400 acik zeminde ~2.3:1 kaliyordu; purple-700 okunur. */
+  --accent: 126 34 206; /* purple-700 */
+
+  /* Yuzeyler */
+  --surface: 255 255 255;
+  --surface-raised: 255 255 255;
+  --field: 243 244 246; /* gray-100 */
+  --field-strong: 229 231 235; /* gray-200 */
+  --overlay: 255 255 255;
+
+  /* Cizgiler */
+  --line: 229 231 235; /* gray-200 */
+  --line-strong: 209 213 219; /* gray-300 */
+  --line-stronger: 156 163 175; /* gray-400 */
+
+  /* Sayfa zemini: mor kimlik korunuyor, yalnizca acik tonda. */
+  --page: 249 250 251; /* gray-50 */
+  --page-accent: 243 232 255; /* purple-100 */
+
+  /* Grafikler: ayni maviyi acik zeminde kullanmak 1.6:1'e dusuyordu. */
+  --chart-clicks: #1d4ed8; /* blue-700 */
+  --chart-views: #b91c1c; /* red-700 */
+  --chart-muted: #6b7280; /* gray-500 */
+  --chart-surface: #ffffff;
+  --chart-grid: rgba(17, 24, 39, 0.1);
+  --chart-crosshair: rgba(17, 24, 39, 0.35);
+  --chart-axis: #4b5563;
+}

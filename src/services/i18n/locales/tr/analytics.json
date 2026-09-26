@@ -1,0 +1,81 @@
+{
+  "title": "Analitik",
+  "subtitle": "Profilinizin ve bağlantılarınızın performansı",
+  "loadFailed": "Analitik yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+  "loading": "Yükleniyor…",
+  "allTime": "Tüm zamanlar",
+  "overTime": "Zaman içinde",
+  "showDataTable": "Veri tablosunu göster",
+  "stats": {
+    "profileViews": "Profil Görüntülenme",
+    "totalClicks": "Toplam Tıklama",
+    "totalLinks": "Toplam Bağlantı",
+    "activeLinks": "Aktif Bağlantı"
+  },
+  "range": {
+    "label": "Tarih aralığı",
+    "lastDays": "Son {{days}} gün",
+    "custom": "Özel",
+    "from": "Başlangıç",
+    "to": "bitiş",
+    "errors": {
+      "bothDates": "İki tarihi de seçin.",
+      "order": "Başlangıç tarihi bitiş tarihinden önce olmalı.",
+      "max": "En fazla {{days}} gün seçin."
+    }
+  },
+  "activity": {
+    "error": "Etkinlik grafiği yüklenemedi.",
+    "summary": "Bu aralıkta <0>{{clicks}}</0> tıklama · <1>{{views}}</1> profil görüntülenmesi",
+    "empty": "Bu aralıkta kayıtlı etkinlik yok. Günlük geçmiş, etkinlik takibinin eklendiği günden başlıyor; daha eski ziyaretler yalnızca yukarıdaki tüm zamanlar toplamlarında görünüyor."
+  },
+  "linkBreakdown": {
+    "title": "Bu aralıkta bağlantı başına tıklama",
+    "error": "Bağlantı dağılımı yüklenemedi.",
+    "empty": "Henüz bağlantı yok — ölçülecek bir şey bulunmuyor."
+  },
+  "allTimeLinks": {
+    "title": "Bağlantı başına tıklama, tüm zamanlar",
+    "empty": "Henüz bağlantı yok — ölçülecek bir şey bulunmuyor.",
+    "addFirst": "İlk bağlantınızı ekleyin"
+  },
+  "inactive": "(pasif)",
+  "referrers": {
+    "title": "Trafik kaynakları",
+    "subtitle": "Ziyaretçiler sayfanıza gelip bir bağlantıya tıklamadan önce neredeydi.",
+    "error": "Trafik kaynakları yüklenemedi.",
+    "note": "“Doğrudan veya bilinmiyor”; adres çubuğuna doğrudan yazılan ziyaretleri, kaynağı gizleyen uygulamaları ve bu site içindeki gezinmeyi kapsıyor. Kaynak takibi eklendiği günden itibaren çalışıyor, daha eski tıklamalar da burada sayılıyor.",
+    "empty": "Bu aralıkta tıklama yok, dolayısıyla gösterilecek trafik kaynağı da yok."
+  },
+  "times": {
+    "title": "Bağlantılarınız ne zaman tıklanıyor",
+    "subtitle": "Kendi saat diliminize göre gruplandı",
+    "error": "Tıklama zamanlaması yüklenemedi.",
+    "empty": "Bu aralıkta henüz tıklama yok, dolayısıyla gösterilecek bir örüntü de yok.",
+    "peak": "Tıklamaların çoğu <0>{{day}}</0> günü <1>{{hour}}</1> civarında geliyor.",
+    "notEnough": "Buna örüntü demek için henüz yeterli tıklama yok — aşağıdaki çubuklar olanı gösteriyor, beklenmesi gerekeni değil.",
+    "shortRange": "{{days}} günlük bir aralıkta her hafta günü yalnızca bir kez geçiyor. Günleri karşılaştırmak için daha uzun bir aralık seçin.",
+    "byWeekday": "Haftanın gününe göre",
+    "byHour": "Saate göre",
+    "subtitleWithZone": "Kendi saat diliminize göre gruplandı ({{zone}}).",
+    "subtitlePlain": "Kendi saat diliminize göre gruplandı."
+  },
+  "chart": {
+    "day": "Gün",
+    "linkClicks": "Bağlantı tıklamaları",
+    "profileViews": "Profil görüntülenmeleri",
+    "ariaLabel": "Günlük bağlantı tıklamaları ve profil görüntülenmeleri. Her günü okumak için ok tuşlarını kullanın.",
+    "when": "Ne zaman",
+    "clicks": "Tıklama",
+    "sparklineAria": "{{title}}: bu aralıkta {{clicks}} tıklama. Her günü okumak için ok tuşlarını kullanın."
+  },
+  "weekdays": {
+    "0": "Pazartesi",
+    "1": "Salı",
+    "2": "Çarşamba",
+    "3": "Perşembe",
+    "4": "Cuma",
+    "5": "Cumartesi",
+    "6": "Pazar"
+  }
+}

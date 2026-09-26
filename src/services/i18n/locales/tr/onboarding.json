@@ -1,0 +1,52 @@
+{
+  "loading": "Yükleniyor ...",
+  "progress": {
+    "label": "Kurulum ilerlemesi",
+    "step": "Adım {{current}} / {{total}}",
+    "completion": "profil %{{percent}} tamamlandı"
+  },
+  "actions": {
+    "start": "Hadi Başlayalım",
+    "next": "Devam",
+    "back": "Geri",
+    "skip": "Kurulumu atla",
+    "finish": "Kurulumu bitir"
+  },
+  "errors": {
+    "generic": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
+  },
+  "steps": {
+    "1": {
+      "title": "Profilinizi tamamlayın",
+      "description": "Adınızı, kısa bir tanıtım yazısı ve bir fotoğraf ekleyin. İnsanlar sayfanızın en üstünde bunları görüyor."
+    },
+    "2": {
+      "title": "Sayfanızı kurun",
+      "description": "Sayfanıza bir başlık ve açıklama verin, ana web sitenizi bağlayın."
+    },
+    "3": {
+      "title": "Sosyal bağlantılarınızı ekleyin",
+      "description": "Sosyal hesaplarınızı bağlayın. İstemediklerinizi boş bırakabilirsiniz."
+    },
+    "4": {
+      "title": "Görünümü özelleştirin",
+      "description": "Herkese açık sayfanız için bir tema rengi ve arka plan seçin."
+    }
+  },
+  "fields": {
+    "first_name": "Ad",
+    "last_name": "Soyad",
+    "display_name": "Görünen ad",
+    "bio": "Hakkımda",
+    "profile_image_url": "Profil görseli adresi",
+    "page_title": "Sayfa başlığı",
+    "page_description": "Sayfa açıklaması",
+    "website": "Web sitesi",
+    "twitter_username": "Twitter kullanıcı adı",
+    "instagram_username": "Instagram kullanıcı adı",
+    "linkedin_username": "LinkedIn kullanıcı adı",
+    "theme_color": "Tema rengi",
+    "background_type": "Arka plan türü",
+    "background_value": "Arka plan rengi ya da görsel adresi"
+  }
+}

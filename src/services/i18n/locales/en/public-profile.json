@@ -1,0 +1,19 @@
+{
+  "links": "Links",
+  "socialLinks": "Social links",
+  "website": "Website",
+  "noLinks": "This profile has no links yet.",
+  "poweredBy": "Powered by Link Yo Self",
+  "adultWarning": {
+    "title": "Content warning",
+    "body": "This profile may contain content intended for adults. Confirm you are 18 or older to continue.",
+    "confirm": "I am 18 or older",
+    "leave": "Take me back"
+  },
+  "unavailable": {
+    "title": "This page is temporarily unavailable",
+    "body": "We couldn't load it just now. Nothing has been removed — please try again in a moment.",
+    "retry": "Try again",
+    "home": "Go to Link Yo Self"
+  }
+}
