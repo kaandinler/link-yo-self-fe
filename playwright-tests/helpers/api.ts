@@ -189,6 +189,18 @@ export async function apiAnalyticsSummary(token: string) {
   return body.data;
 }
 
+/** GET /v1/users/me — token'in sahibi (id dahil). */
+export async function apiGetMe(token: string) {
+  const api = await ctx();
+  const response = await api.get(`${apiUrl}/v1/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(response.status(), await response.text()).toBe(200);
+  const body = await response.json();
+  await api.dispose();
+  return body.data;
+}
+
 /** GET /v1/p/{username} — herkese acik profil (token gerektirmiyor). */
 export async function apiPublicProfile(username: string) {
   const api = await ctx();

@@ -33,10 +33,7 @@ import { User } from "@/services/api/types/user";
 import Link from "@/components/link";
 import useAuth from "@/services/auth/use-auth";
 import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
-import {
-  useDeleteUsersService,
-  usePurgeProfileCacheService,
-} from "@/services/api/services/users";
+import { useDeleteUsersService } from "@/services/api/services/users";
 import removeDuplicatesFromArrayObjects from "@/services/helpers/remove-duplicates-from-array-of-objects";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import UserFilter from "./user-filter";
@@ -84,7 +81,6 @@ function Actions({ user }: { user: User }) {
   const { user: authUser } = useAuth();
   const { confirmDialog } = useConfirmDialog();
   const fetchUserDelete = useDeleteUsersService();
-  const purgeProfileCache = usePurgeProfileCacheService();
   const queryClient = useQueryClient();
   const anchorRef = useRef<HTMLDivElement>(null);
   const canDelete = user.id !== authUser?.id;
@@ -157,17 +153,13 @@ function Actions({ user }: { user: User }) {
         newData
       );
 
+      // Kapatilan hesabin herkese acik sayfasini vekil, silmeyle AYNI
+      // istekte temizliyor (bkz. app/api/proxy/[...yol]/route.ts).
+      // Eskiden burada ayri bir cagri vardi; admin yanit gelmeden
+      // sayfadan ayrilirsa hic atilmiyordu.
       await fetchUserDelete({
         id: user.id,
       });
-
-      // Kapatilan hesabin herkese acik sayfasi onbellekte kalmasin.
-      // Vekildeki kendiliginden temizlik CAGIRANIN profilini
-      // temizliyor, yani burada admin'inkini; silinen kisininki
-      // acikta kalirdi.
-      if (user.username) {
-        await purgeProfileCache(user.username);
-      }
     }
   };
 
@@ -209,7 +201,12 @@ function Actions({ user }: { user: User }) {
       )}
       <Popper
         sx={{
-          zIndex: 1,
+          // Tablonun yapiskan basligi (MUI stickyHeader) zIndex 2. Menu
+          // 1'deyken baslik onun USTUNDE kaliyordu: tabloda tek satir
+          // varken (ornegin aramayla suzulunce) menu yukari aciliyor ve
+          // "Delete" basligin altinda kalip tiklanamiyordu -- E2E'de
+          // olculdu (admin/user-page-cache.spec.ts).
+          zIndex: 3,
         }}
         open={open}
         anchorEl={anchorRef.current}
