@@ -27,6 +27,7 @@ import {
 } from "@/services/auth/session-cookie";
 import {
   kimlikCoz,
+  kullaniciAdiIdIle,
   profilOnbelleginiTemizle,
 } from "@/services/api/profile-cache-purge";
 
@@ -116,6 +117,29 @@ async function kullaniciAdi(token: string): Promise<string | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * Admin'in BASKA bir kullanici uzerindeki islemi mi? Oyleyse o
+ * kullanicinin id'si.
+ *
+ * `/v1/users/{id}` uzerindeki PATCH ve DELETE yalnizca admin'e acik
+ * (kullanici duzenleme ve hesap kapatma). Bunlarda degisen sayfa
+ * CAGIRANIN degil adresteki kullanicinin. `/v1/users/me` eslesmiyor:
+ * kendi hesabi siradan yoldan geciyor.
+ */
+const HEDEF_KULLANICI_YOLU = /^v1\/users\/(\d+)\/?$/;
+
+function hedefKullaniciId(hedefYol: string, method: string): string | null {
+  if (method !== "PATCH" && method !== "DELETE") return null;
+  return HEDEF_KULLANICI_YOLU.exec(hedefYol)?.[1] ?? null;
+}
+
+/** Yanit govdesindeki kullanici adi (PATCH yaniti UserRead doner). */
+function govdedekiKullaniciAdi(govde: unknown): string | null {
+  const ad = (govde as { data?: { username?: unknown } } | null)?.data
+    ?.username;
+  return typeof ad === "string" && ad ? ad : null;
 }
 
 async function vekilEt(
@@ -217,8 +241,29 @@ async function vekilEt(
    * donuyor ve silinen profilin adini gosteriyordu).
    *
    * Oturumsuz istekte temizlenecek bir profil yok.
+   *
+   * ADMIN BASKASINI DUZENLERKEN ya da KAPATIRKEN temizlenecek sayfa
+   * adresteki kullanicinin (bkz. hedefKullaniciId). Eskiden admin
+   * paneli bunu, silme yaniti geldikten sonra ayri bir
+   * /api/revalidate-profile cagrisiyla yapiyordu -- kullanici
+   * kaydetmeden ayrildiginda kaybolan ikinci istegin aynisi.
+   * Duzenlemede ise hic temizlik yoktu: kullanici adi degisince eski
+   * adres 60 sn boyunca eski profili gostermeye devam ediyordu.
+   *
+   * Hedefin adi mutasyondan ONCE soruluyor: silindikten sonra
+   * bulunamaz, adi degistikten sonra eski adi bilinmez. Temizlik yine
+   * yalnizca mutasyon 2xx donerse yapiliyor; o mutasyona backend
+   * yalnizca admin'e izin veriyor, yani bu yol kimseye baskasinin
+   * sayfasini temizleme yetkisi vermiyor.
    */
-  const kimlikSozu = !govdesiz && oturum ? kullaniciAdi(oturum.token) : null;
+  const hedefId = oturum ? hedefKullaniciId(hedefYol, request.method) : null;
+  const hedefOncekiAd =
+    hedefId && oturum
+      ? await kullaniciAdiIdIle(`Bearer ${oturum.token}`, hedefId)
+      : null;
+
+  const kimlikSozu =
+    !govdesiz && oturum && !hedefId ? kullaniciAdi(oturum.token) : null;
   if (kimlikSozu && request.method === "DELETE") await kimlikSozu;
 
   const hedef = `${API_URL}/${hedefYol}${request.nextUrl.search}`;
@@ -261,6 +306,14 @@ async function vekilEt(
   if (kimlikSozu && backendYaniti.ok) {
     const kullanici = await kimlikSozu;
     if (kullanici) profilOnbelleginiTemizle(kullanici);
+  }
+  if (hedefId && backendYaniti.ok) {
+    // Ad degistiyse IKISI de: eski adres artik 404 olmali, yeni
+    // adresin onceden onbellege girmis bir 404'u de kalmamali.
+    const yeniAd = govdedekiKullaniciAdi(cozulmus);
+    for (const ad of Array.from(new Set([hedefOncekiAd, yeniAd]))) {
+      if (ad) profilOnbelleginiTemizle(ad);
+    }
   }
 
   const yanit = new NextResponse(ciktiGovdesi || null, {

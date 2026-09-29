@@ -9,17 +9,18 @@
 // ASIL TEMIZLIK ARTIK VEKILDE: /api/proxy her basarili mutasyonun
 // icinde, yaniti dondurmeden once temizliyor. Bu uc ikinci bir istek;
 // kullanici kaydetme yaniti gelmeden sayfadan ayrilirsa hic
-// atilmiyordu (bkz. proxy route). Artik asil isi admin'in BASKA
-// birinin sayfasini temizlemesi -- vekil yalnizca cagiranin kendi
-// sayfasini biliyor. Kendi sayfasi icin cagrilmasi da hala gecerli
-// (ornegin backend'e dogrudan giden test yardimcilari).
+// atilmiyordu (bkz. proxy route). Admin'in baskasini duzenlemesi ve
+// kapatmasi da artik vekilde temizleniyor; arayuz bu ucu HIC
+// cagirmiyor. Uc, vekilden GECMEYEN yazmalar icin duruyor: backend'e
+// dogrudan giden test yardimcilari (playwright-tests/helpers/api.ts)
+// ve elle yapilan bir islemden sonra sayfayi hemen kapatmak isteyen
+// bir admin.
 //
 // NEDEN VARSAYILAN OLARAK GOVDESIZ: istemci hangi profilin
 // temizlenecegini soylemiyor, token'indan cikariliyor. Aksi halde
 // herkes baskasinin sayfasinin onbellegini istedigi kadar
 // dusurebilirdi. Govdede kullanici adi yalnizca admin icin kabul
-// ediliyor: panelden hesap kapatinca o kisinin sayfasi da hemen
-// kapanmali.
+// ediliyor.
 
 import { NextRequest, NextResponse } from "next/server";
 import { csrfGecerli, oturumOku } from "@/services/auth/session-cookie";

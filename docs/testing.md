@@ -51,6 +51,7 @@ and no test depends on data left behind by another.
 | `playwright-tests/profile/profile-fields.spec.ts`        | Display name, bio, page details, social links                     |
 | `playwright-tests/profile/account.spec.ts`               | Closing your own account                                          |
 | `playwright-tests/profile/save-then-leave.spec.ts`       | Public page fresh when you leave before the save response arrives |
+| `playwright-tests/admin/user-page-cache.spec.ts`         | Admin delete / rename purges that user's public page              |
 | `playwright-tests/profile/dashboard.spec.ts`             | Dashboard and analytics summaries                                 |
 | `playwright-tests/navigation.spec.ts`                    | Language prefix, landing page, signed-in redirects                |
 | `playwright-tests/theme.spec.ts`                         | Theme switch flips MUI + Tailwind together, persists, public page |

@@ -116,6 +116,36 @@ export async function kimlikCoz(
 }
 
 /**
+ * Id'si verilen kullanicinin adi; bulunamazsa ya da okunamazsa null.
+ *
+ * Admin'in BASKA bir kullanici uzerindeki islemi icin (bkz. proxy
+ * route, hedefKullaniciId): sayfasi temizlenecek kisi token'in sahibi
+ * degil, adresteki id. Onbellek yok -- bu islemler seyrek ve ad
+ * degisebiliyor (admin kullanici adini degistirebiliyor).
+ *
+ * Bu sorgu tek basina hicbir yetki vermiyor: temizlik ancak asil
+ * mutasyon 2xx donerse yapiliyor ve o mutasyonu backend yalnizca
+ * admin'e izin veriyor.
+ */
+export async function kullaniciAdiIdIle(
+  authorization: string,
+  id: string
+): Promise<string | null> {
+  if (!API_URL) return null;
+  try {
+    const yanit = await fetch(`${API_URL}/v1/users/${id}`, {
+      headers: { Authorization: authorization },
+      cache: "no-store",
+    });
+    if (!yanit.ok) return null;
+    const username = (await yanit.json())?.data?.username;
+    return typeof username === "string" && username ? username : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Bir kullanicinin sayfa ve kart onbellegini temizler.
  *
  * Sayfa ve kart ayri onbellek kayitlari: kart ayni ucu

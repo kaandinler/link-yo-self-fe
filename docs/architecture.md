@@ -155,11 +155,23 @@ per window instead of one per visit — measured at **five visits: 5 backend cal
   read the username out of the JWT: the session cookie is unsigned JSON, so an
   unverified `sub` would let anyone purge anyone's page.
 
-- **`POST /api/revalidate-profile`** purges both tags on demand. It takes a
-  username in the body only from an admin, so the panel can close someone
-  else's page immediately (the proxy only knows the caller's own page). The API
-  test helpers, which go to the backend directly, call it for the caller's own
-  page.
+- **Admin actions on someone else** (`PATCH` / `DELETE /v1/users/{id}`) are
+  purged by the proxy too, but for the user in the URL, not the caller. The
+  proxy reads that user's current username (`GET /v1/users/{id}`) _before_
+  forwarding, because afterwards a deleted user cannot be found and a renamed
+  user's old name is gone. On a 2xx it purges the old name and, for a `PATCH`
+  that renamed them, the new one. This used to be a separate
+  `/api/revalidate-profile` call from the panel after the delete response
+  arrived (lost if the admin left first), and an edit was not purged at all:
+  after a rename the old URL kept serving the old profile for up to 60 s. The
+  lookup grants nothing by itself — the purge only happens when the backend
+  accepted the mutation, which only admins may make. Regression tests:
+  `playwright-tests/admin/user-page-cache.spec.ts`.
+
+- **`POST /api/revalidate-profile`** purges both tags on demand, for writes
+  that do not pass through the proxy. The UI no longer calls it; the API test
+  helpers, which go to the backend directly, do. It takes a username in the
+  body only from an admin.
 
   Identity lookups (shared by both paths, `profile-cache-purge.ts`) are cached
   token → identity for ten seconds. Without it, one client produced **61

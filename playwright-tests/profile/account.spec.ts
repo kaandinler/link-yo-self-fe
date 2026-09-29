@@ -73,10 +73,11 @@ test.describe("Kapatilan hesabin sayfasi onbellekte kalmiyor", () => {
     request,
   }) => {
     /**
-     * Sayfa bir dakikalik pencereyle onbellege aliniyor. Vekildeki
-     * kendiliginden temizlik CAGIRANIN profilini temizliyor, yani
-     * panelden silerken admin'inkini; silinen kisininki acikta
-     * kalirdi. Uc bu yuzden admin'den kullanici adi kabul ediyor.
+     * Sayfa bir dakikalik pencereyle onbellege aliniyor. Uc, vekilden
+     * GECMEYEN islemlerden sonra (ornegin backend'e dogrudan) baskasinin
+     * sayfasini kapatabilsin diye admin'den kullanici adi kabul
+     * ediyor. Panelden silme ise vekilde temizleniyor; o yol
+     * admin/user-page-cache.spec.ts'te.
      */
     const { user } = await apiRegisterAndLogin();
 
