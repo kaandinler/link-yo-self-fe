@@ -1,0 +1,32 @@
+# Imaja yalnizca derleme icin gerekenler giriyor.
+
+.git
+.github
+.husky
+
+node_modules
+.next
+out
+build
+coverage
+*.tsbuildinfo
+next-env.d.ts
+
+# Yerel ortam dosyalari imaja girmesin: NEXT_PUBLIC_* degerleri derleme
+# aninda pakete gomuluyor ve yerel .env.local'daki localhost adresleri
+# uretim imajina sizardi. Degerler Dockerfile'a build arg olarak veriliyor.
+.env
+.env*.local
+
+# Testler, storybook ve dokumantasyon
+playwright-tests
+playwright.config.ts
+test-results
+playwright-report
+blob-report
+.storybook
+docs
+*.md
+
+Dockerfile
+.dockerignore
