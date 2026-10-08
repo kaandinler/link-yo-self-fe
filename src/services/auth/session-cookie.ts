@@ -31,7 +31,41 @@ export type Oturum = {
  * mi", "bu derleme production mu" degil.
  */
 export function guvenliMi(request: NextRequest): boolean {
-  return request.nextUrl.protocol === "https:";
+  return istekKaynagi(request).protokol === "https:";
+}
+
+/**
+ * Tarayicinin GERCEKTE istek attigi adres: protokol ve host.
+ *
+ * NEDEN request.nextUrl DEGIL: standalone ciktida (Docker imaji,
+ * `node server.js`) nextUrl'in host'u istegin Host basligindan degil,
+ * sunucunun dinledigi adresten kuruluyor. Olculdu: konteynerde
+ * nextUrl.host "0.0.0.0:3000" idi; tarayicinin Origin'i ise
+ * "localhost:3000". CSRF kontrolu bu yuzden her gercek girisi 403 ile
+ * reddediyordu. Ayni sekilde TLS'i sonlandiran bir ters vekilin
+ * arkasinda nextUrl.protocol hep "http:" gorunuyor ve oturum cerezi
+ * uretimde Secure olmadan kuruluyordu.
+ *
+ * Next'in kendi server action CSRF kontrolu de ayni sirayla bakiyor:
+ * once X-Forwarded-*, sonra Host. Basliklara guvenmek burada guvenli:
+ * baska bir sitedeki sayfa, kurbanin tarayicisina bu basliklari
+ * koydurtamiyor (ozel baslik on-ucus gerektirir, izin verilmiyor).
+ * Basligi kendisi uyduran bir istemci yalnizca kendi istegini bozar.
+ */
+export function istekKaynagi(request: NextRequest): {
+  protokol: string;
+  host: string;
+} {
+  // Birden fazla vekil zincirinde deger "a, b" olabiliyor; ilki
+  // istemcinin gordugu.
+  const ilk = (ad: string) =>
+    request.headers.get(ad)?.split(",")[0]?.trim() || undefined;
+
+  const proto = ilk("x-forwarded-proto");
+  return {
+    protokol: proto ? `${proto}:` : request.nextUrl.protocol,
+    host: ilk("x-forwarded-host") ?? ilk("host") ?? request.nextUrl.host,
+  };
 }
 
 export function oturumOku(request: NextRequest): Oturum | null {
@@ -109,7 +143,7 @@ export function csrfGecerli(request: NextRequest): boolean {
   if (!origin) return false;
 
   try {
-    return new URL(origin).host === request.nextUrl.host;
+    return new URL(origin).host === istekKaynagi(request).host;
   } catch {
     return false;
   }
