@@ -79,7 +79,13 @@ export function kartEtiketi(username: string): string {
   return `kart:${username.toLowerCase()}`;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Sunucuda API_URL once: konteynerde (docker-compose) tarayicinin gordugu
+// adres -- NEXT_PUBLIC_API_URL, orn. http://localhost:8000/api -- Next
+// sunucusunun kendisini gosteriyor ve profil sayfasi backend'e
+// ulasamiyordu. Vekil ve oturum ucu zaten bu sirayla okuyor. Istemcide
+// API_URL tanimsiz (NEXT_PUBLIC_ degil, pakete girmiyor), yani tarayici
+// yine NEXT_PUBLIC_API_URL'i kullaniyor.
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
 
 export interface PublicLink {
   id: number;
@@ -192,7 +198,8 @@ async function profilIste(
 ): Promise<PublicProfile | null> {
   // API adresi hic verilmemisse bu bir dagitim hatasi; sessizce her
   // profili 404'e cevirmek onu gizlerdi.
-  if (!API_URL) throw new ProfilGeciciHatasi("NEXT_PUBLIC_API_URL tanimsiz");
+  if (!API_URL)
+    throw new ProfilGeciciHatasi("API_URL / NEXT_PUBLIC_API_URL tanimsiz");
 
   let response: Response;
   try {
