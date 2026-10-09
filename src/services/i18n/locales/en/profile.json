@@ -83,12 +83,6 @@
       "label": "Bio",
       "helper": "A sentence or two under your name."
     },
-    "profileImageUrl": {
-      "label": "Profile image URL",
-      "validation": {
-        "url": "Must start with http:// or https://"
-      }
-    },
     "pageTitle": {
       "label": "Page title",
       "helper": "Browser tab title and search result heading."
@@ -143,5 +137,22 @@
     "emailUnverified": "not confirmed",
     "completion": "Profile completion",
     "completionHint": "Add a bio, a photo, links and page details to reach 100%."
+  },
+  "avatar": {
+    "label": "Profile photo",
+    "alt": "Profile photo",
+    "hint": "JPEG, PNG, WebP or GIF, up to 8 MB. Cropped to a square.",
+    "uploading": "Uploading",
+    "actions": {
+      "upload": "Choose photo",
+      "change": "Change photo",
+      "remove": "Remove photo"
+    },
+    "errors": {
+      "tooLarge": "This image is larger than 8 MB.",
+      "invalid": "This file isn't a supported image. Use JPEG, PNG, WebP or GIF.",
+      "tooMany": "You've changed your photo too many times. Try again later.",
+      "generic": "Couldn't update your photo. Please try again."
+    }
   }
 }
