@@ -36,13 +36,18 @@ COPY . .
 # NEXT_PUBLIC_API_URL: TARAYICININ backend'e ulastigi adres (tiklama
 #   sayaci dogrudan buraya gidiyor), /api ile bitmeli.
 # NEXT_PUBLIC_SITE_URL: sitenin herkese acik adresi (canonical, og:url).
+# NEXT_PUBLIC_MEDIA_URL: avatarlarin sunuldugu kok. Yalnizca backend
+#   STORAGE_BACKEND=s3 ise gerekli (kovanin/CDN'in adresi); bossa API'nin
+#   /media yolu varsayiliyor (bkz. src/services/media-url.ts).
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ARG NEXT_PUBLIC_IS_SIGN_UP_ENABLED=true
+ARG NEXT_PUBLIC_MEDIA_URL=
 
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
     NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL} \
     NEXT_PUBLIC_IS_SIGN_UP_ENABLED=${NEXT_PUBLIC_IS_SIGN_UP_ENABLED} \
+    NEXT_PUBLIC_MEDIA_URL=${NEXT_PUBLIC_MEDIA_URL} \
     NEXT_TELEMETRY_DISABLED=1 \
     NEXT_OUTPUT=standalone
 

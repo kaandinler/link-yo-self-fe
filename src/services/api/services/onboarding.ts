@@ -23,7 +23,8 @@ export interface Step1Data {
   last_name?: string;
   display_name?: string;
   bio?: string;
-  profile_image_url?: string;
+  // profile_image_url yok: avatar yalnizca POST /v1/profile/avatar ile
+  // yukleniyor; backend profil uclarinda bu alani yok sayiyor.
 }
 
 export interface Step2Data {
@@ -88,6 +89,20 @@ async function readError(
   }
 
   return fallback;
+}
+
+/**
+ * Avatar istegi basarisiz. status, arayuzun backend'in Ingilizce mesaji
+ * yerine kendi cevirisini secebilmesi icin (413, 429, 422).
+ */
+export class AvatarError extends Error {
+  constructor(
+    readonly status: number,
+    message: string
+  ) {
+    super(message);
+    this.name = "AvatarError";
+  }
 }
 
 function useOnboardingAPI() {
@@ -158,6 +173,48 @@ function useOnboardingAPI() {
 
       if (!response.ok) {
         throw new Error(await readError(response, "Failed to update profile"));
+      }
+
+      const result: ApiResponse<User> = await response.json();
+      return result.data;
+    },
+
+    /**
+     * POST /v1/profile/avatar (multipart, alan adi `file`).
+     *
+     * Content-Type elle verilmiyor: FormData'nin sinir dizgisini
+     * (boundary) tarayici uretiyor (bkz. use-fetch).
+     */
+    uploadAvatar: async (file: File): Promise<User> => {
+      const body = new FormData();
+      body.append("file", file);
+
+      const response = await fetch(`${API_URL}/v1/profile/avatar`, {
+        method: "POST",
+        body,
+      });
+
+      if (!response.ok) {
+        throw new AvatarError(
+          response.status,
+          await readError(response, "Failed to upload image")
+        );
+      }
+
+      const result: ApiResponse<User> = await response.json();
+      return result.data;
+    },
+
+    deleteAvatar: async (): Promise<User> => {
+      const response = await fetch(`${API_URL}/v1/profile/avatar`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new AvatarError(
+          response.status,
+          await readError(response, "Failed to remove image")
+        );
       }
 
       const result: ApiResponse<User> = await response.json();
@@ -253,6 +310,33 @@ export const useUpdateProfile = () => {
 
   return useMutation({
     mutationFn: api.updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
+    },
+  });
+};
+
+/** Avatar yukler; profil ve ilerleme sorgulari tazeleniyor. */
+export const useUploadAvatar = () => {
+  const api = useOnboardingAPI();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: api.uploadAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
+    },
+  });
+};
+
+export const useDeleteAvatar = () => {
+  const api = useOnboardingAPI();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: api.deleteAvatar,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ONBOARDING_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });

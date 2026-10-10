@@ -38,7 +38,7 @@
     "last_name": "Last name",
     "display_name": "Display name",
     "bio": "Bio",
-    "profile_image_url": "Profile image URL",
+    "avatar": "Profile photo",
     "page_title": "Page title",
     "page_description": "Page description",
     "website": "Website",
