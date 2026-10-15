@@ -4,7 +4,9 @@ import { signInAsNewUser } from "../helpers/auth";
 import { fillField } from "../helpers/ui";
 
 test.describe("Profil alanlari sonradan duzenlenebiliyor", () => {
-  test("gorunen ad, bio ve profil gorseli kaydediliyor", async ({ page }) => {
+  // Profil gorseli burada degil: artik bir metin alani degil, yukleniyor
+  // (bkz. avatar.spec.ts).
+  test("gorunen ad ve bio kaydediliyor", async ({ page }) => {
     const { user } = await signInAsNewUser(page);
 
     await page.goto("/en/profile/edit");
@@ -12,11 +14,6 @@ test.describe("Profil alanlari sonradan duzenlenebiliyor", () => {
     await fillField(page, 'input[name="lastName"]', "Yilmaz");
     await fillField(page, 'input[name="displayName"]', "Deniz | Tasarim");
     await fillField(page, 'textarea[name="bio"]', "Urun tasarimcisi.");
-    await fillField(
-      page,
-      'input[name="profileImageUrl"]',
-      "https://ornek.test/avatar.png"
-    );
     await page.getByTestId("save-profile").click();
 
     await expect(
@@ -26,7 +23,6 @@ test.describe("Profil alanlari sonradan duzenlenebiliyor", () => {
     const profil = await apiPublicProfile(user.username);
     expect(profil.display_name).toBe("Deniz | Tasarim");
     expect(profil.bio).toBe("Urun tasarimcisi.");
-    expect(profil.profile_image_url).toBe("https://ornek.test/avatar.png");
   });
 
   test("sayfa basligi, aciklamasi ve web sitesi kaydediliyor", async ({
@@ -112,25 +108,6 @@ test.describe("Profil alanlari sonradan duzenlenebiliyor", () => {
     await expect(page.locator('input[name="twitterUsername"]')).toHaveValue(
       "duzeltilmis"
     );
-  });
-
-  test("gecersiz profil gorseli adresi istek gonderilmeden reddediliyor", async ({
-    page,
-  }) => {
-    await signInAsNewUser(page);
-
-    await page.goto("/en/profile/edit");
-    await fillField(page, 'input[name="firstName"]', "Deniz");
-    await fillField(page, 'input[name="lastName"]', "Yilmaz");
-    await fillField(page, 'input[name="profileImageUrl"]', "avatar.png");
-    await page.getByTestId("save-profile").click();
-
-    await expect(
-      page.getByText("Must start with http:// or https://")
-    ).toBeVisible();
-    await expect(
-      page.getByText("Profile has been updated successfully")
-    ).toHaveCount(0);
   });
 
   test("sosyal baglantilar herkese acik sayfada gorunuyor", async ({

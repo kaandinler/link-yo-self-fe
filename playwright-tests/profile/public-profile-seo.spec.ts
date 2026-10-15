@@ -183,28 +183,6 @@ test.describe("Public profil SEO", () => {
     expect((await yanit.body()).byteLength).toBeGreaterThan(1000);
   });
 
-  /**
-   * Avatar adresi kullanicinin yazdigi rastgele bir dis adres; ulasilamaz
-   * oldugunda kart uretimi komple dusmemeli.
-   */
-  test("ulasilamayan avatar adresi karti bozmuyor", async ({
-    page,
-    request,
-  }) => {
-    const { user, token } = await signInAsNewUser(page);
-    await apiUpdateProfile(token, {
-      display_name: "Katherine Johnson",
-      profile_image_url: "https://ulasilamaz.test/yok.png",
-    });
-
-    const html = await kaynak(page, `/en/${user.username}`);
-    const gorsel = await meta(page, html, 'meta[property="og:image"]');
-
-    const yanit = await request.get(gorsel!);
-    expect(yanit.status(), "avatar indirilemeyince kart da dusuyor").toBe(200);
-    expect(yanit.headers()["content-type"]).toContain("image/png");
-  });
-
   test("yapisal veri kisiyi sosyal hesaplariyla birlestiriyor", async ({
     page,
   }) => {

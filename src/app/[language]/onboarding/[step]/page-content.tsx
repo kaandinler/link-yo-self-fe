@@ -15,10 +15,13 @@ import {
   useSkipOnboarding,
 } from "@/services/api/services/onboarding";
 import useAuth from "@/services/auth/use-auth";
+import AvatarUpload from "@/components/avatar-upload";
 
 /** Her adimda hangi profil alanlarinin duzenlendigi. */
 const STEP_FIELDS: Record<number, readonly string[]> = {
-  1: ["first_name", "last_name", "display_name", "bio", "profile_image_url"],
+  // Avatar bir metin alani degil; adim 1'de ayrica gosteriliyor
+  // (AvatarUpload) ve secilince kendisi yukleniyor.
+  1: ["first_name", "last_name", "display_name", "bio"],
   2: ["page_title", "page_description", "website"],
   3: ["twitter_username", "instagram_username", "linkedin_username"],
   4: ["theme_color", "background_type", "background_value"],
@@ -144,6 +147,15 @@ export default function OnboardingWizard({ step }: Props) {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
+          {step === 1 ? (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-ink-soft">
+                {t("fields.avatar")}
+              </span>
+              <AvatarUpload />
+            </div>
+          ) : null}
+
           {fields.map((field) => (
             <Field
               key={field}

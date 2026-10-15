@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import http from "node:http";
-import type { AddressInfo } from "node:net";
 import {
+  apiDeleteAvatar,
   apiUpdatePageSettings,
   apiUpdateProfile,
+  apiUploadAvatar,
   uniqueUser,
 } from "../helpers/api";
 import { signInAsNewUser } from "../helpers/auth";
@@ -14,8 +14,8 @@ import { signInAsNewUser } from "../helpers/auth";
  * NEDEN KART AYRI BIR DURUM: sayfanin ara ekrani ziyaretciden onay
  * istiyor, ama kart o ekrani hic gormuyor -- onizleme sohbet
  * penceresinde ya da akista kendiliginden aciliyor. Uyari acikken kart
- * avatari (sahibinin verdigi rastgele bir dis gorsel) ve bio'yu (yine
- * sahibinin yazdigi serbest metin) disarida birakiyor.
+ * avatari (sahibinin yukledigi gorsel) ve bio'yu (yine sahibinin
+ * yazdigi serbest metin) disarida birakiyor.
  *
  * OLCU HER YERDE AYNI: kartin BAYTLARI. Bir sey karta girdiyse cizim
  * degisir, girmediyse bayt bayt ayni kalir. PNG'nin icini okumaya gerek
@@ -24,34 +24,12 @@ import { signInAsNewUser } from "../helpers/auth";
  * HER TESTIN BIR KONTROLU VAR: "uyari acikken girmiyor" tek basina,
  * o sey HICBIR ZAMAN girmiyorsa da gecerdi. Bu yuzden her iddianin
  * yaninda "uyari kapaliyken giriyor" olcumu duruyor.
+ *
+ * Avatar gercekten yukleniyor (apiUploadAvatar): kart yalnizca bizim
+ * medya kokumuzdeki gorselleri indiriyor (bkz. services/media-url.ts).
+ * Kontrol testi bu yuzden ayni zamanda yukle -> depola -> karta gom
+ * zincirinin uctan uca calistigini olcuyor.
  */
-
-/** 1x1 PNG; kartta 180 piksellik cembere yayiliyor. */
-const KUCUK_PNG = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-  "base64"
-);
-
-let sunucu: http.Server;
-let avatarAdresi: string;
-
-test.beforeAll(async () => {
-  // Kendi sunucumuz: CI'da ayri bir servise ya da disariya cikan bir
-  // istege bagli kalmamak icin (bkz. card-avatar-limits.spec.ts).
-  sunucu = http.createServer((_istek, yanit) => {
-    yanit.writeHead(200, { "content-type": "image/png" });
-    yanit.end(KUCUK_PNG);
-  });
-
-  await new Promise<void>((coz) => sunucu.listen(0, "127.0.0.1", coz));
-  avatarAdresi = `http://127.0.0.1:${
-    (sunucu.address() as AddressInfo).port
-  }/avatar.png`;
-});
-
-test.afterAll(async () => {
-  await new Promise<void>((coz) => sunucu.close(() => coz()));
-});
 
 async function kartBaytlari(
   request: import("@playwright/test").APIRequestContext,
@@ -82,10 +60,10 @@ test.describe("Kart ve +18 uyarisi", () => {
   }) => {
     const { user, token } = await profilKur(page);
 
-    await apiUpdateProfile(token, { profile_image_url: null });
+    await apiDeleteAvatar(token);
     const avatarsiz = await kartBaytlari(request, user.username);
 
-    await apiUpdateProfile(token, { profile_image_url: avatarAdresi });
+    await apiUploadAvatar(token);
     const avatarli = await kartBaytlari(request, user.username);
 
     // Bu gecmezse asagidaki test anlamsiz olurdu: avatar hicbir zaman
@@ -100,10 +78,10 @@ test.describe("Kart ve +18 uyarisi", () => {
     const { user, token } = await profilKur(page);
     await apiUpdatePageSettings(token, { adult_warning_enabled: true });
 
-    await apiUpdateProfile(token, { profile_image_url: null });
+    await apiDeleteAvatar(token);
     const avatarsiz = await kartBaytlari(request, user.username);
 
-    await apiUpdateProfile(token, { profile_image_url: avatarAdresi });
+    await apiUploadAvatar(token);
     const avatarli = await kartBaytlari(request, user.username);
 
     expect(
@@ -159,7 +137,7 @@ test.describe("Kart ve +18 uyarisi", () => {
      * eski kart bir saat daha paylasilmaya devam ederdi.
      */
     const { user, token } = await profilKur(page);
-    await apiUpdateProfile(token, { profile_image_url: avatarAdresi });
+    await apiUploadAvatar(token);
 
     const once = await kartBaytlari(request, user.username);
 

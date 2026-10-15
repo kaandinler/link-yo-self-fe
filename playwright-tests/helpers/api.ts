@@ -94,6 +94,53 @@ export async function apiPurgeProfileCache(token: string) {
   await api.dispose();
 }
 
+/** 1x1 PNG; backend onu 1x1 JPEG olarak yeniden yaziyor. */
+export const KUCUK_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64"
+);
+
+/**
+ * POST /v1/profile/avatar -- avatar yukler, yeni adresi doner.
+ *
+ * Avatar artik yalnizca boyle ayarlanabiliyor: profil uclari
+ * profile_image_url'i yok sayiyor. Onbellek apiUpdateProfile'daki
+ * gerekceyle temizleniyor.
+ */
+export async function apiUploadAvatar(
+  token: string,
+  buffer: Buffer = KUCUK_PNG,
+  mimeType = "image/png"
+): Promise<string> {
+  const api = await ctx();
+  const response = await api.post(`${apiUrl}/v1/profile/avatar`, {
+    multipart: { file: { name: "avatar.png", mimeType, buffer } },
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(
+    response.status(),
+    `avatar yuklenemedi: ${await response.text()}`
+  ).toBe(200);
+  const body = await response.json();
+  await api.dispose();
+  await apiPurgeProfileCache(token);
+  return body.data.profile_image_url;
+}
+
+/** DELETE /v1/profile/avatar */
+export async function apiDeleteAvatar(token: string) {
+  const api = await ctx();
+  const response = await api.delete(`${apiUrl}/v1/profile/avatar`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(
+    response.status(),
+    `avatar kaldirilamadi: ${await response.text()}`
+  ).toBe(200);
+  await api.dispose();
+  await apiPurgeProfileCache(token);
+}
+
 export async function apiCreateLink(
   token: string,
   data: { title: string; url: string }
