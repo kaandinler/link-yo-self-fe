@@ -24,13 +24,13 @@ import {
 } from "@/services/api/services/auth";
 import { getErrorMessage, getFieldErrors } from "@/services/api/api-errors";
 import { passwordSchema } from "@/services/api/password-schema";
+import AvatarUpload from "@/components/avatar-upload";
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
   lastName: string;
   displayName: string;
   bio: string;
-  profileImageUrl: string;
 };
 
 type EditProfilePageFormData = {
@@ -79,16 +79,6 @@ const useValidationBasicInfoSchema = () => {
     // form tipiyle uyusmuyor. Alanlar zaten bos string ile basliyor.
     displayName: yup.string().defined(),
     bio: yup.string().defined(),
-    // Backend de ayni kurali uyguluyor (core/validators.py); burasi sunucuya
-    // gitmeden geri bildirim vermek icin, son soz backend'in.
-    profileImageUrl: yup
-      .string()
-      .defined()
-      .test(
-        "http",
-        t("profile:inputs.profileImageUrl.validation.url"),
-        (value) => !value || /^https?:\/\//.test(value)
-      ),
   });
 };
 
@@ -189,7 +179,6 @@ function FormBasicInfo() {
       lastName: "",
       displayName: "",
       bio: "",
-      profileImageUrl: "",
     },
   });
 
@@ -203,7 +192,6 @@ function FormBasicInfo() {
         last_name: formData.lastName,
         display_name: formData.displayName,
         bio: formData.bio,
-        profile_image_url: formData.profileImageUrl,
       });
 
       setUser(updated);
@@ -227,7 +215,6 @@ function FormBasicInfo() {
       lastName: user?.last_name ?? "",
       displayName: user?.display_name ?? "",
       bio: user?.bio ?? "",
-      profileImageUrl: user?.profile_image_url ?? "",
     });
   }, [user, reset]);
 
@@ -243,6 +230,16 @@ function FormBasicInfo() {
               <Typography variant="h6" component="h1">
                 {t("profile:title1")}
               </Typography>
+            </Grid>
+
+            {/* Avatar formun parcasi degil: secilince kendisi yukleniyor
+                (bkz. AvatarUpload). Kaydet dugmesi yalnizca metin
+                alanlari icin. */}
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="subtitle2" component="h2" mb={1}>
+                {t("profile:avatar.label")}
+              </Typography>
+              <AvatarUpload />
             </Grid>
 
             <Grid size={{ xs: 12 }}>
@@ -279,14 +276,6 @@ function FormBasicInfo() {
                 minRows={2}
                 maxRows={5}
                 testId="bio"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <FormTextInput<EditProfileBasicInfoFormData>
-                name="profileImageUrl"
-                label={t("profile:inputs.profileImageUrl.label")}
-                testId="profile-image-url"
               />
             </Grid>
 

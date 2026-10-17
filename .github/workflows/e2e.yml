@@ -92,13 +92,38 @@ jobs:
       - name: Checkout frontend
         uses: actions/checkout@v7
 
+      # Hangi backend dali? Ayni adli bir dal varsa o, yoksa dev.
+      #
+      # NEDEN: iki repoyu birlikte degistiren bir is (ornegin avatar
+      # yukleme: yeni uc backend'de, arayuz burada) eskiden bu repodaki
+      # PR'da test EDILEMIYORDU -- suite hep backend'in dev'ine karsi
+      # kosuyordu ve yeni uc orada henuz yoktu. Ayni dal adini kullanmak
+      # iki PR'i birlikte sinamanin yolu. dev ve main'e push'ta da ayni
+      # kural: main, backend'in main'ine karsi kosuyor.
+      #
+      # Dal adi ortam degiskeniyle geciyor, betigin icine ${{ }} ile
+      # yazilmiyor: dal adi PR'i acan kisinin elinde ve kabuga dogrudan
+      # yazilsaydi komut enjeksiyonuna acik olurdu.
+      - name: Select backend branch
+        id: backend
+        env:
+          DAL: ${{ github.head_ref || github.ref_name }}
+        run: |
+          if git ls-remote --exit-code --heads \
+              https://github.com/kaandinler/link-yo-self-be.git "$DAL" > /dev/null; then
+            echo "ref=$DAL" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=dev" >> "$GITHUB_OUTPUT"
+          fi
+          tail -1 "$GITHUB_OUTPUT"
+
       # Backend ayni urunun diger yarisi ve herkese acik bir repo;
       # token gerekmiyor.
       - name: Checkout backend
         uses: actions/checkout@v7
         with:
           repository: kaandinler/link-yo-self-be
-          ref: dev
+          ref: ${{ steps.backend.outputs.ref }}
           path: backend
 
       - name: Setup Node.js

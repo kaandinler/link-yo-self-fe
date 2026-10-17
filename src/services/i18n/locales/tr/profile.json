@@ -83,12 +83,6 @@
       "label": "Hakkımda",
       "helper": "Adınızın altında bir iki cümle."
     },
-    "profileImageUrl": {
-      "label": "Profil görseli adresi",
-      "validation": {
-        "url": "http:// veya https:// ile başlamalı"
-      }
-    },
     "pageTitle": {
       "label": "Sayfa başlığı",
       "helper": "Tarayıcı sekmesi başlığı ve arama sonucu başlığı."
@@ -143,5 +137,22 @@
     "emailUnverified": "doğrulanmadı",
     "completion": "Profil tamamlanma",
     "completionHint": "%100'e ulaşmak için tanıtım yazısı, fotoğraf, bağlantılar ve sayfa bilgileri ekleyin."
+  },
+  "avatar": {
+    "label": "Profil fotoğrafı",
+    "alt": "Profil fotoğrafı",
+    "hint": "JPEG, PNG, WebP veya GIF, en fazla 8 MB. Kare olarak kırpılır.",
+    "uploading": "Yükleniyor",
+    "actions": {
+      "upload": "Fotoğraf seç",
+      "change": "Fotoğrafı değiştir",
+      "remove": "Fotoğrafı kaldır"
+    },
+    "errors": {
+      "tooLarge": "Bu görsel 8 MB'tan büyük.",
+      "invalid": "Bu dosya desteklenen bir görsel değil. JPEG, PNG, WebP veya GIF kullanın.",
+      "tooMany": "Fotoğrafınızı çok sık değiştirdiniz. Biraz sonra tekrar deneyin.",
+      "generic": "Fotoğraf güncellenemedi. Lütfen tekrar deneyin."
+    }
   }
 }

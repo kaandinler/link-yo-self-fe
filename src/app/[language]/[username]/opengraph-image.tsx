@@ -36,6 +36,7 @@ import {
   DEFAULT_BACKGROUND,
   DEFAULT_THEME_COLOR,
 } from "@/services/profile-theme";
+import { kartIcinAvatarAdresi } from "@/services/media-url";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -91,16 +92,23 @@ function initials(name: string): string {
 /**
  * Avatari data URI'ye cevirir; basarisiz olursa null.
  *
- * NEDEN ONCEDEN INDIRILIYOR: gorsel adresini dogrudan <img src> olarak
- * vermek, adres ulasilamaz oldugunda butun kartin uretimini dusuruyor --
- * ve adres kullanicinin yazdigi rastgele bir dis adres. Burada indirme
- * basarisiz olursa kart bas harflerle ciziliyor, yani kart her halukarda
- * uretiliyor.
+ * YALNIZCA KENDI MEDYA KOKUMUZDEN (bkz. services/media-url.ts). Eskiden
+ * kullanicinin yazdigi herhangi bir http(s) adresi burada, SUNUCUDA
+ * indiriliyordu: avatarina ic bir adres yazan biri sunucumuza ic aga
+ * istek attirabiliyordu. Kokun disindaki adres hic istenmiyor; kart bas
+ * harflerle ciziliyor.
  *
- * Zaman asimi var: yavas bir sunucu paylasim kartini bekletmemeli.
+ * NEDEN ONCEDEN INDIRILIYOR: gorsel adresini dogrudan <img src> olarak
+ * vermek, adres ulasilamaz oldugunda butun kartin uretimini dusuruyor.
+ * Burada indirme basarisiz olursa kart bas harflerle ciziliyor, yani
+ * kart her halukarda uretiliyor.
+ *
+ * Zaman asimi ve boyut tavani kaldi: dosyalar artik kendi depomuzda ve
+ * kucuk (~25 KB JPEG), ama depo yavasladiginda kart onu beklememeli.
  */
-async function avatarDataUri(url: string | null | undefined) {
-  if (!url || !/^https?:\/\//i.test(url)) return null;
+async function avatarDataUri(adres: string | null | undefined) {
+  const url = kartIcinAvatarAdresi(adres);
+  if (!url) return null;
 
   try {
     const yanit = await fetch(url, {
