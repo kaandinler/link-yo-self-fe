@@ -25,13 +25,17 @@ import {
   oturumSil,
   oturumYaz,
 } from "@/services/auth/session-cookie";
+import { BACKEND_URL, istemciBasliklari } from "@/services/api/backend-istegi";
 import {
   kimlikCoz,
   kullaniciAdiIdIle,
   profilOnbelleginiTemizle,
 } from "@/services/api/profile-cache-purge";
 
-const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+// Istemci adina giden cagrilar yigin icinden ve istemcinin adresiyle
+// (bkz. backend-istegi.ts). Profil onbellegi temizligi kendi adresini
+// kullanmaya devam ediyor; o cagrilar hiz sinirina tabi degil.
+const API_URL = BACKEND_URL;
 
 /**
  * Vekil uzerinden GECILEMEYECEK uclar.
@@ -49,13 +53,19 @@ const TOKEN_OMRU_MS = 30 * 60 * 1000;
 /** Bu kadar kalmissa yenile; istek sirasinda dolmasin. */
 const YENILEME_PAYI_MS = 60 * 1000;
 
-async function tokenYenile(oturum: Oturum): Promise<Oturum | null> {
+async function tokenYenile(
+  oturum: Oturum,
+  request: NextRequest
+): Promise<Oturum | null> {
   if (!oturum.refreshToken) return null;
 
   try {
     const yanit = await fetch(`${API_URL}/v1/auth/refresh`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: istemciBasliklari(
+        request,
+        new Headers({ "Content-Type": "application/json" })
+      ),
       body: JSON.stringify({ refresh_token: oturum.refreshToken }),
     });
 
@@ -174,14 +184,14 @@ async function vekilEt(
   let cerezYenilensin = false;
 
   if (oturum && suresiDolmakUzere(oturum)) {
-    const yeni = await tokenYenile(oturum);
+    const yeni = await tokenYenile(oturum, request);
     if (yeni) {
       oturum = yeni;
       cerezYenilensin = true;
     }
   }
 
-  const basliklar = new Headers();
+  const basliklar = istemciBasliklari(request);
   const dil = request.headers.get("x-custom-lang");
   if (dil) basliklar.set("x-custom-lang", dil);
   if (oturum) basliklar.set("authorization", `Bearer ${oturum.token}`);
