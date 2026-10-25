@@ -13,8 +13,11 @@ import {
   oturumOku,
   oturumYaz,
 } from "@/services/auth/session-cookie";
+import { BACKEND_URL, istemciBasliklari } from "@/services/api/backend-istegi";
 
-const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+// Yigin icinden ve istemcinin adresiyle: girisin hiz siniri IP basina
+// (bkz. backend-istegi.ts).
+const API_URL = BACKEND_URL;
 
 /** Backend'in access_token_expire_minutes ayarinin aynasi (settings.py). */
 const TOKEN_OMRU_MS = 30 * 60 * 1000;
@@ -63,6 +66,7 @@ export async function POST(request: NextRequest) {
 
   const girisYaniti = await fetch(`${API_URL}/v1/auth/token`, {
     method: "POST",
+    headers: istemciBasliklari(request),
     body: form,
     cache: "no-store",
   });
@@ -82,7 +86,10 @@ export async function POST(request: NextRequest) {
   // icin bunu kendisi yapamaz, ve giris ekraninin kullaniciya gore
   // yonlendirme yapabilmesi gerekiyor.
   const kullaniciYaniti = await fetch(`${API_URL}/v1/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: istemciBasliklari(
+      request,
+      new Headers({ Authorization: `Bearer ${token}` })
+    ),
     cache: "no-store",
   });
   const kullanici = (await kullaniciYaniti.json().catch(() => null))?.data;
@@ -118,7 +125,10 @@ export async function DELETE(request: NextRequest) {
     try {
       await fetch(`${API_URL}/v1/auth/logout`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${oturum.token}` },
+        headers: istemciBasliklari(
+          request,
+          new Headers({ Authorization: `Bearer ${oturum.token}` })
+        ),
         cache: "no-store",
       });
     } catch {
