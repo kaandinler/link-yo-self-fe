@@ -10,3 +10,4 @@
 - [Auth](auth.md)
 - [Testing](testing.md)
 - [Forms](forms.md)
+- [Future features](future-features.md)
