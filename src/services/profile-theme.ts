@@ -8,6 +8,66 @@
 export const DEFAULT_THEME_COLOR = "#1383eb";
 export const DEFAULT_BACKGROUND = "#ffffff";
 
+export type ThemePreset = {
+  id: string;
+  themeColor: string;
+  backgroundType: "color" | "gradient";
+  backgroundColor: string;
+};
+
+export const PROFILE_THEME_PRESETS: ThemePreset[] = [
+  {
+    id: "ocean",
+    themeColor: "#0ea5e9",
+    backgroundType: "gradient",
+    backgroundColor: "#f0f9ff",
+  },
+  {
+    id: "forest",
+    themeColor: "#16a34a",
+    backgroundType: "gradient",
+    backgroundColor: "#f0fdf4",
+  },
+  {
+    id: "sunset",
+    themeColor: "#f97316",
+    backgroundType: "gradient",
+    backgroundColor: "#fff7ed",
+  },
+  {
+    id: "berry",
+    themeColor: "#9333ea",
+    backgroundType: "gradient",
+    backgroundColor: "#faf5ff",
+  },
+  {
+    id: "midnight",
+    themeColor: "#e2e8f0",
+    backgroundType: "color",
+    backgroundColor: "#0f172a",
+  },
+  {
+    id: "paper",
+    themeColor: "#1383eb",
+    backgroundType: "color",
+    backgroundColor: "#ffffff",
+  },
+];
+
+export function findMatchingPreset(
+  themeColor: string,
+  backgroundType: string,
+  backgroundColor: string
+): string | null {
+  const preset = PROFILE_THEME_PRESETS.find(
+    (p) =>
+      p.themeColor.toLowerCase() === themeColor.toLowerCase() &&
+      p.backgroundType === backgroundType &&
+      p.backgroundColor.toLowerCase() === backgroundColor.toLowerCase()
+  );
+  return preset ? preset.id : null;
+}
+
 /**
  * Metin renkleri.
  *
