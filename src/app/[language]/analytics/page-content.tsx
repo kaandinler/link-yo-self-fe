@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { BarChart3, Eye, Link2, MousePointerClick, Plus } from "lucide-react";
+import {
+  BarChart3,
+  Download,
+  Eye,
+  Link2,
+  MousePointerClick,
+  Plus,
+} from "lucide-react";
 import Link from "next/link";
 import {
   DEFAULT_RANGE,
@@ -31,6 +38,7 @@ import {
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useLanguage from "@/services/i18n/use-language";
 import { Trans, useTranslation } from "@/services/i18n/client";
+import { csvIndir, csvSatirlari } from "@/services/analytics/csv";
 
 const YUKLENIYOR = "—";
 
@@ -243,6 +251,36 @@ function Analytics() {
   const linkSerileri = linkSerisi?.links ?? [];
   const linkTavani = ortakTavan(linkSerileri);
 
+  const aralikBaslangic =
+    aralik.kind === "days" ? (seri?.start_date ?? "") : aralik.start;
+  const aralikBitis =
+    aralik.kind === "days" ? (seri?.end_date ?? "") : aralik.end;
+  const csvHazir =
+    !seriYukleniyor &&
+    !linkSerisiYukleniyor &&
+    !seriHatasi &&
+    !linkSerisiHatasi &&
+    !!seri &&
+    !!linkSerisi;
+  const csvIndirClick = () => {
+    if (!csvHazir) return;
+    const baslik = [t("csv.date"), t("csv.clicks"), t("csv.views")];
+    const satirlar: (string | number | boolean | null | undefined)[][] = [
+      baslik,
+      ...noktalar.map((p) => [p.date, p.clicks, p.profile_views]),
+      [],
+      [t("csv.title"), t("csv.url"), t("csv.active"), t("csv.totalClicks")],
+      ...linkSerileri.map((l) => [
+        l.title,
+        l.url,
+        l.is_active ? "yes" : "no",
+        l.total_clicks,
+      ]),
+    ];
+    const dosyaAdi = `analytics-${aralikBaslangic}_${aralikBitis}.csv`;
+    csvIndir(dosyaAdi, csvSatirlari(satirlar));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-page via-page-accent to-page p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -299,7 +337,19 @@ function Analytics() {
               <h2 className="text-lg font-semibold text-ink">
                 {t("overTime")}
               </h2>
-              <AralikSecici secili={aralik} sec={setAralik} />
+              <div className="flex flex-wrap items-center gap-2">
+                <AralikSecici secili={aralik} sec={setAralik} />
+                <button
+                  type="button"
+                  data-testid="export-csv"
+                  onClick={csvIndirClick}
+                  disabled={!csvHazir}
+                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 min-h-[44px] rounded-lg transition-colors"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("exportCsv")}
+                </button>
+              </div>
             </div>
 
             <div className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-4">

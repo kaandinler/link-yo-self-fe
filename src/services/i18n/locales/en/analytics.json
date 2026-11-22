@@ -6,6 +6,16 @@
   "allTime": "All time",
   "overTime": "Over time",
   "showDataTable": "Show data table",
+  "exportCsv": "Download CSV",
+  "csv": {
+    "date": "Date",
+    "clicks": "Clicks",
+    "views": "Views",
+    "title": "Title",
+    "url": "URL",
+    "active": "Active",
+    "totalClicks": "Total clicks"
+  },
   "stats": {
     "profileViews": "Profile Views",
     "totalClicks": "Total Clicks",
