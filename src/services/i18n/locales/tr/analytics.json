@@ -6,6 +6,16 @@
   "allTime": "Tüm zamanlar",
   "overTime": "Zaman içinde",
   "showDataTable": "Veri tablosunu göster",
+  "exportCsv": "CSV indir",
+  "csv": {
+    "date": "Tarih",
+    "clicks": "Tıklama",
+    "views": "Görüntülenme",
+    "title": "Başlık",
+    "url": "URL",
+    "active": "Aktif",
+    "totalClicks": "Toplam tıklama"
+  },
   "stats": {
     "profileViews": "Profil Görüntülenme",
     "totalClicks": "Toplam Tıklama",
