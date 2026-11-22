@@ -44,13 +44,14 @@ test.describe("Theme presets", () => {
       /bg-purple-600/
     );
 
-    // Preview should update (gradient background)
+    // Preview should update. A gradient is drawn as a background IMAGE, so
+    // backgroundColor stays transparent; the gradient itself is what to check.
     const preview = page.getByTestId("theme-preview");
-    const bg = await preview.evaluate((el) => {
-      const style = window.getComputedStyle(el);
-      return style.backgroundColor;
-    });
-    expect(bg).not.toBe("rgba(0, 0, 0, 0)");
+    await expect
+      .poll(() =>
+        preview.evaluate((el) => window.getComputedStyle(el).backgroundImage)
+      )
+      .toContain("linear-gradient");
   });
 
   test("selected preset is visually marked with aria-pressed", async ({
