@@ -2,6 +2,16 @@
   "title": "Customize Profile",
   "subtitle": "Choose how your public page looks",
   "viewPublicPage": "View public page",
+  "presets": {
+    "title": "Theme presets",
+    "hint": "Pick a ready-made theme. You can still adjust colors manually below.",
+    "ocean": "Ocean",
+    "sunset": "Sunset",
+    "forest": "Forest",
+    "midnight": "Midnight",
+    "berry": "Berry",
+    "paper": "Paper"
+  },
   "themeColor": {
     "label": "Theme color",
     "hint": "Used for your links and the second half of a gradient.",

@@ -28,8 +28,11 @@ import {
   DEFAULT_BACKGROUND,
   DEFAULT_THEME_COLOR,
   HEX_COLOR,
+  PROFILE_THEME_PRESETS,
+  findMatchingPreset,
   resolveTheme,
   safeImageUrl,
+  ThemePreset,
 } from "@/services/profile-theme";
 
 function isBackgroundType(value: unknown): value is BackgroundType {
@@ -187,6 +190,54 @@ function Customize() {
             onSubmit={handleSave}
             className="bg-surface/50 backdrop-blur-sm border border-line rounded-2xl p-6 space-y-6"
           >
+            <div className="space-y-2">
+              <span className="block text-sm font-medium text-ink-soft">
+                {t("presets.title")}
+              </span>
+              <p className="text-xs text-ink-muted">{t("presets.hint")}</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {PROFILE_THEME_PRESETS.map((preset: ThemePreset) => {
+                  const isSelected =
+                    findMatchingPreset(
+                      themeColor,
+                      backgroundType,
+                      backgroundType === "image" ? "" : backgroundColor
+                    ) === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => {
+                        setThemeColor(preset.themeColor);
+                        setBackgroundType(preset.backgroundType);
+                        setBackgroundColor(preset.backgroundColor);
+                      }}
+                      aria-pressed={isSelected}
+                      data-testid={`theme-preset-${preset.id}`}
+                      className={`min-h-[44px] rounded-lg border-2 p-2 text-left transition-colors ${
+                        isSelected
+                          ? "border-purple-500 bg-purple-500/10"
+                          : "border-line hover:border-line-strong"
+                      }`}
+                    >
+                      <div
+                        className="h-8 w-full rounded-md mb-1"
+                        style={
+                          preset.backgroundType === "gradient"
+                            ? {
+                                backgroundImage: `linear-gradient(160deg, ${preset.backgroundColor}, ${preset.themeColor})`,
+                              }
+                            : { backgroundColor: preset.backgroundColor }
+                        }
+                      />
+                      <span className="text-xs text-ink-soft">
+                        {t(`presets.${preset.id}`)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <div className="space-y-2">
               <label
                 htmlFor="theme-color"

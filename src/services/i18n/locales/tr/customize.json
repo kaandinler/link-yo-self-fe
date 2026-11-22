@@ -2,6 +2,16 @@
   "title": "Profili Özelleştir",
   "subtitle": "Herkese açık sayfanızın nasıl görüneceğini seçin",
   "viewPublicPage": "Herkese açık sayfayı gör",
+  "presets": {
+    "title": "Hazır tema şablonları",
+    "hint": "Hazır bir tema seçin. Aşağıdan renkleri elle de düzenleyebilirsiniz.",
+    "ocean": "Okyanus",
+    "sunset": "Gün batımı",
+    "forest": "Orman",
+    "midnight": "Gece yarısı",
+    "berry": "Yaban mersini",
+    "paper": "Kağıt"
+  },
   "themeColor": {
     "label": "Tema rengi",
     "hint": "Bağlantılarınızda ve degradenin ikinci yarısında kullanılır.",
