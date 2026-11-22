@@ -2,6 +2,10 @@ import { test, expect } from "@playwright/test";
 import { clickWhenReady, waitForHydration } from "../helpers/ui";
 
 // Frontend-only acceptance. The existing real-backend e2e suites are preserved separately.
+// Dil burada sabitleniyor: bu dosya hem kabul kapisinda (playwright.personal.config.ts) hem de tam
+// e2e kosusunda (playwright.config.ts, dil ayari yok) calisiyor ve "/" yonlendirmesi tarayici diline bagli.
+test.use({ locale: "tr-TR" });
+
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/**", (route) =>
     route.fulfill({
